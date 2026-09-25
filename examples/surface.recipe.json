@@ -1,0 +1,17 @@
+{
+  "schema": "worldforge.recipe.v1",
+  "generatorVersion": "0.7.0",
+  "engineVersion": "0.1.0",
+  "type": "surface",
+  "seed": 16180,
+  "surface": "grass",
+  "size": 24,
+  "variation": 0.55,
+  "wear": 0.22,
+  "pathPattern": "curve",
+  "pathWidth": 2.4,
+  "pathMaterial": "dirt",
+  "detailDensity": 0.42,
+  "edgeBlend": true,
+  "gridResolution": 40
+}

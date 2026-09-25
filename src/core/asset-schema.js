@@ -1,18 +1,32 @@
 import { ASSET_SCHEMA, ENGINE_VERSIONS, WORLDFORGE_VERSION } from './schema.js';
 
+function rotatePoint([x,y,z],[rx=0,ry=0,rz=0]){
+  let c=Math.cos(rx),s=Math.sin(rx);[y,z]=[y*c-z*s,y*s+z*c];
+  c=Math.cos(ry);s=Math.sin(ry);[x,z]=[x*c+z*s,-x*s+z*c];
+  c=Math.cos(rz);s=Math.sin(rz);[x,y]=[x*c-y*s,x*s+y*c];
+  return [x,y,z];
+}
+function transformPoint(v,node){
+  const sc=node.scale||[1,1,1],p=node.position||[0,0,0],r=node.rotation||[0,0,0];
+  const q=rotatePoint([v[0]*sc[0],v[1]*sc[1],v[2]*sc[2]],r);
+  return [q[0]+p[0],q[1]+p[1],q[2]+p[2]];
+}
+function boundsFromPoints(points){
+  if(!points.length)return null;
+  const min=[0,1,2].map(i=>Math.min(...points.map(p=>p[i]))),max=[0,1,2].map(i=>Math.max(...points.map(p=>p[i])));
+  return {min,max};
+}
 function nodeBounds(node){
   if(node.kind==='box'){
-    const p=node.position||[0,0,0], s=node.size||[0,0,0];
-    return {min:[p[0]-s[0]/2,p[1]-s[1]/2,p[2]-s[2]/2],max:[p[0]+s[0]/2,p[1]+s[1]/2,p[2]+s[2]/2]};
+    const [x,y,z]=(node.size||[0,0,0]).map(v=>v/2),pts=[];
+    for(const sx of [-1,1])for(const sy of [-1,1])for(const sz of [-1,1])pts.push(transformPoint([sx*x,sy*y,sz*z],node));
+    return boundsFromPoints(pts);
   }
-  if(node.kind==='mesh'){
-    const p=node.position||[0,0,0];
-    const xs=node.vertices.map(v=>v[0]+p[0]), ys=node.vertices.map(v=>v[1]+p[1]), zs=node.vertices.map(v=>v[2]+p[2]);
-    return {min:[Math.min(...xs),Math.min(...ys),Math.min(...zs)],max:[Math.max(...xs),Math.max(...ys),Math.max(...zs)]};
-  }
+  if(node.kind==='mesh') return boundsFromPoints((node.vertices||[]).map(v=>transformPoint(v,node)));
   if(node.kind==='dodecahedron'){
-    const p=node.position||[0,0,0], sc=node.scale||[1,1,1], r=node.radius||1;
-    return {min:[p[0]-r*sc[0],p[1]-r*sc[1],p[2]-r*sc[2]],max:[p[0]+r*sc[0],p[1]+r*sc[1],p[2]+r*sc[2]]};
+    const r=node.radius||1,pts=[];
+    for(const sx of [-1,1])for(const sy of [-1,1])for(const sz of [-1,1])pts.push(transformPoint([sx*r,sy*r,sz*r],node));
+    return boundsFromPoints(pts);
   }
   return null;
 }
@@ -31,12 +45,14 @@ function footprintFor(spec,bounds){
     if(r.engineVersion!=='1.0.0') return {shape:'box',width:Math.max(r.width,bounds.size[0]),depth:Math.max(r.depth,bounds.size[1])};
     return {shape:'box',width:r.width,depth:r.depth};
   }
-  if(r.type==='terrain'||r.type==='landscape') return {shape:'box',width:r.size,depth:r.size};
+  if(['terrain','landscape','surface'].includes(r.type)) return {shape:'box',width:r.size||bounds.size[0],depth:r.size||bounds.size[1]};
+  if(r.type==='field') return {shape:'box',width:Math.max(r.size||0,bounds.size[0]),depth:Math.max(r.size||0,bounds.size[1])};
   return {shape:'box',width:Math.max(.1,bounds.size[0]),depth:Math.max(.1,bounds.size[1])};
 }
 
 export function attachAssetMetadata(spec){
-  const r=spec.recipe, bounds=computeBounds(spec), footprint=footprintFor(spec,bounds);
+  const r=spec.recipe,bounds=computeBounds(spec),footprint=footprintFor(spec,bounds);
+  const blocking=!['terrain','landscape','surface','field'].includes(r.type);
   spec.asset={
     schema:ASSET_SCHEMA,
     worldforgeVersion:WORLDFORGE_VERSION,
@@ -48,9 +64,9 @@ export function attachAssetMetadata(spec){
     facing:r.type==='building'?'south':null,
     footprint,
     bounds,
-    collision:{enabled:r.type!=='terrain',shape:r.type==='building'?'footprint':'bounds'},
+    collision:{enabled:blocking,shape:r.type==='building'?'footprint':'bounds'},
     occlusion:{enabled:r.type==='building'||r.type==='prop'},
-    tags:[r.type,r.family||r.feature||r.patch||'asset'].filter(Boolean)
+    tags:[r.type,r.family||r.feature||r.patch||r.surface||r.preset||'asset'].filter(Boolean)
   };
   return spec;
 }

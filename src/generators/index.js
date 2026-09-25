@@ -7,6 +7,8 @@ import { generateBuildingV13 } from './building-v1.3.js';
 import { generateLandscape } from './landscape.js';
 import { generateProp } from './prop.js';
 import { generateTerrain } from './terrain.js';
+import { generateSurface } from './surface.js';
+import { generateField } from './field.js';
 
 export function generateScene(input){
   const recipe=normalizeRecipe(input);
@@ -14,6 +16,8 @@ export function generateScene(input){
   if(recipe.type==='landscape') spec=generateLandscape(recipe);
   else if(recipe.type==='prop') spec=generateProp(recipe);
   else if(recipe.type==='terrain') spec=generateTerrain(recipe);
+  else if(recipe.type==='surface') spec=generateSurface(recipe);
+  else if(recipe.type==='field') spec=generateField(recipe);
   else if(recipe.engineVersion==='1.3.0') spec=generateBuildingV13(recipe);
   else if(recipe.engineVersion==='1.2.0') spec=generateBuildingV12(recipe);
   else if(recipe.engineVersion==='1.1.0') spec=generateBuildingV11(recipe);

@@ -4,7 +4,7 @@
 <body><div id="app">
 <aside class="panel">
   <div class="brand"><b>WORLDFORGE</b><span id="version">v—</span></div><p class="sub">Deterministic procedural world asset lab</p>
-  <div class="tabs tabs4"><button class="tab active" data-mode="building">BUILDING</button><button class="tab" data-mode="prop">PROPS</button><button class="tab" data-mode="terrain">TERRAIN</button><button class="tab" data-mode="landscape">LANDSCAPE</button></div>
+  <div class="tabs tabs6"><button class="tab active" data-mode="building">BUILDING</button><button class="tab" data-mode="prop">PROPS</button><button class="tab" data-mode="surface">SURFACE</button><button class="tab" data-mode="field">FIELD</button><button class="tab" data-mode="terrain">TERRAIN</button><button class="tab" data-mode="landscape">LANDSCAPE</button></div>
   <label>Seed<div class="seedrow"><input id="seed" type="number" value="48127"><button id="randomize">↻</button></div></label>
   <section id="buildingPanel">
     <label>Building engine<select id="buildingEngine"><option value="1.3.0" selected>1.3 — RPG Architecture II</option><option value="1.2.0">1.2 — RPG Architecture I</option><option value="1.1.0">1.1 — Variety Engine</option><option value="1.0.0">1.0 — Protected Legacy</option></select></label>
@@ -32,6 +32,27 @@
     <label>Path width <input id="pathWidth" type="range" min="0.8" max="6" step="0.1" value="2.2"><output id="pathWidthOut"></output></label>
     <label>Wear <input id="wear" type="range" min="0" max="1" step="0.05" value="0.35"><output id="wearOut"></output></label>
     <label>Mesh resolution <input id="patchResolution" type="range" min="12" max="72" step="4" value="32"><output id="patchResolutionOut"></output></label>
+  </section>
+  <section id="surfacePanel" hidden>
+    <div class="cols"><label>Surface<select id="surfaceType"><option value="grass">Grass</option><option value="dirt">Dirt</option><option value="wornVillage">Worn Village</option><option value="stone">Stone</option><option value="cobblestone">Cobblestone</option><option value="mud">Mud</option><option value="sand">Sand</option><option value="rocky">Rocky</option></select></label><label>Path pattern<select id="surfacePathPattern"><option value="none">None</option><option value="straight">Straight</option><option value="curve">Curved</option><option value="tee">T Junction</option><option value="cross">Crossroads</option><option value="plaza">Plaza</option></select></label></div>
+    <div class="cols"><label>Path material<select id="surfacePathMaterial"><option value="dirt">Dirt</option><option value="stone">Stone</option><option value="cobblestone">Cobblestone</option><option value="sand">Sand</option></select></label><label><span class="checkline"><input id="surfaceEdgeBlend" type="checkbox" checked> Blend edges</span></label></div>
+    <label>Size <input id="surfaceSize" type="range" min="8" max="64" step="1" value="24"><output id="surfaceSizeOut"></output></label>
+    <label>Variation <input id="surfaceVariation" type="range" min="0" max="1" step="0.05" value="0.55"><output id="surfaceVariationOut"></output></label>
+    <label>Wear <input id="surfaceWear" type="range" min="0" max="1" step="0.05" value="0.22"><output id="surfaceWearOut"></output></label>
+    <label>Path width <input id="surfacePathWidth" type="range" min="0.8" max="8" step="0.1" value="2.4"><output id="surfacePathWidthOut"></output></label>
+    <label>Detail density <input id="surfaceDetailDensity" type="range" min="0" max="1" step="0.05" value="0.42"><output id="surfaceDetailDensityOut"></output></label>
+    <label>Mesh resolution <input id="surfaceResolution" type="range" min="16" max="96" step="4" value="40"><output id="surfaceResolutionOut"></output></label>
+  </section>
+  <section id="fieldPanel" hidden>
+    <label>Field preset<select id="fieldPreset"><option value="villageWellSquare">Village Well Square</option><option value="ruralHouseLane">Rural House Lane</option><option value="marketCorner">Market Corner</option><option value="castleCourtyard">Castle Courtyard</option><option value="castleGateApproach">Castle Gate Approach</option><option value="mountainPath">Mountain Path</option><option value="mineEntranceClearing">Mine Entrance Clearing</option><option value="desertMarket">Desert Market</option><option value="docksideLane">Dockside Lane</option></select></label>
+    <div class="cols"><label>Surface override<select id="fieldSurface"><option value="auto">Auto by preset</option><option value="grass">Grass</option><option value="dirt">Dirt</option><option value="wornVillage">Worn Village</option><option value="stone">Stone</option><option value="cobblestone">Cobblestone</option><option value="mud">Mud</option><option value="sand">Sand</option><option value="rocky">Rocky</option></select></label><label>Building engine<select id="fieldBuildingEngine"><option value="1.3.0" selected>1.3 — RPG World</option><option value="1.2.0">1.2 — RPG Village/Castle</option><option value="1.1.0">1.1 — Variety</option><option value="1.0.0">1.0 — Legacy</option></select></label></div>
+    <label>Field size <input id="fieldSize" type="range" min="26" max="56" step="1" value="34"><output id="fieldSizeOut"></output></label>
+    <label>Density <input id="fieldDensity" type="range" min="0" max="1" step="0.05" value="0.55"><output id="fieldDensityOut"></output></label>
+    <label>Dressing <input id="fieldDressing" type="range" min="0" max="1" step="0.05" value="0.55"><output id="fieldDressingOut"></output></label>
+    <div class="sectionTitle fieldEditTitle">FIELD EDITOR</div>
+    <div id="selectedAsset" class="selectedAsset">Tap an asset to select it</div>
+    <div class="nudgeGrid"><span></span><button data-nudge="0,1">↑</button><span></span><button data-nudge="-1,0">←</button><button id="fieldCenterSelection">◎</button><button data-nudge="1,0">→</button><span></span><button data-nudge="0,-1">↓</button><span></span></div>
+    <div class="fieldEditButtons"><button id="fieldRotateLeft">ROTATE −15°</button><button id="fieldRotateRight">ROTATE +15°</button><button id="fieldDuplicate">DUPLICATE</button><button id="fieldRegenerateAsset">REGENERATE ASSET</button><button id="fieldDeleteAsset">DELETE</button><button id="fieldClearSelection">CLEAR</button></div>
   </section>
   <section id="landscapePanel" hidden>
     <label>Feature<select id="feature"><option value="ridge">Rocky Ridge</option><option value="mesa">Terraced Mesa</option><option value="ravine">Ravine</option></select></label>

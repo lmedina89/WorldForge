@@ -1,44 +1,67 @@
-# WorldForge v0.6.0 Test Report
+# WorldForge v0.7.0 Test Report
 
-## Protected engine checks
-The following source files in v0.6.0 match v0.5.0 byte-for-byte:
+## Protected building engines
+Compared with v0.6.0, the following generator files are byte-identical:
 - `src/generators/building.js` — Building Engine 1.0.0
 - `src/generators/building-v1.1.js` — Building Engine 1.1.0
 - `src/generators/building-v1.2.js` — Building Engine 1.2.0
+- `src/generators/building-v1.3.js` — Building Engine 1.3.0
 
-## Legacy recipe regressions
-Four representative recipes from Building Engines 1.0, 1.1, and 1.2 were regenerated in v0.5 and v0.6.
-- Exact node match: PASS
-- Exact material match: PASS
+Representative recipes from all four engines were regenerated in v0.6.0 and v0.7.0:
+- Exact nodes: PASS
+- Exact materials: PASS
 
-A v0.5 recipe with no explicit engine resolves to Building Engine 1.2.0: PASS.
-
-## RPG Architecture Pack I
-Existing Pack I suite:
-- 76 RPG cases: PASS
-- 3 protected legacy regression cases: PASS
-
-## RPG Architecture Pack II
-Families tested:
-Watermill, Windmill, Dock, Dock Warehouse, Temple, Mage Tower, Ruined Fort, Desert House, Desert Market, Mine Entrance, City Gate, Sewer Entrance, Town Hall.
-
+## Surface Engine 0.1.0
 Matrix:
-- 13 families
-- 3 conditions
-- 2 seeds per condition
-- 78 Pack II cases total
+- 8 surface families
+- 6 path patterns
+- 2 seeds
+- 96 cases total
 
 Results:
-- Scene validation failures: 0
+- Validation failures: 0
 - Determinism failures: 0
 - Material determinism failures: 0
 
-Engine 1.3 compatibility wrapper was also compared against Engine 1.2 for an existing Smithy recipe:
-- Geometry match: PASS
-- Material match: PASS
+## Field Composer 0.1.0
+Presets:
+Village Well Square, Rural House Lane, Market Corner, Castle Courtyard, Castle Gate Approach, Mountain Path, Mine Entrance Clearing, Desert Market, Dockside Lane.
+
+Matrix:
+- 9 presets
+- 3 seeds
+- 27 cases total
+
+Results at size 34 / Building Engine 1.3.0:
+- Validation failures: 0
+- Placement-overlap warnings: 0
+- Determinism failures: 0
+- Placement recipe determinism failures: 0
+
+Edited field recipe test:
+- Asset position round-trip: PASS
+- Asset rotation round-trip: PASS
+
+## Existing suites
+- RPG Architecture Pack I: PASS
+- RPG Architecture Pack II: PASS
+
+## Headless export
+`examples/field.recipe.json` was exported through `cli/worldforge.mjs`:
+- Recipe JSON: PASS
+- Scene JSON: PASS
+- OBJ: PASS
+- MTL: PASS
+
+Default Village Well Square sample:
+- 9 placements
+- ~10.7k triangles
+- 51 deduplicated materials
 
 ## Visual audit
-Reference gallery:
-`examples/rpg2-gallery/rpg_architecture_pack2_gallery.png`
+Three representative field scenes were rendered from the neutral scene spec and inspected:
+- Village Well Square
+- Castle Courtyard
+- Desert Market
 
-The gallery was reviewed after correcting windmill blade axis, strengthening temple/city-gate/civic silhouettes, and breaking up the mine entrance rock mass.
+The fields show coherent ground surfaces, paths/plazas, architecture, and props without the earlier coordinate-plane intersection issue.

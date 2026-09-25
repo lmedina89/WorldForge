@@ -12,7 +12,14 @@ export function createThreeMaterials(spec){
 
 export function sceneSpecToThree(spec){
   const group=new THREE.Group();group.name=`WorldForge_${spec.recipe.type}_${spec.recipe.seed}`;group.userData.worldforge=spec.recipe;
-  const mats=createThreeMaterials(spec);
+  const mats=createThreeMaterials(spec),placementGroups=new Map();
+  const parentFor=n=>{
+    if(!n.placementId)return group;
+    if(!placementGroups.has(n.placementId)){
+      const g=new THREE.Group();g.name=`Placement_${n.placementId}`;g.userData.placementId=n.placementId;g.userData.sourceType=n.sourceType||null;group.add(g);placementGroups.set(n.placementId,g);
+    }
+    return placementGroups.get(n.placementId);
+  };
   for(const n of spec.nodes){
     let geom;
     if(n.kind==='box') geom=new THREE.BoxGeometry(...n.size);
@@ -22,8 +29,10 @@ export function sceneSpecToThree(spec){
     else continue;
     const mesh=new THREE.Mesh(geom,mats[n.material]);mesh.name=n.name;
     mesh.position.set(...(n.position||[0,0,0]));mesh.rotation.set(...(n.rotation||[0,0,0]));if(n.scale)mesh.scale.set(...n.scale);
-    mesh.castShadow=mesh.receiveShadow=true;mesh.userData.tags=n.tags||[];group.add(mesh);
+    mesh.castShadow=mesh.receiveShadow=true;mesh.userData.tags=n.tags||[];mesh.userData.placementId=n.placementId||null;mesh.userData.sourceType=n.sourceType||null;
+    parentFor(n).add(mesh);
   }
+  group.userData.placementGroups=placementGroups;
   return group;
 }
 

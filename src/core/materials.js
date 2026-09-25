@@ -67,3 +67,33 @@ export function installTerrainPatchMaterials(spec, patch='grass') {
   defineMaterial(spec,'groundStone',{color:'#88877b'});
   defineMaterial(spec,'groundWear',{color:'#9b8768'});
 }
+
+export function installSurfaceMaterials(spec, surface='grass', pathMaterial='dirt') {
+  const base = {
+    grass:['#748d58','#819962','#61764b'],
+    dirt:['#8b7456','#9a8262','#6e5942'],
+    wornVillage:['#7f825e','#93836a','#666a4e'],
+    stone:['#85867f','#99998f','#6e706b'],
+    cobblestone:['#797b76','#8c8d86','#646761'],
+    mud:['#665540','#735f46','#514334'],
+    sand:['#b89a66','#c7aa76','#967b50'],
+    rocky:['#72746d','#82847c','#5c5f59']
+  }[surface] || ['#748d58','#819962','#61764b'];
+  const path = {
+    dirt:['#8b7456','#6e5942'],
+    stone:['#898a84','#6c6e69'],
+    cobblestone:['#7b7d78','#62645f'],
+    sand:['#b89a66','#967b50']
+  }[pathMaterial] || ['#8b7456','#6e5942'];
+  defineMaterial(spec,'surfaceBase',{color:base[0]});
+  defineMaterial(spec,'surfaceLight',{color:base[1]});
+  defineMaterial(spec,'surfaceDark',{color:base[2]});
+  defineMaterial(spec,'surfacePath',{color:path[0]});
+  defineMaterial(spec,'surfacePathDark',{color:path[1]});
+  defineMaterial(spec,'surfaceStone',{color:'#777a74'});
+  defineMaterial(spec,'surfaceStoneLight',{color:'#97998f'});
+  defineMaterial(spec,'surfaceGreen',{color:'#5f7c4c'});
+  defineMaterial(spec,'surfaceFlower',{color:'#d7c56f'});
+  defineMaterial(spec,'surfaceFlower2',{color:'#b58b9b'});
+  defineMaterial(spec,'surfaceWater',{color:'#547d86',roughness:.35,metalness:.02});
+}

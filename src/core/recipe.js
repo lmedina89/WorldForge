@@ -1,4 +1,4 @@
-import { DEFAULT_BUILDING, DEFAULT_LANDSCAPE, DEFAULT_PROP, DEFAULT_TERRAIN, RECIPE_SCHEMA, WORLDFORGE_VERSION, ENGINE_VERSIONS } from './schema.js';
+import { DEFAULT_BUILDING, DEFAULT_LANDSCAPE, DEFAULT_PROP, DEFAULT_TERRAIN, DEFAULT_SURFACE, DEFAULT_FIELD, RECIPE_SCHEMA, WORLDFORGE_VERSION, ENGINE_VERSIONS } from './schema.js';
 import { clamp } from './rng.js';
 
 const BUILDING_FAMILIES = new Set(['cottage','house','shop','inn','shack','barn','warehouse','peasantHouse','farmhouse','smithy','chapel','stable','guildHall','merchantHouse','watchtower','gatehouse','keep','castleWall','barracks','watermill','windmill','dock','dockWarehouse','temple','mageTower','ruinedFort','desertHouse','desertMarket','mineEntrance','cityGate','sewerEntrance','townHall']);
@@ -20,11 +20,15 @@ const PROP_FAMILIES = new Set(['well','fence','signpost','supplies']);
 const PROP_STYLES = new Set(['village','mountain','stone','rough']);
 const PROP_VARIANTS = new Set(['auto','stone','wood','roofed','straight','corner','gate','broken','single','cluster']);
 const TERRAIN_PATCHES = new Set(['grass','dirt','path','wornVillage']);
+const SURFACES = new Set(['grass','dirt','wornVillage','stone','cobblestone','mud','sand','rocky']);
+const SURFACE_PATHS = new Set(['none','straight','curve','tee','cross','plaza']);
+const SURFACE_PATH_MATERIALS = new Set(['dirt','stone','cobblestone','sand']);
+const FIELD_PRESETS = new Set(['villageWellSquare','ruralHouseLane','marketCorner','castleCourtyard','castleGateApproach','mountainPath','mineEntranceClearing','desertMarket','docksideLane']);
+const FIELD_SURFACES = new Set(['auto',...SURFACES]);
 
 function finiteNumber(v, fallback) { const n = Number(v); return Number.isFinite(n) ? n : fallback; }
 function legacyBuildingEngine(input){
   if(input.engineVersion && BUILDING_ENGINES.has(input.engineVersion)) return input.engineVersion;
-  // Recipes created before WorldForge 0.4 predate Building Engine 1.1. Preserve them automatically.
   const gv=String(input.generatorVersion||'');
   if(/^0\.[0-3](?:\.|$)/.test(gv)) return ENGINE_VERSIONS.building;
   if(/^0\.4(?:\.|$)/.test(gv)) return '1.1.0';
@@ -32,8 +36,26 @@ function legacyBuildingEngine(input){
   return DEFAULT_BUILDING.engineVersion;
 }
 
+function normalizePlacement(p,index=0){
+  if(!p || typeof p!=='object') return null;
+  const recipe = p.recipe && typeof p.recipe==='object' ? p.recipe : null;
+  if(!recipe) return null;
+  const pos=Array.isArray(p.position)?p.position:[0,0,0];
+  return {
+    id:String(p.id||`asset-${index}`),
+    label:String(p.label||recipe.family||recipe.type||`Asset ${index+1}`),
+    recipe,
+    position:[finiteNumber(pos[0],0),finiteNumber(pos[1],0),finiteNumber(pos[2],0)],
+    rotation:finiteNumber(p.rotation,0),
+    scale:clamp(finiteNumber(p.scale,1),.25,4),
+    locked:!!p.locked,
+    selectable:p.selectable!==false,
+    allowOverlap:!!p.allowOverlap
+  };
+}
+
 export function normalizeRecipe(input = {}) {
-  const type = ['building','landscape','prop','terrain'].includes(input.type) ? input.type : 'building';
+  const type = ['building','landscape','prop','terrain','surface','field'].includes(input.type) ? input.type : 'building';
   if (type === 'landscape') {
     const d=DEFAULT_LANDSCAPE; return {schema:RECIPE_SCHEMA,generatorVersion:WORLDFORGE_VERSION,engineVersion:input.engineVersion||ENGINE_VERSIONS.landscape,type,seed:Math.trunc(finiteNumber(input.seed,d.seed)),feature:FEATURES.has(input.feature)?input.feature:d.feature,size:clamp(finiteNumber(input.size,d.size),18,80),relief:clamp(finiteNumber(input.relief,d.relief),1,24),roughness:clamp(finiteNumber(input.roughness,d.roughness),0,1),terracing:clamp(finiteNumber(input.terracing,d.terracing),0,1),path:input.path??d.path,rocks:input.rocks??d.rocks,gridResolution:Math.trunc(clamp(finiteNumber(input.gridResolution,d.gridResolution),24,128))};
   }
@@ -42,6 +64,14 @@ export function normalizeRecipe(input = {}) {
   }
   if(type === 'terrain'){
     const d=DEFAULT_TERRAIN; return {schema:RECIPE_SCHEMA,generatorVersion:WORLDFORGE_VERSION,engineVersion:input.engineVersion||ENGINE_VERSIONS.terrain,type,seed:Math.trunc(finiteNumber(input.seed,d.seed)),patch:TERRAIN_PATCHES.has(input.patch)?input.patch:d.patch,size:clamp(finiteNumber(input.size,d.size),6,40),roughness:clamp(finiteNumber(input.roughness,d.roughness),0,1),pathWidth:clamp(finiteNumber(input.pathWidth,d.pathWidth),.8,6),wear:clamp(finiteNumber(input.wear,d.wear),0,1),gridResolution:Math.trunc(clamp(finiteNumber(input.gridResolution,d.gridResolution),12,72))};
+  }
+  if(type === 'surface'){
+    const d=DEFAULT_SURFACE; return {schema:RECIPE_SCHEMA,generatorVersion:WORLDFORGE_VERSION,engineVersion:input.engineVersion||ENGINE_VERSIONS.surface,type,seed:Math.trunc(finiteNumber(input.seed,d.seed)),surface:SURFACES.has(input.surface)?input.surface:d.surface,size:clamp(finiteNumber(input.size,d.size),8,64),variation:clamp(finiteNumber(input.variation,d.variation),0,1),wear:clamp(finiteNumber(input.wear,d.wear),0,1),pathPattern:SURFACE_PATHS.has(input.pathPattern)?input.pathPattern:d.pathPattern,pathWidth:clamp(finiteNumber(input.pathWidth,d.pathWidth),.8,8),pathMaterial:SURFACE_PATH_MATERIALS.has(input.pathMaterial)?input.pathMaterial:d.pathMaterial,detailDensity:clamp(finiteNumber(input.detailDensity,d.detailDensity),0,1),edgeBlend:input.edgeBlend??d.edgeBlend,gridResolution:Math.trunc(clamp(finiteNumber(input.gridResolution,d.gridResolution),16,96))};
+  }
+  if(type === 'field'){
+    const d=DEFAULT_FIELD;
+    const placements=Array.isArray(input.placements)?input.placements.map(normalizePlacement).filter(Boolean):null;
+    return {schema:RECIPE_SCHEMA,generatorVersion:WORLDFORGE_VERSION,engineVersion:input.engineVersion||ENGINE_VERSIONS.field,type,seed:Math.trunc(finiteNumber(input.seed,d.seed)),preset:FIELD_PRESETS.has(input.preset)?input.preset:d.preset,size:clamp(finiteNumber(input.size,d.size),26,56),density:clamp(finiteNumber(input.density,d.density),0,1),surface:FIELD_SURFACES.has(input.surface)?input.surface:d.surface,buildingEngine:BUILDING_ENGINES.has(input.buildingEngine)?input.buildingEngine:d.buildingEngine,dressing:clamp(finiteNumber(input.dressing,d.dressing),0,1),placements};
   }
 
   const d=DEFAULT_BUILDING, features=input.features||{}, engineVersion=legacyBuildingEngine(input), modern=['1.1.0','1.2.0','1.3.0'].includes(engineVersion), rpg=['1.2.0','1.3.0'].includes(engineVersion), rpg2=engineVersion==='1.3.0';
@@ -71,9 +101,8 @@ export function validateRecipe(recipe) {
     if(r.family==='barn'&&r.features.sign)warnings.push('Barn sign is unusual but allowed.');
     if(r.roof==='flat'&&r.pitch!==15)warnings.push('Roof pitch is ignored for flat roofs.');
     if(r.engineVersion==='1.0.0'&&['crossGable','shed','gambrel','conical','parapet'].includes(recipe.roof))warnings.push('Building Engine 1.0 supports gable, hip and flat roofs only.');
-    const rpgFamilies=new Set(['peasantHouse','farmhouse','smithy','chapel','stable','guildHall','merchantHouse','watchtower','gatehouse','keep','castleWall','barracks','watermill','windmill','dock','dockWarehouse','temple','mageTower','ruinedFort','desertHouse','desertMarket','mineEntrance','cityGate','sewerEntrance','townHall']);
-    if(r.engineVersion!=='1.2.0'&&rpgFamilies.has(r.family))warnings.push('This RPG family is designed for Building Engine 1.2.');
   }
   if(r.type==='prop'&&r.family==='fence'&&r.scale>2)warnings.push('Very large fence scale may not match field proportions.');
+  if(r.type==='field'&&r.placements&&r.placements.length>80)warnings.push('Large field placement count may be heavy on mobile.');
   return {recipe:r,warnings};
 }

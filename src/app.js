@@ -8,46 +8,52 @@ import { saveProject, listProjects, getProject, deleteProject } from './storage/
 import { WORLDFORGE_VERSION } from './core/schema.js';
 
 const $=id=>document.getElementById(id);
-let mode='building', currentGroup=null, currentSpec=null;
-const panels={building:$('buildingPanel'),prop:$('propPanel'),terrain:$('terrainPanel'),landscape:$('landscapePanel')};
+let mode='building',currentGroup=null,currentSpec=null,selectedPlacementId=null,selectionHelper=null;
+const panels={building:$('buildingPanel'),prop:$('propPanel'),surface:$('surfacePanel'),field:$('fieldPanel'),terrain:$('terrainPanel'),landscape:$('landscapePanel')};
 
-const scene=new THREE.Scene();scene.background=new THREE.Color(0x0d1310);scene.fog=new THREE.Fog(0x0d1310,45,115);
-const camera=new THREE.OrthographicCamera(-12,12,8,-8,.1,300);camera.up.set(0,0,1);camera.position.set(15,-18,13);camera.lookAt(0,0,2);
+const scene=new THREE.Scene();scene.background=new THREE.Color(0x0d1310);scene.fog=new THREE.Fog(0x0d1310,55,150);
+const camera=new THREE.OrthographicCamera(-12,12,8,-8,.1,400);camera.up.set(0,0,1);camera.position.set(15,-18,13);camera.lookAt(0,0,2);
 const renderer=new THREE.WebGLRenderer({antialias:false,preserveDrawingBuffer:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(1.25,devicePixelRatio||1));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;$('canvasHost').appendChild(renderer.domElement);
 const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.target.set(0,0,2);
 scene.add(new THREE.AmbientLight(0xbfd0c8,1.15));const sun=new THREE.DirectionalLight(0xffe6bd,2.6);sun.position.set(-12,-16,22);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);scene.add(sun);
-const ground=new THREE.Mesh(new THREE.PlaneGeometry(180,180),new THREE.MeshStandardMaterial({color:0x536849,roughness:1}));ground.position.z=-.02;ground.receiveShadow=true;scene.add(ground);const grid=new THREE.GridHelper(80,80,0x34443a,0x243029);grid.rotation.x=Math.PI/2;grid.position.z=.01;scene.add(grid);
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(180,180),new THREE.MeshStandardMaterial({color:0x536849,roughness:1}));ground.position.z=-.02;ground.receiveShadow=true;scene.add(ground);
+const grid=new THREE.GridHelper(80,80,0x34443a,0x243029);grid.rotation.x=Math.PI/2;grid.position.z=.012;scene.add(grid);
+const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
 $('version').textContent='v'+WORLDFORGE_VERSION;
 
 function showMode(next){
-  mode=next;
+  mode=next;selectedPlacementId=null;clearSelectionHelper();
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.mode===mode));
   Object.entries(panels).forEach(([key,p])=>p.hidden=key!==mode);
+  ground.visible=!['surface','field','terrain'].includes(mode);
+  grid.visible=!['surface','field'].includes(mode);
+  updateSelectedUi();
 }
 
 function syncBuildingEngineUI(){
   const engine=$('buildingEngine')?.value||'1.0.0';
-  const modern=['1.1.0','1.2.0','1.3.0'].includes(engine);
-  const rpg=['1.2.0','1.3.0'].includes(engine);
-  const rpg2=engine==='1.3.0';
+  const modern=['1.1.0','1.2.0','1.3.0'].includes(engine),rpg=['1.2.0','1.3.0'].includes(engine),rpg2=engine==='1.3.0';
   document.querySelectorAll('.modernBuilding select,.modernBuilding input').forEach(el=>el.disabled=!modern);
   document.querySelectorAll('#roof .modernRoof').forEach(opt=>opt.disabled=!modern);
   document.querySelectorAll('.rpgFamily,.rpgStyle,.rpgTemplate,.rpgRoof').forEach(opt=>opt.disabled=!rpg);
   document.querySelectorAll('.rpg2Family,.rpg2Style,.rpg2Template,.rpg2Roof').forEach(opt=>opt.disabled=!rpg2);
-  if(!modern && ['crossGable','shed','gambrel','conical','parapet','dome','spire'].includes($('roof').value)) $('roof').value='gable';
-  if(!rpg && ['conical','parapet','dome','spire'].includes($('roof').value)) $('roof').value='gable';
-  if(!rpg2 && ['dome','spire'].includes($('roof').value)) $('roof').value='gable';
-  if($('family').selectedOptions[0]?.disabled) $('family').value='shop';
-  if($('style').selectedOptions[0]?.disabled) $('style').value='smallWoodTown';
-  if($('template').selectedOptions[0]?.disabled) $('template').value='auto';
-  $('width').max=rpg2?24:(rpg?20:14); $('depth').max=rpg2?18:(rpg?15:11); $('floors').max=rpg2?8:(rpg?6:4);
+  if(!modern&&['crossGable','shed','gambrel','conical','parapet','dome','spire'].includes($('roof').value))$('roof').value='gable';
+  if(!rpg&&['conical','parapet','dome','spire'].includes($('roof').value))$('roof').value='gable';
+  if(!rpg2&&['dome','spire'].includes($('roof').value))$('roof').value='gable';
+  if($('family').selectedOptions[0]?.disabled)$('family').value='shop';
+  if($('style').selectedOptions[0]?.disabled)$('style').value='smallWoodTown';
+  if($('template').selectedOptions[0]?.disabled)$('template').value='auto';
+  $('width').max=rpg2?24:(rpg?20:14);$('depth').max=rpg2?18:(rpg?15:11);$('floors').max=rpg2?8:(rpg?6:4);
 }
 
 function readRecipe(){
-  if(mode==='landscape')return normalizeRecipe({type:'landscape',seed:+$('seed').value,feature:$('feature').value,size:+$('terrainSize').value,relief:+$('relief').value,roughness:+$('roughness').value,terracing:+$('terracing').value,path:$('path').checked,rocks:$('rocks').checked,gridResolution:+$('gridResolution').value});
-  if(mode==='prop')return normalizeRecipe({type:'prop',seed:+$('seed').value,family:$('propFamily').value,condition:$('propCondition').value,style:$('propStyle').value,variant:$('propVariant').value,scale:+$('propScale').value});
-  if(mode==='terrain')return normalizeRecipe({type:'terrain',seed:+$('seed').value,patch:$('terrainPatch').value,size:+$('patchSize').value,roughness:+$('patchRoughness').value,pathWidth:+$('pathWidth').value,wear:+$('wear').value,gridResolution:+$('patchResolution').value});
-  return normalizeRecipe({type:'building',engineVersion:$('buildingEngine').value,seed:+$('seed').value,family:$('family').value,style:$('style').value,material:$('material').value,condition:$('condition').value,width:+$('width').value,depth:+$('depth').value,floors:+$('floors').value,roof:$('roof').value,pitch:+$('pitch').value,template:$('template').value,facade:$('facade').value,wealth:$('wealth').value,age:$('age').value,construction:$('construction').value,features:{chimney:$('chimney').checked,porch:$('porch').checked,sign:$('sign').checked,extension:$('extension').checked}});
+  const seed=+$('seed').value;
+  if(mode==='landscape')return normalizeRecipe({type:'landscape',seed,feature:$('feature').value,size:+$('terrainSize').value,relief:+$('relief').value,roughness:+$('roughness').value,terracing:+$('terracing').value,path:$('path').checked,rocks:$('rocks').checked,gridResolution:+$('gridResolution').value});
+  if(mode==='prop')return normalizeRecipe({type:'prop',seed,family:$('propFamily').value,condition:$('propCondition').value,style:$('propStyle').value,variant:$('propVariant').value,scale:+$('propScale').value});
+  if(mode==='terrain')return normalizeRecipe({type:'terrain',seed,patch:$('terrainPatch').value,size:+$('patchSize').value,roughness:+$('patchRoughness').value,pathWidth:+$('pathWidth').value,wear:+$('wear').value,gridResolution:+$('patchResolution').value});
+  if(mode==='surface')return normalizeRecipe({type:'surface',seed,surface:$('surfaceType').value,size:+$('surfaceSize').value,variation:+$('surfaceVariation').value,wear:+$('surfaceWear').value,pathPattern:$('surfacePathPattern').value,pathWidth:+$('surfacePathWidth').value,pathMaterial:$('surfacePathMaterial').value,detailDensity:+$('surfaceDetailDensity').value,edgeBlend:$('surfaceEdgeBlend').checked,gridResolution:+$('surfaceResolution').value});
+  if(mode==='field')return normalizeRecipe({type:'field',seed,preset:$('fieldPreset').value,size:+$('fieldSize').value,density:+$('fieldDensity').value,surface:$('fieldSurface').value,buildingEngine:$('fieldBuildingEngine').value,dressing:+$('fieldDressing').value,placements:null});
+  return normalizeRecipe({type:'building',engineVersion:$('buildingEngine').value,seed,family:$('family').value,style:$('style').value,material:$('material').value,condition:$('condition').value,width:+$('width').value,depth:+$('depth').value,floors:+$('floors').value,roof:$('roof').value,pitch:+$('pitch').value,template:$('template').value,facade:$('facade').value,wealth:$('wealth').value,age:$('age').value,construction:$('construction').value,features:{chimney:$('chimney').checked,porch:$('porch').checked,sign:$('sign').checked,extension:$('extension').checked}});
 }
 
 function writeRecipe(recipe){
@@ -57,57 +63,107 @@ function writeRecipe(recipe){
     for(const [id,key] of [['family','family'],['style','style'],['material','material'],['condition','condition'],['roof','roof']])$(id).value=r[key];
     for(const [id,key] of [['width','width'],['depth','depth'],['floors','floors'],['pitch','pitch']])$(id).value=r[key];
     for(const key of ['chimney','porch','sign','extension'])$(key).checked=!!r.features[key];
-    $('template').value=r.template||'auto';$('facade').value=r.facade||'auto';$('wealth').value=r.wealth||'modest';$('age').value=r.age||'mature';$('construction').value=r.construction||'auto';
-    syncBuildingEngineUI();
+    $('template').value=r.template||'auto';$('facade').value=r.facade||'auto';$('wealth').value=r.wealth||'modest';$('age').value=r.age||'mature';$('construction').value=r.construction||'auto';syncBuildingEngineUI();
   } else if(mode==='prop'){
     $('propFamily').value=r.family;$('propCondition').value=r.condition;$('propStyle').value=r.style;$('propVariant').value=r.variant;$('propScale').value=r.scale;
   } else if(mode==='terrain'){
     $('terrainPatch').value=r.patch;$('patchSize').value=r.size;$('patchRoughness').value=r.roughness;$('pathWidth').value=r.pathWidth;$('wear').value=r.wear;$('patchResolution').value=r.gridResolution;
+  } else if(mode==='surface'){
+    $('surfaceType').value=r.surface;$('surfaceSize').value=r.size;$('surfaceVariation').value=r.variation;$('surfaceWear').value=r.wear;$('surfacePathPattern').value=r.pathPattern;$('surfacePathWidth').value=r.pathWidth;$('surfacePathMaterial').value=r.pathMaterial;$('surfaceDetailDensity').value=r.detailDensity;$('surfaceEdgeBlend').checked=!!r.edgeBlend;$('surfaceResolution').value=r.gridResolution;
+  } else if(mode==='field'){
+    $('fieldPreset').value=r.preset;$('fieldSize').value=r.size;$('fieldDensity').value=r.density;$('fieldSurface').value=r.surface;$('fieldBuildingEngine').value=r.buildingEngine;$('fieldDressing').value=r.dressing;
   } else {
     for(const [id,key] of [['feature','feature'],['terrainSize','size'],['relief','relief'],['roughness','roughness'],['terracing','terracing'],['gridResolution','gridResolution']])$(id).value=r[key];$('path').checked=!!r.path;$('rocks').checked=!!r.rocks;
   }
-  syncOutputs();regenerate();
+  syncOutputs();renderRecipe(r,{resetCamera:true});
 }
 
 function spanFor(recipe){
   if(recipe.type==='landscape')return Math.max(20,recipe.size*.7);
-  if(recipe.type==='terrain')return Math.max(7,recipe.size*.62);
+  if(recipe.type==='terrain'||recipe.type==='surface')return Math.max(7,recipe.size*.62);
+  if(recipe.type==='field')return Math.max(12,recipe.size*.63);
   if(recipe.type==='prop')return Math.max(3.6,4.2*recipe.scale);
   if(recipe.type==='building')return Math.max(10,Math.max(recipe.width||6,recipe.depth||5)*.92);
   return 10;
 }
-
 function targetHeight(recipe){
   if(recipe.type==='building')return Math.max(2.2,Math.min(5.2,1.2+(recipe.floors||2)*1.15));
   if(recipe.type==='prop')return recipe.family==='well'?1.15:.8;
-  if(recipe.type==='terrain')return .15;
+  if(recipe.type==='terrain'||recipe.type==='surface')return .15;
+  if(recipe.type==='field')return 2.0;
   return 1.5;
 }
-
 function setDefaultCamera(recipe){
-  if(recipe.type==='terrain'){camera.position.set(12,-15,14);}
-  else if(recipe.type==='prop'){camera.position.set(8,-10,7);}
+  if(recipe.type==='terrain'||recipe.type==='surface')camera.position.set(12,-15,14);
+  else if(recipe.type==='field')camera.position.set(20,-24,20);
+  else if(recipe.type==='prop')camera.position.set(8,-10,7);
   else camera.position.set(15,-18,13);
   controls.target.set(0,0,targetHeight(recipe));camera.lookAt(controls.target);controls.update();
 }
-
-function regenerate(){
-  if(currentGroup){scene.remove(currentGroup);disposeThreeGroup(currentGroup);}
-  const recipe=readRecipe();currentSpec=generateScene(recipe);currentGroup=sceneSpecToThree(currentSpec);scene.add(currentGroup);$('seedLabel').textContent='SEED '+recipe.seed;$('modeLabel').textContent=mode.toUpperCase();
-  fitCamera(spanFor(recipe));setDefaultCamera(recipe);
-  const v=currentSpec.validation, engine=currentSpec.asset?.engine;
-  $('status').textContent=v.errors.length?`Validation failed: ${v.errors.join('; ')}`:`Generated ${mode} · ${v.stats.nodeCount} nodes · ~${v.stats.approxTriangleCount.toLocaleString()} tris${engine?` · ${engine.name} ${engine.version}`:''}`;
-  $('validation').textContent=v.errors.length?'ERROR':v.warnings.length?`${v.warnings.length} WARN`:'VALID';$('validation').dataset.state=v.errors.length?'bad':v.warnings.length?'warn':'good';
+function updateModeEnvironment(){
+  ground.visible=!['surface','field','terrain'].includes(mode);
+  grid.visible=!['surface','field'].includes(mode);
 }
+function renderRecipe(recipe,{resetCamera=true}={}){
+  clearSelectionHelper();
+  if(currentGroup){scene.remove(currentGroup);disposeThreeGroup(currentGroup);}
+  currentSpec=generateScene(recipe);currentGroup=sceneSpecToThree(currentSpec);scene.add(currentGroup);
+  mode=currentSpec.recipe.type;updateModeEnvironment();
+  $('seedLabel').textContent='SEED '+currentSpec.recipe.seed;$('modeLabel').textContent=mode.toUpperCase();
+  fitCamera(spanFor(currentSpec.recipe));if(resetCamera)setDefaultCamera(currentSpec.recipe);
+  const v=currentSpec.validation,engine=currentSpec.asset?.engine,warn=v.warnings.length?` · ${v.warnings.length} warn`:'';
+  $('status').textContent=v.errors.length?`Validation failed: ${v.errors.join('; ')}`:`Generated ${mode} · ${v.stats.nodeCount} nodes · ~${v.stats.approxTriangleCount.toLocaleString()} tris${v.stats.placementCount?` · ${v.stats.placementCount} placements`:''}${engine?` · ${engine.name} ${engine.version}`:''}${warn}`;
+  $('validation').textContent=v.errors.length?'ERROR':v.warnings.length?`${v.warnings.length} WARN`:'VALID';$('validation').dataset.state=v.errors.length?'bad':v.warnings.length?'warn':'good';
+  if(selectedPlacementId&&!currentSpec.recipe.placements?.some(p=>p.id===selectedPlacementId))selectedPlacementId=null;
+  updateSelectionHelper();updateSelectedUi();
+}
+function regenerate(){selectedPlacementId=null;renderRecipe(readRecipe(),{resetCamera:true});}
 function fitCamera(span){const aspect=Math.max(.5,$('canvasHost').clientWidth/Math.max(1,$('canvasHost').clientHeight));camera.left=-span*aspect;camera.right=span*aspect;camera.top=span;camera.bottom=-span;camera.updateProjectionMatrix();controls.target.set(0,0,currentSpec?targetHeight(currentSpec.recipe):2.2);}
 function setView(v){
   const t=currentSpec?targetHeight(currentSpec.recipe):2.2;controls.target.set(0,0,t);
-  if(v==='field')camera.position.set(mode==='prop'?8:15,mode==='prop'?-10:-18,mode==='terrain'?14:mode==='prop'?7:13);
-  else if(v==='front')camera.position.set(0,-24,mode==='prop'?2.8:4.5);
-  else if(v==='side')camera.position.set(24,0,mode==='prop'?2.8:4.5);
+  if(v==='field')camera.position.set(mode==='field'?20:mode==='prop'?8:15,mode==='field'?-24:mode==='prop'?-10:-18,mode==='field'?20:mode==='terrain'||mode==='surface'?14:mode==='prop'?7:13);
+  else if(v==='front')camera.position.set(0,-Math.max(24,spanFor(currentSpec?.recipe||{})*2),mode==='prop'?2.8:mode==='field'?7:4.5);
+  else if(v==='side')camera.position.set(Math.max(24,spanFor(currentSpec?.recipe||{})*2),0,mode==='prop'?2.8:mode==='field'?7:4.5);
   else return;
   camera.lookAt(controls.target);controls.update();
 }
+
+function clearSelectionHelper(){if(selectionHelper){scene.remove(selectionHelper);selectionHelper.geometry?.dispose?.();selectionHelper.material?.dispose?.();selectionHelper=null;}}
+function placementRecord(id){return currentSpec?.metadata?.placements?.find(p=>p.id===id)||null;}
+function placementObject(id){return currentGroup?.children?.find(o=>o.userData?.placementId===id)||null;}
+function updateSelectionHelper(){
+  clearSelectionHelper();if(mode!=='field'||!selectedPlacementId)return;
+  const obj=placementObject(selectedPlacementId);if(!obj)return;
+  const box=new THREE.Box3().setFromObject(obj);if(box.isEmpty())return;
+  selectionHelper=new THREE.Box3Helper(box,0x8ff0b5);selectionHelper.name='WorldForgeSelection';scene.add(selectionHelper);
+}
+function updateSelectedUi(){
+  const el=$('selectedAsset');if(!el)return;
+  const p=placementRecord(selectedPlacementId);
+  el.textContent=p?`${p.label} · ${p.recipe.type}${p.recipe.family?` / ${p.recipe.family}`:''} · seed ${p.recipe.seed}`:'Tap an asset in the field to select it';
+}
+function selectPlacement(id){
+  const rec=placementRecord(id);if(!rec||rec.selectable===false)return;
+  selectedPlacementId=id;updateSelectionHelper();updateSelectedUi();
+}
+function cloneJson(v){return JSON.parse(JSON.stringify(v));}
+function editField(mutator){
+  if(mode!=='field'||!currentSpec?.recipe?.placements||!selectedPlacementId)return;
+  const r=cloneJson(currentSpec.recipe),p=r.placements.find(x=>x.id===selectedPlacementId);if(!p)return;
+  if(mutator(p,r)===false)return;
+  renderRecipe(r,{resetCamera:false});
+}
+function nudge(dx,dy){editField(p=>{p.position[0]+=dx*.75;p.position[1]+=dy*.75;});}
+
+let pointerDown=null;
+renderer.domElement.addEventListener('pointerdown',e=>{pointerDown={x:e.clientX,y:e.clientY};});
+renderer.domElement.addEventListener('pointerup',e=>{
+  if(mode!=='field'||!currentGroup||!pointerDown)return;
+  const moved=Math.hypot(e.clientX-pointerDown.x,e.clientY-pointerDown.y);pointerDown=null;if(moved>8)return;
+  const rect=renderer.domElement.getBoundingClientRect();pointer.x=((e.clientX-rect.left)/rect.width)*2-1;pointer.y=-((e.clientY-rect.top)/rect.height)*2+1;raycaster.setFromCamera(pointer,camera);
+  const hits=raycaster.intersectObject(currentGroup,true);for(const h of hits){let o=h.object,id=o.userData?.placementId;while(!id&&o.parent&&o!==currentGroup){o=o.parent;id=o.userData?.placementId;}if(id){selectPlacement(id);return;}}
+});
+
 function download(blob,name){const a=document.createElement('a');const url=URL.createObjectURL(blob);a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);}
 function recipeName(){return `worldforge_${mode}_${currentSpec?.recipe?.seed||$('seed').value}`;}
 
@@ -130,8 +186,18 @@ function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':
 $('buildingEngine').onchange=()=>{syncBuildingEngineUI();regenerate();};
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{showMode(b.dataset.mode);regenerate();});
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));
-const outputMap={width:'widthOut',depth:'depthOut',floors:'floorsOut',pitch:'pitchOut',terrainSize:'terrainSizeOut',relief:'reliefOut',roughness:'roughnessOut',terracing:'terracingOut',gridResolution:'gridResolutionOut',propScale:'propScaleOut',patchSize:'patchSizeOut',patchRoughness:'patchRoughnessOut',pathWidth:'pathWidthOut',wear:'wearOut',patchResolution:'patchResolutionOut'};
+document.querySelectorAll('[data-nudge]').forEach(b=>b.onclick=()=>{const [x,y]=b.dataset.nudge.split(',').map(Number);nudge(x,y);});
+$('fieldRotateLeft').onclick=()=>editField(p=>{p.rotation-=Math.PI/12;});
+$('fieldRotateRight').onclick=()=>editField(p=>{p.rotation+=Math.PI/12;});
+$('fieldDuplicate').onclick=()=>editField((p,r)=>{const n=r.placements.filter(x=>x.id.startsWith(p.id+'_copy')).length+1,c=cloneJson(p);c.id=`${p.id}_copy${n}`;c.label=`${p.label} Copy`;c.position[0]+=1;c.position[1]-=1;c.locked=false;c.selectable=true;r.placements.push(c);selectedPlacementId=c.id;});
+$('fieldRegenerateAsset').onclick=()=>editField(p=>{p.recipe.seed=((Number(p.recipe.seed)||1)+104729)%1000000;});
+$('fieldDeleteAsset').onclick=()=>editField((p,r)=>{if(p.locked)return false;r.placements=r.placements.filter(x=>x.id!==p.id);selectedPlacementId=null;});
+$('fieldClearSelection').onclick=()=>{selectedPlacementId=null;updateSelectionHelper();updateSelectedUi();};
+$('fieldCenterSelection').onclick=()=>{const obj=placementObject(selectedPlacementId);if(!obj)return;const box=new THREE.Box3().setFromObject(obj),c=new THREE.Vector3();box.getCenter(c);controls.target.copy(c);camera.lookAt(c);controls.update();};
+
+const outputMap={width:'widthOut',depth:'depthOut',floors:'floorsOut',pitch:'pitchOut',terrainSize:'terrainSizeOut',relief:'reliefOut',roughness:'roughnessOut',terracing:'terracingOut',gridResolution:'gridResolutionOut',propScale:'propScaleOut',patchSize:'patchSizeOut',patchRoughness:'patchRoughnessOut',pathWidth:'pathWidthOut',wear:'wearOut',patchResolution:'patchResolutionOut',surfaceSize:'surfaceSizeOut',surfaceVariation:'surfaceVariationOut',surfaceWear:'surfaceWearOut',surfacePathWidth:'surfacePathWidthOut',surfaceDetailDensity:'surfaceDetailDensityOut',surfaceResolution:'surfaceResolutionOut',fieldSize:'fieldSizeOut',fieldDensity:'fieldDensityOut',fieldDressing:'fieldDressingOut'};
 function syncOutputs(){for(const [id,outId] of Object.entries(outputMap)){const el=$(id),out=$(outId);if(el&&out)out.value=el.value;}}
-for(const id of Object.keys(outputMap)){const el=$(id);if(el)el.oninput=()=>{syncOutputs();};}syncOutputs();
-function resize(){const host=$('canvasHost'),w=Math.max(320,Math.floor(host.clientWidth)),h=Math.max(220,Math.floor(host.clientHeight));renderer.setSize(w,h,false);fitCamera(currentSpec?spanFor(currentSpec.recipe):10);}window.addEventListener('resize',resize);syncBuildingEngineUI();resize();refreshProjects();regenerate();
+for(const id of Object.keys(outputMap)){const el=$(id);if(el)el.oninput=()=>syncOutputs();}syncOutputs();
+function resize(){const host=$('canvasHost'),w=Math.max(320,Math.floor(host.clientWidth)),h=Math.max(220,Math.floor(host.clientHeight));renderer.setSize(w,h,false);fitCamera(currentSpec?spanFor(currentSpec.recipe):10);}window.addEventListener('resize',resize);
+syncBuildingEngineUI();resize();refreshProjects();regenerate();
 (function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera);})();
