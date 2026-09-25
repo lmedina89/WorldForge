@@ -1,0 +1,14 @@
+{
+  "schema": "worldforge.recipe.v1",
+  "generatorVersion": "0.2.0",
+  "type": "landscape",
+  "seed": 90211,
+  "feature": "ridge",
+  "size": 30,
+  "relief": 7,
+  "roughness": 0.45,
+  "terracing": 0.35,
+  "path": true,
+  "rocks": true,
+  "gridResolution": 56
+}

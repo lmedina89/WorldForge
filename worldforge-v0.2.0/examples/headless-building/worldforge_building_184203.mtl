@@ -1,0 +1,51 @@
+newmtl wall
+Kd 0.54118 0.40000 0.27451
+Ns 10
+
+newmtl wallDark
+Kd 0.40392 0.29020 0.20784
+Ns 10
+
+newmtl timber
+Kd 0.30196 0.20392 0.14902
+Ns 10
+
+newmtl trim
+Kd 0.65490 0.47843 0.32157
+Ns 10
+
+newmtl roof
+Kd 0.46275 0.32157 0.23137
+Ns 10
+
+newmtl roofDark
+Kd 0.32549 0.22745 0.18431
+Ns 10
+
+newmtl stone
+Kd 0.46667 0.49020 0.51373
+Ns 10
+
+newmtl stoneLight
+Kd 0.65490 0.67843 0.70980
+Ns 10
+
+newmtl glass
+Kd 0.29020 0.47059 0.58824
+Ns 10
+
+newmtl board
+Kd 0.43922 0.31373 0.21176
+Ns 10
+
+newmtl deadGreen
+Kd 0.40000 0.43922 0.32157
+Ns 10
+
+newmtl rust
+Kd 0.47059 0.29804 0.22745
+Ns 10
+
+newmtl dark
+Kd 0.20784 0.22353 0.23137
+Ns 10

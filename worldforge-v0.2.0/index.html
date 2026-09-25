@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>WorldForge</title><link rel="stylesheet" href="style.css"></head>
+<body><div id="app">
+<aside class="panel">
+  <div class="brand"><b>WORLDFORGE</b><span id="version">v—</span></div><p class="sub">Deterministic procedural world asset lab</p>
+  <div class="tabs"><button class="tab active" data-mode="building">BUILDING</button><button class="tab" data-mode="landscape">LANDSCAPE</button></div>
+  <label>Seed<div class="seedrow"><input id="seed" type="number" value="48127"><button id="randomize">↻</button></div></label>
+  <section id="buildingPanel">
+    <div class="cols"><label>Family<select id="family"><option value="cottage">Cottage</option><option value="house">House</option><option value="shop" selected>Shop</option><option value="inn">Inn</option><option value="shack">Shack</option><option value="barn">Barn</option><option value="warehouse">Warehouse</option></select></label><label>Condition<select id="condition"><option value="clean">Clean</option><option value="worn">Worn</option><option value="abandoned">Abandoned</option></select></label></div>
+    <label>Style<select id="style"><option value="smallWoodTown">Small Wood Town</option><option value="mountain">Mountain Timber</option><option value="stoneTown">Stone Town</option><option value="industrial">Industrial</option><option value="abandonedEdge">Abandoned Edge</option></select></label>
+    <label>Material<select id="material"><option value="auto">Auto by style</option><option value="wood">Wood</option><option value="timberPlaster">Timber + Plaster</option><option value="stone">Stone</option><option value="brick">Brick</option><option value="metal">Metal</option></select></label>
+    <label>Width <input id="width" type="range" min="3.25" max="14" step="0.25" value="6.5"><output id="widthOut"></output></label>
+    <label>Depth <input id="depth" type="range" min="2.75" max="11" step="0.25" value="4.75"><output id="depthOut"></output></label>
+    <label>Floors <input id="floors" type="range" min="1" max="4" step="1" value="2"><output id="floorsOut"></output></label>
+    <div class="cols"><label>Roof<select id="roof"><option value="gable">Gable</option><option value="hip">Hip</option><option value="flat">Flat</option></select></label><label>Roof pitch <input id="pitch" type="range" min="15" max="65" step="1" value="42"><output id="pitchOut"></output></label></div>
+    <div class="checks"><label><input id="chimney" type="checkbox" checked> Chimney</label><label><input id="porch" type="checkbox" checked> Porch</label><label><input id="sign" type="checkbox" checked> Sign</label><label><input id="extension" type="checkbox" checked> Side extension</label></div>
+  </section>
+  <section id="landscapePanel" hidden>
+    <label>Feature<select id="feature"><option value="ridge">Rocky Ridge</option><option value="mesa">Terraced Mesa</option><option value="ravine">Ravine</option></select></label>
+    <label>Size <input id="terrainSize" type="range" min="18" max="80" step="1" value="30"><output id="terrainSizeOut"></output></label>
+    <label>Relief <input id="relief" type="range" min="1" max="24" step="0.5" value="7"><output id="reliefOut"></output></label>
+    <label>Roughness <input id="roughness" type="range" min="0" max="1" step="0.05" value="0.45"><output id="roughnessOut"></output></label>
+    <label>Terracing <input id="terracing" type="range" min="0" max="1" step="0.05" value="0.35"><output id="terracingOut"></output></label>
+    <label>Mesh resolution <input id="gridResolution" type="range" min="24" max="128" step="8" value="56"><output id="gridResolutionOut"></output></label>
+    <div class="checks"><label><input id="path" type="checkbox" checked> Carve path</label><label><input id="rocks" type="checkbox" checked> Scatter rocks</label></div>
+  </section>
+  <button id="generate" class="primary">GENERATE</button>
+  <div class="viewbuttons"><button data-view="field">3/4 FIELD</button><button data-view="front">FRONT</button><button data-view="side">SIDE</button><button data-view="orbit">FREE ORBIT</button></div>
+  <div class="sectionTitle">PROJECT</div><div class="projectRow"><select id="projectSelect"><option value="">Saved projects…</option></select><button id="loadProject">LOAD</button></div><div class="projectbuttons"><button id="saveProject">SAVE LOCAL</button><button id="deleteProject">DELETE</button></div>
+  <div class="sectionTitle">RECIPE / EXPORT</div><input id="recipeFile" type="file" accept="application/json,.json" hidden><div class="exports"><button id="importRecipe">IMPORT RECIPE</button><button id="exportJSON">RECIPE JSON</button><button id="exportScene">SCENE JSON</button><button id="exportGLB">GLB</button><button id="exportPNG">PNG</button></div>
+  <div class="validationRow"><span>VALIDATION</span><b id="validation" data-state="good">VALID</b></div><div id="status">Ready.</div>
+</aside>
+<main class="viewport"><div class="hud"><span id="modeLabel">BUILDING</span><span id="seedLabel">SEED 48127</span></div><div id="canvasHost"></div><div class="hint">Drag to orbit · wheel/pinch to zoom · same recipe = same asset</div></main>
+</div><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script><script type="module" src="src/app.js"></script></body></html>

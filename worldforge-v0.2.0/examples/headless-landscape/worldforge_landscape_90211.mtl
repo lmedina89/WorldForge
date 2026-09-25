@@ -1,0 +1,11 @@
+newmtl terrain
+Kd 0.39608 0.45098 0.33725
+Ns 10
+
+newmtl rock
+Kd 0.38431 0.40000 0.41569
+Ns 10
+
+newmtl path
+Kd 0.50980 0.42745 0.32549
+Ns 10

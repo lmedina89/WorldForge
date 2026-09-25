@@ -1,0 +1,16 @@
+{
+  "schema": "worldforge.recipe.v1",
+  "generatorVersion": "0.2.0",
+  "type": "building",
+  "seed": 73519,
+  "family": "inn",
+  "style": "smallWoodTown",
+  "material": "wood",
+  "condition": "worn",
+  "width": 8.25,
+  "depth": 5.5,
+  "floors": 2,
+  "roof": "hip",
+  "pitch": 40,
+  "features": {"chimney":true,"porch":true,"sign":true,"extension":true}
+}

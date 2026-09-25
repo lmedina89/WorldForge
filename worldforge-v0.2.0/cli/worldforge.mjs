@@ -1,0 +1,7 @@
+#!/usr/bin/env node
+import fs from 'node:fs';import path from 'node:path';import { generateScene } from '../src/generators/index.js';import { sceneSpecToOBJ, sceneSpecToMTL } from './obj-export.mjs';
+const args=process.argv.slice(2);function val(flag,fallback=null){const i=args.indexOf(flag);return i>=0?args[i+1]:fallback;}
+if(args.includes('--help')||!val('--recipe')){console.log('WorldForge headless CLI\n  node cli/worldforge.mjs --recipe examples/building.recipe.json --out out\nExports normalized recipe, neutral scene spec, OBJ and MTL.');process.exit(val('--recipe')?0:1);}
+const recipePath=path.resolve(val('--recipe'));const outDir=path.resolve(val('--out','worldforge-output'));fs.mkdirSync(outDir,{recursive:true});const recipe=JSON.parse(fs.readFileSync(recipePath,'utf8'));const spec=generateScene(recipe);const base=`worldforge_${spec.recipe.type}_${spec.recipe.seed}`;
+fs.writeFileSync(path.join(outDir,base+'.recipe.json'),JSON.stringify(spec.recipe,null,2));fs.writeFileSync(path.join(outDir,base+'.scene.json'),JSON.stringify(spec,null,2));fs.writeFileSync(path.join(outDir,base+'.obj'),`mtllib ${base}.mtl\n`+sceneSpecToOBJ(spec));fs.writeFileSync(path.join(outDir,base+'.mtl'),sceneSpecToMTL(spec));
+console.log(JSON.stringify({ok:spec.validation.errors.length===0,files:[base+'.recipe.json',base+'.scene.json',base+'.obj',base+'.mtl'],validation:spec.validation},null,2));if(spec.validation.errors.length)process.exit(2);
