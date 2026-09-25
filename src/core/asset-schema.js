@@ -46,6 +46,7 @@ function footprintFor(spec,bounds){
     return {shape:'box',width:r.width,depth:r.depth};
   }
   if(['terrain','landscape','surface'].includes(r.type)) return {shape:'box',width:r.size||bounds.size[0],depth:r.size||bounds.size[1]};
+  if(r.type==='traversal') return {shape:'box',width:Math.max(.1,r.width||bounds.size[0]),depth:Math.max(.1,r.length||bounds.size[1])};
   if(r.type==='field') return {shape:'box',width:Math.max(r.size||0,bounds.size[0]),depth:Math.max(r.size||0,bounds.size[1])};
   return {shape:'box',width:Math.max(.1,bounds.size[0]),depth:Math.max(.1,bounds.size[1])};
 }
@@ -53,7 +54,7 @@ function footprintFor(spec,bounds){
 export function attachAssetMetadata(spec){
   const r=spec.recipe,bounds=computeBounds(spec),footprint=footprintFor(spec,bounds);
   const foliageBlocking=r.type==='foliage'&&['tree','fallenLog','stump','rockCluster'].includes(r.family);
-  const blocking=r.type==='foliage'?foliageBlocking:!['terrain','landscape','surface','field'].includes(r.type);
+  const blocking=r.type==='foliage'?foliageBlocking:r.type==='traversal'?['cliff','terrace','retainingWall'].includes(r.family):!['terrain','landscape','surface','field'].includes(r.type);
   spec.asset={
     schema:ASSET_SCHEMA,
     worldforgeVersion:WORLDFORGE_VERSION,
@@ -65,9 +66,10 @@ export function attachAssetMetadata(spec){
     facing:r.type==='building'?'south':null,
     footprint,
     bounds,
-    collision:{enabled:blocking,shape:r.type==='building'?'footprint':'bounds'},
+    collision:{enabled:blocking,shape:r.type==='building'?'footprint':r.type==='traversal'?'traversal':'bounds'},
     occlusion:{enabled:r.type==='building'||r.type==='prop'||(r.type==='foliage'&&['tree','shrub','vines','fallenLog'].includes(r.family))},
-    tags:[r.type,r.family||r.feature||r.patch||r.surface||r.preset||'asset'].filter(Boolean)
+    tags:[r.type,r.family||r.feature||r.patch||r.surface||r.preset||'asset'].filter(Boolean),
+    ...(r.type==='traversal'?{traversal:spec.metadata?.traversal||null}:{})
   };
   return spec;
 }

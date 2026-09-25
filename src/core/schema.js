@@ -1,4 +1,4 @@
-export const WORLDFORGE_VERSION = '0.8.0';
+export const WORLDFORGE_VERSION = '0.9.0';
 export const RECIPE_SCHEMA = 'worldforge.recipe.v1';
 export const SCENE_SCHEMA = 'worldforge.scene.v1';
 export const ASSET_SCHEMA = 'worldforge.asset.v1';
@@ -10,8 +10,9 @@ export const ENGINE_VERSIONS = Object.freeze({
   prop: '0.1.0',
   terrain: '0.1.0',
   surface: '0.1.0',
-  field: '0.2.0',
-  foliage: '0.1.0'
+  field: '0.3.0',
+  foliage: '0.1.0',
+  traversal: '0.1.0'
 });
 
 export const DEFAULT_BUILDING = Object.freeze({
@@ -67,6 +68,14 @@ export const DEFAULT_SURFACE = Object.freeze({
 
 
 
+
+export const DEFAULT_TRAVERSAL = Object.freeze({
+  schema: RECIPE_SCHEMA, generatorVersion: WORLDFORGE_VERSION,
+  engineVersion: ENGINE_VERSIONS.traversal, type: 'traversal', seed: 84512,
+  family: 'bridge', style: 'stone', variant: 'straight',
+  width: 3.2, length: 8, height: 2.4, rails: true
+});
+
 export const DEFAULT_FOLIAGE = Object.freeze({
   schema: RECIPE_SCHEMA, generatorVersion: WORLDFORGE_VERSION,
   engineVersion: ENGINE_VERSIONS.foliage, type: 'foliage', seed: 61803,
@@ -79,5 +88,5 @@ export const DEFAULT_FIELD = Object.freeze({
   engineVersion: ENGINE_VERSIONS.field, type: 'field', seed: 424242,
   preset: 'villageWellSquare', size: 34, density: 0.55,
   surface: 'auto', buildingEngine: ENGINE_VERSIONS.buildingLatest,
-  dressing: 0.55, placements: null
+  dressing: 0.55, elevation: 0.65, placements: null
 });

@@ -1,89 +1,98 @@
-# WorldForge v0.8.0 — Foliage + Natural Dressing
+# WorldForge v0.9.0 — Elevation + Traversal
 
 WorldForge is a deterministic procedural RPG/world asset generator intended for browser, headless, and future standalone use.
 
 ## Protected systems
-The existing architecture and field foundations remain available as explicit engine versions:
+v0.9 expands around the existing systems instead of replacing them:
 - Building 1.0.0 — Protected Legacy
 - Building 1.1.0 — Variety Engine
 - Building 1.2.0 — RPG Architecture I
 - Building 1.3.0 — RPG Architecture II
 - Prop 0.1.0
 - Surface 0.1.0
-- Field Composer 0.1.0 — protected v0.7 layout behavior
+- Foliage 0.1.0
+- Field Composer 0.1.0 — protected v0.7 behavior
+- Field Composer 0.2.0 — protected v0.8 foliage/dressing behavior
 
-The protected building, prop, surface, and Field 0.1 generator source files are byte-identical to v0.7.0.
+The protected generator source files are byte-identical to v0.8.0.
 
-## New in v0.8.0
+## New in v0.9.0
 
-### Foliage Engine 0.1.0
-Deterministic low-poly / 2.5D-friendly natural assets:
-- Trees: oak, pine, birch, fruit tree, palm, mixed/auto
-- Shrub clusters
-- Flower patches
-- Crop patches
-- Fallen logs
-- Stumps
-- Vines
-- Rock clusters
-- Reeds
-- Healthy, dry, and dead conditions where relevant
+### Traversal Engine 0.1.0
+Deterministic elevation/traversal assets:
+- Stone/wood/rope bridges
+- Stairs
+- Slopes / ramps
+- Cliffs / ledges
+- Raised terraces
+- Retaining walls
 
-Biome palettes:
-- Temperate
-- Forest
-- Mountain
-- Farmland
-- Swamp
-- Desert
-- Ruins
+Each traversal asset exports gameplay metadata in addition to geometry:
+- Walkable surfaces
+- Entry/exit connection points
+- Elevation/rise
+- Bridge pass-under flag and clearance where applicable
+- Footprint / bounds / collision metadata
 
-Controls include scale, density, and spread. The same recipe reproduces the same geometry.
+### Field Composer 0.3.0
+Field 0.3 adds real multi-level scene composition while preserving Field 0.1 and 0.2.
 
-### Field Composer 0.2.0
-Field Composer 0.2 adds biome-aware natural dressing to the nine existing field presets while retaining exact child recipes and transforms.
+New elevated field presets:
+- Mountain Village Path
+- Stone Bridge Crossing
+- Cliffside Town Lane
 
-Examples:
-- Village Well Square: oak/fruit trees, flowers, shrubs, optional stump
-- Rural House Lane: fruit tree, oak, crops, wildflowers
-- Mountain Path: pine trees, alpine shrubs, rock cluster
-- Mine Entrance Clearing: dead tree, fallen log, rocks, optional stump
-- Desert Market: palms, dry shrubs, desert rocks
-- Dockside Lane: reeds, harbor tree, shrubs
+Existing presets with new elevation layouts include:
+- Castle Courtyard
+- Castle Gate Approach
+- Mountain Path
+- Mine Entrance Clearing
+- Rural House Lane
 
-The existing `Dressing` slider now affects both surface detail and natural field dressing.
+The field recipe now includes an `elevation` control. Field 0.3 exports a `walkGraph` with detected walk levels and traversal segments so later game movement code can consume the same data.
 
-### Backward compatibility
-Field generation changed, so it is versioned rather than silently replacing v0.7 behavior:
-- A recipe with `engineVersion: "0.1.0"` uses the protected v0.7 Field Composer.
-- New fields use `engineVersion: "0.2.0"` and receive foliage dressing.
-- Saved v0.7 field recipes with explicit placements continue to recreate their exact layout.
+### Editor additions
+- Dedicated **ELEVATION** tab
+- Generate bridge/stairs/slope/cliff/terrace/retaining-wall pieces independently
+- Field elevation-strength control
+- Selected asset `LEVEL +0.5` / `LEVEL -0.5`
+- L0 / L1 / L2 field visibility filters
+- Existing move/rotate/duplicate/regenerate/delete tools remain available
+
+## Backward compatibility
+Field changes are versioned rather than silently altering old projects:
+- `engineVersion: "0.1.0"` → protected v0.7 Field Composer
+- `engineVersion: "0.2.0"` → protected v0.8 dressed-field composer
+- `engineVersion: "0.3.0"` → new elevation/traversal composer
+- A saved recipe marked `generatorVersion: "0.8.0"` without an explicit field engine resolves to Field 0.2 rather than silently upgrading.
 
 ## Browser use
-Upload the contents of the ZIP directly to the root of a GitHub repository and enable GitHub Pages. `index.html` is at the ZIP root.
-
-A new **FOLIAGE** tab exposes family, biome, variant, condition, scale, density, and spread controls.
+Upload the **contents** of the ZIP directly to the root of a GitHub repository and enable GitHub Pages. `index.html` is directly at the ZIP root.
 
 ## Headless use
-Foliage:
+Traversal asset:
 ```bash
-node cli/worldforge.mjs --recipe examples/foliage.recipe.json --out out-foliage
+node cli/worldforge.mjs --recipe examples/traversal-stone-bridge.recipe.json --out out-bridge
 ```
 
-Dressed field:
+Elevated field:
 ```bash
-node cli/worldforge.mjs --recipe examples/field-v0.2-dressed.recipe.json --out out-field
+node cli/worldforge.mjs --recipe examples/field-v0.3-elevated.recipe.json --out out-field
 ```
 
-The CLI exports normalized recipe, neutral scene JSON, OBJ and MTL.
+The CLI exports normalized recipe JSON, neutral scene JSON, OBJ and MTL.
 
-## Efficiency
-Foliage is intentionally low-poly and deterministic. A default dressed Village Well Square is roughly 12.6k triangles across 13 placements, including four foliage placements. Field composition continues to deduplicate identical material definitions.
+## Gameplay-facing metadata
+Field 0.3 stores:
+- `metadata.walkGraph.levels`
+- `metadata.walkGraph.segments`
+- transformed traversal connection points
+- walk-surface descriptions
+- pass-under / clearance information for elevated bridges
 
-Future optimization can add true Three.js instancing for repeated grass/crop/flower elements without changing recipes.
+This is intentionally a foundation for v1.0 movement/collision integration rather than a fake visual-only elevation system.
 
 ## Roadmap
-- **v0.9** — elevation/traversal: cliffs, slopes, stairs, bridges, retaining walls, upper/lower walkable levels.
-- **v1.0** — first complete RPG field-building workflow.
+- **v1.0** — first complete RPG field-building workflow: field-generation polish, traversal/collision export, field save/export workflow, and game-facing integration cleanup.
 
-See `TEST_REPORT.md` for regression and determinism results.
+See `TEST_REPORT.md` for regression, determinism and compatibility results.

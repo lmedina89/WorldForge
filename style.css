@@ -4,3 +4,5 @@
 .tabs6{grid-template-columns:1fr 1fr 1fr}.selectedAsset{border:1px solid #30483a;background:#0d1511;padding:9px;color:#c9d9cf;font-size:11px;min-height:34px}.nudgeGrid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin:8px 0}.nudgeGrid button,.fieldEditButtons button{background:#121b16;border:1px solid var(--line);color:#b9c9bf;padding:8px}.fieldEditButtons{display:grid;grid-template-columns:1fr 1fr;gap:5px}.checkline{display:flex;align-items:center;gap:6px;padding-top:14px}.fieldEditTitle{margin-top:12px}@media(max-width:780px){.tabs6{grid-template-columns:1fr 1fr}.fieldEditButtons{grid-template-columns:1fr 1fr}}
 
 .tabs7{grid-template-columns:repeat(4,1fr)}@media(max-width:780px){.tabs7{grid-template-columns:1fr 1fr}}
+
+.tabs8{grid-template-columns:repeat(4,1fr)}.fieldLevelButtons{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:7px 0}.fieldLevelButtons button{background:#121b16;border:1px solid var(--line);color:#b9c9bf;padding:7px;font-size:10px}.fieldLevelButtons button.active{background:#294636;color:#effff5;border-color:#5d8b70}@media(max-width:780px){.tabs8{grid-template-columns:1fr 1fr}}

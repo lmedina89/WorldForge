@@ -1,0 +1,13 @@
+{
+  "type": "field",
+  "engineVersion": "0.3.0",
+  "seed": 22001,
+  "preset": "mountainVillagePath",
+  "size": 40,
+  "density": 0.58,
+  "surface": "auto",
+  "buildingEngine": "1.3.0",
+  "dressing": 0.68,
+  "elevation": 0.75,
+  "placements": null
+}

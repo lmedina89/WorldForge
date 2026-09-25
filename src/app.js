@@ -8,8 +8,8 @@ import { saveProject, listProjects, getProject, deleteProject } from './storage/
 import { WORLDFORGE_VERSION } from './core/schema.js';
 
 const $=id=>document.getElementById(id);
-let mode='building',currentGroup=null,currentSpec=null,selectedPlacementId=null,selectionHelper=null;
-const panels={building:$('buildingPanel'),prop:$('propPanel'),foliage:$('foliagePanel'),surface:$('surfacePanel'),field:$('fieldPanel'),terrain:$('terrainPanel'),landscape:$('landscapePanel')};
+let mode='building',currentGroup=null,currentSpec=null,selectedPlacementId=null,selectionHelper=null,fieldLevelView='all';
+const panels={building:$('buildingPanel'),prop:$('propPanel'),foliage:$('foliagePanel'),surface:$('surfacePanel'),traversal:$('traversalPanel'),field:$('fieldPanel'),terrain:$('terrainPanel'),landscape:$('landscapePanel')};
 
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x0d1310);scene.fog=new THREE.Fog(0x0d1310,55,150);
 const camera=new THREE.OrthographicCamera(-12,12,8,-8,.1,400);camera.up.set(0,0,1);camera.position.set(15,-18,13);camera.lookAt(0,0,2);
@@ -51,9 +51,10 @@ function readRecipe(){
   if(mode==='landscape')return normalizeRecipe({type:'landscape',seed,feature:$('feature').value,size:+$('terrainSize').value,relief:+$('relief').value,roughness:+$('roughness').value,terracing:+$('terracing').value,path:$('path').checked,rocks:$('rocks').checked,gridResolution:+$('gridResolution').value});
   if(mode==='prop')return normalizeRecipe({type:'prop',seed,family:$('propFamily').value,condition:$('propCondition').value,style:$('propStyle').value,variant:$('propVariant').value,scale:+$('propScale').value});
   if(mode==='foliage')return normalizeRecipe({type:'foliage',seed,family:$('foliageFamily').value,biome:$('foliageBiome').value,variant:$('foliageVariant').value,condition:$('foliageCondition').value,scale:+$('foliageScale').value,density:+$('foliageDensity').value,spread:+$('foliageSpread').value});
+  if(mode==='traversal')return normalizeRecipe({type:'traversal',seed,family:$('traversalFamily').value,style:$('traversalStyle').value,variant:$('traversalVariant').value,width:+$('traversalWidth').value,length:+$('traversalLength').value,height:+$('traversalHeight').value,rails:$('traversalRails').checked});
   if(mode==='terrain')return normalizeRecipe({type:'terrain',seed,patch:$('terrainPatch').value,size:+$('patchSize').value,roughness:+$('patchRoughness').value,pathWidth:+$('pathWidth').value,wear:+$('wear').value,gridResolution:+$('patchResolution').value});
   if(mode==='surface')return normalizeRecipe({type:'surface',seed,surface:$('surfaceType').value,size:+$('surfaceSize').value,variation:+$('surfaceVariation').value,wear:+$('surfaceWear').value,pathPattern:$('surfacePathPattern').value,pathWidth:+$('surfacePathWidth').value,pathMaterial:$('surfacePathMaterial').value,detailDensity:+$('surfaceDetailDensity').value,edgeBlend:$('surfaceEdgeBlend').checked,gridResolution:+$('surfaceResolution').value});
-  if(mode==='field')return normalizeRecipe({type:'field',seed,preset:$('fieldPreset').value,size:+$('fieldSize').value,density:+$('fieldDensity').value,surface:$('fieldSurface').value,buildingEngine:$('fieldBuildingEngine').value,dressing:+$('fieldDressing').value,placements:null});
+  if(mode==='field')return normalizeRecipe({type:'field',seed,preset:$('fieldPreset').value,size:+$('fieldSize').value,density:+$('fieldDensity').value,surface:$('fieldSurface').value,buildingEngine:$('fieldBuildingEngine').value,dressing:+$('fieldDressing').value,elevation:+$('fieldElevation').value,placements:null});
   return normalizeRecipe({type:'building',engineVersion:$('buildingEngine').value,seed,family:$('family').value,style:$('style').value,material:$('material').value,condition:$('condition').value,width:+$('width').value,depth:+$('depth').value,floors:+$('floors').value,roof:$('roof').value,pitch:+$('pitch').value,template:$('template').value,facade:$('facade').value,wealth:$('wealth').value,age:$('age').value,construction:$('construction').value,features:{chimney:$('chimney').checked,porch:$('porch').checked,sign:$('sign').checked,extension:$('extension').checked}});
 }
 
@@ -69,12 +70,14 @@ function writeRecipe(recipe){
     $('propFamily').value=r.family;$('propCondition').value=r.condition;$('propStyle').value=r.style;$('propVariant').value=r.variant;$('propScale').value=r.scale;
   } else if(mode==='foliage'){
     $('foliageFamily').value=r.family;$('foliageBiome').value=r.biome;$('foliageVariant').value=r.variant;$('foliageCondition').value=r.condition;$('foliageScale').value=r.scale;$('foliageDensity').value=r.density;$('foliageSpread').value=r.spread;
+  } else if(mode==='traversal'){
+    $('traversalFamily').value=r.family;$('traversalStyle').value=r.style;$('traversalVariant').value=r.variant;$('traversalWidth').value=r.width;$('traversalLength').value=r.length;$('traversalHeight').value=r.height;$('traversalRails').checked=!!r.rails;
   } else if(mode==='terrain'){
     $('terrainPatch').value=r.patch;$('patchSize').value=r.size;$('patchRoughness').value=r.roughness;$('pathWidth').value=r.pathWidth;$('wear').value=r.wear;$('patchResolution').value=r.gridResolution;
   } else if(mode==='surface'){
     $('surfaceType').value=r.surface;$('surfaceSize').value=r.size;$('surfaceVariation').value=r.variation;$('surfaceWear').value=r.wear;$('surfacePathPattern').value=r.pathPattern;$('surfacePathWidth').value=r.pathWidth;$('surfacePathMaterial').value=r.pathMaterial;$('surfaceDetailDensity').value=r.detailDensity;$('surfaceEdgeBlend').checked=!!r.edgeBlend;$('surfaceResolution').value=r.gridResolution;
   } else if(mode==='field'){
-    $('fieldPreset').value=r.preset;$('fieldSize').value=r.size;$('fieldDensity').value=r.density;$('fieldSurface').value=r.surface;$('fieldBuildingEngine').value=r.buildingEngine;$('fieldDressing').value=r.dressing;
+    $('fieldPreset').value=r.preset;$('fieldSize').value=r.size;$('fieldDensity').value=r.density;$('fieldSurface').value=r.surface;$('fieldBuildingEngine').value=r.buildingEngine;$('fieldDressing').value=r.dressing;$('fieldElevation').value=r.elevation;
   } else {
     for(const [id,key] of [['feature','feature'],['terrainSize','size'],['relief','relief'],['roughness','roughness'],['terracing','terracing'],['gridResolution','gridResolution']])$(id).value=r[key];$('path').checked=!!r.path;$('rocks').checked=!!r.rocks;
   }
@@ -86,6 +89,7 @@ function spanFor(recipe){
   if(recipe.type==='terrain'||recipe.type==='surface')return Math.max(7,recipe.size*.62);
   if(recipe.type==='field')return Math.max(12,recipe.size*.63);
   if(recipe.type==='prop')return Math.max(3.6,4.2*recipe.scale);
+  if(recipe.type==='traversal')return Math.max(5,Math.max(recipe.width||3,recipe.length||8)*.72);
   if(recipe.type==='foliage')return Math.max(4.2,5.2*recipe.scale*recipe.spread);
   if(recipe.type==='building')return Math.max(10,Math.max(recipe.width||6,recipe.depth||5)*.92);
   return 10;
@@ -93,6 +97,7 @@ function spanFor(recipe){
 function targetHeight(recipe){
   if(recipe.type==='building')return Math.max(2.2,Math.min(5.2,1.2+(recipe.floors||2)*1.15));
   if(recipe.type==='prop')return recipe.family==='well'?1.15:.8;
+  if(recipe.type==='traversal')return Math.max(.8,(recipe.height||2.2)*.55);
   if(recipe.type==='foliage')return recipe.family==='tree'?2.3:.65;
   if(recipe.type==='terrain'||recipe.type==='surface')return .15;
   if(recipe.type==='field')return 2.0;
@@ -101,7 +106,7 @@ function targetHeight(recipe){
 function setDefaultCamera(recipe){
   if(recipe.type==='terrain'||recipe.type==='surface')camera.position.set(12,-15,14);
   else if(recipe.type==='field')camera.position.set(20,-24,20);
-  else if(recipe.type==='prop'||recipe.type==='foliage')camera.position.set(8,-10,7);
+  else if(recipe.type==='prop'||recipe.type==='foliage'||recipe.type==='traversal')camera.position.set(8,-10,7);
   else camera.position.set(15,-18,13);
   controls.target.set(0,0,targetHeight(recipe));camera.lookAt(controls.target);controls.update();
 }
@@ -120,15 +125,15 @@ function renderRecipe(recipe,{resetCamera=true}={}){
   $('status').textContent=v.errors.length?`Validation failed: ${v.errors.join('; ')}`:`Generated ${mode} · ${v.stats.nodeCount} nodes · ~${v.stats.approxTriangleCount.toLocaleString()} tris${v.stats.placementCount?` · ${v.stats.placementCount} placements`:''}${engine?` · ${engine.name} ${engine.version}`:''}${warn}`;
   $('validation').textContent=v.errors.length?'ERROR':v.warnings.length?`${v.warnings.length} WARN`:'VALID';$('validation').dataset.state=v.errors.length?'bad':v.warnings.length?'warn':'good';
   if(selectedPlacementId&&!currentSpec.recipe.placements?.some(p=>p.id===selectedPlacementId))selectedPlacementId=null;
-  updateSelectionHelper();updateSelectedUi();
+  updateSelectionHelper();updateSelectedUi();applyLevelFilter();
 }
 function regenerate(){selectedPlacementId=null;renderRecipe(readRecipe(),{resetCamera:true});}
 function fitCamera(span){const aspect=Math.max(.5,$('canvasHost').clientWidth/Math.max(1,$('canvasHost').clientHeight));camera.left=-span*aspect;camera.right=span*aspect;camera.top=span;camera.bottom=-span;camera.updateProjectionMatrix();controls.target.set(0,0,currentSpec?targetHeight(currentSpec.recipe):2.2);}
 function setView(v){
   const t=currentSpec?targetHeight(currentSpec.recipe):2.2;controls.target.set(0,0,t);
-  if(v==='field')camera.position.set(mode==='field'?20:(mode==='prop'||mode==='foliage')?8:15,mode==='field'?-24:(mode==='prop'||mode==='foliage')?-10:-18,mode==='field'?20:mode==='terrain'||mode==='surface'?14:(mode==='prop'||mode==='foliage')?7:13);
-  else if(v==='front')camera.position.set(0,-Math.max(24,spanFor(currentSpec?.recipe||{})*2),(mode==='prop'||mode==='foliage')?2.8:mode==='field'?7:4.5);
-  else if(v==='side')camera.position.set(Math.max(24,spanFor(currentSpec?.recipe||{})*2),0,(mode==='prop'||mode==='foliage')?2.8:mode==='field'?7:4.5);
+  if(v==='field')camera.position.set(mode==='field'?20:(mode==='prop'||mode==='foliage'||mode==='traversal')?8:15,mode==='field'?-24:(mode==='prop'||mode==='foliage'||mode==='traversal')?-10:-18,mode==='field'?20:mode==='terrain'||mode==='surface'?14:(mode==='prop'||mode==='foliage'||mode==='traversal')?7:13);
+  else if(v==='front')camera.position.set(0,-Math.max(24,spanFor(currentSpec?.recipe||{})*2),(mode==='prop'||mode==='foliage'||mode==='traversal')?2.8:mode==='field'?7:4.5);
+  else if(v==='side')camera.position.set(Math.max(24,spanFor(currentSpec?.recipe||{})*2),0,(mode==='prop'||mode==='foliage'||mode==='traversal')?2.8:mode==='field'?7:4.5);
   else return;
   camera.lookAt(controls.target);controls.update();
 }
@@ -145,7 +150,7 @@ function updateSelectionHelper(){
 function updateSelectedUi(){
   const el=$('selectedAsset');if(!el)return;
   const p=placementRecord(selectedPlacementId);
-  el.textContent=p?`${p.label} · ${p.recipe.type}${p.recipe.family?` / ${p.recipe.family}`:''} · seed ${p.recipe.seed}`:'Tap an asset in the field to select it';
+  el.textContent=p?`${p.label} · ${p.recipe.type}${p.recipe.family?` / ${p.recipe.family}`:''} · z ${(p.position?.[2]||0).toFixed(2)} · seed ${p.recipe.seed}`:'Tap an asset in the field to select it';
 }
 function selectPlacement(id){
   const rec=placementRecord(id);if(!rec||rec.selectable===false)return;
@@ -159,6 +164,24 @@ function editField(mutator){
   renderRecipe(r,{resetCamera:false});
 }
 function nudge(dx,dy){editField(p=>{p.position[0]+=dx*.75;p.position[1]+=dy*.75;});}
+function placementVisualLevel(rec){
+  if(!rec)return 0;
+  const ws=rec.asset?.traversal?.walkSurfaces?.[0];
+  const local=ws?.z??ws?.z1??0;
+  const z=(rec.position?.[2]||0)+local*(rec.scale||1);
+  return z<.65?0:z<3.5?1:2;
+}
+function applyLevelFilter(){
+  if(mode!=='field'||!currentGroup)return;
+  const groups=currentGroup.userData?.placementGroups;
+  if(!groups)return;
+  for(const [id,g] of groups.entries()){
+    const rec=placementRecord(id);
+    const always=rec?.recipe?.type==='surface';
+    g.visible=fieldLevelView==='all'||always||placementVisualLevel(rec)===Number(fieldLevelView);
+  }
+  document.querySelectorAll('[data-level-view]').forEach(b=>b.classList.toggle('active',String(b.dataset.levelView)===String(fieldLevelView)));
+}
 
 let pointerDown=null;
 renderer.domElement.addEventListener('pointerdown',e=>{pointerDown={x:e.clientX,y:e.clientY};});
@@ -192,6 +215,8 @@ $('buildingEngine').onchange=()=>{syncBuildingEngineUI();regenerate();};
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{showMode(b.dataset.mode);regenerate();});
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));
 document.querySelectorAll('[data-nudge]').forEach(b=>b.onclick=()=>{const [x,y]=b.dataset.nudge.split(',').map(Number);nudge(x,y);});
+$('fieldLevelDown').onclick=()=>editField(p=>{if(!p.locked)p.position[2]=Math.max(0,(p.position[2]||0)-.5);});
+$('fieldLevelUp').onclick=()=>editField(p=>{if(!p.locked)p.position[2]=(p.position[2]||0)+.5;});
 $('fieldRotateLeft').onclick=()=>editField(p=>{p.rotation-=Math.PI/12;});
 $('fieldRotateRight').onclick=()=>editField(p=>{p.rotation+=Math.PI/12;});
 $('fieldDuplicate').onclick=()=>editField((p,r)=>{const n=r.placements.filter(x=>x.id.startsWith(p.id+'_copy')).length+1,c=cloneJson(p);c.id=`${p.id}_copy${n}`;c.label=`${p.label} Copy`;c.position[0]+=1;c.position[1]-=1;c.locked=false;c.selectable=true;r.placements.push(c);selectedPlacementId=c.id;});
@@ -199,8 +224,9 @@ $('fieldRegenerateAsset').onclick=()=>editField(p=>{p.recipe.seed=((Number(p.rec
 $('fieldDeleteAsset').onclick=()=>editField((p,r)=>{if(p.locked)return false;r.placements=r.placements.filter(x=>x.id!==p.id);selectedPlacementId=null;});
 $('fieldClearSelection').onclick=()=>{selectedPlacementId=null;updateSelectionHelper();updateSelectedUi();};
 $('fieldCenterSelection').onclick=()=>{const obj=placementObject(selectedPlacementId);if(!obj)return;const box=new THREE.Box3().setFromObject(obj),c=new THREE.Vector3();box.getCenter(c);controls.target.copy(c);camera.lookAt(c);controls.update();};
+document.querySelectorAll('[data-level-view]').forEach(b=>b.onclick=()=>{fieldLevelView=b.dataset.levelView;applyLevelFilter();updateSelectionHelper();});
 
-const outputMap={foliageScale:'foliageScaleOut',foliageDensity:'foliageDensityOut',foliageSpread:'foliageSpreadOut',width:'widthOut',depth:'depthOut',floors:'floorsOut',pitch:'pitchOut',terrainSize:'terrainSizeOut',relief:'reliefOut',roughness:'roughnessOut',terracing:'terracingOut',gridResolution:'gridResolutionOut',propScale:'propScaleOut',patchSize:'patchSizeOut',patchRoughness:'patchRoughnessOut',pathWidth:'pathWidthOut',wear:'wearOut',patchResolution:'patchResolutionOut',surfaceSize:'surfaceSizeOut',surfaceVariation:'surfaceVariationOut',surfaceWear:'surfaceWearOut',surfacePathWidth:'surfacePathWidthOut',surfaceDetailDensity:'surfaceDetailDensityOut',surfaceResolution:'surfaceResolutionOut',fieldSize:'fieldSizeOut',fieldDensity:'fieldDensityOut',fieldDressing:'fieldDressingOut'};
+const outputMap={traversalWidth:'traversalWidthOut',traversalLength:'traversalLengthOut',traversalHeight:'traversalHeightOut',foliageScale:'foliageScaleOut',foliageDensity:'foliageDensityOut',foliageSpread:'foliageSpreadOut',width:'widthOut',depth:'depthOut',floors:'floorsOut',pitch:'pitchOut',terrainSize:'terrainSizeOut',relief:'reliefOut',roughness:'roughnessOut',terracing:'terracingOut',gridResolution:'gridResolutionOut',propScale:'propScaleOut',patchSize:'patchSizeOut',patchRoughness:'patchRoughnessOut',pathWidth:'pathWidthOut',wear:'wearOut',patchResolution:'patchResolutionOut',surfaceSize:'surfaceSizeOut',surfaceVariation:'surfaceVariationOut',surfaceWear:'surfaceWearOut',surfacePathWidth:'surfacePathWidthOut',surfaceDetailDensity:'surfaceDetailDensityOut',surfaceResolution:'surfaceResolutionOut',fieldSize:'fieldSizeOut',fieldDensity:'fieldDensityOut',fieldDressing:'fieldDressingOut',fieldElevation:'fieldElevationOut'};
 function syncOutputs(){for(const [id,outId] of Object.entries(outputMap)){const el=$(id),out=$(outId);if(el&&out)out.value=el.value;}}
 for(const id of Object.keys(outputMap)){const el=$(id);if(el)el.oninput=()=>syncOutputs();}syncOutputs();
 function resize(){const host=$('canvasHost'),w=Math.max(320,Math.floor(host.clientWidth)),h=Math.max(220,Math.floor(host.clientHeight));renderer.setSize(w,h,false);fitCamera(currentSpec?spanFor(currentSpec.recipe):10);}window.addEventListener('resize',resize);

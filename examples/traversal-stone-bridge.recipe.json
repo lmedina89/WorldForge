@@ -1,0 +1,11 @@
+{
+  "type": "traversal",
+  "seed": 84512,
+  "family": "bridge",
+  "style": "stone",
+  "variant": "arched",
+  "width": 3.8,
+  "length": 10,
+  "height": 2.6,
+  "rails": true
+}
