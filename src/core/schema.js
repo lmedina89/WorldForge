@@ -1,7 +1,9 @@
-export const WORLDFORGE_VERSION = '0.9.0';
+export const WORLDFORGE_VERSION = '0.9.2';
 export const RECIPE_SCHEMA = 'worldforge.recipe.v1';
 export const SCENE_SCHEMA = 'worldforge.scene.v1';
 export const ASSET_SCHEMA = 'worldforge.asset.v1';
+export const PRODUCTION_SCHEMA = 'worldforge.production.v1';
+export const PRODUCTION_VERSION = '0.1.0';
 
 export const ENGINE_VERSIONS = Object.freeze({
   building: '1.0.0',          // protected legacy baseline
@@ -12,7 +14,8 @@ export const ENGINE_VERSIONS = Object.freeze({
   surface: '0.1.0',
   field: '0.3.0',
   foliage: '0.1.0',
-  traversal: '0.1.0'
+  traversal: '0.1.0',
+  production: PRODUCTION_VERSION
 });
 
 export const DEFAULT_BUILDING = Object.freeze({

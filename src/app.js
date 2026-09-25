@@ -6,9 +6,11 @@ import { normalizeRecipe } from './core/recipe.js';
 import { sceneSpecToThree, disposeThreeGroup } from './adapters/three-adapter.js';
 import { saveProject, listProjects, getProject, deleteProject } from './storage/project-store.js';
 import { WORLDFORGE_VERSION } from './core/schema.js';
+import { enrichExistingScene } from './core/production-metadata.js';
+import { snapScalar, snapRotationRadians, nearestLevel, nearestEdgeAdjustment, worldTraversalConnections } from './core/placement-tools.js';
 
 const $=id=>document.getElementById(id);
-let mode='building',currentGroup=null,currentSpec=null,selectedPlacementId=null,selectionHelper=null,fieldLevelView='all';
+let mode='building',currentGroup=null,currentSpec=null,selectedPlacementId=null,selectionHelper=null,selectionGuideGroup=null,fieldLevelView='all';
 const panels={building:$('buildingPanel'),prop:$('propPanel'),foliage:$('foliagePanel'),surface:$('surfacePanel'),traversal:$('traversalPanel'),field:$('fieldPanel'),terrain:$('terrainPanel'),landscape:$('landscapePanel')};
 
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x0d1310);scene.fog=new THREE.Fog(0x0d1310,55,150);
@@ -138,19 +140,33 @@ function setView(v){
   camera.lookAt(controls.target);controls.update();
 }
 
-function clearSelectionHelper(){if(selectionHelper){scene.remove(selectionHelper);selectionHelper.geometry?.dispose?.();selectionHelper.material?.dispose?.();selectionHelper=null;}}
+function clearSelectionHelper(){
+  if(selectionHelper){scene.remove(selectionHelper);selectionHelper.geometry?.dispose?.();selectionHelper.material?.dispose?.();selectionHelper=null;}
+  if(selectionGuideGroup){scene.remove(selectionGuideGroup);selectionGuideGroup.traverse(o=>{o.geometry?.dispose?.();o.material?.dispose?.();});selectionGuideGroup=null;}
+}
 function placementRecord(id){return currentSpec?.metadata?.placements?.find(p=>p.id===id)||null;}
 function placementObject(id){return currentGroup?.children?.find(o=>o.userData?.placementId===id)||null;}
 function updateSelectionHelper(){
   clearSelectionHelper();if(mode!=='field'||!selectedPlacementId)return;
-  const obj=placementObject(selectedPlacementId);if(!obj)return;
-  const box=new THREE.Box3().setFromObject(obj);if(box.isEmpty())return;
-  selectionHelper=new THREE.Box3Helper(box,0x8ff0b5);selectionHelper.name='WorldForgeSelection';scene.add(selectionHelper);
+  const obj=placementObject(selectedPlacementId),rec=placementRecord(selectedPlacementId);if(!obj||!rec)return;
+  const box=new THREE.Box3().setFromObject(obj);if(!box.isEmpty()){selectionHelper=new THREE.Box3Helper(box,0x8ff0b5);selectionHelper.name='WorldForgeSelection';scene.add(selectionHelper);}
+  if(!$('fieldShowGuides')?.checked)return;
+  selectionGuideGroup=new THREE.Group();selectionGuideGroup.name='WorldForgePlacementGuides';
+  const fp=rec.asset?.footprint||{width:1,depth:1},sc=rec.scale||1,w=(fp.width||1)*sc,d=(fp.depth||1)*sc,a=rec.rotation||0,c=Math.cos(a),si=Math.sin(a),z=(rec.position?.[2]||0)+.035;
+  const local=[[-w/2,-d/2],[w/2,-d/2],[w/2,d/2],[-w/2,d/2]].map(([x,y])=>[x*c-y*si+(rec.position?.[0]||0),x*si+y*c+(rec.position?.[1]||0),z]);
+  const footprintGeom=new THREE.BufferGeometry().setFromPoints([...local,local[0]].map(v=>new THREE.Vector3(...v)));selectionGuideGroup.add(new THREE.Line(footprintGeom,new THREE.LineBasicMaterial({color:0xf4d35e})));
+  const px=rec.position?.[0]||0,py=rec.position?.[1]||0;const crossPts=[[px-.25,py,z+.02],[px+.25,py,z+.02],[px,py-.25,z+.02],[px,py+.25,z+.02]].map(v=>new THREE.Vector3(...v));
+  const crossGeom=new THREE.BufferGeometry().setFromPoints(crossPts);const crossMat=new THREE.LineBasicMaterial({color:0x57c7ff});selectionGuideGroup.add(new THREE.LineSegments(crossGeom,crossMat));
+  for(const cn of worldTraversalConnections(rec)){const m=new THREE.Mesh(new THREE.SphereGeometry(.12,8,6),new THREE.MeshBasicMaterial({color:0xff6b6b}));m.position.set(...cn.position);selectionGuideGroup.add(m);}
+  scene.add(selectionGuideGroup);
 }
 function updateSelectedUi(){
   const el=$('selectedAsset');if(!el)return;
   const p=placementRecord(selectedPlacementId);
-  el.textContent=p?`${p.label} · ${p.recipe.type}${p.recipe.family?` / ${p.recipe.family}`:''} · z ${(p.position?.[2]||0).toFixed(2)} · seed ${p.recipe.seed}`:'Tap an asset in the field to select it';
+  el.textContent=p?`${p.label} · ${p.recipe.type}${p.recipe.family?` / ${p.recipe.family}`:''} · xyz ${(p.position?.[0]||0).toFixed(2)}, ${(p.position?.[1]||0).toFixed(2)}, ${(p.position?.[2]||0).toFixed(2)} · seed ${p.recipe.seed}`:'Tap an asset in the field to select it';
+  for(const id of ['fieldPosX','fieldPosY','fieldPosZ','fieldRotDeg']){const q=$(id);if(q)q.disabled=!p;}
+  if(p){$('fieldPosX').value=(p.position?.[0]||0).toFixed(2);$('fieldPosY').value=(p.position?.[1]||0).toFixed(2);$('fieldPosZ').value=(p.position?.[2]||0).toFixed(2);$('fieldRotDeg').value=((p.rotation||0)*180/Math.PI).toFixed(1);}
+  else{for(const id of ['fieldPosX','fieldPosY','fieldPosZ','fieldRotDeg'])if($(id))$(id).value='';}
 }
 function selectPlacement(id){
   const rec=placementRecord(id);if(!rec||rec.selectable===false)return;
@@ -163,7 +179,9 @@ function editField(mutator){
   if(mutator(p,r)===false)return;
   renderRecipe(r,{resetCamera:false});
 }
-function nudge(dx,dy){editField(p=>{p.position[0]+=dx*.75;p.position[1]+=dy*.75;});}
+function editorStep(){return Math.max(.01,Number($('fieldNudgeStep')?.value)||.25);}
+function rotationSnapDeg(){return Math.max(1,Number($('fieldRotationSnap')?.value)||15);}
+function nudge(dx,dy){const step=editorStep();editField(p=>{p.position[0]+=dx*step;p.position[1]+=dy*step;});}
 function placementVisualLevel(rec){
   if(!rec)return 0;
   const ws=rec.asset?.traversal?.walkSurfaces?.[0];
@@ -201,6 +219,9 @@ $('exportGLB').onclick=()=>{if(!currentGroup)return;new GLTFExporter().parse(cur
 $('exportJSON').onclick=()=>download(new Blob([JSON.stringify(currentSpec.recipe,null,2)],{type:'application/json'}),recipeName()+'.recipe.json');
 $('exportScene').onclick=()=>download(new Blob([JSON.stringify(currentSpec,null,2)],{type:'application/json'}),recipeName()+'.scene.json');
 $('exportAsset').onclick=()=>download(new Blob([JSON.stringify(currentSpec.asset,null,2)],{type:'application/json'}),recipeName()+'.asset.json');
+$('exportProduction').onclick=()=>download(new Blob([JSON.stringify(currentSpec.production,null,2)],{type:'application/json'}),recipeName()+'.production.json');
+$('upgradeScene').onclick=()=>$('sceneUpgradeFile').click();
+$('sceneUpgradeFile').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{const oldSpec=JSON.parse(await file.text());const upgraded=enrichExistingScene(oldSpec);const base=(file.name||'worldforge-scene').replace(/\.scene\.json$|\.json$/i,'');download(new Blob([JSON.stringify(upgraded.production,null,2)],{type:'application/json'}),base+'.production.json');download(new Blob([JSON.stringify(upgraded,null,2)],{type:'application/json'}),base+'.upgraded.scene.json');$('status').textContent=`Upgraded old scene metadata · ${upgraded.production?.sockets?.length??upgraded.production?.placements?.length??0} production records · geometry unchanged.`;}catch(err){$('status').textContent='Scene upgrade failed: '+err.message;}e.target.value='';};
 $('exportPNG').onclick=()=>renderer.domElement.toBlob(b=>download(b,recipeName()+'.png'));
 $('importRecipe').onclick=()=>$('recipeFile').click();
 $('recipeFile').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{writeRecipe(JSON.parse(await file.text()));$('status').textContent='Recipe imported.';}catch(err){$('status').textContent='Invalid recipe: '+err.message;}e.target.value='';};
@@ -215,10 +236,17 @@ $('buildingEngine').onchange=()=>{syncBuildingEngineUI();regenerate();};
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{showMode(b.dataset.mode);regenerate();});
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));
 document.querySelectorAll('[data-nudge]').forEach(b=>b.onclick=()=>{const [x,y]=b.dataset.nudge.split(',').map(Number);nudge(x,y);});
-$('fieldLevelDown').onclick=()=>editField(p=>{if(!p.locked)p.position[2]=Math.max(0,(p.position[2]||0)-.5);});
-$('fieldLevelUp').onclick=()=>editField(p=>{if(!p.locked)p.position[2]=(p.position[2]||0)+.5;});
-$('fieldRotateLeft').onclick=()=>editField(p=>{p.rotation-=Math.PI/12;});
-$('fieldRotateRight').onclick=()=>editField(p=>{p.rotation+=Math.PI/12;});
+$('fieldLevelDown').onclick=()=>{const step=editorStep();editField(p=>{if(!p.locked)p.position[2]=(p.position[2]||0)-step;});};
+$('fieldLevelUp').onclick=()=>{const step=editorStep();editField(p=>{if(!p.locked)p.position[2]=(p.position[2]||0)+step;});};
+$('fieldRotateLeft').onclick=()=>{const step=rotationSnapDeg()*Math.PI/180;editField(p=>{p.rotation=(p.rotation||0)-step;});};
+$('fieldRotateRight').onclick=()=>{const step=rotationSnapDeg()*Math.PI/180;editField(p=>{p.rotation=(p.rotation||0)+step;});};
+$('fieldApplyTransform').onclick=()=>editField(p=>{p.position=[Number($('fieldPosX').value)||0,Number($('fieldPosY').value)||0,Number($('fieldPosZ').value)||0];p.rotation=(Number($('fieldRotDeg').value)||0)*Math.PI/180;});
+$('fieldSnapGrid').onclick=()=>{const step=editorStep();editField(p=>{p.position[0]=snapScalar(p.position?.[0]||0,step);p.position[1]=snapScalar(p.position?.[1]||0,step);});};
+$('fieldSnapRotation').onclick=()=>editField(p=>{p.rotation=snapRotationRadians(p.rotation||0,rotationSnapDeg());});
+$('fieldSnapLevel').onclick=()=>{const levels=currentSpec?.metadata?.walkGraph?.levels||[0];editField(p=>{p.position[2]=nearestLevel(p.position?.[2]||0,levels);});};
+$('fieldSnapGround').onclick=()=>editField(p=>{p.position[2]=0;});
+$('fieldSnapEdge').onclick=()=>{const selected=placementRecord(selectedPlacementId),others=(currentSpec?.metadata?.placements||[]).filter(r=>r.id!==selectedPlacementId&&r.selectable!==false&&r.recipe?.type!=='surface'&&r.recipe?.type!=='foliage');const adj=nearestEdgeAdjustment(selected,others,0);if(!adj)return;editField(p=>{if(adj.axis==='x')p.position[0]+=adj.delta;else p.position[1]+=adj.delta;});};
+$('fieldShowGuides').onchange=()=>updateSelectionHelper();
 $('fieldDuplicate').onclick=()=>editField((p,r)=>{const n=r.placements.filter(x=>x.id.startsWith(p.id+'_copy')).length+1,c=cloneJson(p);c.id=`${p.id}_copy${n}`;c.label=`${p.label} Copy`;c.position[0]+=1;c.position[1]-=1;c.locked=false;c.selectable=true;r.placements.push(c);selectedPlacementId=c.id;});
 $('fieldRegenerateAsset').onclick=()=>editField(p=>{p.recipe.seed=((Number(p.recipe.seed)||1)+104729)%1000000;});
 $('fieldDeleteAsset').onclick=()=>editField((p,r)=>{if(p.locked)return false;r.placements=r.placements.filter(x=>x.id!==p.id);selectedPlacementId=null;});

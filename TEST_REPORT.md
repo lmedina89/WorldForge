@@ -1,37 +1,53 @@
-# WorldForge v0.9.0 Test Report
+# WorldForge v0.9.2 Test Report
 
-## New elevation/traversal suite
-- Protected generator files checked against v0.8.0: **9**
-- Field Engine 0.2 compatibility checked against v0.8.0: **pass**
-- v0.8 implicit field-engine migration to 0.2: **pass**
-- Traversal deterministic generation cases: **48**
-- Traversal validation failures: **0**
-- Elevated field deterministic cases: **16**
-- Elevated field validation failures: **0**
-- Elevated field placement warnings in audit matrix: **0**
-- Field Z-edit recipe round-trip: **pass**
-- Walk graph level/segment metadata checks: **pass**
+Status: **PASS**
 
-## Existing suites still passing
-- Foliage family/biome determinism cases: **126**
-- Dressed field presets: **9**
-- Surface cases: **96**
-- Surface/field cases: **27**
-- RPG Architecture I cases: **76**
-- RPG Architecture II cases: **78**
-- Existing legacy building regression suites: **pass**
+## Production metadata / compatibility
+- Protected generator implementation files vs v0.9.1: **13/13 byte-identical**.
+- Representative geometry/material regression recipes: **4/4 exact matches**.
+- Building production metadata coverage: **32 RPG/general building families**.
+- Production metadata determinism: **PASS**.
+- Traversal endpoint socket/walk-surface checks: **PASS**.
+- Retroactive v0.9.1 deep-village upgrade: **PASS**.
+  - placements preserved: 64
+  - production sockets added: 54
+  - nodes preserved exactly: PASS
+  - materials preserved exactly: PASS
+  - recipe preserved exactly: PASS
+- Browser UI ID audit: **0 missing controls**.
+- JavaScript syntax audit: **PASS**.
 
-## Browser/static integrity
-- JavaScript syntax checks: **pass**
-- Browser control-ID audit: **107 referenced IDs / 0 missing**
-- GitHub ZIP root check: run during final packaging
-- ZIP integrity: run during final packaging
+## Existing suites
+- Placement / alignment: PASS.
+- Elevation / traversal: PASS — 48 traversal cases, 16 elevated fields.
+- Foliage / natural dressing: PASS — 126 foliage cases, 9 dressed fields.
+- RPG Architecture Pack I: PASS — 76 cases.
+- RPG Architecture Pack II: PASS — 78 cases.
+- Surface / Field Foundation: PASS — 96 surface cases, 27 field cases.
+- Legacy field/building compatibility checks: PASS.
 
-## Visual audit
-Audited standalone bridge/stairs/slope/cliff/terrace/retaining-wall pieces and four composed elevated fields:
-- Mountain Village Path
-- Stone Bridge Crossing
-- Cliffside Town Lane
-- Castle Gate Approach
+---
 
-The audit confirmed visible upper/lower levels and traversal connectors rather than flat cosmetic elevation.
+# WorldForge v0.9.1 Test Report
+
+Status: **PASS**
+
+## Placement / Alignment
+- Protected generator files checked against v0.9.0: 14/14 byte-identical.
+- Exact X/Y/Z transform recipe round-trip: PASS.
+- Exact rotation recipe round-trip: PASS.
+- Grid snap math: PASS.
+- Rotation snap math: PASS.
+- Nearest walk-level snap math: PASS.
+- Nearest asset-edge alignment math: PASS.
+- Traversal connection world-transform guide math: PASS.
+- Browser UI ID audit: 0 missing controls.
+- JavaScript syntax audit: PASS.
+
+## Existing suites
+- Elevation / traversal: PASS — 48 traversal cases, 16 elevated fields.
+- Foliage / natural dressing: PASS — 126 foliage cases, 9 dressed fields.
+- RPG Architecture Pack I: PASS — 76 cases.
+- RPG Architecture Pack II: PASS — 78 cases.
+- Surface / Field Foundation: PASS — 96 surface cases, 27 field cases.
+- Legacy field/building compatibility checks: PASS.

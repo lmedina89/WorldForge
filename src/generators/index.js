@@ -1,5 +1,6 @@
 import { normalizeRecipe } from '../core/recipe.js';
 import { attachAssetMetadata } from '../core/asset-schema.js';
+import { attachProductionMetadata } from '../core/production-metadata.js';
 import { generateBuilding } from './building.js';
 import { generateBuildingV11 } from './building-v1.1.js';
 import { generateBuildingV12 } from './building-v1.2.js';
@@ -28,5 +29,6 @@ export function generateScene(input){
   else if(recipe.engineVersion==='1.2.0') spec=generateBuildingV12(recipe);
   else if(recipe.engineVersion==='1.1.0') spec=generateBuildingV11(recipe);
   else spec=generateBuilding(recipe);
-  return attachAssetMetadata(spec);
+  attachAssetMetadata(spec);
+  return attachProductionMetadata(spec);
 }

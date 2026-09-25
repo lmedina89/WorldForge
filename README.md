@@ -1,3 +1,65 @@
+# WorldForge v0.9.2 — Production Metadata + Sockets
+
+WorldForge v0.9.2 adds the first game-production layer **without changing existing generated geometry**. Buildings, props, traversal pieces, foliage, and fields now receive deterministic gameplay metadata that a game runtime or later WorldForge export stage can consume directly.
+
+## Retroactive compatibility
+This update is deliberately additive. Existing WorldForge recipes and scene files remain valid. The protected Building, Prop, Surface, Foliage, Traversal, Terrain, Landscape, and Field generator implementations are unchanged from v0.9.1.
+
+An older `.scene.json` can be upgraded in either place:
+- Browser: **UPGRADE OLD SCENE**
+- CLI: `node cli/worldforge.mjs --scene old.scene.json --out upgraded`
+
+The upgrade adds `production` metadata while preserving the original `nodes`, `materials`, and `recipe` exactly. This means towns and assets already created do not need to be rebuilt to gain the new production information.
+
+## Production metadata 0.1
+Generated assets now include `worldforge.production.v1` metadata with:
+- local or world-space bounds
+- door / entry sockets
+- road-connection sockets
+- castle-wall / fence connection sockets
+- gate, mine, sewer, dock and traversal portal sockets
+- walkable porch/deck/traversal surfaces
+- collision strategy and simplified primitive collision hints
+- collision openings tied to entry/portal sockets
+- navigation mode and entry links
+- occlusion volumes
+- placement rules and facing hints
+
+Fields expose the same information per placement plus the existing multi-level walk graph.
+
+## Browser exports
+In addition to recipe, scene, asset, GLB and PNG exports, v0.9.2 adds:
+- **GAME META** — exports `.production.json`
+- **UPGRADE OLD SCENE** — adds production metadata to an existing WorldForge scene without changing its geometry
+
+## Headless examples
+Fresh generation:
+```bash
+node cli/worldforge.mjs --recipe examples/building.recipe.json --out out
+```
+
+Retroactive scene enrichment:
+```bash
+node cli/worldforge.mjs --scene examples/deep-village-test-out/worldforge_field_731904.scene.json --out upgraded
+```
+
+The fresh-generation path now exports recipe JSON, scene JSON, production JSON, OBJ, and MTL.
+
+---
+
+# WorldForge v0.9.1 — Placement + Alignment Pass
+
+WorldForge v0.9.1 keeps the v0.9.0 generation stack intact and adds a precision editor for correcting field composition. Select an asset in FIELD mode, then use exact XYZ/rotation fields, configurable nudge increments, grid/rotation/walk-level snapping, nearest-edge alignment, and placement guides. All edits are stored in the deterministic field recipe.
+
+## Precision editor quick use
+1. Open **FIELD** and generate/load a field.
+2. Tap a building, stair, bridge, wall, prop, or foliage asset.
+3. Choose a nudge step or type exact X/Y/Z/rotation values.
+4. Use snap tools when useful: XY Grid, Rotation, Nearest Walk Level, Ground, or Nearest Asset Edge.
+5. Export/save the field recipe; transforms recreate exactly.
+
+---
+
 # WorldForge v0.9.0 — Elevation + Traversal
 
 WorldForge is a deterministic procedural RPG/world asset generator intended for browser, headless, and future standalone use.

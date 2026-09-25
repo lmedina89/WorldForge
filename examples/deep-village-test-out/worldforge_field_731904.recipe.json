@@ -1,0 +1,2022 @@
+{
+  "schema": "worldforge.recipe.v1",
+  "generatorVersion": "0.9.1",
+  "engineVersion": "0.3.0",
+  "type": "field",
+  "seed": 731904,
+  "preset": "villageWellSquare",
+  "size": 64,
+  "density": 0.95,
+  "surface": "grass",
+  "buildingEngine": "1.3.0",
+  "dressing": 0.85,
+  "elevation": 0.55,
+  "placements": [
+    {
+      "id": "ground",
+      "label": "Village Ground",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "surface",
+        "seed": 1001,
+        "surface": "grass",
+        "size": 64,
+        "variation": 0.72,
+        "wear": 0.4,
+        "pathPattern": "cross",
+        "pathWidth": 3.4,
+        "pathMaterial": "dirt",
+        "detailDensity": 0.52,
+        "edgeBlend": true,
+        "gridResolution": 60
+      },
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": true,
+      "selectable": false,
+      "allowOverlap": true
+    },
+    {
+      "id": "plaza",
+      "label": "Central Plaza",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "surface",
+        "seed": 1002,
+        "surface": "cobblestone",
+        "size": 19,
+        "variation": 0.38,
+        "wear": 0.55,
+        "pathPattern": "plaza",
+        "pathWidth": 3.2,
+        "pathMaterial": "cobblestone",
+        "detailDensity": 0.26,
+        "edgeBlend": true,
+        "gridResolution": 38
+      },
+      "position": [
+        0,
+        0,
+        0.045
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": true,
+      "selectable": false,
+      "allowOverlap": true
+    },
+    {
+      "id": "civicTerrace",
+      "label": "Civic Terrace",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "traversal",
+        "seed": 1101,
+        "family": "terrace",
+        "style": "stone",
+        "variant": "straight",
+        "width": 18,
+        "length": 10.5,
+        "height": 2.25,
+        "rails": false
+      },
+      "position": [
+        0,
+        19,
+        0
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "civicStairs",
+      "label": "Civic Stairs",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "traversal",
+        "seed": 1102,
+        "family": "stairs",
+        "style": "stone",
+        "variant": "straight",
+        "width": 3.2,
+        "length": 6.8,
+        "height": 2.25,
+        "rails": true
+      },
+      "position": [
+        0,
+        11.2,
+        0
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "civicWallL",
+      "label": "Terrace Wall L",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "traversal",
+        "seed": 1103,
+        "family": "retainingWall",
+        "style": "stone",
+        "variant": "straight",
+        "width": 8.2,
+        "length": 3,
+        "height": 2.25,
+        "rails": false
+      },
+      "position": [
+        -7.1,
+        13.75,
+        0
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "civicWallR",
+      "label": "Terrace Wall R",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "traversal",
+        "seed": 1104,
+        "family": "retainingWall",
+        "style": "stone",
+        "variant": "straight",
+        "width": 8.2,
+        "length": 3,
+        "height": 2.25,
+        "rails": false
+      },
+      "position": [
+        7.1,
+        13.75,
+        0
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "townHall",
+      "label": "Town Hall",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "1.3.0",
+        "type": "building",
+        "seed": 2001,
+        "family": "townHall",
+        "style": "grandCity",
+        "material": "timberPlaster",
+        "condition": "clean",
+        "width": 8.2,
+        "depth": 6,
+        "floors": 2,
+        "roof": "hip",
+        "pitch": 42,
+        "features": {
+          "chimney": true,
+          "porch": true,
+          "sign": false,
+          "extension": false
+        },
+        "template": "auto",
+        "facade": "auto",
+        "wealth": "prosperous",
+        "age": "mature",
+        "construction": "auto"
+      },
+      "position": [
+        -5.8,
+        19,
+        2.25
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": false
+    },
+    {
+      "id": "chapel",
+      "label": "Village Chapel",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "1.3.0",
+        "type": "building",
+        "seed": 2002,
+        "family": "chapel",
+        "style": "monastery",
+        "material": "stone",
+        "condition": "clean",
+        "width": 5.6,
+        "depth": 6.3,
+        "floors": 2,
+        "roof": "gable",
+        "pitch": 42,
+        "features": {
+          "chimney": true,
+          "porch": false,
+          "sign": false,
+          "extension": false
+        },
+        "template": "auto",
+        "facade": "auto",
+        "wealth": "modest",
+        "age": "old",
+        "construction": "auto"
+      },
+      "position": [
+        6.7,
+        19.3,
+        2.25
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": false
+    },
+    {
+      "id": "inn",
+      "label": "Old Oak Inn",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "1.3.0",
+        "type": "building",
+        "seed": 2101,
+        "family": "inn",
+        "style": "oldRpgVillage",
+        "material": "auto",
+        "condition": "clean",
+        "width": 7.5,
+        "depth": 5.4,
+        "floors": 2,
+        "roof": "crossGable",
+        "pitch": 42,
+        "features": {
+          "chimney": true,
+          "porch": true,
+          "sign": true,
+          "extension": true
+        },
+        "template": "auto",
+        "facade": "auto",
+        "wealth": "prosperous",
+        "age": "old",
+        "construction": "auto"
+      },
+      "position": [
+        -18,
+        8,
+        0
+      ],
+      "rotation": 1.5707963267948966,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": false
+    },
+    {
+      "id": "smithy",
+      "label": "Blacksmith",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "1.3.0",
+        "type": "building",
+        "seed": 2102,
+        "family": "smithy",
+        "style": "rusticVillage",
+        "material": "auto",
+        "condition": "clean",
+        "width": 7,
+        "depth": 5.3,
+        "floors": 2,
+        "roof": "gable",
+        "pitch": 42,
+        "features": {
+          "chimney": true,
+          "porch": true,
+          "sign": true,
+          "extension": true
+        },
+        "template": "auto",
+        "facade": "auto",
+        "wealth": "modest",
+        "age": "old",
+        "construction": "auto"
+      },
+      "position": [
+        -18,
+        -3.5,
+        0
+      ],
+      "rotation": 1.5707963267948966,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": false
+    },
+    {
+      "id": "westShop",
+      "label": "General Store",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "1.3.0",
+        "type": "building",
+        "seed": 2103,
+        "family": "shop",
+        "style": "oldRpgVillage",
+        "material": "auto",
+        "condition": "clean",
+        "width": 6.3,
+        "depth": 4.6,
+        "floors": 2,
+        "roof": "crossGable",
+        "pitch": 42,
+        "features": {
+          "chimney": true,
+          "porch": true,
+          "sign": true,
+          "extension": true
+        },
+        "template": "shopfront",
+        "facade": "storefront",
+        "wealth": "modest",
+        "age": "mature",
+        "construction": "auto"
+      },
+      "position": [
+        -18,
+        -14.3,
+        0
+      ],
+      "rotation": 1.5707963267948966,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": false
+    },
+    {
+      "id": "merchant",
+      "label": "Merchant House",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "1.3.0",
+        "type": "building",
+        "seed": 2201,
+        "family": "merchantHouse",
+        "style": "oldRpgVillage",
+        "material": "auto",
+        "condition": "clean",
+        "width": 7.2,
+        "depth": 5,
+        "floors": 2,
+        "roof": "crossGable",
+        "pitch": 42,
+        "features": {
+          "chimney": true,
+          "porch": true,
+          "sign": true,
+          "extension": true
+        },
+        "template": "auto",
+        "facade": "auto",
+        "wealth": "prosperous",
+        "age": "mature",
+        "construction": "auto"
+      },
+      "position": [
+        18.2,
+        7.5,
+        0
+      ],
+      "rotation": -1.5707963267948966,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": false
+    },
+    {
+      "id": "eastShop",
+      "label": "Apothecary Shop",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "1.3.0",
+        "type": "building",
+        "seed": 2202,
+        "family": "shop",
+        "style": "oldRpgVillage",
+        "material": "auto",
+        "condition": "clean",
+        "width": 6.1,
+        "depth": 4.5,
+        "floors": 2,
+        "roof": "gable",
+        "pitch": 42,
+        "features": {
+          "chimney": true,
+          "porch": true,
+          "sign": true,
+          "extension": true
+        },
+        "template": "shopfront",
+        "facade": "storefront",
+        "wealth": "modest",
+        "age": "old",
+        "construction": "auto"
+      },
+      "position": [
+        18.3,
+        -3.7,
+        0
+      ],
+      "rotation": -1.5707963267948966,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": false
+    },
+    {
+      "id": "guild",
+      "label": "Small Guild Hall",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "1.3.0",
+        "type": "building",
+        "seed": 2203,
+        "family": "guildHall",
+        "style": "oldRpgVillage",
+        "material": "auto",
+        "condition": "clean",
+        "width": 7,
+        "depth": 5.2,
+        "floors": 2,
+        "roof": "hip",
+        "pitch": 42,
+        "features": {
+          "chimney": true,
+          "porch": true,
+          "sign": true,
+          "extension": true
+        },
+        "template": "auto",
+        "facade": "auto",
+        "wealth": "prosperous",
+        "age": "mature",
+        "construction": "auto"
+      },
+      "position": [
+        18.2,
+        -14.7,
+        0
+      ],
+      "rotation": -1.5707963267948966,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": false
+    },
+    {
+      "id": "farmhouse",
+      "label": "Farmhouse",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "1.3.0",
+        "type": "building",
+        "seed": 2301,
+        "family": "farmhouse",
+        "style": "rusticVillage",
+        "material": "auto",
+        "condition": "clean",
+        "width": 7.2,
+        "depth": 5.4,
+        "floors": 2,
+        "roof": "gable",
+        "pitch": 42,
+        "features": {
+          "chimney": true,
+          "porch": true,
+          "sign": false,
+          "extension": true
+        },
+        "template": "auto",
+        "facade": "auto",
+        "wealth": "modest",
+        "age": "old",
+        "construction": "auto"
+      },
+      "position": [
+        -11,
+        -23,
+        0
+      ],
+      "rotation": 3.141592653589793,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": false
+    },
+    {
+      "id": "stable",
+      "label": "Stable",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "1.3.0",
+        "type": "building",
+        "seed": 2302,
+        "family": "stable",
+        "style": "rusticVillage",
+        "material": "auto",
+        "condition": "clean",
+        "width": 7.7,
+        "depth": 5.8,
+        "floors": 2,
+        "roof": "gambrel",
+        "pitch": 42,
+        "features": {
+          "chimney": true,
+          "porch": false,
+          "sign": false,
+          "extension": true
+        },
+        "template": "auto",
+        "facade": "auto",
+        "wealth": "modest",
+        "age": "old",
+        "construction": "auto"
+      },
+      "position": [
+        0,
+        -23.2,
+        0
+      ],
+      "rotation": 3.141592653589793,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": false
+    },
+    {
+      "id": "barn",
+      "label": "Barn",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "1.3.0",
+        "type": "building",
+        "seed": 2303,
+        "family": "barn",
+        "style": "smallWoodTown",
+        "material": "wood",
+        "condition": "clean",
+        "width": 8.2,
+        "depth": 6,
+        "floors": 2,
+        "roof": "gambrel",
+        "pitch": 42,
+        "features": {
+          "chimney": true,
+          "porch": false,
+          "sign": false,
+          "extension": false
+        },
+        "template": "auto",
+        "facade": "auto",
+        "wealth": "poor",
+        "age": "old",
+        "construction": "auto"
+      },
+      "position": [
+        14.5,
+        -26.2,
+        0
+      ],
+      "rotation": 3.141592653589793,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": false
+    },
+    {
+      "id": "windmill",
+      "label": "Windmill",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "1.3.0",
+        "type": "building",
+        "seed": 2304,
+        "family": "windmill",
+        "style": "rusticVillage",
+        "material": "stone",
+        "condition": "clean",
+        "width": 5,
+        "depth": 5,
+        "floors": 3,
+        "roof": "conical",
+        "pitch": 42,
+        "features": {
+          "chimney": true,
+          "porch": false,
+          "sign": false,
+          "extension": false
+        },
+        "template": "auto",
+        "facade": "auto",
+        "wealth": "modest",
+        "age": "old",
+        "construction": "auto"
+      },
+      "position": [
+        27,
+        -26,
+        0
+      ],
+      "rotation": 3.141592653589793,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": false
+    },
+    {
+      "id": "houseNW",
+      "label": "Northwest House",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "1.3.0",
+        "type": "building",
+        "seed": 2401,
+        "family": "peasantHouse",
+        "style": "oldRpgVillage",
+        "material": "auto",
+        "condition": "clean",
+        "width": 5.6,
+        "depth": 4.3,
+        "floors": 2,
+        "roof": "gable",
+        "pitch": 42,
+        "features": {
+          "chimney": true,
+          "porch": true,
+          "sign": false,
+          "extension": true
+        },
+        "template": "auto",
+        "facade": "auto",
+        "wealth": "poor",
+        "age": "old",
+        "construction": "auto"
+      },
+      "position": [
+        -25.2,
+        18,
+        0
+      ],
+      "rotation": 1.5707963267948966,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": false
+    },
+    {
+      "id": "houseW",
+      "label": "West House",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "1.3.0",
+        "type": "building",
+        "seed": 2402,
+        "family": "peasantHouse",
+        "style": "rusticVillage",
+        "material": "auto",
+        "condition": "clean",
+        "width": 5.3,
+        "depth": 4.2,
+        "floors": 2,
+        "roof": "gable",
+        "pitch": 42,
+        "features": {
+          "chimney": true,
+          "porch": true,
+          "sign": false,
+          "extension": true
+        },
+        "template": "auto",
+        "facade": "auto",
+        "wealth": "poor",
+        "age": "old",
+        "construction": "auto"
+      },
+      "position": [
+        -26,
+        -5.2,
+        0
+      ],
+      "rotation": 1.5707963267948966,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": false
+    },
+    {
+      "id": "houseSW",
+      "label": "Southwest Cottage",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "1.3.0",
+        "type": "building",
+        "seed": 2403,
+        "family": "cottage",
+        "style": "smallWoodTown",
+        "material": "auto",
+        "condition": "clean",
+        "width": 5.2,
+        "depth": 4.1,
+        "floors": 1,
+        "roof": "gable",
+        "pitch": 42,
+        "features": {
+          "chimney": true,
+          "porch": true,
+          "sign": false,
+          "extension": true
+        },
+        "template": "auto",
+        "facade": "auto",
+        "wealth": "poor",
+        "age": "old",
+        "construction": "auto"
+      },
+      "position": [
+        -25,
+        -19,
+        0
+      ],
+      "rotation": 1.5707963267948966,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": false
+    },
+    {
+      "id": "houseNE",
+      "label": "Northeast House",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "1.3.0",
+        "type": "building",
+        "seed": 2404,
+        "family": "peasantHouse",
+        "style": "oldRpgVillage",
+        "material": "auto",
+        "condition": "clean",
+        "width": 5.7,
+        "depth": 4.3,
+        "floors": 2,
+        "roof": "gable",
+        "pitch": 42,
+        "features": {
+          "chimney": true,
+          "porch": true,
+          "sign": false,
+          "extension": true
+        },
+        "template": "auto",
+        "facade": "auto",
+        "wealth": "poor",
+        "age": "old",
+        "construction": "auto"
+      },
+      "position": [
+        25,
+        18,
+        0
+      ],
+      "rotation": -1.5707963267948966,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": false
+    },
+    {
+      "id": "houseE",
+      "label": "East House",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "1.3.0",
+        "type": "building",
+        "seed": 2405,
+        "family": "cottage",
+        "style": "rusticVillage",
+        "material": "auto",
+        "condition": "clean",
+        "width": 5.4,
+        "depth": 4.2,
+        "floors": 1,
+        "roof": "gable",
+        "pitch": 42,
+        "features": {
+          "chimney": true,
+          "porch": true,
+          "sign": false,
+          "extension": true
+        },
+        "template": "auto",
+        "facade": "auto",
+        "wealth": "poor",
+        "age": "mature",
+        "construction": "auto"
+      },
+      "position": [
+        26,
+        -5,
+        0
+      ],
+      "rotation": -1.5707963267948966,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": false
+    },
+    {
+      "id": "houseSE",
+      "label": "Southeast House",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "1.3.0",
+        "type": "building",
+        "seed": 2406,
+        "family": "peasantHouse",
+        "style": "oldRpgVillage",
+        "material": "auto",
+        "condition": "clean",
+        "width": 5.5,
+        "depth": 4.4,
+        "floors": 2,
+        "roof": "gable",
+        "pitch": 42,
+        "features": {
+          "chimney": true,
+          "porch": true,
+          "sign": false,
+          "extension": true
+        },
+        "template": "auto",
+        "facade": "auto",
+        "wealth": "modest",
+        "age": "old",
+        "construction": "auto"
+      },
+      "position": [
+        27.2,
+        -13.5,
+        0
+      ],
+      "rotation": -1.5707963267948966,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": false
+    },
+    {
+      "id": "well",
+      "label": "Town Well",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "prop",
+        "seed": 3001,
+        "family": "well",
+        "style": "stone",
+        "condition": "clean",
+        "scale": 1.08,
+        "variant": "roofed"
+      },
+      "position": [
+        0,
+        0,
+        0.08
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "sign",
+      "label": "Crossroads Sign",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "prop",
+        "seed": 3002,
+        "family": "signpost",
+        "style": "village",
+        "condition": "clean",
+        "scale": 0.9,
+        "variant": "cluster"
+      },
+      "position": [
+        5,
+        -5.2,
+        0.08
+      ],
+      "rotation": -0.2,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "marketSuppliesA",
+      "label": "Market Goods A",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "prop",
+        "seed": 3003,
+        "family": "supplies",
+        "style": "village",
+        "condition": "clean",
+        "scale": 0.95,
+        "variant": "cluster"
+      },
+      "position": [
+        -5.3,
+        4.6,
+        0.08
+      ],
+      "rotation": 0.2,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "marketSuppliesB",
+      "label": "Market Goods B",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "prop",
+        "seed": 3004,
+        "family": "supplies",
+        "style": "village",
+        "condition": "clean",
+        "scale": 0.9,
+        "variant": "cluster"
+      },
+      "position": [
+        5.5,
+        4.2,
+        0.08
+      ],
+      "rotation": -0.25,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "smithySupplies",
+      "label": "Smithy Supplies",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "prop",
+        "seed": 3005,
+        "family": "supplies",
+        "style": "rough",
+        "condition": "clean",
+        "scale": 1,
+        "variant": "cluster"
+      },
+      "position": [
+        -12.8,
+        -3,
+        0.05
+      ],
+      "rotation": 0.4,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "merchantSupplies",
+      "label": "Merchant Goods",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "prop",
+        "seed": 3006,
+        "family": "supplies",
+        "style": "village",
+        "condition": "clean",
+        "scale": 0.9,
+        "variant": "cluster"
+      },
+      "position": [
+        12.8,
+        7,
+        0.05
+      ],
+      "rotation": -0.4,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "fence0",
+      "label": "Fence 1",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "prop",
+        "seed": 3100,
+        "family": "fence",
+        "style": "village",
+        "condition": "clean",
+        "scale": 1.05,
+        "variant": "straight"
+      },
+      "position": [
+        -9,
+        -12,
+        0.03
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "fence1",
+      "label": "Fence 2",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "prop",
+        "seed": 3101,
+        "family": "fence",
+        "style": "village",
+        "condition": "clean",
+        "scale": 1.05,
+        "variant": "straight"
+      },
+      "position": [
+        0,
+        -12,
+        0.03
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "fence2",
+      "label": "Fence 3",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "prop",
+        "seed": 3102,
+        "family": "fence",
+        "style": "village",
+        "condition": "clean",
+        "scale": 1.05,
+        "variant": "straight"
+      },
+      "position": [
+        9,
+        -12,
+        0.03
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "fence3",
+      "label": "Fence 4",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "prop",
+        "seed": 3103,
+        "family": "fence",
+        "style": "village",
+        "condition": "clean",
+        "scale": 1.05,
+        "variant": "straight"
+      },
+      "position": [
+        -14,
+        -18,
+        0.03
+      ],
+      "rotation": 1.5707963267948966,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "fence4",
+      "label": "Fence 5",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "prop",
+        "seed": 3104,
+        "family": "fence",
+        "style": "village",
+        "condition": "clean",
+        "scale": 1.05,
+        "variant": "straight"
+      },
+      "position": [
+        14,
+        -18,
+        0.03
+      ],
+      "rotation": 1.5707963267948966,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "fence5",
+      "label": "Fence 6",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "prop",
+        "seed": 3105,
+        "family": "fence",
+        "style": "village",
+        "condition": "clean",
+        "scale": 1.05,
+        "variant": "straight"
+      },
+      "position": [
+        -22,
+        13,
+        0.03
+      ],
+      "rotation": 1.5707963267948966,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "fence6",
+      "label": "Fence 7",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "prop",
+        "seed": 3106,
+        "family": "fence",
+        "style": "village",
+        "condition": "clean",
+        "scale": 1.05,
+        "variant": "straight"
+      },
+      "position": [
+        22,
+        13,
+        0.03
+      ],
+      "rotation": 1.5707963267948966,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "cropsA",
+      "label": "Crop Patch A",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "foliage",
+        "seed": 4001,
+        "family": "crops",
+        "biome": "farmland",
+        "variant": "auto",
+        "condition": "healthy",
+        "scale": 1.1,
+        "density": 0.75,
+        "spread": 1.25
+      },
+      "position": [
+        -14,
+        -27,
+        0.02
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "cropsB",
+      "label": "Crop Patch B",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "foliage",
+        "seed": 4002,
+        "family": "crops",
+        "biome": "farmland",
+        "variant": "auto",
+        "condition": "healthy",
+        "scale": 1,
+        "density": 0.7,
+        "spread": 1.2
+      },
+      "position": [
+        2.5,
+        -29,
+        0.02
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "tree0",
+      "label": "Tree 1",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "foliage",
+        "seed": 4100,
+        "family": "tree",
+        "biome": "temperate",
+        "variant": "oak",
+        "condition": "healthy",
+        "scale": 1.05,
+        "density": 0.55,
+        "spread": 1
+      },
+      "position": [
+        -29,
+        27,
+        0.02
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "tree1",
+      "label": "Tree 2",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "foliage",
+        "seed": 4101,
+        "family": "tree",
+        "biome": "temperate",
+        "variant": "oak",
+        "condition": "healthy",
+        "scale": 0.9,
+        "density": 0.55,
+        "spread": 1
+      },
+      "position": [
+        -20,
+        28,
+        0.02
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "tree2",
+      "label": "Tree 3",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "foliage",
+        "seed": 4102,
+        "family": "tree",
+        "biome": "temperate",
+        "variant": "fruit",
+        "condition": "healthy",
+        "scale": 0.85,
+        "density": 0.55,
+        "spread": 1
+      },
+      "position": [
+        -10,
+        29,
+        0.02
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "tree3",
+      "label": "Tree 4",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "foliage",
+        "seed": 4103,
+        "family": "tree",
+        "biome": "temperate",
+        "variant": "oak",
+        "condition": "healthy",
+        "scale": 1,
+        "density": 0.55,
+        "spread": 1
+      },
+      "position": [
+        12,
+        29,
+        0.02
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "tree4",
+      "label": "Tree 5",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "foliage",
+        "seed": 4104,
+        "family": "tree",
+        "biome": "temperate",
+        "variant": "oak",
+        "condition": "healthy",
+        "scale": 0.95,
+        "density": 0.55,
+        "spread": 1
+      },
+      "position": [
+        23,
+        28,
+        0.02
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "tree5",
+      "label": "Tree 6",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "foliage",
+        "seed": 4105,
+        "family": "tree",
+        "biome": "temperate",
+        "variant": "oak",
+        "condition": "healthy",
+        "scale": 1,
+        "density": 0.55,
+        "spread": 1
+      },
+      "position": [
+        29,
+        20,
+        0.02
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "tree6",
+      "label": "Tree 7",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "foliage",
+        "seed": 4106,
+        "family": "tree",
+        "biome": "temperate",
+        "variant": "oak",
+        "condition": "healthy",
+        "scale": 0.85,
+        "density": 0.55,
+        "spread": 1
+      },
+      "position": [
+        -29,
+        4,
+        0.02
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "tree7",
+      "label": "Tree 8",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "foliage",
+        "seed": 4107,
+        "family": "tree",
+        "biome": "temperate",
+        "variant": "oak",
+        "condition": "healthy",
+        "scale": 0.95,
+        "density": 0.55,
+        "spread": 1
+      },
+      "position": [
+        -29,
+        -12,
+        0.02
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "tree8",
+      "label": "Tree 9",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "foliage",
+        "seed": 4108,
+        "family": "tree",
+        "biome": "temperate",
+        "variant": "oak",
+        "condition": "healthy",
+        "scale": 0.9,
+        "density": 0.55,
+        "spread": 1
+      },
+      "position": [
+        29,
+        4,
+        0.02
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "tree9",
+      "label": "Tree 10",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "foliage",
+        "seed": 4109,
+        "family": "tree",
+        "biome": "temperate",
+        "variant": "oak",
+        "condition": "healthy",
+        "scale": 1,
+        "density": 0.55,
+        "spread": 1
+      },
+      "position": [
+        29,
+        -10,
+        0.02
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "tree10",
+      "label": "Tree 11",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "foliage",
+        "seed": 4110,
+        "family": "tree",
+        "biome": "temperate",
+        "variant": "oak",
+        "condition": "healthy",
+        "scale": 1,
+        "density": 0.55,
+        "spread": 1
+      },
+      "position": [
+        -27,
+        -28,
+        0.02
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "tree11",
+      "label": "Tree 12",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "foliage",
+        "seed": 4111,
+        "family": "tree",
+        "biome": "temperate",
+        "variant": "oak",
+        "condition": "healthy",
+        "scale": 0.9,
+        "density": 0.55,
+        "spread": 1
+      },
+      "position": [
+        28,
+        -28,
+        0.02
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "shrub0",
+      "label": "Shrub 1",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "foliage",
+        "seed": 4200,
+        "family": "shrub",
+        "biome": "temperate",
+        "variant": "auto",
+        "condition": "healthy",
+        "scale": 0.7,
+        "density": 0.65,
+        "spread": 0.8
+      },
+      "position": [
+        -7,
+        7,
+        0.05
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "shrub1",
+      "label": "Shrub 2",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "foliage",
+        "seed": 4201,
+        "family": "shrub",
+        "biome": "temperate",
+        "variant": "auto",
+        "condition": "healthy",
+        "scale": 0.7,
+        "density": 0.65,
+        "spread": 0.8
+      },
+      "position": [
+        7,
+        7,
+        0.05
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "shrub2",
+      "label": "Shrub 3",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "foliage",
+        "seed": 4202,
+        "family": "shrub",
+        "biome": "temperate",
+        "variant": "auto",
+        "condition": "healthy",
+        "scale": 0.7,
+        "density": 0.65,
+        "spread": 0.8
+      },
+      "position": [
+        -9,
+        -7,
+        0.05
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "shrub3",
+      "label": "Shrub 4",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "foliage",
+        "seed": 4203,
+        "family": "shrub",
+        "biome": "temperate",
+        "variant": "auto",
+        "condition": "healthy",
+        "scale": 0.7,
+        "density": 0.65,
+        "spread": 0.8
+      },
+      "position": [
+        9,
+        -7,
+        0.05
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "shrub4",
+      "label": "Shrub 5",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "foliage",
+        "seed": 4204,
+        "family": "shrub",
+        "biome": "temperate",
+        "variant": "auto",
+        "condition": "healthy",
+        "scale": 0.7,
+        "density": 0.65,
+        "spread": 0.8
+      },
+      "position": [
+        -7,
+        15,
+        0.05
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "shrub5",
+      "label": "Shrub 6",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "foliage",
+        "seed": 4205,
+        "family": "shrub",
+        "biome": "temperate",
+        "variant": "auto",
+        "condition": "healthy",
+        "scale": 0.7,
+        "density": 0.65,
+        "spread": 0.8
+      },
+      "position": [
+        8,
+        14,
+        0.05
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "flowers0",
+      "label": "Flowers 1",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "foliage",
+        "seed": 4300,
+        "family": "flowers",
+        "biome": "temperate",
+        "variant": "auto",
+        "condition": "healthy",
+        "scale": 0.75,
+        "density": 0.75,
+        "spread": 0.9
+      },
+      "position": [
+        -3,
+        6,
+        0.06
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "flowers1",
+      "label": "Flowers 2",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "foliage",
+        "seed": 4301,
+        "family": "flowers",
+        "biome": "temperate",
+        "variant": "auto",
+        "condition": "healthy",
+        "scale": 0.75,
+        "density": 0.75,
+        "spread": 0.9
+      },
+      "position": [
+        3,
+        6,
+        0.06
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "flowers2",
+      "label": "Flowers 3",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "foliage",
+        "seed": 4302,
+        "family": "flowers",
+        "biome": "temperate",
+        "variant": "auto",
+        "condition": "healthy",
+        "scale": 0.75,
+        "density": 0.75,
+        "spread": 0.9
+      },
+      "position": [
+        -4,
+        -6,
+        0.06
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "flowers3",
+      "label": "Flowers 4",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "foliage",
+        "seed": 4303,
+        "family": "flowers",
+        "biome": "temperate",
+        "variant": "auto",
+        "condition": "healthy",
+        "scale": 0.75,
+        "density": 0.75,
+        "spread": 0.9
+      },
+      "position": [
+        4,
+        -6,
+        0.06
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "flowers4",
+      "label": "Flowers 5",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "foliage",
+        "seed": 4304,
+        "family": "flowers",
+        "biome": "temperate",
+        "variant": "auto",
+        "condition": "healthy",
+        "scale": 0.75,
+        "density": 0.75,
+        "spread": 0.9
+      },
+      "position": [
+        -8,
+        20,
+        0.06
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "flowers5",
+      "label": "Flowers 6",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "foliage",
+        "seed": 4305,
+        "family": "flowers",
+        "biome": "temperate",
+        "variant": "auto",
+        "condition": "healthy",
+        "scale": 0.75,
+        "density": 0.75,
+        "spread": 0.9
+      },
+      "position": [
+        8,
+        20,
+        0.06
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    },
+    {
+      "id": "rocks",
+      "label": "Village Rocks",
+      "recipe": {
+        "schema": "worldforge.recipe.v1",
+        "generatorVersion": "0.9.1",
+        "engineVersion": "0.1.0",
+        "type": "foliage",
+        "seed": 4401,
+        "family": "rockCluster",
+        "biome": "temperate",
+        "variant": "auto",
+        "condition": "healthy",
+        "scale": 0.85,
+        "density": 0.45,
+        "spread": 1.1
+      },
+      "position": [
+        -28,
+        28,
+        0.02
+      ],
+      "rotation": 0,
+      "scale": 1,
+      "locked": false,
+      "selectable": true,
+      "allowOverlap": true
+    }
+  ]
+}
