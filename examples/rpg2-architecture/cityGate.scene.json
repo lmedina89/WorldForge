@@ -1,0 +1,2987 @@
+{
+  "schema": "worldforge.scene.v1",
+  "generatorVersion": "0.6.0",
+  "recipe": {
+    "schema": "worldforge.recipe.v1",
+    "generatorVersion": "0.6.0",
+    "engineVersion": "1.3.0",
+    "type": "building",
+    "seed": 7111,
+    "family": "cityGate",
+    "style": "grandCity",
+    "material": "auto",
+    "condition": "clean",
+    "width": 15,
+    "depth": 7,
+    "floors": 4,
+    "roof": "parapet",
+    "pitch": 44,
+    "features": {
+      "chimney": true,
+      "porch": true,
+      "sign": true,
+      "extension": true
+    },
+    "template": "grandCityGate",
+    "facade": "auto",
+    "wealth": "prosperous",
+    "age": "mature",
+    "construction": "auto"
+  },
+  "materials": {
+    "wall": {
+      "id": "wall",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#85898d"
+    },
+    "wallDark": {
+      "id": "wallDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#686c70"
+    },
+    "timber": {
+      "id": "timber",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#554338"
+    },
+    "trim": {
+      "id": "trim",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#a7adb5"
+    },
+    "roof": {
+      "id": "roof",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#565d62"
+    },
+    "roofDark": {
+      "id": "roofDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#3f4549"
+    },
+    "stone": {
+      "id": "stone",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#777d83"
+    },
+    "stoneLight": {
+      "id": "stoneLight",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#a7adb5"
+    },
+    "glass": {
+      "id": "glass",
+      "roughness": 0.2,
+      "metalness": 0.05,
+      "flatShading": true,
+      "color": "#4a7896"
+    },
+    "board": {
+      "id": "board",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#705036"
+    },
+    "deadGreen": {
+      "id": "deadGreen",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#667052"
+    },
+    "rust": {
+      "id": "rust",
+      "roughness": 0.95,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#784c3a"
+    },
+    "dark": {
+      "id": "dark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#35393b"
+    },
+    "waterWood": {
+      "id": "waterWood",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#5e412f"
+    },
+    "wetWood": {
+      "id": "wetWood",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#44352d"
+    },
+    "waterBlue": {
+      "id": "waterBlue",
+      "roughness": 0.25,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#4e7580"
+    },
+    "sailCloth": {
+      "id": "sailCloth",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#d8d0b8"
+    },
+    "dockRope": {
+      "id": "dockRope",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#8a7353"
+    },
+    "templeStone": {
+      "id": "templeStone",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#c5bfae"
+    },
+    "templeDark": {
+      "id": "templeDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#817d75"
+    },
+    "arcaneStone": {
+      "id": "arcaneStone",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#5f5b78"
+    },
+    "arcaneGlow": {
+      "id": "arcaneGlow",
+      "roughness": 0.15,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#70a8c8"
+    },
+    "ruinStone": {
+      "id": "ruinStone",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#77766e"
+    },
+    "ruinDark": {
+      "id": "ruinDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#51524e"
+    },
+    "desertWall": {
+      "id": "desertWall",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#c49a6c"
+    },
+    "desertDark": {
+      "id": "desertDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#8f684c"
+    },
+    "desertCloth": {
+      "id": "desertCloth",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#a74c3b"
+    },
+    "mineTimber": {
+      "id": "mineTimber",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#50372b"
+    },
+    "mineRock": {
+      "id": "mineRock",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#57534f"
+    },
+    "civicStone": {
+      "id": "civicStone",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#a7a9a4"
+    },
+    "civicRoof": {
+      "id": "civicRoof",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#4e5960"
+    },
+    "sewerStone": {
+      "id": "sewerStone",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#626764"
+    },
+    "sewerDark": {
+      "id": "sewerDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#252b29"
+    },
+    "metalGate": {
+      "id": "metalGate",
+      "roughness": 0.85,
+      "metalness": 0.25,
+      "flatShading": true,
+      "color": "#34393c"
+    },
+    "bannerGold": {
+      "id": "bannerGold",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#b08b3e"
+    },
+    "bannerRed": {
+      "id": "bannerRed",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#7c2731"
+    }
+  },
+  "nodes": [
+    {
+      "kind": "box",
+      "name": "cityTower_-1",
+      "size": [
+        3.9000000000000004,
+        7,
+        7.55
+      ],
+      "position": [
+        -5.55,
+        0,
+        3.775
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": [
+        "structural",
+        "city-gate"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerBand_-1",
+      "size": [
+        4.0200000000000005,
+        7.12,
+        0.3
+      ],
+      "position": [
+        -5.55,
+        0,
+        5.0585
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "templeStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_f0",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        -1.7300000000000002,
+        -3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_b0",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        -1.7300000000000002,
+        3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_f1",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        -1.0100000000000002,
+        -3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_b1",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        -1.0100000000000002,
+        3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_f2",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        -0.29000000000000026,
+        -3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_b2",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        -0.29000000000000026,
+        3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_f3",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        0.4299999999999997,
+        -3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_b3",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        0.4299999999999997,
+        3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_f4",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        1.1499999999999997,
+        -3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_b4",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        1.1499999999999997,
+        3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_l0",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -2.12,
+        -3.28,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_r0",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        2.12,
+        -3.28,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_l1",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -2.12,
+        -2.5599999999999996,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_r1",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        2.12,
+        -2.5599999999999996,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_l2",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -2.12,
+        -1.8399999999999996,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_r2",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        2.12,
+        -1.8399999999999996,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_l3",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -2.12,
+        -1.1199999999999997,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_r3",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        2.12,
+        -1.1199999999999997,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_l4",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -2.12,
+        -0.3999999999999997,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_r4",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        2.12,
+        -0.3999999999999997,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_l5",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -2.12,
+        0.3200000000000003,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_r5",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        2.12,
+        0.3200000000000003,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_l6",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -2.12,
+        1.0400000000000003,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_r6",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        2.12,
+        1.0400000000000003,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_l7",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -2.12,
+        1.7600000000000002,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_r7",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        2.12,
+        1.7600000000000002,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_l8",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -2.12,
+        2.4800000000000004,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_r8",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        2.12,
+        2.4800000000000004,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_l9",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -2.12,
+        3.2,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_-1_r9",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        2.12,
+        3.2,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerSlit_-1_a",
+      "size": [
+        0.18,
+        0.05,
+        0.72
+      ],
+      "position": [
+        -5.55,
+        -3.54,
+        3.2464999999999997
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "sewerDark",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerSlit_-1_b",
+      "size": [
+        0.18,
+        0.05,
+        0.72
+      ],
+      "position": [
+        -5.55,
+        -3.54,
+        4.681
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "sewerDark",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTower_1",
+      "size": [
+        3.9000000000000004,
+        7,
+        7.55
+      ],
+      "position": [
+        5.55,
+        0,
+        3.775
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": [
+        "structural",
+        "city-gate"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerBand_1",
+      "size": [
+        4.0200000000000005,
+        7.12,
+        0.3
+      ],
+      "position": [
+        5.55,
+        0,
+        5.0585
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "templeStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_f0",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        -1.7300000000000002,
+        -3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_b0",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        -1.7300000000000002,
+        3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_f1",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        -1.0100000000000002,
+        -3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_b1",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        -1.0100000000000002,
+        3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_f2",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        -0.29000000000000026,
+        -3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_b2",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        -0.29000000000000026,
+        3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_f3",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        0.4299999999999997,
+        -3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_b3",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        0.4299999999999997,
+        3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_f4",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        1.1499999999999997,
+        -3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_b4",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        1.1499999999999997,
+        3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_l0",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -2.12,
+        -3.28,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_r0",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        2.12,
+        -3.28,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_l1",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -2.12,
+        -2.5599999999999996,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_r1",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        2.12,
+        -2.5599999999999996,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_l2",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -2.12,
+        -1.8399999999999996,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_r2",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        2.12,
+        -1.8399999999999996,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_l3",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -2.12,
+        -1.1199999999999997,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_r3",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        2.12,
+        -1.1199999999999997,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_l4",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -2.12,
+        -0.3999999999999997,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_r4",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        2.12,
+        -0.3999999999999997,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_l5",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -2.12,
+        0.3200000000000003,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_r5",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        2.12,
+        0.3200000000000003,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_l6",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -2.12,
+        1.0400000000000003,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_r6",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        2.12,
+        1.0400000000000003,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_l7",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -2.12,
+        1.7600000000000002,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_r7",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        2.12,
+        1.7600000000000002,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_l8",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -2.12,
+        2.4800000000000004,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_r8",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        2.12,
+        2.4800000000000004,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_l9",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -2.12,
+        3.2,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerCrenel_1_r9",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        2.12,
+        3.2,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerSlit_1_a",
+      "size": [
+        0.18,
+        0.05,
+        0.72
+      ],
+      "position": [
+        5.55,
+        -3.54,
+        3.2464999999999997
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "sewerDark",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityTowerSlit_1_b",
+      "size": [
+        0.18,
+        0.05,
+        0.72
+      ],
+      "position": [
+        5.55,
+        -3.54,
+        4.681
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "sewerDark",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateBridge",
+      "size": [
+        7.199999999999999,
+        7,
+        2.35
+      ],
+      "position": [
+        0,
+        0,
+        6.17
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "templeStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_f0",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        -3.3799999999999994,
+        -3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_b0",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        -3.3799999999999994,
+        3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_f1",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        -2.6599999999999993,
+        -3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_b1",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        -2.6599999999999993,
+        3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_f2",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        -1.9399999999999993,
+        -3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_b2",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        -1.9399999999999993,
+        3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_f3",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        -1.2199999999999993,
+        -3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_b3",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        -1.2199999999999993,
+        3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_f4",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        -0.49999999999999933,
+        -3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_b4",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        -0.49999999999999933,
+        3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_f5",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        0.22000000000000064,
+        -3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_b5",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        0.22000000000000064,
+        3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_f6",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        0.9400000000000006,
+        -3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_b6",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        0.9400000000000006,
+        3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_f7",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        1.6600000000000006,
+        -3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_b7",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        1.6600000000000006,
+        3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_f8",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        2.380000000000001,
+        -3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_b8",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        2.380000000000001,
+        3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_f9",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        3.1000000000000005,
+        -3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_b9",
+      "size": [
+        0.44,
+        0.34,
+        0.46
+      ],
+      "position": [
+        3.1000000000000005,
+        3.67,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_l0",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -3.7699999999999996,
+        -3.28,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_r0",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        3.7699999999999996,
+        -3.28,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_l1",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -3.7699999999999996,
+        -2.5599999999999996,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_r1",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        3.7699999999999996,
+        -2.5599999999999996,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_l2",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -3.7699999999999996,
+        -1.8399999999999996,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_r2",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        3.7699999999999996,
+        -1.8399999999999996,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_l3",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -3.7699999999999996,
+        -1.1199999999999997,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_r3",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        3.7699999999999996,
+        -1.1199999999999997,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_l4",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -3.7699999999999996,
+        -0.3999999999999997,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_r4",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        3.7699999999999996,
+        -0.3999999999999997,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_l5",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -3.7699999999999996,
+        0.3200000000000003,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_r5",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        3.7699999999999996,
+        0.3200000000000003,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_l6",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -3.7699999999999996,
+        1.0400000000000003,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_r6",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        3.7699999999999996,
+        1.0400000000000003,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_l7",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -3.7699999999999996,
+        1.7600000000000002,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_r7",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        3.7699999999999996,
+        1.7600000000000002,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_l8",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -3.7699999999999996,
+        2.4800000000000004,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_r8",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        3.7699999999999996,
+        2.4800000000000004,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_l9",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        -3.7699999999999996,
+        3.2,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateTop_r9",
+      "size": [
+        0.34,
+        0.44,
+        0.46
+      ],
+      "position": [
+        3.7699999999999996,
+        3.2,
+        7.79
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateCrest",
+      "size": [
+        2.1,
+        0.42,
+        0.9
+      ],
+      "position": [
+        0,
+        -3.7,
+        7.2299999999999995
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityGateDark",
+      "size": [
+        4.4639999999999995,
+        0.1,
+        3.8
+      ],
+      "position": [
+        0,
+        -3.53,
+        1.9
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "sewerDark",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityPort_-1.87",
+      "size": [
+        0.08,
+        0.1,
+        3.55
+      ],
+      "position": [
+        -1.8719999999999999,
+        -3.58,
+        1.78
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "metalGate",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityPort_-1.45",
+      "size": [
+        0.08,
+        0.1,
+        3.55
+      ],
+      "position": [
+        -1.452,
+        -3.58,
+        1.78
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "metalGate",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityPort_-1.03",
+      "size": [
+        0.08,
+        0.1,
+        3.55
+      ],
+      "position": [
+        -1.032,
+        -3.58,
+        1.78
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "metalGate",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityPort_-0.61",
+      "size": [
+        0.08,
+        0.1,
+        3.55
+      ],
+      "position": [
+        -0.6120000000000001,
+        -3.58,
+        1.78
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "metalGate",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityPort_-0.19",
+      "size": [
+        0.08,
+        0.1,
+        3.55
+      ],
+      "position": [
+        -0.19200000000000012,
+        -3.58,
+        1.78
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "metalGate",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityPort_0.23",
+      "size": [
+        0.08,
+        0.1,
+        3.55
+      ],
+      "position": [
+        0.22799999999999987,
+        -3.58,
+        1.78
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "metalGate",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityPort_0.65",
+      "size": [
+        0.08,
+        0.1,
+        3.55
+      ],
+      "position": [
+        0.6479999999999999,
+        -3.58,
+        1.78
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "metalGate",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityPort_1.07",
+      "size": [
+        0.08,
+        0.1,
+        3.55
+      ],
+      "position": [
+        1.0679999999999998,
+        -3.58,
+        1.78
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "metalGate",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityPort_1.49",
+      "size": [
+        0.08,
+        0.1,
+        3.55
+      ],
+      "position": [
+        1.4879999999999998,
+        -3.58,
+        1.78
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "metalGate",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityLintel",
+      "size": [
+        5.616,
+        0.44,
+        0.5
+      ],
+      "position": [
+        0,
+        -3.62,
+        4.05
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "templeStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityBanner_-1.944",
+      "size": [
+        0.52,
+        0.04,
+        1.55
+      ],
+      "position": [
+        -1.944,
+        -3.65,
+        5.15
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "bannerRed",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityBannerGold_-1.944",
+      "size": [
+        0.38,
+        0.045,
+        0.18
+      ],
+      "position": [
+        -1.944,
+        -3.67,
+        5.36
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "bannerGold",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityBanner_1.944",
+      "size": [
+        0.52,
+        0.04,
+        1.55
+      ],
+      "position": [
+        1.944,
+        -3.65,
+        5.15
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "bannerRed",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "cityBannerGold_1.944",
+      "size": [
+        0.38,
+        0.045,
+        0.18
+      ],
+      "position": [
+        1.944,
+        -3.67,
+        5.36
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "bannerGold",
+      "tags": []
+    }
+  ],
+  "metadata": {
+    "buildingEngine": "1.3.0",
+    "rpgPack": "RPG Architecture II",
+    "archetype": "cityGate",
+    "templateResolved": "grandCityGate"
+  },
+  "validation": {
+    "errors": [],
+    "warnings": [],
+    "stats": {
+      "nodeCount": 125,
+      "materialCount": 36,
+      "approxVertexCount": 1000,
+      "approxTriangleCount": 1500
+    }
+  },
+  "asset": {
+    "schema": "worldforge.asset.v1",
+    "worldforgeVersion": "0.6.0",
+    "engine": {
+      "name": "building",
+      "version": "1.3.0"
+    },
+    "id": "building-7111",
+    "assetType": "building",
+    "seed": 7111,
+    "anchor": {
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "pivot": "ground-center"
+    },
+    "facing": "south",
+    "footprint": {
+      "shape": "box",
+      "width": 15.120000000000001,
+      "depth": 7.75
+    },
+    "bounds": {
+      "min": [
+        -7.5600000000000005,
+        -3.91,
+        0
+      ],
+      "max": [
+        7.5600000000000005,
+        3.84,
+        8.02
+      ],
+      "size": [
+        15.120000000000001,
+        7.75,
+        8.02
+      ]
+    },
+    "collision": {
+      "enabled": true,
+      "shape": "footprint"
+    },
+    "occlusion": {
+      "enabled": true
+    },
+    "tags": [
+      "building",
+      "cityGate"
+    ]
+  }
+}

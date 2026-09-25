@@ -25,19 +25,40 @@ function showMode(next){
   Object.entries(panels).forEach(([key,p])=>p.hidden=key!==mode);
 }
 
+function syncBuildingEngineUI(){
+  const engine=$('buildingEngine')?.value||'1.0.0';
+  const modern=['1.1.0','1.2.0','1.3.0'].includes(engine);
+  const rpg=['1.2.0','1.3.0'].includes(engine);
+  const rpg2=engine==='1.3.0';
+  document.querySelectorAll('.modernBuilding select,.modernBuilding input').forEach(el=>el.disabled=!modern);
+  document.querySelectorAll('#roof .modernRoof').forEach(opt=>opt.disabled=!modern);
+  document.querySelectorAll('.rpgFamily,.rpgStyle,.rpgTemplate,.rpgRoof').forEach(opt=>opt.disabled=!rpg);
+  document.querySelectorAll('.rpg2Family,.rpg2Style,.rpg2Template,.rpg2Roof').forEach(opt=>opt.disabled=!rpg2);
+  if(!modern && ['crossGable','shed','gambrel','conical','parapet','dome','spire'].includes($('roof').value)) $('roof').value='gable';
+  if(!rpg && ['conical','parapet','dome','spire'].includes($('roof').value)) $('roof').value='gable';
+  if(!rpg2 && ['dome','spire'].includes($('roof').value)) $('roof').value='gable';
+  if($('family').selectedOptions[0]?.disabled) $('family').value='shop';
+  if($('style').selectedOptions[0]?.disabled) $('style').value='smallWoodTown';
+  if($('template').selectedOptions[0]?.disabled) $('template').value='auto';
+  $('width').max=rpg2?24:(rpg?20:14); $('depth').max=rpg2?18:(rpg?15:11); $('floors').max=rpg2?8:(rpg?6:4);
+}
+
 function readRecipe(){
   if(mode==='landscape')return normalizeRecipe({type:'landscape',seed:+$('seed').value,feature:$('feature').value,size:+$('terrainSize').value,relief:+$('relief').value,roughness:+$('roughness').value,terracing:+$('terracing').value,path:$('path').checked,rocks:$('rocks').checked,gridResolution:+$('gridResolution').value});
   if(mode==='prop')return normalizeRecipe({type:'prop',seed:+$('seed').value,family:$('propFamily').value,condition:$('propCondition').value,style:$('propStyle').value,variant:$('propVariant').value,scale:+$('propScale').value});
   if(mode==='terrain')return normalizeRecipe({type:'terrain',seed:+$('seed').value,patch:$('terrainPatch').value,size:+$('patchSize').value,roughness:+$('patchRoughness').value,pathWidth:+$('pathWidth').value,wear:+$('wear').value,gridResolution:+$('patchResolution').value});
-  return normalizeRecipe({type:'building',seed:+$('seed').value,family:$('family').value,style:$('style').value,material:$('material').value,condition:$('condition').value,width:+$('width').value,depth:+$('depth').value,floors:+$('floors').value,roof:$('roof').value,pitch:+$('pitch').value,features:{chimney:$('chimney').checked,porch:$('porch').checked,sign:$('sign').checked,extension:$('extension').checked}});
+  return normalizeRecipe({type:'building',engineVersion:$('buildingEngine').value,seed:+$('seed').value,family:$('family').value,style:$('style').value,material:$('material').value,condition:$('condition').value,width:+$('width').value,depth:+$('depth').value,floors:+$('floors').value,roof:$('roof').value,pitch:+$('pitch').value,template:$('template').value,facade:$('facade').value,wealth:$('wealth').value,age:$('age').value,construction:$('construction').value,features:{chimney:$('chimney').checked,porch:$('porch').checked,sign:$('sign').checked,extension:$('extension').checked}});
 }
 
 function writeRecipe(recipe){
   const r=normalizeRecipe(recipe);showMode(r.type);$('seed').value=r.seed;
   if(mode==='building'){
+    $('buildingEngine').value=r.engineVersion||'1.0.0';
     for(const [id,key] of [['family','family'],['style','style'],['material','material'],['condition','condition'],['roof','roof']])$(id).value=r[key];
     for(const [id,key] of [['width','width'],['depth','depth'],['floors','floors'],['pitch','pitch']])$(id).value=r[key];
     for(const key of ['chimney','porch','sign','extension'])$(key).checked=!!r.features[key];
+    $('template').value=r.template||'auto';$('facade').value=r.facade||'auto';$('wealth').value=r.wealth||'modest';$('age').value=r.age||'mature';$('construction').value=r.construction||'auto';
+    syncBuildingEngineUI();
   } else if(mode==='prop'){
     $('propFamily').value=r.family;$('propCondition').value=r.condition;$('propStyle').value=r.style;$('propVariant').value=r.variant;$('propScale').value=r.scale;
   } else if(mode==='terrain'){
@@ -52,11 +73,12 @@ function spanFor(recipe){
   if(recipe.type==='landscape')return Math.max(20,recipe.size*.7);
   if(recipe.type==='terrain')return Math.max(7,recipe.size*.62);
   if(recipe.type==='prop')return Math.max(3.6,4.2*recipe.scale);
+  if(recipe.type==='building')return Math.max(10,Math.max(recipe.width||6,recipe.depth||5)*.92);
   return 10;
 }
 
 function targetHeight(recipe){
-  if(recipe.type==='building')return 2.2;
+  if(recipe.type==='building')return Math.max(2.2,Math.min(5.2,1.2+(recipe.floors||2)*1.15));
   if(recipe.type==='prop')return recipe.family==='well'?1.15:.8;
   if(recipe.type==='terrain')return .15;
   return 1.5;
@@ -105,10 +127,11 @@ $('deleteProject').onclick=async()=>{const id=$('projectSelect').value;if(!id)re
 async function refreshProjects(){try{const items=await listProjects();$('projectSelect').innerHTML='<option value="">Saved projects…</option>'+items.map(p=>`<option value="${p.id}">${escapeHtml(p.name)} · ${p.recipe.type} · ${p.recipe.seed}</option>`).join('');}catch{$('projectSelect').innerHTML='<option value="">Local storage unavailable</option>';}}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
 
+$('buildingEngine').onchange=()=>{syncBuildingEngineUI();regenerate();};
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{showMode(b.dataset.mode);regenerate();});
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));
 const outputMap={width:'widthOut',depth:'depthOut',floors:'floorsOut',pitch:'pitchOut',terrainSize:'terrainSizeOut',relief:'reliefOut',roughness:'roughnessOut',terracing:'terracingOut',gridResolution:'gridResolutionOut',propScale:'propScaleOut',patchSize:'patchSizeOut',patchRoughness:'patchRoughnessOut',pathWidth:'pathWidthOut',wear:'wearOut',patchResolution:'patchResolutionOut'};
 function syncOutputs(){for(const [id,outId] of Object.entries(outputMap)){const el=$(id),out=$(outId);if(el&&out)out.value=el.value;}}
 for(const id of Object.keys(outputMap)){const el=$(id);if(el)el.oninput=()=>{syncOutputs();};}syncOutputs();
-function resize(){const host=$('canvasHost'),w=Math.max(320,Math.floor(host.clientWidth)),h=Math.max(220,Math.floor(host.clientHeight));renderer.setSize(w,h,false);fitCamera(currentSpec?spanFor(currentSpec.recipe):10);}window.addEventListener('resize',resize);resize();refreshProjects();regenerate();
+function resize(){const host=$('canvasHost'),w=Math.max(320,Math.floor(host.clientWidth)),h=Math.max(220,Math.floor(host.clientHeight));renderer.setSize(w,h,false);fitCamera(currentSpec?spanFor(currentSpec.recipe):10);}window.addEventListener('resize',resize);syncBuildingEngineUI();resize();refreshProjects();regenerate();
 (function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera);})();

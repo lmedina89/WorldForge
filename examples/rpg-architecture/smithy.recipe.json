@@ -1,0 +1,27 @@
+{
+  "schema": "worldforge.recipe.v1",
+  "generatorVersion": "0.5.0",
+  "engineVersion": "1.2.0",
+  "type": "building",
+  "seed": 61346,
+  "family": "smithy",
+  "style": "oldRpgVillage",
+  "material": "auto",
+  "condition": "clean",
+  "width": 7.5,
+  "depth": 5.5,
+  "floors": 1,
+  "roof": "gable",
+  "pitch": 44,
+  "template": "smithyYard",
+  "facade": "auto",
+  "wealth": "modest",
+  "age": "mature",
+  "construction": "auto",
+  "features": {
+    "chimney": true,
+    "porch": true,
+    "sign": true,
+    "extension": true
+  }
+}

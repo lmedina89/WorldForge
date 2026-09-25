@@ -1,0 +1,27 @@
+{
+  "schema": "worldforge.recipe.v1",
+  "generatorVersion": "0.4.0",
+  "engineVersion": "1.1.0",
+  "type": "building",
+  "seed": 66066,
+  "family": "warehouse",
+  "style": "industrial",
+  "material": "metal",
+  "condition": "worn",
+  "width": 9,
+  "depth": 7,
+  "floors": 1,
+  "roof": "shed",
+  "pitch": 22,
+  "features": {
+    "chimney": false,
+    "porch": false,
+    "sign": false,
+    "extension": true
+  },
+  "template": "stepped",
+  "facade": "workshop",
+  "wealth": "modest",
+  "age": "mature",
+  "construction": "uniform"
+}

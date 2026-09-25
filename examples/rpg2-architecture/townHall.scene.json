@@ -1,0 +1,10933 @@
+{
+  "schema": "worldforge.scene.v1",
+  "generatorVersion": "0.6.0",
+  "recipe": {
+    "schema": "worldforge.recipe.v1",
+    "generatorVersion": "0.6.0",
+    "engineVersion": "1.3.0",
+    "type": "building",
+    "seed": 7313,
+    "family": "townHall",
+    "style": "grandCity",
+    "material": "auto",
+    "condition": "clean",
+    "width": 12,
+    "depth": 8,
+    "floors": 3,
+    "roof": "hip",
+    "pitch": 44,
+    "features": {
+      "chimney": true,
+      "porch": true,
+      "sign": true,
+      "extension": true
+    },
+    "template": "civicHall",
+    "facade": "auto",
+    "wealth": "prosperous",
+    "age": "mature",
+    "construction": "auto"
+  },
+  "materials": {
+    "wall": {
+      "id": "wall",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#85898d"
+    },
+    "wallDark": {
+      "id": "wallDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#686c70"
+    },
+    "timber": {
+      "id": "timber",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#554338"
+    },
+    "trim": {
+      "id": "trim",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#a7adb5"
+    },
+    "roof": {
+      "id": "roof",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#565d62"
+    },
+    "roofDark": {
+      "id": "roofDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#3f4549"
+    },
+    "stone": {
+      "id": "stone",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#777d83"
+    },
+    "stoneLight": {
+      "id": "stoneLight",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#a7adb5"
+    },
+    "glass": {
+      "id": "glass",
+      "roughness": 0.2,
+      "metalness": 0.05,
+      "flatShading": true,
+      "color": "#4a7896"
+    },
+    "board": {
+      "id": "board",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#705036"
+    },
+    "deadGreen": {
+      "id": "deadGreen",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#667052"
+    },
+    "rust": {
+      "id": "rust",
+      "roughness": 0.95,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#784c3a"
+    },
+    "dark": {
+      "id": "dark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#35393b"
+    },
+    "wallSecondary": {
+      "id": "wallSecondary",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#85898d"
+    },
+    "accentWood": {
+      "id": "accentWood",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#a7adb5"
+    },
+    "roofAccent": {
+      "id": "roofAccent",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#3f4549"
+    },
+    "rpgStoneDark": {
+      "id": "rpgStoneDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#55575a"
+    },
+    "rpgStoneLight": {
+      "id": "rpgStoneLight",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#9a9b96"
+    },
+    "rpgWoodDark": {
+      "id": "rpgWoodDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#4a3326"
+    },
+    "rpgWoodLight": {
+      "id": "rpgWoodLight",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#8d6849"
+    },
+    "rpgThatch": {
+      "id": "rpgThatch",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#8c7346"
+    },
+    "rpgTileOld": {
+      "id": "rpgTileOld",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#7b4035"
+    },
+    "rpgBanner": {
+      "id": "rpgBanner",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#314f76"
+    },
+    "rpgMetalDark": {
+      "id": "rpgMetalDark",
+      "roughness": 0.75,
+      "metalness": 0.25,
+      "flatShading": true,
+      "color": "#373b3d"
+    },
+    "rpgForge": {
+      "id": "rpgForge",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#2e2925"
+    },
+    "rpgMoss": {
+      "id": "rpgMoss",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#53664a"
+    },
+    "rpgHay": {
+      "id": "rpgHay",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#a58b4f"
+    },
+    "waterWood": {
+      "id": "waterWood",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#5e412f"
+    },
+    "wetWood": {
+      "id": "wetWood",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#44352d"
+    },
+    "waterBlue": {
+      "id": "waterBlue",
+      "roughness": 0.25,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#4e7580"
+    },
+    "sailCloth": {
+      "id": "sailCloth",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#d8d0b8"
+    },
+    "dockRope": {
+      "id": "dockRope",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#8a7353"
+    },
+    "templeStone": {
+      "id": "templeStone",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#c5bfae"
+    },
+    "templeDark": {
+      "id": "templeDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#817d75"
+    },
+    "arcaneStone": {
+      "id": "arcaneStone",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#5f5b78"
+    },
+    "arcaneGlow": {
+      "id": "arcaneGlow",
+      "roughness": 0.15,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#70a8c8"
+    },
+    "ruinStone": {
+      "id": "ruinStone",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#77766e"
+    },
+    "ruinDark": {
+      "id": "ruinDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#51524e"
+    },
+    "desertWall": {
+      "id": "desertWall",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#c49a6c"
+    },
+    "desertDark": {
+      "id": "desertDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#8f684c"
+    },
+    "desertCloth": {
+      "id": "desertCloth",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#a74c3b"
+    },
+    "mineTimber": {
+      "id": "mineTimber",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#50372b"
+    },
+    "mineRock": {
+      "id": "mineRock",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#57534f"
+    },
+    "civicStone": {
+      "id": "civicStone",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#a7a9a4"
+    },
+    "civicRoof": {
+      "id": "civicRoof",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#4e5960"
+    },
+    "sewerStone": {
+      "id": "sewerStone",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#626764"
+    },
+    "sewerDark": {
+      "id": "sewerDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#252b29"
+    },
+    "metalGate": {
+      "id": "metalGate",
+      "roughness": 0.85,
+      "metalness": 0.25,
+      "flatShading": true,
+      "color": "#34393c"
+    },
+    "bannerGold": {
+      "id": "bannerGold",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#b08b3e"
+    },
+    "bannerRed": {
+      "id": "bannerRed",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#7c2731"
+    }
+  },
+  "nodes": [
+    {
+      "kind": "box",
+      "name": "foundation",
+      "size": [
+        12.1,
+        8.1,
+        0.28
+      ],
+      "position": [
+        0,
+        0,
+        0.14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone",
+      "tags": [
+        "structural"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "plinth",
+      "size": [
+        12.02,
+        8.02,
+        0.1
+      ],
+      "position": [
+        0,
+        0,
+        0.33
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "walls",
+      "size": [
+        12,
+        8,
+        7.3500000000000005
+      ],
+      "position": [
+        0,
+        0,
+        3.955
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "wall",
+      "tags": [
+        "structural"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "rightWallTone",
+      "size": [
+        0.03,
+        7.88,
+        7.250000000000001
+      ],
+      "position": [
+        6.016,
+        0,
+        3.955
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "wallDark",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "leftWallTone",
+      "size": [
+        0.03,
+        7.88,
+        7.250000000000001
+      ],
+      "position": [
+        -6.016,
+        0,
+        3.955
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "wallDark",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "frontPost_-5.66",
+      "size": [
+        0.14,
+        0.085,
+        7.290000000000001
+      ],
+      "position": [
+        -5.66,
+        -4.048,
+        3.955
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "backPost_-5.66",
+      "size": [
+        0.14,
+        0.085,
+        7.290000000000001
+      ],
+      "position": [
+        -5.66,
+        4.048,
+        3.955
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "frontPost_-3.86",
+      "size": [
+        0.14,
+        0.085,
+        7.290000000000001
+      ],
+      "position": [
+        -3.8600000000000003,
+        -4.048,
+        3.955
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "backPost_-3.86",
+      "size": [
+        0.14,
+        0.085,
+        7.290000000000001
+      ],
+      "position": [
+        -3.8600000000000003,
+        4.048,
+        3.955
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "frontPost_-2.06",
+      "size": [
+        0.14,
+        0.085,
+        7.290000000000001
+      ],
+      "position": [
+        -2.0600000000000005,
+        -4.048,
+        3.955
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "backPost_-2.06",
+      "size": [
+        0.14,
+        0.085,
+        7.290000000000001
+      ],
+      "position": [
+        -2.0600000000000005,
+        4.048,
+        3.955
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "frontPost_-0.26",
+      "size": [
+        0.14,
+        0.085,
+        7.290000000000001
+      ],
+      "position": [
+        -0.26000000000000045,
+        -4.048,
+        3.955
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "backPost_-0.26",
+      "size": [
+        0.14,
+        0.085,
+        7.290000000000001
+      ],
+      "position": [
+        -0.26000000000000045,
+        4.048,
+        3.955
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "frontPost_1.54",
+      "size": [
+        0.14,
+        0.085,
+        7.290000000000001
+      ],
+      "position": [
+        1.5399999999999996,
+        -4.048,
+        3.955
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "backPost_1.54",
+      "size": [
+        0.14,
+        0.085,
+        7.290000000000001
+      ],
+      "position": [
+        1.5399999999999996,
+        4.048,
+        3.955
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "frontPost_3.34",
+      "size": [
+        0.14,
+        0.085,
+        7.290000000000001
+      ],
+      "position": [
+        3.34,
+        -4.048,
+        3.955
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "backPost_3.34",
+      "size": [
+        0.14,
+        0.085,
+        7.290000000000001
+      ],
+      "position": [
+        3.34,
+        4.048,
+        3.955
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "frontPost_5.14",
+      "size": [
+        0.14,
+        0.085,
+        7.290000000000001
+      ],
+      "position": [
+        5.14,
+        -4.048,
+        3.955
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "backPost_5.14",
+      "size": [
+        0.14,
+        0.085,
+        7.290000000000001
+      ],
+      "position": [
+        5.14,
+        4.048,
+        3.955
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "frontBeam_1",
+      "size": [
+        11.88,
+        0.085,
+        0.14
+      ],
+      "position": [
+        0,
+        -4.048,
+        2.5500000000000003
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "backBeam_1",
+      "size": [
+        11.88,
+        0.085,
+        0.14
+      ],
+      "position": [
+        0,
+        4.048,
+        2.5500000000000003
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "frontBeam_2",
+      "size": [
+        11.88,
+        0.085,
+        0.14
+      ],
+      "position": [
+        0,
+        -4.048,
+        5.000000000000001
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "backBeam_2",
+      "size": [
+        11.88,
+        0.085,
+        0.14
+      ],
+      "position": [
+        0,
+        4.048,
+        5.000000000000001
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "frontBeam_3",
+      "size": [
+        11.88,
+        0.085,
+        0.14
+      ],
+      "position": [
+        0,
+        -4.048,
+        7.450000000000001
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "backBeam_3",
+      "size": [
+        11.88,
+        0.085,
+        0.14
+      ],
+      "position": [
+        0,
+        4.048,
+        7.450000000000001
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "rightPost_-3.50",
+      "size": [
+        0.085,
+        0.14,
+        7.290000000000001
+      ],
+      "position": [
+        6.048,
+        -3.5,
+        3.955
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "leftPost_-3.50",
+      "size": [
+        0.085,
+        0.14,
+        7.290000000000001
+      ],
+      "position": [
+        -6.048,
+        -3.5,
+        3.955
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "rightPost_-1.90",
+      "size": [
+        0.085,
+        0.14,
+        7.290000000000001
+      ],
+      "position": [
+        6.048,
+        -1.9,
+        3.955
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "leftPost_-1.90",
+      "size": [
+        0.085,
+        0.14,
+        7.290000000000001
+      ],
+      "position": [
+        -6.048,
+        -1.9,
+        3.955
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "rightPost_-0.30",
+      "size": [
+        0.085,
+        0.14,
+        7.290000000000001
+      ],
+      "position": [
+        6.048,
+        -0.2999999999999998,
+        3.955
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "leftPost_-0.30",
+      "size": [
+        0.085,
+        0.14,
+        7.290000000000001
+      ],
+      "position": [
+        -6.048,
+        -0.2999999999999998,
+        3.955
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "rightPost_1.30",
+      "size": [
+        0.085,
+        0.14,
+        7.290000000000001
+      ],
+      "position": [
+        6.048,
+        1.3000000000000003,
+        3.955
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "leftPost_1.30",
+      "size": [
+        0.085,
+        0.14,
+        7.290000000000001
+      ],
+      "position": [
+        -6.048,
+        1.3000000000000003,
+        3.955
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "rightPost_2.90",
+      "size": [
+        0.085,
+        0.14,
+        7.290000000000001
+      ],
+      "position": [
+        6.048,
+        2.9000000000000004,
+        3.955
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "leftPost_2.90",
+      "size": [
+        0.085,
+        0.14,
+        7.290000000000001
+      ],
+      "position": [
+        -6.048,
+        2.9000000000000004,
+        3.955
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "rightBeam_1",
+      "size": [
+        0.085,
+        7.82,
+        0.14
+      ],
+      "position": [
+        6.048,
+        0,
+        2.5500000000000003
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "leftBeam_1",
+      "size": [
+        0.085,
+        7.82,
+        0.14
+      ],
+      "position": [
+        -6.048,
+        0,
+        2.5500000000000003
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "rightBeam_2",
+      "size": [
+        0.085,
+        7.82,
+        0.14
+      ],
+      "position": [
+        6.048,
+        0,
+        5.000000000000001
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "leftBeam_2",
+      "size": [
+        0.085,
+        7.82,
+        0.14
+      ],
+      "position": [
+        -6.048,
+        0,
+        5.000000000000001
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "rightBeam_3",
+      "size": [
+        0.085,
+        7.82,
+        0.14
+      ],
+      "position": [
+        6.048,
+        0,
+        7.450000000000001
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "leftBeam_3",
+      "size": [
+        0.085,
+        7.82,
+        0.14
+      ],
+      "position": [
+        -6.048,
+        0,
+        7.450000000000001
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "mesh",
+      "name": "mainRoof",
+      "vertices": [
+        [
+          -6.31,
+          -4.38,
+          7.610000000000001
+        ],
+        [
+          6.31,
+          -4.38,
+          7.610000000000001
+        ],
+        [
+          6.31,
+          4.38,
+          7.610000000000001
+        ],
+        [
+          -6.31,
+          4.38,
+          7.610000000000001
+        ],
+        [
+          -1.9299999999999997,
+          0,
+          11.839716833654986
+        ],
+        [
+          1.9299999999999997,
+          0,
+          11.839716833654986
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          5
+        ],
+        [
+          0,
+          5,
+          4
+        ],
+        [
+          1,
+          2,
+          5
+        ],
+        [
+          2,
+          3,
+          4
+        ],
+        [
+          2,
+          4,
+          5
+        ],
+        [
+          3,
+          0,
+          4
+        ]
+      ],
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "roof",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "eaveTrimFront",
+      "size": [
+        12.799999999999999,
+        0.1,
+        0.08
+      ],
+      "position": [
+        0,
+        -4.68,
+        7.600000000000001
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "eaveTrimBack",
+      "size": [
+        12.799999999999999,
+        0.1,
+        0.08
+      ],
+      "position": [
+        0,
+        4.68,
+        7.600000000000001
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "door",
+      "size": [
+        1.02,
+        0.085,
+        2.02
+      ],
+      "position": [
+        0.011848824284970805,
+        -4.048,
+        1.31
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "doorLintel",
+      "size": [
+        1.16,
+        0.08,
+        0.14
+      ],
+      "position": [
+        0.011848824284970805,
+        -4.052,
+        2.3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "doorJambL",
+      "size": [
+        0.1,
+        0.07,
+        2.04
+      ],
+      "position": [
+        -0.5181511757150292,
+        -4.052,
+        1.31
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "doorJambR",
+      "size": [
+        0.1,
+        0.07,
+        2.04
+      ],
+      "position": [
+        0.5418488242849708,
+        -4.052,
+        1.31
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "doorKnob",
+      "size": [
+        0.08,
+        0.02,
+        0.08
+      ],
+      "position": [
+        0.2718488242849708,
+        -4.098,
+        1.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_0_glass",
+      "size": [
+        0.6662516458204016,
+        0.05,
+        0.8200020256251096
+      ],
+      "position": [
+        -5.28,
+        -4.048,
+        1.83
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_0_frameTop",
+      "size": [
+        0.8062516458204017,
+        0.07,
+        0.0683335021354258
+      ],
+      "position": [
+        -5.28,
+        -4.06,
+        2.240001012812555
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_0_frameBottom",
+      "size": [
+        0.8462516458204017,
+        0.09,
+        0.0683335021354258
+      ],
+      "position": [
+        -5.28,
+        -4.063,
+        1.4199989871874452
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_0_frameL",
+      "size": [
+        0.0683335021354258,
+        0.07,
+        0.9400020256251096
+      ],
+      "position": [
+        -5.6131258229102015,
+        -4.06,
+        1.83
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_0_frameR",
+      "size": [
+        0.0683335021354258,
+        0.07,
+        0.9400020256251096
+      ],
+      "position": [
+        -4.946874177089799,
+        -4.06,
+        1.83
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_0_mullionV",
+      "size": [
+        0.053300131665632126,
+        0.03,
+        0.7000020256251096
+      ],
+      "position": [
+        -5.28,
+        -4.076,
+        1.83
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_0_mullionH",
+      "size": [
+        0.5462516458204016,
+        0.03,
+        0.053300131665632126
+      ],
+      "position": [
+        -5.28,
+        -4.076,
+        1.83
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_0_shutterL",
+      "size": [
+        0.14,
+        0.045,
+        0.8600020256251096
+      ],
+      "position": [
+        -5.733125822910202,
+        -4.068,
+        1.83
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_0_shutterR",
+      "size": [
+        0.14,
+        0.045,
+        0.8600020256251096
+      ],
+      "position": [
+        -4.826874177089799,
+        -4.068,
+        1.83
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_1_glass",
+      "size": [
+        0.6845898230310995,
+        0.05,
+        0.8425720898844301
+      ],
+      "position": [
+        -2.64,
+        -4.048,
+        1.83
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_1_frameTop",
+      "size": [
+        0.8245898230310995,
+        0.07,
+        0.07021434082370251
+      ],
+      "position": [
+        -2.64,
+        -4.06,
+        2.251286044942215
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_1_frameBottom",
+      "size": [
+        0.8645898230310995,
+        0.09,
+        0.07021434082370251
+      ],
+      "position": [
+        -2.64,
+        -4.063,
+        1.408713955057785
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_1_frameL",
+      "size": [
+        0.07021434082370251,
+        0.07,
+        0.9625720898844301
+      ],
+      "position": [
+        -2.9822949115155497,
+        -4.06,
+        1.83
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_1_frameR",
+      "size": [
+        0.07021434082370251,
+        0.07,
+        0.9625720898844301
+      ],
+      "position": [
+        -2.2977050884844505,
+        -4.06,
+        1.83
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_1_mullionV",
+      "size": [
+        0.05476718584248796,
+        0.03,
+        0.7225720898844301
+      ],
+      "position": [
+        -2.64,
+        -4.076,
+        1.83
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_1_mullionH",
+      "size": [
+        0.5645898230310995,
+        0.03,
+        0.05476718584248796
+      ],
+      "position": [
+        -2.64,
+        -4.076,
+        1.83
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_1_shutterL",
+      "size": [
+        0.14,
+        0.045,
+        0.8825720898844301
+      ],
+      "position": [
+        -3.10229491151555,
+        -4.068,
+        1.83
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_1_shutterR",
+      "size": [
+        0.14,
+        0.045,
+        0.8825720898844301
+      ],
+      "position": [
+        -2.1777050884844504,
+        -4.068,
+        1.83
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_2_glass",
+      "size": [
+        0.6408197179664857,
+        0.05,
+        0.788701191343367
+      ],
+      "position": [
+        2.6399999999999997,
+        -4.048,
+        1.83
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_2_frameTop",
+      "size": [
+        0.7808197179664857,
+        0.07,
+        0.06572509927861392
+      ],
+      "position": [
+        2.6399999999999997,
+        -4.06,
+        2.224350595671684
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_2_frameBottom",
+      "size": [
+        0.8208197179664858,
+        0.09,
+        0.06572509927861392
+      ],
+      "position": [
+        2.6399999999999997,
+        -4.063,
+        1.4356494043283166
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_2_frameL",
+      "size": [
+        0.06572509927861392,
+        0.07,
+        0.908701191343367
+      ],
+      "position": [
+        2.3195901410167568,
+        -4.06,
+        1.83
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_2_frameR",
+      "size": [
+        0.06572509927861392,
+        0.07,
+        0.908701191343367
+      ],
+      "position": [
+        2.9604098589832426,
+        -4.06,
+        1.83
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_2_mullionV",
+      "size": [
+        0.05126557743731886,
+        0.03,
+        0.668701191343367
+      ],
+      "position": [
+        2.6399999999999997,
+        -4.076,
+        1.83
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_2_mullionH",
+      "size": [
+        0.5208197179664857,
+        0.03,
+        0.05126557743731886
+      ],
+      "position": [
+        2.6399999999999997,
+        -4.076,
+        1.83
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_3_glass",
+      "size": [
+        0.6328682384085841,
+        0.05,
+        0.7789147549644111
+      ],
+      "position": [
+        5.28,
+        -4.048,
+        1.83
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_3_frameTop",
+      "size": [
+        0.7728682384085841,
+        0.07,
+        0.06490956291370094
+      ],
+      "position": [
+        5.28,
+        -4.06,
+        2.2194573774822057
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_3_frameBottom",
+      "size": [
+        0.8128682384085841,
+        0.09,
+        0.06490956291370094
+      ],
+      "position": [
+        5.28,
+        -4.063,
+        1.4405426225177944
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_3_frameL",
+      "size": [
+        0.06490956291370094,
+        0.07,
+        0.8989147549644111
+      ],
+      "position": [
+        4.963565880795708,
+        -4.06,
+        1.83
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_3_frameR",
+      "size": [
+        0.06490956291370094,
+        0.07,
+        0.8989147549644111
+      ],
+      "position": [
+        5.596434119204292,
+        -4.06,
+        1.83
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_3_mullionV",
+      "size": [
+        0.05062945907268673,
+        0.03,
+        0.6589147549644111
+      ],
+      "position": [
+        5.28,
+        -4.076,
+        1.83
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_3_mullionH",
+      "size": [
+        0.5128682384085841,
+        0.03,
+        0.05062945907268673
+      ],
+      "position": [
+        5.28,
+        -4.076,
+        1.83
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_4_glass",
+      "size": [
+        0.6203047331930603,
+        0.05,
+        0.7634519793145358
+      ],
+      "position": [
+        -5.28,
+        -4.048,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_4_frameTop",
+      "size": [
+        0.7603047331930604,
+        0.07,
+        0.06362099827621132
+      ],
+      "position": [
+        -5.28,
+        -4.06,
+        4.661725989657268
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_4_frameBottom",
+      "size": [
+        0.8003047331930604,
+        0.09,
+        0.06362099827621132
+      ],
+      "position": [
+        -5.28,
+        -4.063,
+        3.8982740103427322
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_4_frameL",
+      "size": [
+        0.06362099827621132,
+        0.07,
+        0.8834519793145358
+      ],
+      "position": [
+        -5.590152366596531,
+        -4.06,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_4_frameR",
+      "size": [
+        0.06362099827621132,
+        0.07,
+        0.8834519793145358
+      ],
+      "position": [
+        -4.96984763340347,
+        -4.06,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_4_mullionV",
+      "size": [
+        0.04962437865544483,
+        0.03,
+        0.6434519793145358
+      ],
+      "position": [
+        -5.28,
+        -4.076,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_4_mullionH",
+      "size": [
+        0.5003047331930603,
+        0.03,
+        0.04962437865544483
+      ],
+      "position": [
+        -5.28,
+        -4.076,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_4_shutterL",
+      "size": [
+        0.14,
+        0.045,
+        0.8034519793145358
+      ],
+      "position": [
+        -5.710152366596531,
+        -4.068,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_4_shutterR",
+      "size": [
+        0.14,
+        0.045,
+        0.8034519793145358
+      ],
+      "position": [
+        -4.84984763340347,
+        -4.068,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_5_glass",
+      "size": [
+        0.650564087796444,
+        0.05,
+        0.8006942619033157
+      ],
+      "position": [
+        -2.64,
+        -4.048,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_5_frameTop",
+      "size": [
+        0.790564087796444,
+        0.07,
+        0.06672452182527631
+      ],
+      "position": [
+        -2.64,
+        -4.06,
+        4.680347130951658
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_5_frameBottom",
+      "size": [
+        0.830564087796444,
+        0.09,
+        0.06672452182527631
+      ],
+      "position": [
+        -2.64,
+        -4.063,
+        3.8796528690483423
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_5_frameL",
+      "size": [
+        0.06672452182527631,
+        0.07,
+        0.9206942619033157
+      ],
+      "position": [
+        -2.965282043898222,
+        -4.06,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_5_frameR",
+      "size": [
+        0.06672452182527631,
+        0.07,
+        0.9206942619033157
+      ],
+      "position": [
+        -2.314717956101778,
+        -4.06,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_5_mullionV",
+      "size": [
+        0.052045127023715526,
+        0.03,
+        0.6806942619033157
+      ],
+      "position": [
+        -2.64,
+        -4.076,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_5_mullionH",
+      "size": [
+        0.530564087796444,
+        0.03,
+        0.052045127023715526
+      ],
+      "position": [
+        -2.64,
+        -4.076,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_5_shutterL",
+      "size": [
+        0.14,
+        0.045,
+        0.8406942619033158
+      ],
+      "position": [
+        -3.0852820438982222,
+        -4.068,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_5_shutterR",
+      "size": [
+        0.14,
+        0.045,
+        0.8406942619033158
+      ],
+      "position": [
+        -2.194717956101778,
+        -4.068,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_6_glass",
+      "size": [
+        0.635230032199854,
+        0.05,
+        0.7818215780921279
+      ],
+      "position": [
+        0,
+        -4.048,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_6_frameTop",
+      "size": [
+        0.775230032199854,
+        0.07,
+        0.065151798174344
+      ],
+      "position": [
+        0,
+        -4.06,
+        4.670910789046064
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_6_frameBottom",
+      "size": [
+        0.815230032199854,
+        0.09,
+        0.065151798174344
+      ],
+      "position": [
+        0,
+        -4.063,
+        3.8890892109539363
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_6_frameL",
+      "size": [
+        0.065151798174344,
+        0.07,
+        0.9018215780921279
+      ],
+      "position": [
+        -0.317615016099927,
+        -4.06,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_6_frameR",
+      "size": [
+        0.065151798174344,
+        0.07,
+        0.9018215780921279
+      ],
+      "position": [
+        0.317615016099927,
+        -4.06,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_6_mullionV",
+      "size": [
+        0.05081840257598832,
+        0.03,
+        0.6618215780921279
+      ],
+      "position": [
+        0,
+        -4.076,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_6_mullionH",
+      "size": [
+        0.515230032199854,
+        0.03,
+        0.05081840257598832
+      ],
+      "position": [
+        0,
+        -4.076,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_7_glass",
+      "size": [
+        0.6278395291796419,
+        0.05,
+        0.7727255743749438
+      ],
+      "position": [
+        2.6399999999999997,
+        -4.048,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_7_frameTop",
+      "size": [
+        0.7678395291796419,
+        0.07,
+        0.06439379786457866
+      ],
+      "position": [
+        2.6399999999999997,
+        -4.06,
+        4.666362787187472
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_7_frameBottom",
+      "size": [
+        0.8078395291796419,
+        0.09,
+        0.06439379786457866
+      ],
+      "position": [
+        2.6399999999999997,
+        -4.063,
+        3.8936372128125285
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_7_frameL",
+      "size": [
+        0.06439379786457866,
+        0.07,
+        0.8927255743749438
+      ],
+      "position": [
+        2.3260802354101786,
+        -4.06,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_7_frameR",
+      "size": [
+        0.06439379786457866,
+        0.07,
+        0.8927255743749438
+      ],
+      "position": [
+        2.9539197645898208,
+        -4.06,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_7_mullionV",
+      "size": [
+        0.050227162334371356,
+        0.03,
+        0.6527255743749438
+      ],
+      "position": [
+        2.6399999999999997,
+        -4.076,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_7_mullionH",
+      "size": [
+        0.5078395291796419,
+        0.03,
+        0.050227162334371356
+      ],
+      "position": [
+        2.6399999999999997,
+        -4.076,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_7_shutterL",
+      "size": [
+        0.14,
+        0.045,
+        0.8127255743749439
+      ],
+      "position": [
+        2.2060802354101785,
+        -4.068,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_7_shutterR",
+      "size": [
+        0.14,
+        0.045,
+        0.8127255743749439
+      ],
+      "position": [
+        3.073919764589821,
+        -4.068,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_8_glass",
+      "size": [
+        0.661737513454305,
+        0.05,
+        0.8144461704052983
+      ],
+      "position": [
+        5.28,
+        -4.048,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_8_frameTop",
+      "size": [
+        0.801737513454305,
+        0.07,
+        0.06787051420044153
+      ],
+      "position": [
+        5.28,
+        -4.06,
+        4.68722308520265
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_8_frameBottom",
+      "size": [
+        0.841737513454305,
+        0.09,
+        0.06787051420044153
+      ],
+      "position": [
+        5.28,
+        -4.063,
+        3.872776914797351
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_8_frameL",
+      "size": [
+        0.06787051420044153,
+        0.07,
+        0.9344461704052983
+      ],
+      "position": [
+        4.949131243272848,
+        -4.06,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_8_frameR",
+      "size": [
+        0.06787051420044153,
+        0.07,
+        0.9344461704052983
+      ],
+      "position": [
+        5.610868756727153,
+        -4.06,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_8_mullionV",
+      "size": [
+        0.052939001076344396,
+        0.03,
+        0.6944461704052983
+      ],
+      "position": [
+        5.28,
+        -4.076,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_8_mullionH",
+      "size": [
+        0.541737513454305,
+        0.03,
+        0.052939001076344396
+      ],
+      "position": [
+        5.28,
+        -4.076,
+        4.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_9_glass",
+      "size": [
+        0.6442032304323279,
+        0.05,
+        0.7928655143782496
+      ],
+      "position": [
+        -5.28,
+        -4.048,
+        6.73
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_9_frameTop",
+      "size": [
+        0.7842032304323279,
+        0.07,
+        0.06607212619818748
+      ],
+      "position": [
+        -5.28,
+        -4.06,
+        7.126432757189125
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_9_frameBottom",
+      "size": [
+        0.8242032304323279,
+        0.09,
+        0.06607212619818748
+      ],
+      "position": [
+        -5.28,
+        -4.063,
+        6.333567242810876
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_9_frameL",
+      "size": [
+        0.06607212619818748,
+        0.07,
+        0.9128655143782496
+      ],
+      "position": [
+        -5.6021016152161645,
+        -4.06,
+        6.73
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_9_frameR",
+      "size": [
+        0.06607212619818748,
+        0.07,
+        0.9128655143782496
+      ],
+      "position": [
+        -4.957898384783836,
+        -4.06,
+        6.73
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_9_mullionV",
+      "size": [
+        0.05153625843458623,
+        0.03,
+        0.6728655143782496
+      ],
+      "position": [
+        -5.28,
+        -4.076,
+        6.73
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_9_mullionH",
+      "size": [
+        0.5242032304323279,
+        0.03,
+        0.05153625843458623
+      ],
+      "position": [
+        -5.28,
+        -4.076,
+        6.73
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_10_glass",
+      "size": [
+        0.6691663631137925,
+        0.05,
+        0.8235893699862061
+      ],
+      "position": [
+        -2.64,
+        -4.048,
+        6.73
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_10_frameTop",
+      "size": [
+        0.8091663631137925,
+        0.07,
+        0.06863244749885052
+      ],
+      "position": [
+        -2.64,
+        -4.06,
+        7.141794684993103
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_10_frameBottom",
+      "size": [
+        0.8491663631137925,
+        0.09,
+        0.06863244749885052
+      ],
+      "position": [
+        -2.64,
+        -4.063,
+        6.318205315006898
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_10_frameL",
+      "size": [
+        0.06863244749885052,
+        0.07,
+        0.9435893699862061
+      ],
+      "position": [
+        -2.9745831815568966,
+        -4.06,
+        6.73
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_10_frameR",
+      "size": [
+        0.06863244749885052,
+        0.07,
+        0.9435893699862061
+      ],
+      "position": [
+        -2.3054168184431036,
+        -4.06,
+        6.73
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_10_mullionV",
+      "size": [
+        0.0535333090491034,
+        0.03,
+        0.7035893699862061
+      ],
+      "position": [
+        -2.64,
+        -4.076,
+        6.73
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_10_mullionH",
+      "size": [
+        0.5491663631137925,
+        0.03,
+        0.0535333090491034
+      ],
+      "position": [
+        -2.64,
+        -4.076,
+        6.73
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_11_glass",
+      "size": [
+        0.6265133982572704,
+        0.05,
+        0.7710934132397174
+      ],
+      "position": [
+        0,
+        -4.048,
+        6.73
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_11_frameTop",
+      "size": [
+        0.7665133982572704,
+        0.07,
+        0.06425778443664312
+      ],
+      "position": [
+        0,
+        -4.06,
+        7.115546706619859
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_11_frameBottom",
+      "size": [
+        0.8065133982572703,
+        0.09,
+        0.06425778443664312
+      ],
+      "position": [
+        0,
+        -4.063,
+        6.344453293380142
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_11_frameL",
+      "size": [
+        0.06425778443664312,
+        0.07,
+        0.8910934132397174
+      ],
+      "position": [
+        -0.3132566991286352,
+        -4.06,
+        6.73
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_11_frameR",
+      "size": [
+        0.06425778443664312,
+        0.07,
+        0.8910934132397174
+      ],
+      "position": [
+        0.3132566991286352,
+        -4.06,
+        6.73
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_11_mullionV",
+      "size": [
+        0.05012107186058164,
+        0.03,
+        0.6510934132397174
+      ],
+      "position": [
+        0,
+        -4.076,
+        6.73
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_11_mullionH",
+      "size": [
+        0.5065133982572704,
+        0.03,
+        0.05012107186058164
+      ],
+      "position": [
+        0,
+        -4.076,
+        6.73
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_12_glass",
+      "size": [
+        0.615514843460312,
+        0.05,
+        0.7575567304126918
+      ],
+      "position": [
+        2.6399999999999997,
+        -4.048,
+        6.73
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_12_frameTop",
+      "size": [
+        0.7555148434603121,
+        0.07,
+        0.06312972753439099
+      ],
+      "position": [
+        2.6399999999999997,
+        -4.06,
+        7.108778365206346
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_12_frameBottom",
+      "size": [
+        0.7955148434603121,
+        0.09,
+        0.06312972753439099
+      ],
+      "position": [
+        2.6399999999999997,
+        -4.063,
+        6.351221634793655
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_12_frameL",
+      "size": [
+        0.06312972753439099,
+        0.07,
+        0.8775567304126918
+      ],
+      "position": [
+        2.3322425782698435,
+        -4.06,
+        6.73
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_12_frameR",
+      "size": [
+        0.06312972753439099,
+        0.07,
+        0.8775567304126918
+      ],
+      "position": [
+        2.947757421730156,
+        -4.06,
+        6.73
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_12_mullionV",
+      "size": [
+        0.049241187476824974,
+        0.03,
+        0.6375567304126918
+      ],
+      "position": [
+        2.6399999999999997,
+        -4.076,
+        6.73
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_12_mullionH",
+      "size": [
+        0.49551484346031205,
+        0.03,
+        0.049241187476824974
+      ],
+      "position": [
+        2.6399999999999997,
+        -4.076,
+        6.73
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_12_shutterL",
+      "size": [
+        0.14,
+        0.045,
+        0.7975567304126918
+      ],
+      "position": [
+        2.2122425782698434,
+        -4.068,
+        6.73
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_12_shutterR",
+      "size": [
+        0.14,
+        0.045,
+        0.7975567304126918
+      ],
+      "position": [
+        3.067757421730156,
+        -4.068,
+        6.73
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_13_glass",
+      "size": [
+        0.6873970538806636,
+        0.05,
+        0.8460271432377398
+      ],
+      "position": [
+        5.28,
+        -4.048,
+        6.73
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_13_frameTop",
+      "size": [
+        0.8273970538806636,
+        0.07,
+        0.07050226193647832
+      ],
+      "position": [
+        5.28,
+        -4.06,
+        7.15301357161887
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_13_frameBottom",
+      "size": [
+        0.8673970538806637,
+        0.09,
+        0.07050226193647832
+      ],
+      "position": [
+        5.28,
+        -4.063,
+        6.306986428381131
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_13_frameL",
+      "size": [
+        0.07050226193647832,
+        0.07,
+        0.9660271432377397
+      ],
+      "position": [
+        4.936301473059668,
+        -4.06,
+        6.73
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_13_frameR",
+      "size": [
+        0.07050226193647832,
+        0.07,
+        0.9660271432377397
+      ],
+      "position": [
+        5.623698526940332,
+        -4.06,
+        6.73
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_13_mullionV",
+      "size": [
+        0.05499176431045309,
+        0.03,
+        0.7260271432377398
+      ],
+      "position": [
+        5.28,
+        -4.076,
+        6.73
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "fwin_13_mullionH",
+      "size": [
+        0.5673970538806636,
+        0.03,
+        0.05499176431045309
+      ],
+      "position": [
+        5.28,
+        -4.076,
+        6.73
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_14_glass",
+      "size": [
+        0.05,
+        0.6162000000000001,
+        0.7584
+      ],
+      "position": [
+        6.055,
+        -3.1,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_14_frameTop",
+      "size": [
+        0.07,
+        0.7562000000000001,
+        0.0632
+      ],
+      "position": [
+        6.066999999999999,
+        -3.1,
+        2.1792
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_14_frameBottom",
+      "size": [
+        0.09,
+        0.7962,
+        0.0632
+      ],
+      "position": [
+        6.069999999999999,
+        -3.1,
+        1.4208
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_14_frameL",
+      "size": [
+        0.07,
+        0.0632,
+        0.8784
+      ],
+      "position": [
+        6.066999999999999,
+        -3.4081,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_14_frameR",
+      "size": [
+        0.07,
+        0.0632,
+        0.8784
+      ],
+      "position": [
+        6.066999999999999,
+        -2.7919,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_14_mullionV",
+      "size": [
+        0.03,
+        0.049296000000000006,
+        0.6384
+      ],
+      "position": [
+        6.082999999999999,
+        -3.1,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_14_mullionH",
+      "size": [
+        0.03,
+        0.4962000000000001,
+        0.049296000000000006
+      ],
+      "position": [
+        6.082999999999999,
+        -3.1,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_15_glass",
+      "size": [
+        0.05,
+        0.6162000000000001,
+        0.7584
+      ],
+      "position": [
+        6.055,
+        -1.4500000000000002,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_15_frameTop",
+      "size": [
+        0.07,
+        0.7562000000000001,
+        0.0632
+      ],
+      "position": [
+        6.066999999999999,
+        -1.4500000000000002,
+        2.1792
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_15_frameBottom",
+      "size": [
+        0.09,
+        0.7962,
+        0.0632
+      ],
+      "position": [
+        6.069999999999999,
+        -1.4500000000000002,
+        1.4208
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_15_frameL",
+      "size": [
+        0.07,
+        0.0632,
+        0.8784
+      ],
+      "position": [
+        6.066999999999999,
+        -1.7581000000000002,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_15_frameR",
+      "size": [
+        0.07,
+        0.0632,
+        0.8784
+      ],
+      "position": [
+        6.066999999999999,
+        -1.1419000000000001,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_15_mullionV",
+      "size": [
+        0.03,
+        0.049296000000000006,
+        0.6384
+      ],
+      "position": [
+        6.082999999999999,
+        -1.4500000000000002,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_15_mullionH",
+      "size": [
+        0.03,
+        0.4962000000000001,
+        0.049296000000000006
+      ],
+      "position": [
+        6.082999999999999,
+        -1.4500000000000002,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_16_glass",
+      "size": [
+        0.05,
+        0.6162000000000001,
+        0.7584
+      ],
+      "position": [
+        6.055,
+        0.19999999999999973,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_16_frameTop",
+      "size": [
+        0.07,
+        0.7562000000000001,
+        0.0632
+      ],
+      "position": [
+        6.066999999999999,
+        0.19999999999999973,
+        2.1792
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_16_frameBottom",
+      "size": [
+        0.09,
+        0.7962,
+        0.0632
+      ],
+      "position": [
+        6.069999999999999,
+        0.19999999999999973,
+        1.4208
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_16_frameL",
+      "size": [
+        0.07,
+        0.0632,
+        0.8784
+      ],
+      "position": [
+        6.066999999999999,
+        -0.10810000000000031,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_16_frameR",
+      "size": [
+        0.07,
+        0.0632,
+        0.8784
+      ],
+      "position": [
+        6.066999999999999,
+        0.5080999999999998,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_16_mullionV",
+      "size": [
+        0.03,
+        0.049296000000000006,
+        0.6384
+      ],
+      "position": [
+        6.082999999999999,
+        0.19999999999999973,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_16_mullionH",
+      "size": [
+        0.03,
+        0.4962000000000001,
+        0.049296000000000006
+      ],
+      "position": [
+        6.082999999999999,
+        0.19999999999999973,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_17_glass",
+      "size": [
+        0.05,
+        0.6162000000000001,
+        0.7584
+      ],
+      "position": [
+        6.055,
+        1.8499999999999996,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_17_frameTop",
+      "size": [
+        0.07,
+        0.7562000000000001,
+        0.0632
+      ],
+      "position": [
+        6.066999999999999,
+        1.8499999999999996,
+        2.1792
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_17_frameBottom",
+      "size": [
+        0.09,
+        0.7962,
+        0.0632
+      ],
+      "position": [
+        6.069999999999999,
+        1.8499999999999996,
+        1.4208
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_17_frameL",
+      "size": [
+        0.07,
+        0.0632,
+        0.8784
+      ],
+      "position": [
+        6.066999999999999,
+        1.5418999999999996,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_17_frameR",
+      "size": [
+        0.07,
+        0.0632,
+        0.8784
+      ],
+      "position": [
+        6.066999999999999,
+        2.1580999999999997,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_17_mullionV",
+      "size": [
+        0.03,
+        0.049296000000000006,
+        0.6384
+      ],
+      "position": [
+        6.082999999999999,
+        1.8499999999999996,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_17_mullionH",
+      "size": [
+        0.03,
+        0.4962000000000001,
+        0.049296000000000006
+      ],
+      "position": [
+        6.082999999999999,
+        1.8499999999999996,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_18_glass",
+      "size": [
+        0.05,
+        0.5616,
+        0.6911999999999999
+      ],
+      "position": [
+        -6.055,
+        -2.85,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_18_frameTop",
+      "size": [
+        0.07,
+        0.7016,
+        0.0576
+      ],
+      "position": [
+        -6.043,
+        -2.85,
+        2.1456
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_18_frameBottom",
+      "size": [
+        0.09,
+        0.7416,
+        0.0576
+      ],
+      "position": [
+        -6.04,
+        -2.85,
+        1.4544000000000001
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_18_frameL",
+      "size": [
+        0.07,
+        0.0576,
+        0.8111999999999999
+      ],
+      "position": [
+        -6.043,
+        -3.1308000000000002,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_18_frameR",
+      "size": [
+        0.07,
+        0.0576,
+        0.8111999999999999
+      ],
+      "position": [
+        -6.043,
+        -2.5692,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_18_mullionV",
+      "size": [
+        0.03,
+        0.044928,
+        0.5711999999999999
+      ],
+      "position": [
+        -6.027,
+        -2.85,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_18_mullionH",
+      "size": [
+        0.03,
+        0.4416,
+        0.044928
+      ],
+      "position": [
+        -6.027,
+        -2.85,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_19_glass",
+      "size": [
+        0.05,
+        0.5616,
+        0.6911999999999999
+      ],
+      "position": [
+        -6.055,
+        -0.75,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_19_frameTop",
+      "size": [
+        0.07,
+        0.7016,
+        0.0576
+      ],
+      "position": [
+        -6.043,
+        -0.75,
+        2.1456
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_19_frameBottom",
+      "size": [
+        0.09,
+        0.7416,
+        0.0576
+      ],
+      "position": [
+        -6.04,
+        -0.75,
+        1.4544000000000001
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_19_frameL",
+      "size": [
+        0.07,
+        0.0576,
+        0.8111999999999999
+      ],
+      "position": [
+        -6.043,
+        -1.0308,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_19_frameR",
+      "size": [
+        0.07,
+        0.0576,
+        0.8111999999999999
+      ],
+      "position": [
+        -6.043,
+        -0.4692,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_19_mullionV",
+      "size": [
+        0.03,
+        0.044928,
+        0.5711999999999999
+      ],
+      "position": [
+        -6.027,
+        -0.75,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_19_mullionH",
+      "size": [
+        0.03,
+        0.4416,
+        0.044928
+      ],
+      "position": [
+        -6.027,
+        -0.75,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_20_glass",
+      "size": [
+        0.05,
+        0.5616,
+        0.6911999999999999
+      ],
+      "position": [
+        -6.055,
+        1.35,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_20_frameTop",
+      "size": [
+        0.07,
+        0.7016,
+        0.0576
+      ],
+      "position": [
+        -6.043,
+        1.35,
+        2.1456
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_20_frameBottom",
+      "size": [
+        0.09,
+        0.7416,
+        0.0576
+      ],
+      "position": [
+        -6.04,
+        1.35,
+        1.4544000000000001
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_20_frameL",
+      "size": [
+        0.07,
+        0.0576,
+        0.8111999999999999
+      ],
+      "position": [
+        -6.043,
+        1.0692000000000002,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_20_frameR",
+      "size": [
+        0.07,
+        0.0576,
+        0.8111999999999999
+      ],
+      "position": [
+        -6.043,
+        1.6308,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_20_mullionV",
+      "size": [
+        0.03,
+        0.044928,
+        0.5711999999999999
+      ],
+      "position": [
+        -6.027,
+        1.35,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_20_mullionH",
+      "size": [
+        0.03,
+        0.4416,
+        0.044928
+      ],
+      "position": [
+        -6.027,
+        1.35,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_21_glass",
+      "size": [
+        0.05,
+        0.6162000000000001,
+        0.7584
+      ],
+      "position": [
+        6.055,
+        -3.1,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_21_frameTop",
+      "size": [
+        0.07,
+        0.7562000000000001,
+        0.0632
+      ],
+      "position": [
+        6.066999999999999,
+        -3.1,
+        4.6292
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_21_frameBottom",
+      "size": [
+        0.09,
+        0.7962,
+        0.0632
+      ],
+      "position": [
+        6.069999999999999,
+        -3.1,
+        3.8708
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_21_frameL",
+      "size": [
+        0.07,
+        0.0632,
+        0.8784
+      ],
+      "position": [
+        6.066999999999999,
+        -3.4081,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_21_frameR",
+      "size": [
+        0.07,
+        0.0632,
+        0.8784
+      ],
+      "position": [
+        6.066999999999999,
+        -2.7919,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_21_mullionV",
+      "size": [
+        0.03,
+        0.049296000000000006,
+        0.6384
+      ],
+      "position": [
+        6.082999999999999,
+        -3.1,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_21_mullionH",
+      "size": [
+        0.03,
+        0.4962000000000001,
+        0.049296000000000006
+      ],
+      "position": [
+        6.082999999999999,
+        -3.1,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_22_glass",
+      "size": [
+        0.05,
+        0.6162000000000001,
+        0.7584
+      ],
+      "position": [
+        6.055,
+        -1.4500000000000002,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_22_frameTop",
+      "size": [
+        0.07,
+        0.7562000000000001,
+        0.0632
+      ],
+      "position": [
+        6.066999999999999,
+        -1.4500000000000002,
+        4.6292
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_22_frameBottom",
+      "size": [
+        0.09,
+        0.7962,
+        0.0632
+      ],
+      "position": [
+        6.069999999999999,
+        -1.4500000000000002,
+        3.8708
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_22_frameL",
+      "size": [
+        0.07,
+        0.0632,
+        0.8784
+      ],
+      "position": [
+        6.066999999999999,
+        -1.7581000000000002,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_22_frameR",
+      "size": [
+        0.07,
+        0.0632,
+        0.8784
+      ],
+      "position": [
+        6.066999999999999,
+        -1.1419000000000001,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_22_mullionV",
+      "size": [
+        0.03,
+        0.049296000000000006,
+        0.6384
+      ],
+      "position": [
+        6.082999999999999,
+        -1.4500000000000002,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_22_mullionH",
+      "size": [
+        0.03,
+        0.4962000000000001,
+        0.049296000000000006
+      ],
+      "position": [
+        6.082999999999999,
+        -1.4500000000000002,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_22_shutterL",
+      "size": [
+        0.045,
+        0.14,
+        0.7984
+      ],
+      "position": [
+        6.074999999999999,
+        -1.8781000000000003,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_22_shutterR",
+      "size": [
+        0.045,
+        0.14,
+        0.7984
+      ],
+      "position": [
+        6.074999999999999,
+        -1.0219,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_23_glass",
+      "size": [
+        0.05,
+        0.6162000000000001,
+        0.7584
+      ],
+      "position": [
+        6.055,
+        0.19999999999999973,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_23_frameTop",
+      "size": [
+        0.07,
+        0.7562000000000001,
+        0.0632
+      ],
+      "position": [
+        6.066999999999999,
+        0.19999999999999973,
+        4.6292
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_23_frameBottom",
+      "size": [
+        0.09,
+        0.7962,
+        0.0632
+      ],
+      "position": [
+        6.069999999999999,
+        0.19999999999999973,
+        3.8708
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_23_frameL",
+      "size": [
+        0.07,
+        0.0632,
+        0.8784
+      ],
+      "position": [
+        6.066999999999999,
+        -0.10810000000000031,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_23_frameR",
+      "size": [
+        0.07,
+        0.0632,
+        0.8784
+      ],
+      "position": [
+        6.066999999999999,
+        0.5080999999999998,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_23_mullionV",
+      "size": [
+        0.03,
+        0.049296000000000006,
+        0.6384
+      ],
+      "position": [
+        6.082999999999999,
+        0.19999999999999973,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_23_mullionH",
+      "size": [
+        0.03,
+        0.4962000000000001,
+        0.049296000000000006
+      ],
+      "position": [
+        6.082999999999999,
+        0.19999999999999973,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_23_shutterL",
+      "size": [
+        0.045,
+        0.14,
+        0.7984
+      ],
+      "position": [
+        6.074999999999999,
+        -0.2281000000000003,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_23_shutterR",
+      "size": [
+        0.045,
+        0.14,
+        0.7984
+      ],
+      "position": [
+        6.074999999999999,
+        0.6280999999999998,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_24_glass",
+      "size": [
+        0.05,
+        0.6162000000000001,
+        0.7584
+      ],
+      "position": [
+        6.055,
+        1.8499999999999996,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_24_frameTop",
+      "size": [
+        0.07,
+        0.7562000000000001,
+        0.0632
+      ],
+      "position": [
+        6.066999999999999,
+        1.8499999999999996,
+        4.6292
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_24_frameBottom",
+      "size": [
+        0.09,
+        0.7962,
+        0.0632
+      ],
+      "position": [
+        6.069999999999999,
+        1.8499999999999996,
+        3.8708
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_24_frameL",
+      "size": [
+        0.07,
+        0.0632,
+        0.8784
+      ],
+      "position": [
+        6.066999999999999,
+        1.5418999999999996,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_24_frameR",
+      "size": [
+        0.07,
+        0.0632,
+        0.8784
+      ],
+      "position": [
+        6.066999999999999,
+        2.1580999999999997,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_24_mullionV",
+      "size": [
+        0.03,
+        0.049296000000000006,
+        0.6384
+      ],
+      "position": [
+        6.082999999999999,
+        1.8499999999999996,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_24_mullionH",
+      "size": [
+        0.03,
+        0.4962000000000001,
+        0.049296000000000006
+      ],
+      "position": [
+        6.082999999999999,
+        1.8499999999999996,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_25_glass",
+      "size": [
+        0.05,
+        0.5616,
+        0.6911999999999999
+      ],
+      "position": [
+        -6.055,
+        -2.85,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_25_frameTop",
+      "size": [
+        0.07,
+        0.7016,
+        0.0576
+      ],
+      "position": [
+        -6.043,
+        -2.85,
+        4.5956
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_25_frameBottom",
+      "size": [
+        0.09,
+        0.7416,
+        0.0576
+      ],
+      "position": [
+        -6.04,
+        -2.85,
+        3.9044
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_25_frameL",
+      "size": [
+        0.07,
+        0.0576,
+        0.8111999999999999
+      ],
+      "position": [
+        -6.043,
+        -3.1308000000000002,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_25_frameR",
+      "size": [
+        0.07,
+        0.0576,
+        0.8111999999999999
+      ],
+      "position": [
+        -6.043,
+        -2.5692,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_25_mullionV",
+      "size": [
+        0.03,
+        0.044928,
+        0.5711999999999999
+      ],
+      "position": [
+        -6.027,
+        -2.85,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_25_mullionH",
+      "size": [
+        0.03,
+        0.4416,
+        0.044928
+      ],
+      "position": [
+        -6.027,
+        -2.85,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_26_glass",
+      "size": [
+        0.05,
+        0.5616,
+        0.6911999999999999
+      ],
+      "position": [
+        -6.055,
+        -0.75,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_26_frameTop",
+      "size": [
+        0.07,
+        0.7016,
+        0.0576
+      ],
+      "position": [
+        -6.043,
+        -0.75,
+        4.5956
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_26_frameBottom",
+      "size": [
+        0.09,
+        0.7416,
+        0.0576
+      ],
+      "position": [
+        -6.04,
+        -0.75,
+        3.9044
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_26_frameL",
+      "size": [
+        0.07,
+        0.0576,
+        0.8111999999999999
+      ],
+      "position": [
+        -6.043,
+        -1.0308,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_26_frameR",
+      "size": [
+        0.07,
+        0.0576,
+        0.8111999999999999
+      ],
+      "position": [
+        -6.043,
+        -0.4692,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_26_mullionV",
+      "size": [
+        0.03,
+        0.044928,
+        0.5711999999999999
+      ],
+      "position": [
+        -6.027,
+        -0.75,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_26_mullionH",
+      "size": [
+        0.03,
+        0.4416,
+        0.044928
+      ],
+      "position": [
+        -6.027,
+        -0.75,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_27_glass",
+      "size": [
+        0.05,
+        0.5616,
+        0.6911999999999999
+      ],
+      "position": [
+        -6.055,
+        1.35,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_27_frameTop",
+      "size": [
+        0.07,
+        0.7016,
+        0.0576
+      ],
+      "position": [
+        -6.043,
+        1.35,
+        4.5956
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_27_frameBottom",
+      "size": [
+        0.09,
+        0.7416,
+        0.0576
+      ],
+      "position": [
+        -6.04,
+        1.35,
+        3.9044
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_27_frameL",
+      "size": [
+        0.07,
+        0.0576,
+        0.8111999999999999
+      ],
+      "position": [
+        -6.043,
+        1.0692000000000002,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_27_frameR",
+      "size": [
+        0.07,
+        0.0576,
+        0.8111999999999999
+      ],
+      "position": [
+        -6.043,
+        1.6308,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_27_mullionV",
+      "size": [
+        0.03,
+        0.044928,
+        0.5711999999999999
+      ],
+      "position": [
+        -6.027,
+        1.35,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_27_mullionH",
+      "size": [
+        0.03,
+        0.4416,
+        0.044928
+      ],
+      "position": [
+        -6.027,
+        1.35,
+        4.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_28_glass",
+      "size": [
+        0.05,
+        0.6162000000000001,
+        0.7584
+      ],
+      "position": [
+        6.055,
+        -3.1,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_28_frameTop",
+      "size": [
+        0.07,
+        0.7562000000000001,
+        0.0632
+      ],
+      "position": [
+        6.066999999999999,
+        -3.1,
+        7.0792
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_28_frameBottom",
+      "size": [
+        0.09,
+        0.7962,
+        0.0632
+      ],
+      "position": [
+        6.069999999999999,
+        -3.1,
+        6.3208
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_28_frameL",
+      "size": [
+        0.07,
+        0.0632,
+        0.8784
+      ],
+      "position": [
+        6.066999999999999,
+        -3.4081,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_28_frameR",
+      "size": [
+        0.07,
+        0.0632,
+        0.8784
+      ],
+      "position": [
+        6.066999999999999,
+        -2.7919,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_28_mullionV",
+      "size": [
+        0.03,
+        0.049296000000000006,
+        0.6384
+      ],
+      "position": [
+        6.082999999999999,
+        -3.1,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_28_mullionH",
+      "size": [
+        0.03,
+        0.4962000000000001,
+        0.049296000000000006
+      ],
+      "position": [
+        6.082999999999999,
+        -3.1,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_28_shutterL",
+      "size": [
+        0.045,
+        0.14,
+        0.7984
+      ],
+      "position": [
+        6.074999999999999,
+        -3.5281000000000002,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_28_shutterR",
+      "size": [
+        0.045,
+        0.14,
+        0.7984
+      ],
+      "position": [
+        6.074999999999999,
+        -2.6719,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_29_glass",
+      "size": [
+        0.05,
+        0.6162000000000001,
+        0.7584
+      ],
+      "position": [
+        6.055,
+        -1.4500000000000002,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_29_frameTop",
+      "size": [
+        0.07,
+        0.7562000000000001,
+        0.0632
+      ],
+      "position": [
+        6.066999999999999,
+        -1.4500000000000002,
+        7.0792
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_29_frameBottom",
+      "size": [
+        0.09,
+        0.7962,
+        0.0632
+      ],
+      "position": [
+        6.069999999999999,
+        -1.4500000000000002,
+        6.3208
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_29_frameL",
+      "size": [
+        0.07,
+        0.0632,
+        0.8784
+      ],
+      "position": [
+        6.066999999999999,
+        -1.7581000000000002,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_29_frameR",
+      "size": [
+        0.07,
+        0.0632,
+        0.8784
+      ],
+      "position": [
+        6.066999999999999,
+        -1.1419000000000001,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_29_mullionV",
+      "size": [
+        0.03,
+        0.049296000000000006,
+        0.6384
+      ],
+      "position": [
+        6.082999999999999,
+        -1.4500000000000002,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_29_mullionH",
+      "size": [
+        0.03,
+        0.4962000000000001,
+        0.049296000000000006
+      ],
+      "position": [
+        6.082999999999999,
+        -1.4500000000000002,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_30_glass",
+      "size": [
+        0.05,
+        0.6162000000000001,
+        0.7584
+      ],
+      "position": [
+        6.055,
+        0.19999999999999973,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_30_frameTop",
+      "size": [
+        0.07,
+        0.7562000000000001,
+        0.0632
+      ],
+      "position": [
+        6.066999999999999,
+        0.19999999999999973,
+        7.0792
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_30_frameBottom",
+      "size": [
+        0.09,
+        0.7962,
+        0.0632
+      ],
+      "position": [
+        6.069999999999999,
+        0.19999999999999973,
+        6.3208
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_30_frameL",
+      "size": [
+        0.07,
+        0.0632,
+        0.8784
+      ],
+      "position": [
+        6.066999999999999,
+        -0.10810000000000031,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_30_frameR",
+      "size": [
+        0.07,
+        0.0632,
+        0.8784
+      ],
+      "position": [
+        6.066999999999999,
+        0.5080999999999998,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_30_mullionV",
+      "size": [
+        0.03,
+        0.049296000000000006,
+        0.6384
+      ],
+      "position": [
+        6.082999999999999,
+        0.19999999999999973,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_30_mullionH",
+      "size": [
+        0.03,
+        0.4962000000000001,
+        0.049296000000000006
+      ],
+      "position": [
+        6.082999999999999,
+        0.19999999999999973,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_31_glass",
+      "size": [
+        0.05,
+        0.6162000000000001,
+        0.7584
+      ],
+      "position": [
+        6.055,
+        1.8499999999999996,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_31_frameTop",
+      "size": [
+        0.07,
+        0.7562000000000001,
+        0.0632
+      ],
+      "position": [
+        6.066999999999999,
+        1.8499999999999996,
+        7.0792
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_31_frameBottom",
+      "size": [
+        0.09,
+        0.7962,
+        0.0632
+      ],
+      "position": [
+        6.069999999999999,
+        1.8499999999999996,
+        6.3208
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_31_frameL",
+      "size": [
+        0.07,
+        0.0632,
+        0.8784
+      ],
+      "position": [
+        6.066999999999999,
+        1.5418999999999996,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_31_frameR",
+      "size": [
+        0.07,
+        0.0632,
+        0.8784
+      ],
+      "position": [
+        6.066999999999999,
+        2.1580999999999997,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_31_mullionV",
+      "size": [
+        0.03,
+        0.049296000000000006,
+        0.6384
+      ],
+      "position": [
+        6.082999999999999,
+        1.8499999999999996,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_r_31_mullionH",
+      "size": [
+        0.03,
+        0.4962000000000001,
+        0.049296000000000006
+      ],
+      "position": [
+        6.082999999999999,
+        1.8499999999999996,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_32_glass",
+      "size": [
+        0.05,
+        0.5616,
+        0.6911999999999999
+      ],
+      "position": [
+        -6.055,
+        -2.85,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_32_frameTop",
+      "size": [
+        0.07,
+        0.7016,
+        0.0576
+      ],
+      "position": [
+        -6.043,
+        -2.85,
+        7.0456
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_32_frameBottom",
+      "size": [
+        0.09,
+        0.7416,
+        0.0576
+      ],
+      "position": [
+        -6.04,
+        -2.85,
+        6.3544
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_32_frameL",
+      "size": [
+        0.07,
+        0.0576,
+        0.8111999999999999
+      ],
+      "position": [
+        -6.043,
+        -3.1308000000000002,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_32_frameR",
+      "size": [
+        0.07,
+        0.0576,
+        0.8111999999999999
+      ],
+      "position": [
+        -6.043,
+        -2.5692,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_32_mullionV",
+      "size": [
+        0.03,
+        0.044928,
+        0.5711999999999999
+      ],
+      "position": [
+        -6.027,
+        -2.85,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_32_mullionH",
+      "size": [
+        0.03,
+        0.4416,
+        0.044928
+      ],
+      "position": [
+        -6.027,
+        -2.85,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_33_glass",
+      "size": [
+        0.05,
+        0.5616,
+        0.6911999999999999
+      ],
+      "position": [
+        -6.055,
+        -0.75,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_33_frameTop",
+      "size": [
+        0.07,
+        0.7016,
+        0.0576
+      ],
+      "position": [
+        -6.043,
+        -0.75,
+        7.0456
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_33_frameBottom",
+      "size": [
+        0.09,
+        0.7416,
+        0.0576
+      ],
+      "position": [
+        -6.04,
+        -0.75,
+        6.3544
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_33_frameL",
+      "size": [
+        0.07,
+        0.0576,
+        0.8111999999999999
+      ],
+      "position": [
+        -6.043,
+        -1.0308,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_33_frameR",
+      "size": [
+        0.07,
+        0.0576,
+        0.8111999999999999
+      ],
+      "position": [
+        -6.043,
+        -0.4692,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_33_mullionV",
+      "size": [
+        0.03,
+        0.044928,
+        0.5711999999999999
+      ],
+      "position": [
+        -6.027,
+        -0.75,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_33_mullionH",
+      "size": [
+        0.03,
+        0.4416,
+        0.044928
+      ],
+      "position": [
+        -6.027,
+        -0.75,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_34_glass",
+      "size": [
+        0.05,
+        0.5616,
+        0.6911999999999999
+      ],
+      "position": [
+        -6.055,
+        1.35,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_34_frameTop",
+      "size": [
+        0.07,
+        0.7016,
+        0.0576
+      ],
+      "position": [
+        -6.043,
+        1.35,
+        7.0456
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_34_frameBottom",
+      "size": [
+        0.09,
+        0.7416,
+        0.0576
+      ],
+      "position": [
+        -6.04,
+        1.35,
+        6.3544
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_34_frameL",
+      "size": [
+        0.07,
+        0.0576,
+        0.8111999999999999
+      ],
+      "position": [
+        -6.043,
+        1.0692000000000002,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_34_frameR",
+      "size": [
+        0.07,
+        0.0576,
+        0.8111999999999999
+      ],
+      "position": [
+        -6.043,
+        1.6308,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_34_mullionV",
+      "size": [
+        0.03,
+        0.044928,
+        0.5711999999999999
+      ],
+      "position": [
+        -6.027,
+        1.35,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "swin_l_34_mullionH",
+      "size": [
+        0.03,
+        0.4416,
+        0.044928
+      ],
+      "position": [
+        -6.027,
+        1.35,
+        6.7
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "chimney",
+      "size": [
+        0.54,
+        0.58,
+        1.72
+      ],
+      "position": [
+        2.64,
+        1.12,
+        8.690000000000001
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "chimneyCap",
+      "size": [
+        0.7,
+        0.74,
+        0.15
+      ],
+      "position": [
+        2.64,
+        1.12,
+        9.55
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "porchDeck",
+      "size": [
+        2.55,
+        1.15,
+        0.16
+      ],
+      "position": [
+        0.011848824284970805,
+        -4.58,
+        0.36000000000000004
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "step1",
+      "size": [
+        1.78,
+        0.42,
+        0.1
+      ],
+      "position": [
+        0.011848824284970805,
+        -5.2,
+        0.05
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "step2",
+      "size": [
+        1.25,
+        0.28,
+        0.08
+      ],
+      "position": [
+        0.011848824284970805,
+        -5.46,
+        0.04
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "porchPost_-0.91",
+      "size": [
+        0.12,
+        0.12,
+        1.82
+      ],
+      "position": [
+        -0.9081511757150292,
+        -4.76,
+        1.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "porchPost_0.93",
+      "size": [
+        0.12,
+        0.12,
+        1.82
+      ],
+      "position": [
+        0.9318488242849708,
+        -4.76,
+        1.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "porchRail",
+      "size": [
+        2.26,
+        0.06,
+        0.1
+      ],
+      "position": [
+        0.011848824284970805,
+        -4.78,
+        2
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "mesh",
+      "name": "porchRoof",
+      "vertices": [
+        [
+          -1.3,
+          -0.725,
+          2.5599999999999996
+        ],
+        [
+          1.3,
+          -0.725,
+          2.5599999999999996
+        ],
+        [
+          -1.3,
+          0.725,
+          2.5599999999999996
+        ],
+        [
+          1.3,
+          0.725,
+          2.5599999999999996
+        ],
+        [
+          -1.3,
+          0,
+          2.9785789451624782
+        ],
+        [
+          1.3,
+          0,
+          2.9785789451624782
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          5
+        ],
+        [
+          0,
+          5,
+          4
+        ],
+        [
+          2,
+          4,
+          5
+        ],
+        [
+          2,
+          5,
+          3
+        ],
+        [
+          0,
+          4,
+          2
+        ],
+        [
+          1,
+          3,
+          5
+        ]
+      ],
+      "position": [
+        0.011848824284970805,
+        -4.62,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "roofDark",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "extension",
+      "size": [
+        2.1109398137778044,
+        2.7,
+        1.72
+      ],
+      "position": [
+        6.9,
+        0.15687326537445187,
+        1.1400000000000001
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "wall",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "extensionTrim",
+      "size": [
+        2.1709398137778044,
+        0.1,
+        0.14
+      ],
+      "position": [
+        6.9,
+        -1.2131267346255483,
+        1.76
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "mesh",
+      "name": "extensionRoof",
+      "vertices": [
+        [
+          -1.1954699068889023,
+          -1.4900000000000002,
+          1.97
+        ],
+        [
+          1.1954699068889023,
+          -1.4900000000000002,
+          1.97
+        ],
+        [
+          -1.1954699068889023,
+          1.4900000000000002,
+          1.97
+        ],
+        [
+          1.1954699068889023,
+          1.4900000000000002,
+          1.97
+        ],
+        [
+          -1.1954699068889023,
+          0,
+          2.937617313864291
+        ],
+        [
+          1.1954699068889023,
+          0,
+          2.937617313864291
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          5
+        ],
+        [
+          0,
+          5,
+          4
+        ],
+        [
+          2,
+          4,
+          5
+        ],
+        [
+          2,
+          5,
+          3
+        ],
+        [
+          0,
+          4,
+          2
+        ],
+        [
+          1,
+          3,
+          5
+        ]
+      ],
+      "position": [
+        6.9,
+        0.15687326537445187,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "roofDark",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "extensionPlanter_box",
+      "size": [
+        0.52,
+        0.34,
+        0.22
+      ],
+      "position": [
+        6.65,
+        -1.5931267346255482,
+        0.11
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "extensionPlanter_plant",
+      "size": [
+        0.42,
+        0.26,
+        0.24
+      ],
+      "position": [
+        6.65,
+        -1.5931267346255482,
+        0.3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "deadGreen",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "signArm",
+      "size": [
+        0.85,
+        0.08,
+        0.08
+      ],
+      "position": [
+        -6.38,
+        -4.1,
+        2.16
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "sign",
+      "size": [
+        0.78,
+        0.1,
+        0.6
+      ],
+      "position": [
+        -6.78,
+        -4.12,
+        1.8
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "barrel_0_body",
+      "size": [
+        0.34,
+        0.34,
+        0.44
+      ],
+      "position": [
+        7.11500155415386,
+        -2.05951259980211,
+        0.24
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "barrel_0_bandTop",
+      "size": [
+        0.36,
+        0.36,
+        0.04
+      ],
+      "position": [
+        7.11500155415386,
+        -2.05951259980211,
+        0.4
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "dark",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "barrel_0_bandMid",
+      "size": [
+        0.36,
+        0.36,
+        0.04
+      ],
+      "position": [
+        7.11500155415386,
+        -2.05951259980211,
+        0.24
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "dark",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "barrel_0_bandBot",
+      "size": [
+        0.36,
+        0.36,
+        0.04
+      ],
+      "position": [
+        7.11500155415386,
+        -2.05951259980211,
+        0.08
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "dark",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "crate_1",
+      "size": [
+        0.4128370060957968,
+        0.4128370060957968,
+        0.4128370060957968
+      ],
+      "position": [
+        7.068282041810454,
+        -2.0506094217766075,
+        0.2064185030478984
+      ],
+      "rotation": [
+        0,
+        0.5454375082626939,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "planter_front_box",
+      "size": [
+        0.52,
+        0.34,
+        0.22
+      ],
+      "position": [
+        1.3118488242849708,
+        -4.92,
+        0.11
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "planter_front_plant",
+      "size": [
+        0.42,
+        0.26,
+        0.24
+      ],
+      "position": [
+        1.3118488242849708,
+        -4.92,
+        0.3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "deadGreen",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "lowerCourseFront",
+      "size": [
+        12.04,
+        0.035,
+        1.15
+      ],
+      "position": [
+        0,
+        -4.065,
+        0.855
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "wallSecondary",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "lowerCourseBack",
+      "size": [
+        12.04,
+        0.035,
+        1.15
+      ],
+      "position": [
+        0,
+        4.065,
+        0.855
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "wallSecondary",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "lowerCourseRight",
+      "size": [
+        0.035,
+        8.04,
+        1.15
+      ],
+      "position": [
+        6.065,
+        0,
+        0.855
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "wallSecondary",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "lowerCourseLeft",
+      "size": [
+        0.035,
+        8.04,
+        1.15
+      ],
+      "position": [
+        -6.065,
+        0,
+        0.855
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "wallSecondary",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "frontPavilion_walls",
+      "size": [
+        4.2,
+        1.5,
+        2.45
+      ],
+      "position": [
+        0.2770016428828239,
+        -4.53,
+        1.5050000000000001
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "wallSecondary",
+      "tags": [
+        "structural",
+        "v11-wing"
+      ]
+    },
+    {
+      "kind": "mesh",
+      "name": "frontPavilion_roof",
+      "vertices": [
+        [
+          -2.24,
+          -0.89,
+          2.7100000000000004
+        ],
+        [
+          2.24,
+          -0.89,
+          2.7100000000000004
+        ],
+        [
+          -2.24,
+          0.89,
+          2.7100000000000004
+        ],
+        [
+          2.24,
+          0.89,
+          2.7100000000000004
+        ],
+        [
+          -2.24,
+          0,
+          3.244765950934529
+        ],
+        [
+          2.24,
+          0,
+          3.244765950934529
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          5
+        ],
+        [
+          0,
+          5,
+          4
+        ],
+        [
+          2,
+          4,
+          5
+        ],
+        [
+          2,
+          5,
+          3
+        ],
+        [
+          0,
+          4,
+          2
+        ],
+        [
+          1,
+          3,
+          5
+        ]
+      ],
+      "position": [
+        0.2770016428828239,
+        -4.53,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "roofDark",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "balconyDeck",
+      "size": [
+        2.7,
+        0.75,
+        0.12
+      ],
+      "position": [
+        0.48355973996222024,
+        -4.430000000000001,
+        2.8700000000000006
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "balconyRail",
+      "size": [
+        2.7,
+        0.08,
+        0.1
+      ],
+      "position": [
+        0.48355973996222024,
+        -4.79,
+        3.5900000000000007
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "balconyPost_-0.79",
+      "size": [
+        0.1,
+        0.1,
+        0.78
+      ],
+      "position": [
+        -0.7864402600377799,
+        -4.7700000000000005,
+        3.2300000000000004
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "balconyPost_1.75",
+      "size": [
+        0.1,
+        0.1,
+        0.78
+      ],
+      "position": [
+        1.7535597399622203,
+        -4.7700000000000005,
+        3.2300000000000004
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "dormer_0_body",
+      "size": [
+        1.15,
+        0.62,
+        1
+      ],
+      "position": [
+        -0.95,
+        -1.36,
+        8.270000000000001
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "wall",
+      "tags": []
+    },
+    {
+      "kind": "mesh",
+      "name": "dormer_0_roof",
+      "vertices": [
+        [
+          -0.68,
+          -0.44,
+          8.730000000000002
+        ],
+        [
+          0.68,
+          -0.44,
+          8.730000000000002
+        ],
+        [
+          -0.68,
+          0.44,
+          8.730000000000002
+        ],
+        [
+          0.68,
+          0.44,
+          8.730000000000002
+        ],
+        [
+          -0.68,
+          0,
+          9.073765675662958
+        ],
+        [
+          0.68,
+          0,
+          9.073765675662958
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          5
+        ],
+        [
+          0,
+          5,
+          4
+        ],
+        [
+          2,
+          4,
+          5
+        ],
+        [
+          2,
+          5,
+          3
+        ],
+        [
+          0,
+          4,
+          2
+        ],
+        [
+          1,
+          3,
+          5
+        ]
+      ],
+      "position": [
+        -0.95,
+        -1.36,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "roofDark",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "dormer_0_window_glass",
+      "size": [
+        0.4712,
+        0.045,
+        0.5828
+      ],
+      "position": [
+        -0.95,
+        -1.695,
+        8.3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "dormer_0_window_v",
+      "size": [
+        0.0465,
+        0.028,
+        0.5327999999999999
+      ],
+      "position": [
+        -0.95,
+        -1.72,
+        8.3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "dormer_0_window_h",
+      "size": [
+        0.4212,
+        0.028,
+        0.0465
+      ],
+      "position": [
+        -0.95,
+        -1.72,
+        8.3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "dormer_0_window_sill",
+      "size": [
+        0.6312,
+        0.1,
+        0.09
+      ],
+      "position": [
+        -0.95,
+        -1.73,
+        7.978600000000001
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "dormer_1_body",
+      "size": [
+        1.15,
+        0.62,
+        1
+      ],
+      "position": [
+        0.95,
+        -1.36,
+        8.270000000000001
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "wall",
+      "tags": []
+    },
+    {
+      "kind": "mesh",
+      "name": "dormer_1_roof",
+      "vertices": [
+        [
+          -0.68,
+          -0.44,
+          8.730000000000002
+        ],
+        [
+          0.68,
+          -0.44,
+          8.730000000000002
+        ],
+        [
+          -0.68,
+          0.44,
+          8.730000000000002
+        ],
+        [
+          0.68,
+          0.44,
+          8.730000000000002
+        ],
+        [
+          -0.68,
+          0,
+          9.073765675662958
+        ],
+        [
+          0.68,
+          0,
+          9.073765675662958
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          5
+        ],
+        [
+          0,
+          5,
+          4
+        ],
+        [
+          2,
+          4,
+          5
+        ],
+        [
+          2,
+          5,
+          3
+        ],
+        [
+          0,
+          4,
+          2
+        ],
+        [
+          1,
+          3,
+          5
+        ]
+      ],
+      "position": [
+        0.95,
+        -1.36,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "roofDark",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "dormer_1_window_glass",
+      "size": [
+        0.4712,
+        0.045,
+        0.5828
+      ],
+      "position": [
+        0.95,
+        -1.695,
+        8.3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "dormer_1_window_v",
+      "size": [
+        0.0465,
+        0.028,
+        0.5327999999999999
+      ],
+      "position": [
+        0.95,
+        -1.72,
+        8.3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "dormer_1_window_h",
+      "size": [
+        0.4212,
+        0.028,
+        0.0465
+      ],
+      "position": [
+        0.95,
+        -1.72,
+        8.3
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "dormer_1_window_sill",
+      "size": [
+        0.6312,
+        0.1,
+        0.09
+      ],
+      "position": [
+        0.95,
+        -1.73,
+        7.978600000000001
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "innSignHeader",
+      "size": [
+        1.45,
+        0.08,
+        0.28
+      ],
+      "position": [
+        -4.08,
+        -4.101999999999999,
+        2.5599999999999996
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "accentWood",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "decorBand",
+      "size": [
+        8.64,
+        0.07,
+        0.11
+      ],
+      "position": [
+        0,
+        -4.075,
+        7.280000000000001
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "guildBannerL_bar",
+      "size": [
+        0.55,
+        0.07,
+        0.07
+      ],
+      "position": [
+        -3.4799999999999995,
+        -4.13,
+        3.05
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "rpgWoodDark",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "guildBannerL_cloth",
+      "size": [
+        0.38,
+        0.035,
+        0.74
+      ],
+      "position": [
+        -3.4799999999999995,
+        -4.155,
+        2.63
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "rpgBanner",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "guildBannerR_bar",
+      "size": [
+        0.55,
+        0.07,
+        0.07
+      ],
+      "position": [
+        3.4799999999999995,
+        -4.13,
+        3.05
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "rpgWoodDark",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "guildBannerR_cloth",
+      "size": [
+        0.38,
+        0.035,
+        0.74
+      ],
+      "position": [
+        3.4799999999999995,
+        -4.155,
+        2.63
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "rpgBanner",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "guildSign",
+      "size": [
+        1.6,
+        0.1,
+        0.54
+      ],
+      "position": [
+        0,
+        -4.2,
+        2.9800000000000004
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "civicStair1",
+      "size": [
+        4.5600000000000005,
+        1.1,
+        0.14
+      ],
+      "position": [
+        0,
+        -4.82,
+        0.07
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "civicStair2",
+      "size": [
+        3.5999999999999996,
+        0.75,
+        0.14
+      ],
+      "position": [
+        0,
+        -5.34,
+        0.14
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "mesh",
+      "name": "civicColumn_0",
+      "vertices": [
+        [
+          0.22,
+          0,
+          -1.35
+        ],
+        [
+          0.17798373876248844,
+          0.1293127555043441,
+          -1.35
+        ],
+        [
+          0.06798373876248844,
+          0.2092324335849338,
+          -1.35
+        ],
+        [
+          -0.06798373876248842,
+          0.2092324335849338,
+          -1.35
+        ],
+        [
+          -0.1779837387624884,
+          0.12931275550434412,
+          -1.35
+        ],
+        [
+          -0.22,
+          2.694222958124177e-17,
+          -1.35
+        ],
+        [
+          -0.17798373876248844,
+          -0.12931275550434407,
+          -1.35
+        ],
+        [
+          -0.06798373876248846,
+          -0.2092324335849338,
+          -1.35
+        ],
+        [
+          0.0679837387624884,
+          -0.2092324335849338,
+          -1.35
+        ],
+        [
+          0.1779837387624884,
+          -0.12931275550434415,
+          -1.35
+        ],
+        [
+          0.22,
+          0,
+          1.35
+        ],
+        [
+          0.17798373876248844,
+          0.1293127555043441,
+          1.35
+        ],
+        [
+          0.06798373876248844,
+          0.2092324335849338,
+          1.35
+        ],
+        [
+          -0.06798373876248842,
+          0.2092324335849338,
+          1.35
+        ],
+        [
+          -0.1779837387624884,
+          0.12931275550434412,
+          1.35
+        ],
+        [
+          -0.22,
+          2.694222958124177e-17,
+          1.35
+        ],
+        [
+          -0.17798373876248844,
+          -0.12931275550434407,
+          1.35
+        ],
+        [
+          -0.06798373876248846,
+          -0.2092324335849338,
+          1.35
+        ],
+        [
+          0.0679837387624884,
+          -0.2092324335849338,
+          1.35
+        ],
+        [
+          0.1779837387624884,
+          -0.12931275550434415,
+          1.35
+        ],
+        [
+          0,
+          0,
+          -1.35
+        ],
+        [
+          0,
+          0,
+          1.35
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          11
+        ],
+        [
+          0,
+          11,
+          10
+        ],
+        [
+          20,
+          1,
+          0
+        ],
+        [
+          21,
+          10,
+          11
+        ],
+        [
+          1,
+          2,
+          12
+        ],
+        [
+          1,
+          12,
+          11
+        ],
+        [
+          20,
+          2,
+          1
+        ],
+        [
+          21,
+          11,
+          12
+        ],
+        [
+          2,
+          3,
+          13
+        ],
+        [
+          2,
+          13,
+          12
+        ],
+        [
+          20,
+          3,
+          2
+        ],
+        [
+          21,
+          12,
+          13
+        ],
+        [
+          3,
+          4,
+          14
+        ],
+        [
+          3,
+          14,
+          13
+        ],
+        [
+          20,
+          4,
+          3
+        ],
+        [
+          21,
+          13,
+          14
+        ],
+        [
+          4,
+          5,
+          15
+        ],
+        [
+          4,
+          15,
+          14
+        ],
+        [
+          20,
+          5,
+          4
+        ],
+        [
+          21,
+          14,
+          15
+        ],
+        [
+          5,
+          6,
+          16
+        ],
+        [
+          5,
+          16,
+          15
+        ],
+        [
+          20,
+          6,
+          5
+        ],
+        [
+          21,
+          15,
+          16
+        ],
+        [
+          6,
+          7,
+          17
+        ],
+        [
+          6,
+          17,
+          16
+        ],
+        [
+          20,
+          7,
+          6
+        ],
+        [
+          21,
+          16,
+          17
+        ],
+        [
+          7,
+          8,
+          18
+        ],
+        [
+          7,
+          18,
+          17
+        ],
+        [
+          20,
+          8,
+          7
+        ],
+        [
+          21,
+          17,
+          18
+        ],
+        [
+          8,
+          9,
+          19
+        ],
+        [
+          8,
+          19,
+          18
+        ],
+        [
+          20,
+          9,
+          8
+        ],
+        [
+          21,
+          18,
+          19
+        ],
+        [
+          9,
+          0,
+          10
+        ],
+        [
+          9,
+          10,
+          19
+        ],
+        [
+          20,
+          0,
+          9
+        ],
+        [
+          21,
+          19,
+          10
+        ]
+      ],
+      "position": [
+        -2.88,
+        -4.64,
+        1.6300000000000001
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "civicColumn_cap_0",
+      "size": [
+        0.55,
+        0.55,
+        0.14
+      ],
+      "position": [
+        -2.88,
+        -4.64,
+        3.0300000000000002
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "mesh",
+      "name": "civicColumn_1",
+      "vertices": [
+        [
+          0.22,
+          0,
+          -1.35
+        ],
+        [
+          0.17798373876248844,
+          0.1293127555043441,
+          -1.35
+        ],
+        [
+          0.06798373876248844,
+          0.2092324335849338,
+          -1.35
+        ],
+        [
+          -0.06798373876248842,
+          0.2092324335849338,
+          -1.35
+        ],
+        [
+          -0.1779837387624884,
+          0.12931275550434412,
+          -1.35
+        ],
+        [
+          -0.22,
+          2.694222958124177e-17,
+          -1.35
+        ],
+        [
+          -0.17798373876248844,
+          -0.12931275550434407,
+          -1.35
+        ],
+        [
+          -0.06798373876248846,
+          -0.2092324335849338,
+          -1.35
+        ],
+        [
+          0.0679837387624884,
+          -0.2092324335849338,
+          -1.35
+        ],
+        [
+          0.1779837387624884,
+          -0.12931275550434415,
+          -1.35
+        ],
+        [
+          0.22,
+          0,
+          1.35
+        ],
+        [
+          0.17798373876248844,
+          0.1293127555043441,
+          1.35
+        ],
+        [
+          0.06798373876248844,
+          0.2092324335849338,
+          1.35
+        ],
+        [
+          -0.06798373876248842,
+          0.2092324335849338,
+          1.35
+        ],
+        [
+          -0.1779837387624884,
+          0.12931275550434412,
+          1.35
+        ],
+        [
+          -0.22,
+          2.694222958124177e-17,
+          1.35
+        ],
+        [
+          -0.17798373876248844,
+          -0.12931275550434407,
+          1.35
+        ],
+        [
+          -0.06798373876248846,
+          -0.2092324335849338,
+          1.35
+        ],
+        [
+          0.0679837387624884,
+          -0.2092324335849338,
+          1.35
+        ],
+        [
+          0.1779837387624884,
+          -0.12931275550434415,
+          1.35
+        ],
+        [
+          0,
+          0,
+          -1.35
+        ],
+        [
+          0,
+          0,
+          1.35
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          11
+        ],
+        [
+          0,
+          11,
+          10
+        ],
+        [
+          20,
+          1,
+          0
+        ],
+        [
+          21,
+          10,
+          11
+        ],
+        [
+          1,
+          2,
+          12
+        ],
+        [
+          1,
+          12,
+          11
+        ],
+        [
+          20,
+          2,
+          1
+        ],
+        [
+          21,
+          11,
+          12
+        ],
+        [
+          2,
+          3,
+          13
+        ],
+        [
+          2,
+          13,
+          12
+        ],
+        [
+          20,
+          3,
+          2
+        ],
+        [
+          21,
+          12,
+          13
+        ],
+        [
+          3,
+          4,
+          14
+        ],
+        [
+          3,
+          14,
+          13
+        ],
+        [
+          20,
+          4,
+          3
+        ],
+        [
+          21,
+          13,
+          14
+        ],
+        [
+          4,
+          5,
+          15
+        ],
+        [
+          4,
+          15,
+          14
+        ],
+        [
+          20,
+          5,
+          4
+        ],
+        [
+          21,
+          14,
+          15
+        ],
+        [
+          5,
+          6,
+          16
+        ],
+        [
+          5,
+          16,
+          15
+        ],
+        [
+          20,
+          6,
+          5
+        ],
+        [
+          21,
+          15,
+          16
+        ],
+        [
+          6,
+          7,
+          17
+        ],
+        [
+          6,
+          17,
+          16
+        ],
+        [
+          20,
+          7,
+          6
+        ],
+        [
+          21,
+          16,
+          17
+        ],
+        [
+          7,
+          8,
+          18
+        ],
+        [
+          7,
+          18,
+          17
+        ],
+        [
+          20,
+          8,
+          7
+        ],
+        [
+          21,
+          17,
+          18
+        ],
+        [
+          8,
+          9,
+          19
+        ],
+        [
+          8,
+          19,
+          18
+        ],
+        [
+          20,
+          9,
+          8
+        ],
+        [
+          21,
+          18,
+          19
+        ],
+        [
+          9,
+          0,
+          10
+        ],
+        [
+          9,
+          10,
+          19
+        ],
+        [
+          20,
+          0,
+          9
+        ],
+        [
+          21,
+          19,
+          10
+        ]
+      ],
+      "position": [
+        -1.728,
+        -4.64,
+        1.6300000000000001
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "civicColumn_cap_1",
+      "size": [
+        0.55,
+        0.55,
+        0.14
+      ],
+      "position": [
+        -1.728,
+        -4.64,
+        3.0300000000000002
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "mesh",
+      "name": "civicColumn_2",
+      "vertices": [
+        [
+          0.22,
+          0,
+          -1.35
+        ],
+        [
+          0.17798373876248844,
+          0.1293127555043441,
+          -1.35
+        ],
+        [
+          0.06798373876248844,
+          0.2092324335849338,
+          -1.35
+        ],
+        [
+          -0.06798373876248842,
+          0.2092324335849338,
+          -1.35
+        ],
+        [
+          -0.1779837387624884,
+          0.12931275550434412,
+          -1.35
+        ],
+        [
+          -0.22,
+          2.694222958124177e-17,
+          -1.35
+        ],
+        [
+          -0.17798373876248844,
+          -0.12931275550434407,
+          -1.35
+        ],
+        [
+          -0.06798373876248846,
+          -0.2092324335849338,
+          -1.35
+        ],
+        [
+          0.0679837387624884,
+          -0.2092324335849338,
+          -1.35
+        ],
+        [
+          0.1779837387624884,
+          -0.12931275550434415,
+          -1.35
+        ],
+        [
+          0.22,
+          0,
+          1.35
+        ],
+        [
+          0.17798373876248844,
+          0.1293127555043441,
+          1.35
+        ],
+        [
+          0.06798373876248844,
+          0.2092324335849338,
+          1.35
+        ],
+        [
+          -0.06798373876248842,
+          0.2092324335849338,
+          1.35
+        ],
+        [
+          -0.1779837387624884,
+          0.12931275550434412,
+          1.35
+        ],
+        [
+          -0.22,
+          2.694222958124177e-17,
+          1.35
+        ],
+        [
+          -0.17798373876248844,
+          -0.12931275550434407,
+          1.35
+        ],
+        [
+          -0.06798373876248846,
+          -0.2092324335849338,
+          1.35
+        ],
+        [
+          0.0679837387624884,
+          -0.2092324335849338,
+          1.35
+        ],
+        [
+          0.1779837387624884,
+          -0.12931275550434415,
+          1.35
+        ],
+        [
+          0,
+          0,
+          -1.35
+        ],
+        [
+          0,
+          0,
+          1.35
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          11
+        ],
+        [
+          0,
+          11,
+          10
+        ],
+        [
+          20,
+          1,
+          0
+        ],
+        [
+          21,
+          10,
+          11
+        ],
+        [
+          1,
+          2,
+          12
+        ],
+        [
+          1,
+          12,
+          11
+        ],
+        [
+          20,
+          2,
+          1
+        ],
+        [
+          21,
+          11,
+          12
+        ],
+        [
+          2,
+          3,
+          13
+        ],
+        [
+          2,
+          13,
+          12
+        ],
+        [
+          20,
+          3,
+          2
+        ],
+        [
+          21,
+          12,
+          13
+        ],
+        [
+          3,
+          4,
+          14
+        ],
+        [
+          3,
+          14,
+          13
+        ],
+        [
+          20,
+          4,
+          3
+        ],
+        [
+          21,
+          13,
+          14
+        ],
+        [
+          4,
+          5,
+          15
+        ],
+        [
+          4,
+          15,
+          14
+        ],
+        [
+          20,
+          5,
+          4
+        ],
+        [
+          21,
+          14,
+          15
+        ],
+        [
+          5,
+          6,
+          16
+        ],
+        [
+          5,
+          16,
+          15
+        ],
+        [
+          20,
+          6,
+          5
+        ],
+        [
+          21,
+          15,
+          16
+        ],
+        [
+          6,
+          7,
+          17
+        ],
+        [
+          6,
+          17,
+          16
+        ],
+        [
+          20,
+          7,
+          6
+        ],
+        [
+          21,
+          16,
+          17
+        ],
+        [
+          7,
+          8,
+          18
+        ],
+        [
+          7,
+          18,
+          17
+        ],
+        [
+          20,
+          8,
+          7
+        ],
+        [
+          21,
+          17,
+          18
+        ],
+        [
+          8,
+          9,
+          19
+        ],
+        [
+          8,
+          19,
+          18
+        ],
+        [
+          20,
+          9,
+          8
+        ],
+        [
+          21,
+          18,
+          19
+        ],
+        [
+          9,
+          0,
+          10
+        ],
+        [
+          9,
+          10,
+          19
+        ],
+        [
+          20,
+          0,
+          9
+        ],
+        [
+          21,
+          19,
+          10
+        ]
+      ],
+      "position": [
+        -0.5760000000000001,
+        -4.64,
+        1.6300000000000001
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "civicColumn_cap_2",
+      "size": [
+        0.55,
+        0.55,
+        0.14
+      ],
+      "position": [
+        -0.5760000000000001,
+        -4.64,
+        3.0300000000000002
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "mesh",
+      "name": "civicColumn_3",
+      "vertices": [
+        [
+          0.22,
+          0,
+          -1.35
+        ],
+        [
+          0.17798373876248844,
+          0.1293127555043441,
+          -1.35
+        ],
+        [
+          0.06798373876248844,
+          0.2092324335849338,
+          -1.35
+        ],
+        [
+          -0.06798373876248842,
+          0.2092324335849338,
+          -1.35
+        ],
+        [
+          -0.1779837387624884,
+          0.12931275550434412,
+          -1.35
+        ],
+        [
+          -0.22,
+          2.694222958124177e-17,
+          -1.35
+        ],
+        [
+          -0.17798373876248844,
+          -0.12931275550434407,
+          -1.35
+        ],
+        [
+          -0.06798373876248846,
+          -0.2092324335849338,
+          -1.35
+        ],
+        [
+          0.0679837387624884,
+          -0.2092324335849338,
+          -1.35
+        ],
+        [
+          0.1779837387624884,
+          -0.12931275550434415,
+          -1.35
+        ],
+        [
+          0.22,
+          0,
+          1.35
+        ],
+        [
+          0.17798373876248844,
+          0.1293127555043441,
+          1.35
+        ],
+        [
+          0.06798373876248844,
+          0.2092324335849338,
+          1.35
+        ],
+        [
+          -0.06798373876248842,
+          0.2092324335849338,
+          1.35
+        ],
+        [
+          -0.1779837387624884,
+          0.12931275550434412,
+          1.35
+        ],
+        [
+          -0.22,
+          2.694222958124177e-17,
+          1.35
+        ],
+        [
+          -0.17798373876248844,
+          -0.12931275550434407,
+          1.35
+        ],
+        [
+          -0.06798373876248846,
+          -0.2092324335849338,
+          1.35
+        ],
+        [
+          0.0679837387624884,
+          -0.2092324335849338,
+          1.35
+        ],
+        [
+          0.1779837387624884,
+          -0.12931275550434415,
+          1.35
+        ],
+        [
+          0,
+          0,
+          -1.35
+        ],
+        [
+          0,
+          0,
+          1.35
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          11
+        ],
+        [
+          0,
+          11,
+          10
+        ],
+        [
+          20,
+          1,
+          0
+        ],
+        [
+          21,
+          10,
+          11
+        ],
+        [
+          1,
+          2,
+          12
+        ],
+        [
+          1,
+          12,
+          11
+        ],
+        [
+          20,
+          2,
+          1
+        ],
+        [
+          21,
+          11,
+          12
+        ],
+        [
+          2,
+          3,
+          13
+        ],
+        [
+          2,
+          13,
+          12
+        ],
+        [
+          20,
+          3,
+          2
+        ],
+        [
+          21,
+          12,
+          13
+        ],
+        [
+          3,
+          4,
+          14
+        ],
+        [
+          3,
+          14,
+          13
+        ],
+        [
+          20,
+          4,
+          3
+        ],
+        [
+          21,
+          13,
+          14
+        ],
+        [
+          4,
+          5,
+          15
+        ],
+        [
+          4,
+          15,
+          14
+        ],
+        [
+          20,
+          5,
+          4
+        ],
+        [
+          21,
+          14,
+          15
+        ],
+        [
+          5,
+          6,
+          16
+        ],
+        [
+          5,
+          16,
+          15
+        ],
+        [
+          20,
+          6,
+          5
+        ],
+        [
+          21,
+          15,
+          16
+        ],
+        [
+          6,
+          7,
+          17
+        ],
+        [
+          6,
+          17,
+          16
+        ],
+        [
+          20,
+          7,
+          6
+        ],
+        [
+          21,
+          16,
+          17
+        ],
+        [
+          7,
+          8,
+          18
+        ],
+        [
+          7,
+          18,
+          17
+        ],
+        [
+          20,
+          8,
+          7
+        ],
+        [
+          21,
+          17,
+          18
+        ],
+        [
+          8,
+          9,
+          19
+        ],
+        [
+          8,
+          19,
+          18
+        ],
+        [
+          20,
+          9,
+          8
+        ],
+        [
+          21,
+          18,
+          19
+        ],
+        [
+          9,
+          0,
+          10
+        ],
+        [
+          9,
+          10,
+          19
+        ],
+        [
+          20,
+          0,
+          9
+        ],
+        [
+          21,
+          19,
+          10
+        ]
+      ],
+      "position": [
+        0.5760000000000005,
+        -4.64,
+        1.6300000000000001
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "civicColumn_cap_3",
+      "size": [
+        0.55,
+        0.55,
+        0.14
+      ],
+      "position": [
+        0.5760000000000005,
+        -4.64,
+        3.0300000000000002
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "mesh",
+      "name": "civicColumn_4",
+      "vertices": [
+        [
+          0.22,
+          0,
+          -1.35
+        ],
+        [
+          0.17798373876248844,
+          0.1293127555043441,
+          -1.35
+        ],
+        [
+          0.06798373876248844,
+          0.2092324335849338,
+          -1.35
+        ],
+        [
+          -0.06798373876248842,
+          0.2092324335849338,
+          -1.35
+        ],
+        [
+          -0.1779837387624884,
+          0.12931275550434412,
+          -1.35
+        ],
+        [
+          -0.22,
+          2.694222958124177e-17,
+          -1.35
+        ],
+        [
+          -0.17798373876248844,
+          -0.12931275550434407,
+          -1.35
+        ],
+        [
+          -0.06798373876248846,
+          -0.2092324335849338,
+          -1.35
+        ],
+        [
+          0.0679837387624884,
+          -0.2092324335849338,
+          -1.35
+        ],
+        [
+          0.1779837387624884,
+          -0.12931275550434415,
+          -1.35
+        ],
+        [
+          0.22,
+          0,
+          1.35
+        ],
+        [
+          0.17798373876248844,
+          0.1293127555043441,
+          1.35
+        ],
+        [
+          0.06798373876248844,
+          0.2092324335849338,
+          1.35
+        ],
+        [
+          -0.06798373876248842,
+          0.2092324335849338,
+          1.35
+        ],
+        [
+          -0.1779837387624884,
+          0.12931275550434412,
+          1.35
+        ],
+        [
+          -0.22,
+          2.694222958124177e-17,
+          1.35
+        ],
+        [
+          -0.17798373876248844,
+          -0.12931275550434407,
+          1.35
+        ],
+        [
+          -0.06798373876248846,
+          -0.2092324335849338,
+          1.35
+        ],
+        [
+          0.0679837387624884,
+          -0.2092324335849338,
+          1.35
+        ],
+        [
+          0.1779837387624884,
+          -0.12931275550434415,
+          1.35
+        ],
+        [
+          0,
+          0,
+          -1.35
+        ],
+        [
+          0,
+          0,
+          1.35
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          11
+        ],
+        [
+          0,
+          11,
+          10
+        ],
+        [
+          20,
+          1,
+          0
+        ],
+        [
+          21,
+          10,
+          11
+        ],
+        [
+          1,
+          2,
+          12
+        ],
+        [
+          1,
+          12,
+          11
+        ],
+        [
+          20,
+          2,
+          1
+        ],
+        [
+          21,
+          11,
+          12
+        ],
+        [
+          2,
+          3,
+          13
+        ],
+        [
+          2,
+          13,
+          12
+        ],
+        [
+          20,
+          3,
+          2
+        ],
+        [
+          21,
+          12,
+          13
+        ],
+        [
+          3,
+          4,
+          14
+        ],
+        [
+          3,
+          14,
+          13
+        ],
+        [
+          20,
+          4,
+          3
+        ],
+        [
+          21,
+          13,
+          14
+        ],
+        [
+          4,
+          5,
+          15
+        ],
+        [
+          4,
+          15,
+          14
+        ],
+        [
+          20,
+          5,
+          4
+        ],
+        [
+          21,
+          14,
+          15
+        ],
+        [
+          5,
+          6,
+          16
+        ],
+        [
+          5,
+          16,
+          15
+        ],
+        [
+          20,
+          6,
+          5
+        ],
+        [
+          21,
+          15,
+          16
+        ],
+        [
+          6,
+          7,
+          17
+        ],
+        [
+          6,
+          17,
+          16
+        ],
+        [
+          20,
+          7,
+          6
+        ],
+        [
+          21,
+          16,
+          17
+        ],
+        [
+          7,
+          8,
+          18
+        ],
+        [
+          7,
+          18,
+          17
+        ],
+        [
+          20,
+          8,
+          7
+        ],
+        [
+          21,
+          17,
+          18
+        ],
+        [
+          8,
+          9,
+          19
+        ],
+        [
+          8,
+          19,
+          18
+        ],
+        [
+          20,
+          9,
+          8
+        ],
+        [
+          21,
+          18,
+          19
+        ],
+        [
+          9,
+          0,
+          10
+        ],
+        [
+          9,
+          10,
+          19
+        ],
+        [
+          20,
+          0,
+          9
+        ],
+        [
+          21,
+          19,
+          10
+        ]
+      ],
+      "position": [
+        1.7279999999999998,
+        -4.64,
+        1.6300000000000001
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "civicColumn_cap_4",
+      "size": [
+        0.55,
+        0.55,
+        0.14
+      ],
+      "position": [
+        1.7279999999999998,
+        -4.64,
+        3.0300000000000002
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "mesh",
+      "name": "civicColumn_5",
+      "vertices": [
+        [
+          0.22,
+          0,
+          -1.35
+        ],
+        [
+          0.17798373876248844,
+          0.1293127555043441,
+          -1.35
+        ],
+        [
+          0.06798373876248844,
+          0.2092324335849338,
+          -1.35
+        ],
+        [
+          -0.06798373876248842,
+          0.2092324335849338,
+          -1.35
+        ],
+        [
+          -0.1779837387624884,
+          0.12931275550434412,
+          -1.35
+        ],
+        [
+          -0.22,
+          2.694222958124177e-17,
+          -1.35
+        ],
+        [
+          -0.17798373876248844,
+          -0.12931275550434407,
+          -1.35
+        ],
+        [
+          -0.06798373876248846,
+          -0.2092324335849338,
+          -1.35
+        ],
+        [
+          0.0679837387624884,
+          -0.2092324335849338,
+          -1.35
+        ],
+        [
+          0.1779837387624884,
+          -0.12931275550434415,
+          -1.35
+        ],
+        [
+          0.22,
+          0,
+          1.35
+        ],
+        [
+          0.17798373876248844,
+          0.1293127555043441,
+          1.35
+        ],
+        [
+          0.06798373876248844,
+          0.2092324335849338,
+          1.35
+        ],
+        [
+          -0.06798373876248842,
+          0.2092324335849338,
+          1.35
+        ],
+        [
+          -0.1779837387624884,
+          0.12931275550434412,
+          1.35
+        ],
+        [
+          -0.22,
+          2.694222958124177e-17,
+          1.35
+        ],
+        [
+          -0.17798373876248844,
+          -0.12931275550434407,
+          1.35
+        ],
+        [
+          -0.06798373876248846,
+          -0.2092324335849338,
+          1.35
+        ],
+        [
+          0.0679837387624884,
+          -0.2092324335849338,
+          1.35
+        ],
+        [
+          0.1779837387624884,
+          -0.12931275550434415,
+          1.35
+        ],
+        [
+          0,
+          0,
+          -1.35
+        ],
+        [
+          0,
+          0,
+          1.35
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          11
+        ],
+        [
+          0,
+          11,
+          10
+        ],
+        [
+          20,
+          1,
+          0
+        ],
+        [
+          21,
+          10,
+          11
+        ],
+        [
+          1,
+          2,
+          12
+        ],
+        [
+          1,
+          12,
+          11
+        ],
+        [
+          20,
+          2,
+          1
+        ],
+        [
+          21,
+          11,
+          12
+        ],
+        [
+          2,
+          3,
+          13
+        ],
+        [
+          2,
+          13,
+          12
+        ],
+        [
+          20,
+          3,
+          2
+        ],
+        [
+          21,
+          12,
+          13
+        ],
+        [
+          3,
+          4,
+          14
+        ],
+        [
+          3,
+          14,
+          13
+        ],
+        [
+          20,
+          4,
+          3
+        ],
+        [
+          21,
+          13,
+          14
+        ],
+        [
+          4,
+          5,
+          15
+        ],
+        [
+          4,
+          15,
+          14
+        ],
+        [
+          20,
+          5,
+          4
+        ],
+        [
+          21,
+          14,
+          15
+        ],
+        [
+          5,
+          6,
+          16
+        ],
+        [
+          5,
+          16,
+          15
+        ],
+        [
+          20,
+          6,
+          5
+        ],
+        [
+          21,
+          15,
+          16
+        ],
+        [
+          6,
+          7,
+          17
+        ],
+        [
+          6,
+          17,
+          16
+        ],
+        [
+          20,
+          7,
+          6
+        ],
+        [
+          21,
+          16,
+          17
+        ],
+        [
+          7,
+          8,
+          18
+        ],
+        [
+          7,
+          18,
+          17
+        ],
+        [
+          20,
+          8,
+          7
+        ],
+        [
+          21,
+          17,
+          18
+        ],
+        [
+          8,
+          9,
+          19
+        ],
+        [
+          8,
+          19,
+          18
+        ],
+        [
+          20,
+          9,
+          8
+        ],
+        [
+          21,
+          18,
+          19
+        ],
+        [
+          9,
+          0,
+          10
+        ],
+        [
+          9,
+          10,
+          19
+        ],
+        [
+          20,
+          0,
+          9
+        ],
+        [
+          21,
+          19,
+          10
+        ]
+      ],
+      "position": [
+        2.88,
+        -4.64,
+        1.6300000000000001
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "civicColumn_cap_5",
+      "size": [
+        0.55,
+        0.55,
+        0.14
+      ],
+      "position": [
+        2.88,
+        -4.64,
+        3.0300000000000002
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "civicPortico",
+      "size": [
+        6.959999999999999,
+        1.55,
+        0.28
+      ],
+      "position": [
+        0,
+        -4.5,
+        3.06
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "mesh",
+      "name": "civicPediment",
+      "vertices": [
+        [
+          -3.7199999999999998,
+          -0.75,
+          3.2
+        ],
+        [
+          3.7199999999999998,
+          -0.75,
+          3.2
+        ],
+        [
+          3.7199999999999998,
+          0.75,
+          3.2
+        ],
+        [
+          -3.7199999999999998,
+          0.75,
+          3.2
+        ],
+        [
+          0,
+          0,
+          4
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          4
+        ],
+        [
+          1,
+          2,
+          4
+        ],
+        [
+          2,
+          3,
+          4
+        ],
+        [
+          3,
+          0,
+          4
+        ],
+        [
+          0,
+          3,
+          2
+        ],
+        [
+          0,
+          2,
+          1
+        ]
+      ],
+      "position": [
+        0,
+        -4.48,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicRoof",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "clockTower",
+      "size": [
+        2.85,
+        2.55,
+        4.4
+      ],
+      "position": [
+        0,
+        -0.96,
+        9.48
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicStone",
+      "tags": []
+    },
+    {
+      "kind": "mesh",
+      "name": "clockRoof",
+      "vertices": [
+        [
+          -1.575,
+          -1.425,
+          11.65
+        ],
+        [
+          1.575,
+          -1.425,
+          11.65
+        ],
+        [
+          1.575,
+          1.425,
+          11.65
+        ],
+        [
+          -1.575,
+          1.425,
+          11.65
+        ],
+        [
+          0,
+          0,
+          12.950000000000001
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          4
+        ],
+        [
+          1,
+          2,
+          4
+        ],
+        [
+          2,
+          3,
+          4
+        ],
+        [
+          3,
+          0,
+          4
+        ],
+        [
+          0,
+          3,
+          2
+        ],
+        [
+          0,
+          2,
+          1
+        ]
+      ],
+      "position": [
+        0,
+        -0.96,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "civicRoof",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "clockFace",
+      "size": [
+        0.9,
+        0.05,
+        0.9
+      ],
+      "position": [
+        0,
+        -2.26,
+        10.18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "templeStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "clockHandV",
+      "size": [
+        0.05,
+        0.03,
+        0.56
+      ],
+      "position": [
+        0,
+        -2.3,
+        10.18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "sewerDark",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "clockHandH",
+      "size": [
+        0.46,
+        0.03,
+        0.05
+      ],
+      "position": [
+        0.16,
+        -2.3,
+        10.18
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "sewerDark",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "civicBanner_-3.3600000000000003",
+      "size": [
+        0.5,
+        0.04,
+        1.4
+      ],
+      "position": [
+        -3.3600000000000003,
+        -4.08,
+        3.75
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "bannerRed",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "civicBanner_3.3600000000000003",
+      "size": [
+        0.5,
+        0.04,
+        1.4
+      ],
+      "position": [
+        3.3600000000000003,
+        -4.08,
+        3.75
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "bannerRed",
+      "tags": []
+    }
+  ],
+  "metadata": {
+    "resolvedMaterial": "stone",
+    "effectiveRecipe": {
+      "schema": "worldforge.recipe.v1",
+      "generatorVersion": "0.6.0",
+      "engineVersion": "1.0.0",
+      "type": "building",
+      "seed": 7313,
+      "family": "inn",
+      "style": "fortifiedStone",
+      "material": "stone",
+      "condition": "clean",
+      "width": 12,
+      "depth": 8,
+      "floors": 3,
+      "roof": "hip",
+      "pitch": 44,
+      "features": {
+        "chimney": true,
+        "porch": true,
+        "sign": true,
+        "extension": true
+      }
+    },
+    "recipeWarnings": [],
+    "buildingEngine": "1.3.0",
+    "templateResolved": "civicHall",
+    "facadeResolved": "symmetric",
+    "wealth": "prosperous",
+    "age": "mature",
+    "construction": "auto",
+    "rpgPack": "RPG Architecture II",
+    "archetype": "townHall",
+    "baseFamily": "inn"
+  },
+  "validation": {
+    "errors": [],
+    "warnings": [],
+    "stats": {
+      "nodeCount": 387,
+      "materialCount": 50,
+      "approxVertexCount": 3162,
+      "approxTriangleCount": 4764
+    }
+  },
+  "asset": {
+    "schema": "worldforge.asset.v1",
+    "worldforgeVersion": "0.6.0",
+    "engine": {
+      "name": "building",
+      "version": "1.3.0"
+    },
+    "id": "building-7313",
+    "assetType": "building",
+    "seed": 7313,
+    "anchor": {
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "pivot": "ground-center"
+    },
+    "facing": "south",
+    "footprint": {
+      "shape": "box",
+      "width": 15.265469906888903,
+      "depth": 10.445
+    },
+    "bounds": {
+      "min": [
+        -7.17,
+        -5.715,
+        0
+      ],
+      "max": [
+        8.095469906888903,
+        4.7299999999999995,
+        12.950000000000001
+      ],
+      "size": [
+        15.265469906888903,
+        10.445,
+        12.950000000000001
+      ]
+    },
+    "collision": {
+      "enabled": true,
+      "shape": "footprint"
+    },
+    "occlusion": {
+      "enabled": true
+    },
+    "tags": [
+      "building",
+      "townHall"
+    ]
+  }
+}

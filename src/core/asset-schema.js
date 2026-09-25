@@ -27,7 +27,10 @@ export function computeBounds(spec){
 
 function footprintFor(spec,bounds){
   const r=spec.recipe;
-  if(r.type==='building') return {shape:'box',width:r.width,depth:r.depth};
+  if(r.type==='building') {
+    if(r.engineVersion!=='1.0.0') return {shape:'box',width:Math.max(r.width,bounds.size[0]),depth:Math.max(r.depth,bounds.size[1])};
+    return {shape:'box',width:r.width,depth:r.depth};
+  }
   if(r.type==='terrain'||r.type==='landscape') return {shape:'box',width:r.size,depth:r.size};
   return {shape:'box',width:Math.max(.1,bounds.size[0]),depth:Math.max(.1,bounds.size[1])};
 }

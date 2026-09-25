@@ -1,0 +1,779 @@
+{
+  "schema": "worldforge.scene.v1",
+  "generatorVersion": "0.6.0",
+  "recipe": {
+    "schema": "worldforge.recipe.v1",
+    "generatorVersion": "0.6.0",
+    "engineVersion": "1.3.0",
+    "type": "building",
+    "seed": 6909,
+    "family": "desertMarket",
+    "style": "desertTown",
+    "material": "auto",
+    "condition": "worn",
+    "width": 9,
+    "depth": 6,
+    "floors": 2,
+    "roof": "flat",
+    "pitch": 44,
+    "features": {
+      "chimney": true,
+      "porch": true,
+      "sign": true,
+      "extension": true
+    },
+    "template": "desertBazaar",
+    "facade": "auto",
+    "wealth": "modest",
+    "age": "mature",
+    "construction": "auto"
+  },
+  "materials": {
+    "wall": {
+      "id": "wall",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#c49a6c"
+    },
+    "wallDark": {
+      "id": "wallDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#9e7759"
+    },
+    "timber": {
+      "id": "timber",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#684633"
+    },
+    "trim": {
+      "id": "trim",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#8a5d3d"
+    },
+    "roof": {
+      "id": "roof",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#a67d59"
+    },
+    "roofDark": {
+      "id": "roofDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#6e302f"
+    },
+    "stone": {
+      "id": "stone",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#777d83"
+    },
+    "stoneLight": {
+      "id": "stoneLight",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#a7adb5"
+    },
+    "glass": {
+      "id": "glass",
+      "roughness": 0.2,
+      "metalness": 0.05,
+      "flatShading": true,
+      "color": "#4a7896"
+    },
+    "board": {
+      "id": "board",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#705036"
+    },
+    "deadGreen": {
+      "id": "deadGreen",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#667052"
+    },
+    "rust": {
+      "id": "rust",
+      "roughness": 0.95,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#784c3a"
+    },
+    "dark": {
+      "id": "dark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#35393b"
+    },
+    "waterWood": {
+      "id": "waterWood",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#5e412f"
+    },
+    "wetWood": {
+      "id": "wetWood",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#44352d"
+    },
+    "waterBlue": {
+      "id": "waterBlue",
+      "roughness": 0.25,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#4e7580"
+    },
+    "sailCloth": {
+      "id": "sailCloth",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#d8d0b8"
+    },
+    "dockRope": {
+      "id": "dockRope",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#8a7353"
+    },
+    "templeStone": {
+      "id": "templeStone",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#c5bfae"
+    },
+    "templeDark": {
+      "id": "templeDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#817d75"
+    },
+    "arcaneStone": {
+      "id": "arcaneStone",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#5f5b78"
+    },
+    "arcaneGlow": {
+      "id": "arcaneGlow",
+      "roughness": 0.15,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#70a8c8"
+    },
+    "ruinStone": {
+      "id": "ruinStone",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#77766e"
+    },
+    "ruinDark": {
+      "id": "ruinDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#51524e"
+    },
+    "desertWall": {
+      "id": "desertWall",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#c49a6c"
+    },
+    "desertDark": {
+      "id": "desertDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#8f684c"
+    },
+    "desertCloth": {
+      "id": "desertCloth",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#a74c3b"
+    },
+    "mineTimber": {
+      "id": "mineTimber",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#50372b"
+    },
+    "mineRock": {
+      "id": "mineRock",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#57534f"
+    },
+    "civicStone": {
+      "id": "civicStone",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#a7a9a4"
+    },
+    "civicRoof": {
+      "id": "civicRoof",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#4e5960"
+    },
+    "sewerStone": {
+      "id": "sewerStone",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#626764"
+    },
+    "sewerDark": {
+      "id": "sewerDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#252b29"
+    },
+    "metalGate": {
+      "id": "metalGate",
+      "roughness": 0.85,
+      "metalness": 0.25,
+      "flatShading": true,
+      "color": "#34393c"
+    },
+    "bannerGold": {
+      "id": "bannerGold",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#b08b3e"
+    },
+    "bannerRed": {
+      "id": "bannerRed",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#6b3e35"
+    }
+  },
+  "nodes": [
+    {
+      "kind": "box",
+      "name": "adobeCore",
+      "size": [
+        9,
+        6,
+        4.5
+      ],
+      "position": [
+        0,
+        0,
+        2.25
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "wall",
+      "tags": [
+        "structural",
+        "desert"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "flatRoof",
+      "size": [
+        9.28,
+        6.28,
+        0.22
+      ],
+      "position": [
+        0,
+        0,
+        4.61
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "desertDark",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "parapetFront",
+      "size": [
+        9.25,
+        0.22,
+        0.55
+      ],
+      "position": [
+        0,
+        -3.03,
+        4.88
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "desertWall",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "parapetBack",
+      "size": [
+        9.25,
+        0.22,
+        0.55
+      ],
+      "position": [
+        0,
+        3.03,
+        4.88
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "desertWall",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "parapetL",
+      "size": [
+        0.22,
+        6,
+        0.55
+      ],
+      "position": [
+        -4.53,
+        0,
+        4.88
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "desertWall",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "parapetR",
+      "size": [
+        0.22,
+        6,
+        0.55
+      ],
+      "position": [
+        4.53,
+        0,
+        4.88
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "desertWall",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "desertDoor",
+      "size": [
+        0.95,
+        0.08,
+        1.9
+      ],
+      "position": [
+        0,
+        -3.05,
+        0.95
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "wetWood",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "desertWindow_-2.5200000000000005",
+      "size": [
+        0.58,
+        0.05,
+        0.72
+      ],
+      "position": [
+        -2.5200000000000005,
+        -3.05,
+        1.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "desertWindow_2.5200000000000005",
+      "size": [
+        0.58,
+        0.05,
+        0.72
+      ],
+      "position": [
+        2.5200000000000005,
+        -3.05,
+        1.5
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "roofWaterJar",
+      "size": [
+        0.45,
+        0.45,
+        0.55
+      ],
+      "position": [
+        2.25,
+        0.8999999999999999,
+        5.02
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "desertDark",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "weatherBand",
+      "size": [
+        5.22,
+        0.04,
+        0.15
+      ],
+      "position": [
+        0,
+        -3.07,
+        0.24
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "ruinDark",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "bazaarCanopy",
+      "size": [
+        6.12,
+        2.15,
+        0.1
+      ],
+      "position": [
+        0,
+        -4.05,
+        2.25
+      ],
+      "rotation": [
+        0.1,
+        0,
+        0
+      ],
+      "material": "desertCloth",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "bazaarPost_-2.5200000000000005",
+      "size": [
+        0.1,
+        0.1,
+        2.15
+      ],
+      "position": [
+        -2.5200000000000005,
+        -4.72,
+        1.08
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "wetWood",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "bazaarPost_0",
+      "size": [
+        0.1,
+        0.1,
+        2.15
+      ],
+      "position": [
+        0,
+        -4.72,
+        1.08
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "wetWood",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "bazaarPost_2.5200000000000005",
+      "size": [
+        0.1,
+        0.1,
+        2.15
+      ],
+      "position": [
+        2.5200000000000005,
+        -4.72,
+        1.08
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "wetWood",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "marketCounter",
+      "size": [
+        4.86,
+        0.62,
+        0.82
+      ],
+      "position": [
+        0,
+        -3.62,
+        0.41
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "waterWood",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "marketCrate_0",
+      "size": [
+        0.42,
+        0.42,
+        0.34
+      ],
+      "position": [
+        -2.16,
+        -4.32,
+        0.17
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "waterWood",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "marketCrate_1",
+      "size": [
+        0.42,
+        0.42,
+        0.34
+      ],
+      "position": [
+        -0.7200000000000002,
+        -4.32,
+        0.17
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "waterWood",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "marketCrate_2",
+      "size": [
+        0.42,
+        0.42,
+        0.34
+      ],
+      "position": [
+        0.7199999999999998,
+        -4.32,
+        0.17
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "waterWood",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "marketCrate_3",
+      "size": [
+        0.42,
+        0.42,
+        0.34
+      ],
+      "position": [
+        2.16,
+        -4.32,
+        0.17
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "waterWood",
+      "tags": []
+    }
+  ],
+  "metadata": {
+    "buildingEngine": "1.3.0",
+    "rpgPack": "RPG Architecture II",
+    "archetype": "desertMarket",
+    "templateResolved": "desertBazaar"
+  },
+  "validation": {
+    "errors": [],
+    "warnings": [],
+    "stats": {
+      "nodeCount": 20,
+      "materialCount": 36,
+      "approxVertexCount": 160,
+      "approxTriangleCount": 240
+    }
+  },
+  "asset": {
+    "schema": "worldforge.asset.v1",
+    "worldforgeVersion": "0.6.0",
+    "engine": {
+      "name": "building",
+      "version": "1.3.0"
+    },
+    "id": "building-6909",
+    "assetType": "building",
+    "seed": 6909,
+    "anchor": {
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "pivot": "ground-center"
+    },
+    "facing": "south",
+    "footprint": {
+      "shape": "box",
+      "width": 9.280000000000001,
+      "depth": 8.265
+    },
+    "bounds": {
+      "min": [
+        -4.640000000000001,
+        -5.125,
+        0
+      ],
+      "max": [
+        4.640000000000001,
+        3.14,
+        5.295
+      ],
+      "size": [
+        9.280000000000001,
+        8.265,
+        5.295
+      ]
+    },
+    "collision": {
+      "enabled": true,
+      "shape": "footprint"
+    },
+    "occlusion": {
+      "enabled": true
+    },
+    "tags": [
+      "building",
+      "desertMarket"
+    ]
+  }
+}

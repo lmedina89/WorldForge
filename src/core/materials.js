@@ -10,10 +10,11 @@ export const MATERIAL_PALETTES = {
 
 export function resolveBuildingMaterial(recipe) {
   if (recipe.material !== 'auto') return recipe.material;
-  if (recipe.style === 'smallWoodTown' || recipe.family === 'shack' || recipe.family === 'barn') return 'wood';
-  if (recipe.style === 'stoneTown') return 'stone';
+  if (recipe.style === 'smallWoodTown' || recipe.style === 'rusticVillage' || recipe.style === 'frontierTown' || recipe.family === 'shack' || recipe.family === 'barn' || recipe.family === 'peasantHouse' || recipe.family === 'stable') return 'wood';
+  if (recipe.style === 'stoneTown' || recipe.style === 'fortifiedStone' || recipe.style === 'castleKeep' || recipe.style === 'monastery') return 'stone';
   if (recipe.style === 'industrial') return 'metal';
   if (recipe.style === 'abandonedEdge') return recipe.seed % 2 ? 'wood' : 'brick';
+  if (recipe.style === 'oldRpgVillage') return 'timberPlaster';
   return 'timberPlaster';
 }
 

@@ -1,0 +1,27 @@
+{
+  "schema": "worldforge.recipe.v1",
+  "generatorVersion": "0.5.0",
+  "engineVersion": "1.2.0",
+  "type": "building",
+  "seed": 62557,
+  "family": "keep",
+  "style": "castleKeep",
+  "material": "auto",
+  "condition": "clean",
+  "width": 13,
+  "depth": 9,
+  "floors": 4,
+  "roof": "parapet",
+  "pitch": 44,
+  "template": "keepBlock",
+  "facade": "auto",
+  "wealth": "prosperous",
+  "age": "mature",
+  "construction": "auto",
+  "features": {
+    "chimney": false,
+    "porch": false,
+    "sign": false,
+    "extension": false
+  }
+}

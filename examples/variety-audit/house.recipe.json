@@ -1,0 +1,27 @@
+{
+  "schema": "worldforge.recipe.v1",
+  "generatorVersion": "0.4.0",
+  "engineVersion": "1.1.0",
+  "type": "building",
+  "seed": 44044,
+  "family": "house",
+  "style": "stoneTown",
+  "material": "brick",
+  "condition": "clean",
+  "width": 6.8,
+  "depth": 5,
+  "floors": 2,
+  "roof": "gable",
+  "pitch": 40,
+  "features": {
+    "chimney": true,
+    "porch": true,
+    "sign": false,
+    "extension": true
+  },
+  "template": "twinWing",
+  "facade": "asymmetric",
+  "wealth": "prosperous",
+  "age": "new",
+  "construction": "brickBase"
+}

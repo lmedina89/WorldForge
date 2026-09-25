@@ -1,0 +1,27 @@
+{
+  "schema": "worldforge.recipe.v1",
+  "generatorVersion": "0.4.0",
+  "engineVersion": "1.1.0",
+  "type": "building",
+  "seed": 11011,
+  "family": "cottage",
+  "style": "mountain",
+  "material": "timberPlaster",
+  "condition": "worn",
+  "width": 5.6,
+  "depth": 4.4,
+  "floors": 1,
+  "roof": "gambrel",
+  "pitch": 44,
+  "features": {
+    "chimney": true,
+    "porch": true,
+    "sign": false,
+    "extension": true
+  },
+  "template": "lWing",
+  "facade": "rural",
+  "wealth": "poor",
+  "age": "old",
+  "construction": "stoneBase"
+}

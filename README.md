@@ -1,69 +1,46 @@
-# WorldForge v0.3.0
+# WorldForge v0.6.0
 
-WorldForge is a deterministic procedural world-asset generator designed to grow from a browser tool into a reusable standalone world-building system.
+WorldForge is a deterministic procedural RPG/world asset generator intended for browser, headless, and future standalone use.
 
-## v0.3.0 milestone
+## Building engines
+- **1.0.0 — Protected Legacy**: frozen original building baseline.
+- **1.1.0 — Variety Engine**: structural massing, facades, wealth/age, mixed construction.
+- **1.2.0 — RPG Architecture I**: old RPG village + castle architecture.
+- **1.3.0 — RPG Architecture II**: expanded world architecture for ports, temples, magic, ruins, deserts, mines, cities, sewers, and civic districts.
 
-This release keeps the existing Building Engine intact and adds the first shared field-asset foundation around it.
+Old recipes retain their original engine. New projects default to Building Engine 1.3.0.
 
-### Engines
+## RPG Architecture I
+Peasant House, Farmhouse, Smithy, Chapel, Stable, Guild Hall, Merchant House, Watchtower, Gatehouse, Castle Keep, Castle Wall, Barracks.
 
-- **Building Engine 1.0.0** — preserved baseline. Existing building recipes keep the same geometry/material output.
-- **Landscape Engine 0.2.0** — existing ridge / mesa / ravine generator retained.
-- **Prop Engine 0.1.0** — wells, fences, signposts, crate/barrel supply clusters.
-- **Terrain Engine 0.1.0** — grass, dirt, grass+path, and worn-village ground patches.
+## RPG Architecture II
+Watermill, Windmill, Dock / Pier, Dock Warehouse, Temple, Mage Tower, Ruined Fort, Desert House, Desert Market, Mine Entrance, Grand City Gate, Sewer Entrance, Town Hall / Civic Hall.
 
-Every generated scene now also receives a `worldforge.asset.v1` metadata record containing engine version, bounds, footprint, anchor, facing, collision hints, occlusion hints, and tags. This is the contract future field composition will use.
+Pack II assets use dedicated geometry rather than generic recolored houses. Examples include functional water/wind wheels, pier structure, temple porticos, tower spires, mine rails, portcullises, sewer channels, and clock towers.
 
-## Important compatibility rule
+## Other generators
+WorldForge also retains:
+- Prop Engine 0.1.0
+- Terrain Engine 0.1.0
+- Landscape Engine 0.2.0
 
-The Building Engine is a protected module. v0.3.0 was tested against the v0.2 baseline and three representative building recipes produced identical geometry/material node hashes. Future building changes must be explicitly versioned instead of silently changing old recipes.
+## Determinism
+A recipe + engine version + seed reproduces the same asset. Engine versions are explicit so future improvements do not silently change saved designs.
 
-## Browser viewport coordinate fix
+## Browser use
+Upload the contents of this ZIP directly to the root of a GitHub repository and enable GitHub Pages. `index.html` is at the ZIP root.
 
-WorldForge's neutral scene format is **Z-up**. Earlier browser builds placed the Three.js ground/grid on a Y-up plane, which could make correct buildings look sideways or cut through the ground. v0.3.0 makes the browser viewport Z-up too:
-
-- camera up = +Z
-- field ground = XY plane at Z=0
-- grid = XY plane
-
-The generator geometry itself was not changed to fix this.
-
-## Run in browser / GitHub Pages
-
-Serve the folder locally:
-
+## Headless use
 ```bash
-python -m http.server 8000
+node cli/worldforge.mjs --recipe examples/rpg2-architecture/mageTower.recipe.json --out out
 ```
 
-Then open `http://localhost:8000`.
+The headless path exports the normalized recipe, neutral scene spec, OBJ, and MTL.
 
-The project is also static-hosting friendly for GitHub Pages. Generated assets remain local to the browser until saved/exported.
-
-## Headless / chat-friendly mode
-
-Requires Node.js 18+ and no npm install:
-
+## Tests
 ```bash
-node cli/worldforge.mjs --recipe examples/building.recipe.json --out out
-node cli/worldforge.mjs --recipe examples/prop-well.recipe.json --out out
-node cli/worldforge.mjs --recipe examples/terrain-village.recipe.json --out out
+node tests/rpg-architecture.test.mjs
+node tests/rpg-architecture-pack2.test.mjs
 ```
 
-Outputs normalized recipe JSON, neutral scene JSON, OBJ, and MTL.
-
-## Architecture
-
-```text
-src/core/        RNG, recipes, scene spec, materials, validation, asset metadata
-src/generators/  building, prop, terrain, landscape
-src/adapters/    neutral scene -> Three.js
-src/storage/     browser-local project recipes
-cli/             headless generator + OBJ/MTL export
-examples/        reproducible recipes
-```
-
-## Next planned module
-
-**Field Composer 0.1** will consume the shared asset metadata and place buildings, props, and terrain together into a first Village Well Square field without replacing the current Building Engine.
+See `TEST_REPORT.md` for the current validation summary.

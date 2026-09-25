@@ -1,36 +1,44 @@
-# WorldForge v0.3.0 Test Report
+# WorldForge v0.6.0 Test Report
 
-## Protected Building Engine regression
+## Protected engine checks
+The following source files in v0.6.0 match v0.5.0 byte-for-byte:
+- `src/generators/building.js` — Building Engine 1.0.0
+- `src/generators/building-v1.1.js` — Building Engine 1.1.0
+- `src/generators/building-v1.2.js` — Building Engine 1.2.0
 
-Compared neutral geometry + material node hashes against the v0.2 baseline for:
+## Legacy recipe regressions
+Four representative recipes from Building Engines 1.0, 1.1, and 1.2 were regenerated in v0.5 and v0.6.
+- Exact node match: PASS
+- Exact material match: PASS
 
-- building seed 73519 — MATCH
-- abandoned shop seed 184203 — MATCH
-- town building seed 90217 — MATCH
+A v0.5 recipe with no explicit engine resolves to Building Engine 1.2.0: PASS.
 
-Result: **3 / 3 exact geometry/material matches**.
+## RPG Architecture Pack I
+Existing Pack I suite:
+- 76 RPG cases: PASS
+- 3 protected legacy regression cases: PASS
 
-## Determinism / validation sweep
+## RPG Architecture Pack II
+Families tested:
+Watermill, Windmill, Dock, Dock Warehouse, Temple, Mage Tower, Ruined Fort, Desert House, Desert Market, Mine Entrance, City Gate, Sewer Entrance, Town Hall.
 
-Tested 63 generator cases across:
-
-- 4 prop families
-- 4 prop styles
-- 3 prop conditions
-- 4 terrain patch types at multiple roughness values
-- ridge / mesa / ravine landscape generation
+Matrix:
+- 13 families
+- 3 conditions
+- 2 seeds per condition
+- 78 Pack II cases total
 
 Results:
+- Scene validation failures: 0
+- Determinism failures: 0
+- Material determinism failures: 0
 
-- Validation failures: **0**
-- Determinism failures: **0**
+Engine 1.3 compatibility wrapper was also compared against Engine 1.2 for an existing Smithy recipe:
+- Geometry match: PASS
+- Material match: PASS
 
-## Browser integration checks
+## Visual audit
+Reference gallery:
+`examples/rpg2-gallery/rpg_architecture_pack2_gallery.png`
 
-- JavaScript syntax checks passed for modified modules.
-- UI IDs for Building / Props / Terrain / Landscape are wired to the shared recipe pipeline.
-- Z-up browser viewport convention corrected to match neutral scene coordinates.
-
-## Known scope limit
-
-Field composition is intentionally not included yet. v0.3.0 establishes the asset contract and first supporting generators before adding scene placement logic.
+The gallery was reviewed after correcting windmill blade axis, strengthening temple/city-gate/civic silhouettes, and breaking up the mine entrance rock mass.

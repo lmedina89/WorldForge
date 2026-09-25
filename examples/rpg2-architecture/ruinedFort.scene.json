@@ -1,0 +1,713 @@
+{
+  "schema": "worldforge.scene.v1",
+  "generatorVersion": "0.6.0",
+  "recipe": {
+    "schema": "worldforge.recipe.v1",
+    "generatorVersion": "0.6.0",
+    "engineVersion": "1.3.0",
+    "type": "building",
+    "seed": 6707,
+    "family": "ruinedFort",
+    "style": "ancientRuins",
+    "material": "auto",
+    "condition": "abandoned",
+    "width": 13,
+    "depth": 9,
+    "floors": 2,
+    "roof": "parapet",
+    "pitch": 44,
+    "features": {
+      "chimney": true,
+      "porch": true,
+      "sign": true,
+      "extension": true
+    },
+    "template": "ruinedFort",
+    "facade": "auto",
+    "wealth": "modest",
+    "age": "old",
+    "construction": "auto"
+  },
+  "materials": {
+    "wall": {
+      "id": "wall",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#85898d"
+    },
+    "wallDark": {
+      "id": "wallDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#686c70"
+    },
+    "timber": {
+      "id": "timber",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#554338"
+    },
+    "trim": {
+      "id": "trim",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#a7adb5"
+    },
+    "roof": {
+      "id": "roof",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#565d62"
+    },
+    "roofDark": {
+      "id": "roofDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#3f4549"
+    },
+    "stone": {
+      "id": "stone",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#777d83"
+    },
+    "stoneLight": {
+      "id": "stoneLight",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#a7adb5"
+    },
+    "glass": {
+      "id": "glass",
+      "roughness": 0.2,
+      "metalness": 0.05,
+      "flatShading": true,
+      "color": "#4a7896"
+    },
+    "board": {
+      "id": "board",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#705036"
+    },
+    "deadGreen": {
+      "id": "deadGreen",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#667052"
+    },
+    "rust": {
+      "id": "rust",
+      "roughness": 0.95,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#784c3a"
+    },
+    "dark": {
+      "id": "dark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#35393b"
+    },
+    "waterWood": {
+      "id": "waterWood",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#5e412f"
+    },
+    "wetWood": {
+      "id": "wetWood",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#44352d"
+    },
+    "waterBlue": {
+      "id": "waterBlue",
+      "roughness": 0.25,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#4e7580"
+    },
+    "sailCloth": {
+      "id": "sailCloth",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#d8d0b8"
+    },
+    "dockRope": {
+      "id": "dockRope",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#8a7353"
+    },
+    "templeStone": {
+      "id": "templeStone",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#c5bfae"
+    },
+    "templeDark": {
+      "id": "templeDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#817d75"
+    },
+    "arcaneStone": {
+      "id": "arcaneStone",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#5f5b78"
+    },
+    "arcaneGlow": {
+      "id": "arcaneGlow",
+      "roughness": 0.15,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#70a8c8"
+    },
+    "ruinStone": {
+      "id": "ruinStone",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#77766e"
+    },
+    "ruinDark": {
+      "id": "ruinDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#51524e"
+    },
+    "desertWall": {
+      "id": "desertWall",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#c49a6c"
+    },
+    "desertDark": {
+      "id": "desertDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#8f684c"
+    },
+    "desertCloth": {
+      "id": "desertCloth",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#a74c3b"
+    },
+    "mineTimber": {
+      "id": "mineTimber",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#50372b"
+    },
+    "mineRock": {
+      "id": "mineRock",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#57534f"
+    },
+    "civicStone": {
+      "id": "civicStone",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#a7a9a4"
+    },
+    "civicRoof": {
+      "id": "civicRoof",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#4e5960"
+    },
+    "sewerStone": {
+      "id": "sewerStone",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#626764"
+    },
+    "sewerDark": {
+      "id": "sewerDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#252b29"
+    },
+    "metalGate": {
+      "id": "metalGate",
+      "roughness": 0.85,
+      "metalness": 0.25,
+      "flatShading": true,
+      "color": "#34393c"
+    },
+    "bannerGold": {
+      "id": "bannerGold",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#b08b3e"
+    },
+    "bannerRed": {
+      "id": "bannerRed",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#6b3e35"
+    }
+  },
+  "nodes": [
+    {
+      "kind": "box",
+      "name": "ruinBackWall",
+      "size": [
+        13,
+        0.68,
+        3.95
+      ],
+      "position": [
+        0,
+        4.16,
+        1.975
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "ruinStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "ruinLeftWall",
+      "size": [
+        0.68,
+        7.0200000000000005,
+        3.3970000000000002
+      ],
+      "position": [
+        -6.16,
+        0.9,
+        1.6985000000000001
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "ruinStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "ruinRightWall",
+      "size": [
+        0.68,
+        4.95,
+        2.765
+      ],
+      "position": [
+        6.16,
+        1.8,
+        1.3825
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "ruinStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "ruinFrontL",
+      "size": [
+        4.16,
+        0.68,
+        2.291
+      ],
+      "position": [
+        -4.42,
+        -4.16,
+        1.1455
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "ruinStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "ruinFrontR",
+      "size": [
+        2.99,
+        0.68,
+        1.7775
+      ],
+      "position": [
+        5.07,
+        -4.16,
+        0.88875
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "ruinStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "ruinTower",
+      "size": [
+        2.45,
+        2.45,
+        5.35
+      ],
+      "position": [
+        -5.1,
+        3.2,
+        2.675
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "ruinDark",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "ruinRubble_0",
+      "size": [
+        0.3534850338334218,
+        0.4628248551860452,
+        0.23000265308190138
+      ],
+      "position": [
+        1.4020850716531275,
+        0.05652069322764852,
+        0.12
+      ],
+      "rotation": [
+        -0.0655497316038236,
+        1.5196115118451416,
+        0.07163818841800096
+      ],
+      "material": "ruinStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "ruinRubble_1",
+      "size": [
+        0.3855757218226791,
+        0.398211584778037,
+        0.14277944382745772
+      ],
+      "position": [
+        -5.46027007855475,
+        -0.7793407456576826,
+        0.12
+      ],
+      "rotation": [
+        0.10987724794540554,
+        0.013478175038471818,
+        -0.15849881833419205
+      ],
+      "material": "ruinStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "ruinRubble_2",
+      "size": [
+        0.3352779932366684,
+        0.43006556564243514,
+        0.3363851442281157
+      ],
+      "position": [
+        0.6111696870625023,
+        -1.4793861459195616,
+        0.12
+      ],
+      "rotation": [
+        0.09297652810346335,
+        1.6090299698989838,
+        0.10682529043406247
+      ],
+      "material": "ruinStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "ruinRubble_3",
+      "size": [
+        0.4774324802448974,
+        0.5184991450863891,
+        0.14803276476450264
+      ],
+      "position": [
+        5.9275211025774475,
+        1.3364269414544108,
+        0.12
+      ],
+      "rotation": [
+        -0.11995110870338976,
+        0.7066985419951379,
+        -0.09995231097564101
+      ],
+      "material": "ruinStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "ruinRubble_4",
+      "size": [
+        0.45512747772037987,
+        0.5247278918279336,
+        0.12627408460713924
+      ],
+      "position": [
+        4.2029497419297694,
+        0.12894152350723775,
+        0.12
+      ],
+      "rotation": [
+        -0.022764677414670587,
+        1.1619549917522818,
+        0.08388910666108129
+      ],
+      "material": "ruinStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "ruinRubble_5",
+      "size": [
+        0.23436004201415928,
+        0.48874808199703695,
+        0.1428071077959612
+      ],
+      "position": [
+        -4.560288130268455,
+        0.21616156138479692,
+        0.12
+      ],
+      "rotation": [
+        0.16311196133028716,
+        1.7346511578653008,
+        0.03382673682644963
+      ],
+      "material": "ruinStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "ruinRubble_6",
+      "size": [
+        0.25698951687198135,
+        0.4400098996283487,
+        0.1450155236944556
+      ],
+      "position": [
+        3.2713000508397823,
+        2.4913537287712098,
+        0.12
+      ],
+      "rotation": [
+        0.07847499079070985,
+        2.760797007707879,
+        -0.19649083483964205
+      ],
+      "material": "ruinStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "ruinRubble_7",
+      "size": [
+        0.25783473180606964,
+        0.22482369840843602,
+        0.2647305763373151
+      ],
+      "position": [
+        -2.124999013245106,
+        3.056157875061035,
+        0.12
+      ],
+      "rotation": [
+        -0.08429669321049005,
+        2.400563969509676,
+        -0.19563372898846865
+      ],
+      "material": "ruinStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "ruinRubble_8",
+      "size": [
+        0.3969967829296366,
+        0.5308533772872761,
+        0.314623589143157
+      ],
+      "position": [
+        5.833982528820634,
+        2.2466797209531073,
+        0.12
+      ],
+      "rotation": [
+        -0.05515327455941588,
+        2.132631529821083,
+        -0.09288266208022833
+      ],
+      "material": "ruinStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "ruinRubble_9",
+      "size": [
+        0.38116739751305434,
+        0.48410670850658793,
+        0.22300939944107084
+      ],
+      "position": [
+        -1.2491973260790106,
+        -0.2314843871444463,
+        0.12
+      ],
+      "rotation": [
+        -0.1636220180662349,
+        1.1857527326792479,
+        0.18502419600263237
+      ],
+      "material": "ruinStone",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "ruinBeam",
+      "size": [
+        4,
+        0.2,
+        0.2
+      ],
+      "position": [
+        0.4,
+        -0.2,
+        1.25
+      ],
+      "rotation": [
+        0,
+        0.25,
+        0.35
+      ],
+      "material": "mineTimber",
+      "tags": []
+    }
+  ],
+  "metadata": {
+    "buildingEngine": "1.3.0",
+    "rpgPack": "RPG Architecture II",
+    "archetype": "ruinedFort",
+    "templateResolved": "ruinedFort"
+  },
+  "validation": {
+    "errors": [],
+    "warnings": [],
+    "stats": {
+      "nodeCount": 17,
+      "materialCount": 36,
+      "approxVertexCount": 136,
+      "approxTriangleCount": 204
+    }
+  },
+  "asset": {
+    "schema": "worldforge.asset.v1",
+    "worldforgeVersion": "0.6.0",
+    "engine": {
+      "name": "building",
+      "version": "1.3.0"
+    },
+    "id": "building-6707",
+    "assetType": "building",
+    "seed": 6707,
+    "anchor": {
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "pivot": "ground-center"
+    },
+    "facing": "south",
+    "footprint": {
+      "shape": "box",
+      "width": 13.065000000000001,
+      "depth": 9
+    },
+    "bounds": {
+      "min": [
+        -6.5,
+        -4.5,
+        -0.04819257211405786
+      ],
+      "max": [
+        6.565,
+        4.5,
+        5.35
+      ],
+      "size": [
+        13.065000000000001,
+        9,
+        5.398192572114057
+      ]
+    },
+    "collision": {
+      "enabled": true,
+      "shape": "footprint"
+    },
+    "occlusion": {
+      "enabled": true
+    },
+    "tags": [
+      "building",
+      "ruinedFort"
+    ]
+  }
+}

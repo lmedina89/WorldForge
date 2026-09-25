@@ -1,0 +1,15 @@
+{
+  "watermill":{"seed":6101,"style":"riverVillage","width":8,"depth":6,"floors":2,"roof":"gable","template":"waterMillHouse","condition":"worn"},
+  "windmill":{"seed":6202,"style":"riverVillage","width":7,"depth":6,"floors":3,"roof":"spire","template":"windmillTower","condition":"clean"},
+  "dock":{"seed":6303,"style":"harborTown","width":10,"depth":5,"floors":1,"roof":"flat","template":"dockPier","condition":"worn"},
+  "dockWarehouse":{"seed":6404,"style":"harborTown","width":10,"depth":7,"floors":2,"roof":"gable","template":"dockWarehouse","condition":"worn"},
+  "temple":{"seed":6505,"style":"highTemple","width":10,"depth":11,"floors":2,"roof":"dome","template":"templeHall","condition":"clean","wealth":"prosperous"},
+  "mageTower":{"seed":6606,"style":"arcane","width":7,"depth":7,"floors":5,"roof":"spire","template":"mageSpire","condition":"clean","wealth":"prosperous"},
+  "ruinedFort":{"seed":6707,"style":"ancientRuins","width":13,"depth":9,"floors":2,"roof":"parapet","template":"ruinedFort","condition":"abandoned","age":"old"},
+  "desertHouse":{"seed":6808,"style":"desertTown","width":7,"depth":5,"floors":2,"roof":"flat","template":"adobeCourtyard","condition":"worn"},
+  "desertMarket":{"seed":6909,"style":"desertTown","width":9,"depth":6,"floors":2,"roof":"flat","template":"desertBazaar","condition":"worn"},
+  "mineEntrance":{"seed":7010,"style":"miningTown","width":8,"depth":5,"floors":1,"roof":"flat","template":"minePortal","condition":"worn"},
+  "cityGate":{"seed":7111,"style":"grandCity","width":15,"depth":7,"floors":4,"roof":"parapet","template":"grandCityGate","condition":"clean","wealth":"prosperous"},
+  "sewerEntrance":{"seed":7212,"style":"sewerworks","width":8,"depth":5,"floors":1,"roof":"flat","template":"sewerPortal","condition":"worn"},
+  "townHall":{"seed":7313,"style":"grandCity","width":12,"depth":8,"floors":3,"roof":"hip","template":"civicHall","condition":"clean","wealth":"prosperous"}
+}

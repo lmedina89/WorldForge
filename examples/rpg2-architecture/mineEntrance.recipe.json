@@ -1,0 +1,27 @@
+{
+  "schema": "worldforge.recipe.v1",
+  "generatorVersion": "0.6.0",
+  "engineVersion": "1.3.0",
+  "type": "building",
+  "seed": 7010,
+  "family": "mineEntrance",
+  "style": "miningTown",
+  "material": "auto",
+  "condition": "worn",
+  "width": 8,
+  "depth": 5,
+  "floors": 1,
+  "roof": "flat",
+  "pitch": 44,
+  "features": {
+    "chimney": true,
+    "porch": true,
+    "sign": true,
+    "extension": true
+  },
+  "template": "minePortal",
+  "facade": "auto",
+  "wealth": "modest",
+  "age": "mature",
+  "construction": "auto"
+}
