@@ -1,0 +1,12 @@
+{
+  "schema": "worldforge.recipe.v1",
+  "generatorVersion": "0.3.0",
+  "engineVersion": "0.1.0",
+  "type": "prop",
+  "seed": 12346,
+  "family": "fence",
+  "style": "rough",
+  "condition": "worn",
+  "scale": 1,
+  "variant": "corner"
+}

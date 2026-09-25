@@ -1,0 +1,12 @@
+{
+  "schema": "worldforge.recipe.v1",
+  "generatorVersion": "0.3.0",
+  "engineVersion": "0.1.0",
+  "type": "prop",
+  "seed": 12345,
+  "family": "well",
+  "style": "village",
+  "condition": "clean",
+  "scale": 1,
+  "variant": "roofed"
+}

@@ -4,7 +4,7 @@
 <body><div id="app">
 <aside class="panel">
   <div class="brand"><b>WORLDFORGE</b><span id="version">v—</span></div><p class="sub">Deterministic procedural world asset lab</p>
-  <div class="tabs"><button class="tab active" data-mode="building">BUILDING</button><button class="tab" data-mode="landscape">LANDSCAPE</button></div>
+  <div class="tabs tabs4"><button class="tab active" data-mode="building">BUILDING</button><button class="tab" data-mode="prop">PROPS</button><button class="tab" data-mode="terrain">TERRAIN</button><button class="tab" data-mode="landscape">LANDSCAPE</button></div>
   <label>Seed<div class="seedrow"><input id="seed" type="number" value="48127"><button id="randomize">↻</button></div></label>
   <section id="buildingPanel">
     <div class="cols"><label>Family<select id="family"><option value="cottage">Cottage</option><option value="house">House</option><option value="shop" selected>Shop</option><option value="inn">Inn</option><option value="shack">Shack</option><option value="barn">Barn</option><option value="warehouse">Warehouse</option></select></label><label>Condition<select id="condition"><option value="clean">Clean</option><option value="worn">Worn</option><option value="abandoned">Abandoned</option></select></label></div>
@@ -15,6 +15,19 @@
     <label>Floors <input id="floors" type="range" min="1" max="4" step="1" value="2"><output id="floorsOut"></output></label>
     <div class="cols"><label>Roof<select id="roof"><option value="gable">Gable</option><option value="hip">Hip</option><option value="flat">Flat</option></select></label><label>Roof pitch <input id="pitch" type="range" min="15" max="65" step="1" value="42"><output id="pitchOut"></output></label></div>
     <div class="checks"><label><input id="chimney" type="checkbox" checked> Chimney</label><label><input id="porch" type="checkbox" checked> Porch</label><label><input id="sign" type="checkbox" checked> Sign</label><label><input id="extension" type="checkbox" checked> Side extension</label></div>
+  </section>
+  <section id="propPanel" hidden>
+    <div class="cols"><label>Prop family<select id="propFamily"><option value="well">Well</option><option value="fence">Fence</option><option value="signpost">Signpost</option><option value="supplies">Crates + Barrels</option></select></label><label>Condition<select id="propCondition"><option value="clean">Clean</option><option value="worn">Worn</option><option value="abandoned">Abandoned</option></select></label></div>
+    <div class="cols"><label>Style<select id="propStyle"><option value="village">Village</option><option value="mountain">Mountain</option><option value="stone">Stone</option><option value="rough">Rough</option></select></label><label>Variant<select id="propVariant"><option value="auto">Auto</option><option value="stone">Stone</option><option value="wood">Wood</option><option value="roofed">Roofed</option><option value="straight">Straight</option><option value="corner">Corner</option><option value="gate">Gate</option><option value="broken">Broken</option><option value="single">Single</option><option value="cluster">Cluster</option></select></label></div>
+    <label>Scale <input id="propScale" type="range" min="0.5" max="2.5" step="0.05" value="1"><output id="propScaleOut"></output></label>
+  </section>
+  <section id="terrainPanel" hidden>
+    <label>Patch<select id="terrainPatch"><option value="grass">Grass Field</option><option value="dirt">Dirt Ground</option><option value="path">Grass + Path</option><option value="wornVillage">Worn Village Ground</option></select></label>
+    <label>Size <input id="patchSize" type="range" min="6" max="40" step="1" value="12"><output id="patchSizeOut"></output></label>
+    <label>Surface roughness <input id="patchRoughness" type="range" min="0" max="1" step="0.05" value="0.18"><output id="patchRoughnessOut"></output></label>
+    <label>Path width <input id="pathWidth" type="range" min="0.8" max="6" step="0.1" value="2.2"><output id="pathWidthOut"></output></label>
+    <label>Wear <input id="wear" type="range" min="0" max="1" step="0.05" value="0.35"><output id="wearOut"></output></label>
+    <label>Mesh resolution <input id="patchResolution" type="range" min="12" max="72" step="4" value="32"><output id="patchResolutionOut"></output></label>
   </section>
   <section id="landscapePanel" hidden>
     <label>Feature<select id="feature"><option value="ridge">Rocky Ridge</option><option value="mesa">Terraced Mesa</option><option value="ravine">Ravine</option></select></label>
@@ -28,7 +41,7 @@
   <button id="generate" class="primary">GENERATE</button>
   <div class="viewbuttons"><button data-view="field">3/4 FIELD</button><button data-view="front">FRONT</button><button data-view="side">SIDE</button><button data-view="orbit">FREE ORBIT</button></div>
   <div class="sectionTitle">PROJECT</div><div class="projectRow"><select id="projectSelect"><option value="">Saved projects…</option></select><button id="loadProject">LOAD</button></div><div class="projectbuttons"><button id="saveProject">SAVE LOCAL</button><button id="deleteProject">DELETE</button></div>
-  <div class="sectionTitle">RECIPE / EXPORT</div><input id="recipeFile" type="file" accept="application/json,.json" hidden><div class="exports"><button id="importRecipe">IMPORT RECIPE</button><button id="exportJSON">RECIPE JSON</button><button id="exportScene">SCENE JSON</button><button id="exportGLB">GLB</button><button id="exportPNG">PNG</button></div>
+  <div class="sectionTitle">RECIPE / EXPORT</div><input id="recipeFile" type="file" accept="application/json,.json" hidden><div class="exports"><button id="importRecipe">IMPORT RECIPE</button><button id="exportJSON">RECIPE JSON</button><button id="exportScene">SCENE JSON</button><button id="exportAsset">ASSET JSON</button><button id="exportGLB">GLB</button><button id="exportPNG">PNG</button></div>
   <div class="validationRow"><span>VALIDATION</span><b id="validation" data-state="good">VALID</b></div><div id="status">Ready.</div>
 </aside>
 <main class="viewport"><div class="hud"><span id="modeLabel">BUILDING</span><span id="seedLabel">SEED 48127</span></div><div id="canvasHost"></div><div class="hint">Drag to orbit · wheel/pinch to zoom · same recipe = same asset</div></main>

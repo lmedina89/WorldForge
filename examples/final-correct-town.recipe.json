@@ -1,0 +1,21 @@
+{
+  "schema": "worldforge.recipe.v1",
+  "generatorVersion": "0.2.0",
+  "type": "building",
+  "seed": 90217,
+  "family": "house",
+  "style": "mountain",
+  "material": "timberPlaster",
+  "condition": "clean",
+  "width": 6.6,
+  "depth": 4.8,
+  "floors": 2,
+  "roof": "gable",
+  "pitch": 41,
+  "features": {
+    "chimney": true,
+    "porch": true,
+    "sign": false,
+    "extension": true
+  }
+}

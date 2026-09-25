@@ -41,3 +41,28 @@ export function installLandscapeMaterials(spec, feature) {
   defineMaterial(spec,'rock',{color:'#62666a'});
   defineMaterial(spec,'path',{color:'#826d53'});
 }
+
+export function installPropMaterials(spec, style='village') {
+  const wood = style==='rough' ? '#6a4a31' : '#7c5839';
+  const woodDark = style==='rough' ? '#4d3528' : '#50382a';
+  const stone = style==='stone' ? '#7f8589' : '#8a8577';
+  defineMaterial(spec,'propWood',{color:wood});
+  defineMaterial(spec,'propWoodDark',{color:woodDark});
+  defineMaterial(spec,'propStone',{color:stone});
+  defineMaterial(spec,'propStoneLight',{color:'#a9aa9e'});
+  defineMaterial(spec,'propMetal',{color:'#555b5d',metalness:.25});
+  defineMaterial(spec,'propRope',{color:'#9c7a4f'});
+  defineMaterial(spec,'propCloth',{color:'#9d5b45'});
+  defineMaterial(spec,'propGreen',{color:'#6d8657'});
+  defineMaterial(spec,'propDirt',{color:'#765f47'});
+  defineMaterial(spec,'propDark',{color:'#333637'});
+}
+
+export function installTerrainPatchMaterials(spec, patch='grass') {
+  defineMaterial(spec,'groundGrass',{color:'#748d58'});
+  defineMaterial(spec,'groundGrassDark',{color:'#61764b'});
+  defineMaterial(spec,'groundDirt',{color:'#8b7456'});
+  defineMaterial(spec,'groundDirtDark',{color:'#6e5942'});
+  defineMaterial(spec,'groundStone',{color:'#88877b'});
+  defineMaterial(spec,'groundWear',{color:'#9b8768'});
+}

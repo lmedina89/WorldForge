@@ -1,0 +1,13 @@
+{
+  "schema": "worldforge.recipe.v1",
+  "generatorVersion": "0.3.0",
+  "engineVersion": "0.1.0",
+  "type": "terrain",
+  "seed": 777,
+  "patch": "wornVillage",
+  "size": 14,
+  "roughness": 0.2,
+  "pathWidth": 2.4,
+  "wear": 0.5,
+  "gridResolution": 32
+}

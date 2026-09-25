@@ -1,25 +1,37 @@
-# WorldForge v0.2.0
+# WorldForge v0.3.0
 
-WorldForge is a deterministic procedural 3D world-asset generator intended to grow from a browser tool into a reusable standalone generation engine.
+WorldForge is a deterministic procedural world-asset generator designed to grow from a browser tool into a reusable standalone world-building system.
 
-## What changed in v0.2.0
+## v0.3.0 milestone
 
-- Generation logic is separated from the Three.js browser UI.
-- Every asset starts from a versioned deterministic recipe.
-- The shared core emits a neutral `worldforge.scene.v1` scene specification.
-- Browser adapter converts that neutral scene into real Three.js geometry.
-- Headless Node CLI uses the same generator code and can regenerate recipes without a browser.
-- Browser-local project storage uses IndexedDB.
-- Recipe import/export and neutral scene export added.
-- Basic validation reports malformed geometry, missing materials, node counts, and approximate triangle counts.
-- Building families: cottage, house, shop, inn, shack, barn, warehouse.
-- Building conditions: clean, worn, abandoned.
-- Material sets: wood, timber/plaster, stone, brick, metal.
-- Landscape generator retained and now shares the same recipe/scene architecture.
+This release keeps the existing Building Engine intact and adds the first shared field-asset foundation around it.
 
-## Run in the browser
+### Engines
 
-Because WorldForge uses JavaScript modules, serve the folder instead of double-clicking `index.html`:
+- **Building Engine 1.0.0** — preserved baseline. Existing building recipes keep the same geometry/material output.
+- **Landscape Engine 0.2.0** — existing ridge / mesa / ravine generator retained.
+- **Prop Engine 0.1.0** — wells, fences, signposts, crate/barrel supply clusters.
+- **Terrain Engine 0.1.0** — grass, dirt, grass+path, and worn-village ground patches.
+
+Every generated scene now also receives a `worldforge.asset.v1` metadata record containing engine version, bounds, footprint, anchor, facing, collision hints, occlusion hints, and tags. This is the contract future field composition will use.
+
+## Important compatibility rule
+
+The Building Engine is a protected module. v0.3.0 was tested against the v0.2 baseline and three representative building recipes produced identical geometry/material node hashes. Future building changes must be explicitly versioned instead of silently changing old recipes.
+
+## Browser viewport coordinate fix
+
+WorldForge's neutral scene format is **Z-up**. Earlier browser builds placed the Three.js ground/grid on a Y-up plane, which could make correct buildings look sideways or cut through the ground. v0.3.0 makes the browser viewport Z-up too:
+
+- camera up = +Z
+- field ground = XY plane at Z=0
+- grid = XY plane
+
+The generator geometry itself was not changed to fix this.
+
+## Run in browser / GitHub Pages
+
+Serve the folder locally:
 
 ```bash
 python -m http.server 8000
@@ -27,44 +39,31 @@ python -m http.server 8000
 
 Then open `http://localhost:8000`.
 
-It also works as a static GitHub Pages site.
-
-Generated assets live in browser memory until you save/export them. `SAVE LOCAL` writes the recipe to IndexedDB on that device/browser. Export buttons download files through the browser; GitHub Pages itself does not store generated files.
+The project is also static-hosting friendly for GitHub Pages. Generated assets remain local to the browser until saved/exported.
 
 ## Headless / chat-friendly mode
 
-Requires Node.js 18+ and no npm packages:
+Requires Node.js 18+ and no npm install:
 
 ```bash
 node cli/worldforge.mjs --recipe examples/building.recipe.json --out out
+node cli/worldforge.mjs --recipe examples/prop-well.recipe.json --out out
+node cli/worldforge.mjs --recipe examples/terrain-village.recipe.json --out out
 ```
 
-Outputs:
-
-- normalized recipe JSON
-- neutral WorldForge scene JSON
-- OBJ
-- MTL
-
-The browser and headless CLI call the same generator modules under `src/generators/`.
-
-GLB and PNG export are currently browser-side because those use Three.js/WebGL. The neutral scene format is the stable handoff between browser, CLI, future desktop app, and chat tooling.
+Outputs normalized recipe JSON, neutral scene JSON, OBJ, and MTL.
 
 ## Architecture
 
 ```text
-src/core/        deterministic RNG, recipe schema, materials, scene spec, validation
-src/generators/  building + landscape generators
-src/adapters/    scene-spec -> Three.js
-src/storage/     browser project persistence
-cli/             headless Node entry point + OBJ export
+src/core/        RNG, recipes, scene spec, materials, validation, asset metadata
+src/generators/  building, prop, terrain, landscape
+src/adapters/    neutral scene -> Three.js
+src/storage/     browser-local project recipes
+cli/             headless generator + OBJ/MTL export
 examples/        reproducible recipes
 ```
 
-## Design rules
+## Next planned module
 
-1. Same generator version + same normalized recipe must recreate the same asset.
-2. Generator logic must not depend on DOM/browser state.
-3. UI, renderer, exporters, and storage are adapters around the core.
-4. New generators should emit the same neutral scene specification.
-5. Recipes and scene schemas are versioned so future migrations can be explicit.
+**Field Composer 0.1** will consume the shared asset metadata and place buildings, props, and terrain together into a first Village Well Square field without replacing the current Building Engine.
