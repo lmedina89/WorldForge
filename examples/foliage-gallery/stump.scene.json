@@ -1,0 +1,498 @@
+{
+  "schema": "worldforge.scene.v1",
+  "generatorVersion": "0.8.0",
+  "recipe": {
+    "schema": "worldforge.recipe.v1",
+    "generatorVersion": "0.8.0",
+    "engineVersion": "0.1.0",
+    "type": "foliage",
+    "seed": 8107,
+    "family": "stump",
+    "biome": "forest",
+    "variant": "auto",
+    "condition": "healthy",
+    "scale": 1,
+    "density": 0.5,
+    "spread": 1
+  },
+  "materials": {
+    "folTrunk": {
+      "id": "folTrunk",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#60432f"
+    },
+    "folBark": {
+      "id": "folBark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#413126"
+    },
+    "folLeaf": {
+      "id": "folLeaf",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#466f40"
+    },
+    "folLeaf2": {
+      "id": "folLeaf2",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#608a50"
+    },
+    "folLeafDark": {
+      "id": "folLeafDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#355534"
+    },
+    "folDry": {
+      "id": "folDry",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#756847"
+    },
+    "folFlower": {
+      "id": "folFlower",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#d9c866"
+    },
+    "folFlower2": {
+      "id": "folFlower2",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#b5839c"
+    },
+    "folRock": {
+      "id": "folRock",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#74736b"
+    },
+    "folRockLight": {
+      "id": "folRockLight",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#8a8b82"
+    },
+    "folCrop": {
+      "id": "folCrop",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#87915a"
+    },
+    "folCropDark": {
+      "id": "folCropDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#756d3e"
+    },
+    "folVine": {
+      "id": "folVine",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#4f7045"
+    }
+  },
+  "nodes": [
+    {
+      "kind": "mesh",
+      "name": "stump",
+      "vertices": [
+        [
+          0.45,
+          0,
+          0
+        ],
+        [
+          0.3181980515339464,
+          0.31819805153394637,
+          0
+        ],
+        [
+          2.7554552980815448e-17,
+          0.45,
+          0
+        ],
+        [
+          -0.31819805153394637,
+          0.3181980515339464,
+          0
+        ],
+        [
+          -0.45,
+          5.5109105961630896e-17,
+          0
+        ],
+        [
+          -0.3181980515339465,
+          -0.31819805153394637,
+          0
+        ],
+        [
+          -8.266365894244634e-17,
+          -0.45,
+          0
+        ],
+        [
+          0.3181980515339463,
+          -0.3181980515339465,
+          0
+        ],
+        [
+          0.39,
+          0,
+          0.7056887206970714
+        ],
+        [
+          0.27577164466275356,
+          0.2757716446627535,
+          0.7056887206970714
+        ],
+        [
+          2.3880612583373387e-17,
+          0.39,
+          0.7056887206970714
+        ],
+        [
+          -0.2757716446627535,
+          0.27577164466275356,
+          0.7056887206970714
+        ],
+        [
+          -0.39,
+          4.7761225166746774e-17,
+          0.7056887206970714
+        ],
+        [
+          -0.2757716446627536,
+          -0.2757716446627535,
+          0.7056887206970714
+        ],
+        [
+          -7.164183775012016e-17,
+          -0.39,
+          0.7056887206970714
+        ],
+        [
+          0.2757716446627535,
+          -0.2757716446627536,
+          0.7056887206970714
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          9
+        ],
+        [
+          0,
+          9,
+          8
+        ],
+        [
+          1,
+          2,
+          10
+        ],
+        [
+          1,
+          10,
+          9
+        ],
+        [
+          2,
+          3,
+          11
+        ],
+        [
+          2,
+          11,
+          10
+        ],
+        [
+          3,
+          4,
+          12
+        ],
+        [
+          3,
+          12,
+          11
+        ],
+        [
+          4,
+          5,
+          13
+        ],
+        [
+          4,
+          13,
+          12
+        ],
+        [
+          5,
+          6,
+          14
+        ],
+        [
+          5,
+          14,
+          13
+        ],
+        [
+          6,
+          7,
+          15
+        ],
+        [
+          6,
+          15,
+          14
+        ],
+        [
+          7,
+          0,
+          8
+        ],
+        [
+          7,
+          8,
+          15
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          8,
+          9,
+          10
+        ],
+        [
+          0,
+          3,
+          2
+        ],
+        [
+          8,
+          10,
+          11
+        ],
+        [
+          0,
+          4,
+          3
+        ],
+        [
+          8,
+          11,
+          12
+        ],
+        [
+          0,
+          5,
+          4
+        ],
+        [
+          8,
+          12,
+          13
+        ],
+        [
+          0,
+          6,
+          5
+        ],
+        [
+          8,
+          13,
+          14
+        ],
+        [
+          0,
+          7,
+          6
+        ],
+        [
+          8,
+          14,
+          15
+        ]
+      ],
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0.9368506979234275
+      ],
+      "material": "folTrunk",
+      "tags": [
+        "foliage",
+        "stump"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "stumpMoss",
+      "radius": 0.22,
+      "position": [
+        0.18,
+        -0.22,
+        0.5080958789018915
+      ],
+      "scale": [
+        1.2,
+        0.65,
+        0.35
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folLeafDark",
+      "tags": [
+        "foliage",
+        "moss"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "root_0",
+      "size": [
+        0.12,
+        0.12,
+        0.8
+      ],
+      "position": [
+        0,
+        0,
+        0.1
+      ],
+      "rotation": [
+        1.5707963267948966,
+        0,
+        4.250873996707427
+      ],
+      "material": "folTrunk",
+      "tags": [
+        "foliage",
+        "branch"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "root_1",
+      "size": [
+        0.12,
+        0.12,
+        0.8
+      ],
+      "position": [
+        0,
+        0,
+        0.1
+      ],
+      "rotation": [
+        1.5707963267948966,
+        0,
+        2.2960976545750613
+      ],
+      "material": "folTrunk",
+      "tags": [
+        "foliage",
+        "branch"
+      ]
+    }
+  ],
+  "metadata": {
+    "engine": "foliage",
+    "engineVersion": "0.1.0",
+    "biome": "forest",
+    "recipeWarnings": []
+  },
+  "validation": {
+    "errors": [],
+    "warnings": [],
+    "stats": {
+      "nodeCount": 4,
+      "materialCount": 13,
+      "approxVertexCount": 52,
+      "approxTriangleCount": 88
+    }
+  },
+  "asset": {
+    "schema": "worldforge.asset.v1",
+    "worldforgeVersion": "0.8.0",
+    "engine": {
+      "name": "foliage",
+      "version": "0.1.0"
+    },
+    "id": "foliage-8107",
+    "assetType": "foliage",
+    "seed": 8107,
+    "anchor": {
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "pivot": "ground-center"
+    },
+    "facing": null,
+    "footprint": {
+      "shape": "box",
+      "width": 0.8896976737947646,
+      "depth": 0.8896976737947646
+    },
+    "bounds": {
+      "min": [
+        -0.4448488368973823,
+        -0.44484883689738236,
+        0
+      ],
+      "max": [
+        0.4448488368973823,
+        0.4448488368973823,
+        0.7056887206970714
+      ],
+      "size": [
+        0.8896976737947646,
+        0.8896976737947646,
+        0.7056887206970714
+      ]
+    },
+    "collision": {
+      "enabled": true,
+      "shape": "bounds"
+    },
+    "occlusion": {
+      "enabled": false
+    },
+    "tags": [
+      "foliage",
+      "stump"
+    ]
+  }
+}

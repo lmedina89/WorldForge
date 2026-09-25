@@ -52,7 +52,8 @@ function footprintFor(spec,bounds){
 
 export function attachAssetMetadata(spec){
   const r=spec.recipe,bounds=computeBounds(spec),footprint=footprintFor(spec,bounds);
-  const blocking=!['terrain','landscape','surface','field'].includes(r.type);
+  const foliageBlocking=r.type==='foliage'&&['tree','fallenLog','stump','rockCluster'].includes(r.family);
+  const blocking=r.type==='foliage'?foliageBlocking:!['terrain','landscape','surface','field'].includes(r.type);
   spec.asset={
     schema:ASSET_SCHEMA,
     worldforgeVersion:WORLDFORGE_VERSION,
@@ -65,7 +66,7 @@ export function attachAssetMetadata(spec){
     footprint,
     bounds,
     collision:{enabled:blocking,shape:r.type==='building'?'footprint':'bounds'},
-    occlusion:{enabled:r.type==='building'||r.type==='prop'},
+    occlusion:{enabled:r.type==='building'||r.type==='prop'||(r.type==='foliage'&&['tree','shrub','vines','fallenLog'].includes(r.family))},
     tags:[r.type,r.family||r.feature||r.patch||r.surface||r.preset||'asset'].filter(Boolean)
   };
   return spec;

@@ -1,0 +1,14 @@
+{
+  "schema":"worldforge.recipe.v1",
+  "generatorVersion":"0.8.0",
+  "engineVersion":"0.1.0",
+  "type":"foliage",
+  "seed":61803,
+  "family":"tree",
+  "biome":"temperate",
+  "variant":"oak",
+  "condition":"healthy",
+  "scale":1,
+  "density":0.55,
+  "spread":1
+}

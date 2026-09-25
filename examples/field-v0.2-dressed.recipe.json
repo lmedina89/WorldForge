@@ -1,0 +1,14 @@
+{
+  "schema":"worldforge.recipe.v1",
+  "generatorVersion":"0.8.0",
+  "engineVersion":"0.2.0",
+  "type":"field",
+  "seed":424242,
+  "preset":"villageWellSquare",
+  "size":34,
+  "density":0.55,
+  "surface":"auto",
+  "buildingEngine":"1.3.0",
+  "dressing":0.65,
+  "placements":null
+}

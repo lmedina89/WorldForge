@@ -1,0 +1,1718 @@
+{
+  "schema": "worldforge.scene.v1",
+  "generatorVersion": "0.8.0",
+  "recipe": {
+    "schema": "worldforge.recipe.v1",
+    "generatorVersion": "0.8.0",
+    "engineVersion": "0.1.0",
+    "type": "foliage",
+    "seed": 8105,
+    "family": "crops",
+    "biome": "farmland",
+    "variant": "auto",
+    "condition": "healthy",
+    "scale": 1,
+    "density": 0.7,
+    "spread": 1
+  },
+  "materials": {
+    "folTrunk": {
+      "id": "folTrunk",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#725036"
+    },
+    "folBark": {
+      "id": "folBark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#503726"
+    },
+    "folLeaf": {
+      "id": "folLeaf",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#6f8c48"
+    },
+    "folLeaf2": {
+      "id": "folLeaf2",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#8aa65c"
+    },
+    "folLeafDark": {
+      "id": "folLeafDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#566e39"
+    },
+    "folDry": {
+      "id": "folDry",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#a08a55"
+    },
+    "folFlower": {
+      "id": "folFlower",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#e2c85f"
+    },
+    "folFlower2": {
+      "id": "folFlower2",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#d1919d"
+    },
+    "folRock": {
+      "id": "folRock",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#74736b"
+    },
+    "folRockLight": {
+      "id": "folRockLight",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#8a8b82"
+    },
+    "folCrop": {
+      "id": "folCrop",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#a18f4f"
+    },
+    "folCropDark": {
+      "id": "folCropDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#756d3e"
+    },
+    "folVine": {
+      "id": "folVine",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#4f7045"
+    }
+  },
+  "nodes": [
+    {
+      "kind": "box",
+      "name": "cropStem_0_0",
+      "size": [
+        0.035,
+        0.035,
+        0.5661985733220354
+      ],
+      "position": [
+        -1.61,
+        -0.9299999999999999,
+        0.2830992866610177
+      ],
+      "rotation": [
+        0,
+        0,
+        0.02514377780258656
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_0_0",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        -1.61,
+        -0.9299999999999999,
+        0.6161985733220354
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.046775556541979305
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_0_1",
+      "size": [
+        0.035,
+        0.035,
+        0.4854027909692377
+      ],
+      "position": [
+        -1.1500000000000001,
+        -0.9299999999999999,
+        0.24270139548461886
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.06194916818290949
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_0_1",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        -1.1500000000000001,
+        -0.9299999999999999,
+        0.5354027909692377
+      ],
+      "rotation": [
+        0,
+        0,
+        0.08138761280570178
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_0_2",
+      "size": [
+        0.035,
+        0.035,
+        0.6212996805855073
+      ],
+      "position": [
+        -0.6900000000000001,
+        -0.9299999999999999,
+        0.31064984029275367
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.06160542283207178
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_0_2",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        -0.6900000000000001,
+        -0.9299999999999999,
+        0.6712996805855074
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.1004859845386818
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_0_3",
+      "size": [
+        0.035,
+        0.035,
+        0.48881978781195357
+      ],
+      "position": [
+        -0.23,
+        -0.9299999999999999,
+        0.24440989390597678
+      ],
+      "rotation": [
+        0,
+        0,
+        0.0043873319029808094
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_0_3",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        -0.23,
+        -0.9299999999999999,
+        0.5388197878119536
+      ],
+      "rotation": [
+        0,
+        0,
+        0.10153448127675799
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_0_4",
+      "size": [
+        0.035,
+        0.035,
+        0.6748770531476476
+      ],
+      "position": [
+        0.23,
+        -0.9299999999999999,
+        0.3374385265738238
+      ],
+      "rotation": [
+        0,
+        0,
+        0.021198689192533496
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_0_4",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        0.23,
+        -0.9299999999999999,
+        0.7248770531476476
+      ],
+      "rotation": [
+        0,
+        0,
+        0.1256321760127321
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_0_5",
+      "size": [
+        0.035,
+        0.035,
+        0.6597462762775831
+      ],
+      "position": [
+        0.6900000000000001,
+        -0.9299999999999999,
+        0.32987313813879154
+      ],
+      "rotation": [
+        0,
+        0,
+        0.054169728830456745
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_0_5",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        0.6900000000000001,
+        -0.9299999999999999,
+        0.7097462762775831
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.09937462136149405
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_0_6",
+      "size": [
+        0.035,
+        0.035,
+        0.6911397569230757
+      ],
+      "position": [
+        1.1500000000000001,
+        -0.9299999999999999,
+        0.34556987846153786
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.010013789273798465
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_0_6",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        1.1500000000000001,
+        -0.9299999999999999,
+        0.7411397569230758
+      ],
+      "rotation": [
+        0,
+        0,
+        0.006180678494274616
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_0_7",
+      "size": [
+        0.035,
+        0.035,
+        0.6127233593026176
+      ],
+      "position": [
+        1.61,
+        -0.9299999999999999,
+        0.3063616796513088
+      ],
+      "rotation": [
+        0,
+        0,
+        0.0504602748900652
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_0_7",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        1.61,
+        -0.9299999999999999,
+        0.6627233593026176
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.030718106799758976
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_1_0",
+      "size": [
+        0.035,
+        0.035,
+        0.6797772609977983
+      ],
+      "position": [
+        -1.53,
+        -0.31,
+        0.33988863049889917
+      ],
+      "rotation": [
+        0,
+        0,
+        0.06024407707154751
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_1_0",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        -1.53,
+        -0.31,
+        0.7297772609977984
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.027914924640208477
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_1_1",
+      "size": [
+        0.035,
+        0.035,
+        0.45190495936665687
+      ],
+      "position": [
+        -1.07,
+        -0.31,
+        0.22595247968332843
+      ],
+      "rotation": [
+        0,
+        0,
+        0.05916715662926435
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_1_1",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        -1.07,
+        -0.31,
+        0.5019049593666569
+      ],
+      "rotation": [
+        0,
+        0,
+        0.1177985214628279
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_1_2",
+      "size": [
+        0.035,
+        0.035,
+        0.6587942158780061
+      ],
+      "position": [
+        -0.6100000000000001,
+        -0.31,
+        0.32939710793900306
+      ],
+      "rotation": [
+        0,
+        0,
+        0.03919311858713627
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_1_2",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        -0.6100000000000001,
+        -0.31,
+        0.7087942158780062
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.08566706660203635
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_1_3",
+      "size": [
+        0.035,
+        0.035,
+        0.6428569088713266
+      ],
+      "position": [
+        -0.15000000000000002,
+        -0.31,
+        0.3214284544356633
+      ],
+      "rotation": [
+        0,
+        0,
+        0.028732308261096476
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_1_3",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        -0.15000000000000002,
+        -0.31,
+        0.6928569088713267
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.14818180685397236
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_1_4",
+      "size": [
+        0.035,
+        0.035,
+        0.7116937683499418
+      ],
+      "position": [
+        0.31,
+        -0.31,
+        0.3558468841749709
+      ],
+      "rotation": [
+        0,
+        0,
+        0.026060101129114624
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_1_4",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        0.31,
+        -0.31,
+        0.7616937683499418
+      ],
+      "rotation": [
+        0,
+        0,
+        0.03151083954144268
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_1_5",
+      "size": [
+        0.035,
+        0.035,
+        0.4626211017672904
+      ],
+      "position": [
+        0.77,
+        -0.31,
+        0.2313105508836452
+      ],
+      "rotation": [
+        0,
+        0,
+        0.030958173237741
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_1_5",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        0.77,
+        -0.31,
+        0.5126211017672904
+      ],
+      "rotation": [
+        0,
+        0,
+        0.10476146831642838
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_1_6",
+      "size": [
+        0.035,
+        0.035,
+        0.7793926374055445
+      ],
+      "position": [
+        1.2300000000000002,
+        -0.31,
+        0.38969631870277227
+      ],
+      "rotation": [
+        0,
+        0,
+        0.008698694482445715
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_1_6",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        1.2300000000000002,
+        -0.31,
+        0.8293926374055446
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.1241506706457585
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_1_7",
+      "size": [
+        0.035,
+        0.035,
+        0.5958059851708822
+      ],
+      "position": [
+        1.6900000000000002,
+        -0.31,
+        0.2979029925854411
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.07864476293325424
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_1_7",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        1.6900000000000002,
+        -0.31,
+        0.6458059851708823
+      ],
+      "rotation": [
+        0,
+        0,
+        0.142862514895387
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_2_0",
+      "size": [
+        0.035,
+        0.035,
+        0.5266077007935382
+      ],
+      "position": [
+        -1.61,
+        0.31,
+        0.2633038503967691
+      ],
+      "rotation": [
+        0,
+        0,
+        0.03088701527565718
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_2_0",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        -1.61,
+        0.31,
+        0.5766077007935383
+      ],
+      "rotation": [
+        0,
+        0,
+        0.10349002112634478
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_2_1",
+      "size": [
+        0.035,
+        0.035,
+        0.6045538548217155
+      ],
+      "position": [
+        -1.1500000000000001,
+        0.31,
+        0.30227692741085777
+      ],
+      "rotation": [
+        0,
+        0,
+        0.01812726434320211
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_2_1",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        -1.1500000000000001,
+        0.31,
+        0.6545538548217156
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.10887518157251179
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_2_2",
+      "size": [
+        0.035,
+        0.035,
+        0.5738112185779027
+      ],
+      "position": [
+        -0.6900000000000001,
+        0.31,
+        0.28690560928895137
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.037908256985247135
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_2_2",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        -0.6900000000000001,
+        0.31,
+        0.6238112185779028
+      ],
+      "rotation": [
+        0,
+        0,
+        0.05111817105207592
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_2_3",
+      "size": [
+        0.035,
+        0.035,
+        0.7618179754866288
+      ],
+      "position": [
+        -0.23,
+        0.31,
+        0.3809089877433144
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.02153312362730503
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_2_3",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        -0.23,
+        0.31,
+        0.8118179754866288
+      ],
+      "rotation": [
+        0,
+        0,
+        0.006307985284365714
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_2_4",
+      "size": [
+        0.035,
+        0.035,
+        0.7475160059588961
+      ],
+      "position": [
+        0.23,
+        0.31,
+        0.37375800297944806
+      ],
+      "rotation": [
+        0,
+        0,
+        0.013178661204874514
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_2_4",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        0.23,
+        0.31,
+        0.7975160059588962
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.03745565379504115
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_2_5",
+      "size": [
+        0.035,
+        0.035,
+        0.6867769943154417
+      ],
+      "position": [
+        0.6900000000000001,
+        0.31,
+        0.34338849715772085
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.07557255633175373
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_2_5",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        0.6900000000000001,
+        0.31,
+        0.7367769943154417
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.015632302290759986
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_2_6",
+      "size": [
+        0.035,
+        0.035,
+        0.7289238878991455
+      ],
+      "position": [
+        1.1500000000000001,
+        0.31,
+        0.36446194394957276
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.02291298639029264
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_2_6",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        1.1500000000000001,
+        0.31,
+        0.7789238878991456
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.06939409039914608
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_2_7",
+      "size": [
+        0.035,
+        0.035,
+        0.658985909151379
+      ],
+      "position": [
+        1.61,
+        0.31,
+        0.3294929545756895
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.03730409316718578
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_2_7",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        1.61,
+        0.31,
+        0.708985909151379
+      ],
+      "rotation": [
+        0,
+        0,
+        0.08542346677277238
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_3_0",
+      "size": [
+        0.035,
+        0.035,
+        0.7061063765594736
+      ],
+      "position": [
+        -1.53,
+        0.9299999999999999,
+        0.3530531882797368
+      ],
+      "rotation": [
+        0,
+        0,
+        0.07695731408894062
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_3_0",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        -1.53,
+        0.9299999999999999,
+        0.7561063765594737
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.0374172868905589
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_3_1",
+      "size": [
+        0.035,
+        0.035,
+        0.493923758729361
+      ],
+      "position": [
+        -1.07,
+        0.9299999999999999,
+        0.2469618793646805
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.0693545487895608
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_3_1",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        -1.07,
+        0.9299999999999999,
+        0.543923758729361
+      ],
+      "rotation": [
+        0,
+        0,
+        0.10126683865673838
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_3_2",
+      "size": [
+        0.035,
+        0.035,
+        0.7434979195659981
+      ],
+      "position": [
+        -0.6100000000000001,
+        0.9299999999999999,
+        0.37174895978299904
+      ],
+      "rotation": [
+        0,
+        0,
+        0.01162611257284879
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_3_2",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        -0.6100000000000001,
+        0.9299999999999999,
+        0.7934979195659981
+      ],
+      "rotation": [
+        0,
+        0,
+        0.1281711793038994
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_3_3",
+      "size": [
+        0.035,
+        0.035,
+        0.6942581275384874
+      ],
+      "position": [
+        -0.15000000000000002,
+        0.9299999999999999,
+        0.3471290637692437
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.06675790067762137
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_3_3",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        -0.15000000000000002,
+        0.9299999999999999,
+        0.7442581275384874
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.08904600071255117
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_3_4",
+      "size": [
+        0.035,
+        0.035,
+        0.5941139143053442
+      ],
+      "position": [
+        0.31,
+        0.9299999999999999,
+        0.2970569571526721
+      ],
+      "rotation": [
+        0,
+        0,
+        0.06219360686838628
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_3_4",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        0.31,
+        0.9299999999999999,
+        0.6441139143053443
+      ],
+      "rotation": [
+        0,
+        0,
+        0.058182881888933474
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_3_5",
+      "size": [
+        0.035,
+        0.035,
+        0.4806544392881915
+      ],
+      "position": [
+        0.77,
+        0.9299999999999999,
+        0.24032721964409576
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.028338336385786533
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_3_5",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        0.77,
+        0.9299999999999999,
+        0.5306544392881916
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.0068058407166972645
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_3_6",
+      "size": [
+        0.035,
+        0.035,
+        0.7430816306546331
+      ],
+      "position": [
+        1.2300000000000002,
+        0.9299999999999999,
+        0.37154081532731653
+      ],
+      "rotation": [
+        0,
+        0,
+        0.030402481481432916
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_3_6",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        1.2300000000000002,
+        0.9299999999999999,
+        0.7930816306546331
+      ],
+      "rotation": [
+        0,
+        0,
+        0.036931152082979674
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropStem_3_7",
+      "size": [
+        0.035,
+        0.035,
+        0.7449197298218496
+      ],
+      "position": [
+        1.6900000000000002,
+        0.9299999999999999,
+        0.3724598649109248
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.036933108903467654
+      ],
+      "material": "folCropDark",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "cropHead_3_7",
+      "size": [
+        0.1,
+        0.1,
+        0.22
+      ],
+      "position": [
+        1.6900000000000002,
+        0.9299999999999999,
+        0.7949197298218497
+      ],
+      "rotation": [
+        0,
+        0,
+        0.0014496437273919527
+      ],
+      "material": "folCrop",
+      "tags": [
+        "foliage",
+        "crop"
+      ]
+    }
+  ],
+  "metadata": {
+    "engine": "foliage",
+    "engineVersion": "0.1.0",
+    "biome": "farmland",
+    "recipeWarnings": []
+  },
+  "validation": {
+    "errors": [],
+    "warnings": [],
+    "stats": {
+      "nodeCount": 64,
+      "materialCount": 13,
+      "approxVertexCount": 512,
+      "approxTriangleCount": 768
+    }
+  },
+  "asset": {
+    "schema": "worldforge.asset.v1",
+    "worldforgeVersion": "0.8.0",
+    "engine": {
+      "name": "foliage",
+      "version": "0.1.0"
+    },
+    "id": "foliage-8105",
+    "assetType": "foliage",
+    "seed": 8105,
+    "anchor": {
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "pivot": "ground-center"
+    },
+    "facing": null,
+    "footprint": {
+      "shape": "box",
+      "width": 3.4115072307714187,
+      "depth": 1.9718519227763185
+    },
+    "bounds": {
+      "min": [
+        -1.6648977536358758,
+        -0.9858710302295113,
+        0
+      ],
+      "max": [
+        1.746609477135543,
+        0.9859808925468071,
+        0.9393926374055446
+      ],
+      "size": [
+        3.4115072307714187,
+        1.9718519227763185,
+        0.9393926374055446
+      ]
+    },
+    "collision": {
+      "enabled": false,
+      "shape": "bounds"
+    },
+    "occlusion": {
+      "enabled": false
+    },
+    "tags": [
+      "foliage",
+      "crops"
+    ]
+  }
+}

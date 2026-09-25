@@ -1,4 +1,4 @@
-export const WORLDFORGE_VERSION = '0.7.0';
+export const WORLDFORGE_VERSION = '0.8.0';
 export const RECIPE_SCHEMA = 'worldforge.recipe.v1';
 export const SCENE_SCHEMA = 'worldforge.scene.v1';
 export const ASSET_SCHEMA = 'worldforge.asset.v1';
@@ -10,7 +10,8 @@ export const ENGINE_VERSIONS = Object.freeze({
   prop: '0.1.0',
   terrain: '0.1.0',
   surface: '0.1.0',
-  field: '0.1.0'
+  field: '0.2.0',
+  foliage: '0.1.0'
 });
 
 export const DEFAULT_BUILDING = Object.freeze({
@@ -62,6 +63,15 @@ export const DEFAULT_SURFACE = Object.freeze({
   surface: 'grass', size: 24, variation: 0.55, wear: 0.22,
   pathPattern: 'none', pathWidth: 2.4, pathMaterial: 'dirt',
   detailDensity: 0.42, edgeBlend: true, gridResolution: 40
+});
+
+
+
+export const DEFAULT_FOLIAGE = Object.freeze({
+  schema: RECIPE_SCHEMA, generatorVersion: WORLDFORGE_VERSION,
+  engineVersion: ENGINE_VERSIONS.foliage, type: 'foliage', seed: 61803,
+  family: 'tree', biome: 'temperate', variant: 'oak', condition: 'healthy',
+  scale: 1, density: 0.55, spread: 1.0
 });
 
 export const DEFAULT_FIELD = Object.freeze({

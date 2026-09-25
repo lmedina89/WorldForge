@@ -1,67 +1,95 @@
-# WorldForge v0.7.0 Test Report
+# WorldForge v0.8.0 Test Report
 
-## Protected building engines
-Compared with v0.6.0, the following generator files are byte-identical:
-- `src/generators/building.js` — Building Engine 1.0.0
-- `src/generators/building-v1.1.js` — Building Engine 1.1.0
-- `src/generators/building-v1.2.js` — Building Engine 1.2.0
-- `src/generators/building-v1.3.js` — Building Engine 1.3.0
+## Protected modules
+Compared with v0.7.0, these generator source files are byte-identical:
+- `src/generators/building.js`
+- `src/generators/building-v1.1.js`
+- `src/generators/building-v1.2.js`
+- `src/generators/building-v1.3.js`
+- `src/generators/prop.js`
+- `src/generators/surface.js`
+- `src/generators/field.js` — protected Field Composer 0.1.0
 
-Representative recipes from all four engines were regenerated in v0.6.0 and v0.7.0:
-- Exact nodes: PASS
-- Exact materials: PASS
+Protected Field 0.1 regression:
+- Node geometry: PASS
+- Materials: PASS
+- Placement layout / child seeds: PASS
 
-## Surface Engine 0.1.0
+## Foliage Engine 0.1.0
 Matrix:
-- 8 surface families
-- 6 path patterns
+- 9 foliage families
+- 7 biomes
 - 2 seeds
-- 96 cases total
+- 126 family/biome cases
 
 Results:
 - Validation failures: 0
 - Determinism failures: 0
 - Material determinism failures: 0
 
-## Field Composer 0.1.0
-Presets:
-Village Well Square, Rural House Lane, Market Corner, Castle Courtyard, Castle Gate Approach, Mountain Path, Mine Entrance Clearing, Desert Market, Dockside Lane.
+Additional tree tests:
+- oak: PASS
+- pine: PASS
+- birch: PASS
+- fruit: PASS
+- palm: PASS
+- mixed: PASS
+- healthy/dry/dead conditions: PASS
 
-Matrix:
-- 9 presets
-- 3 seeds
-- 27 cases total
+## Field Composer 0.2.0
+All nine field presets were generated with natural dressing enabled:
+- Village Well Square
+- Rural House Lane
+- Market Corner
+- Castle Courtyard
+- Castle Gate Approach
+- Mountain Path
+- Mine Entrance Clearing
+- Desert Market
+- Dockside Lane
 
-Results at size 34 / Building Engine 1.3.0:
+Audit result:
 - Validation failures: 0
 - Placement-overlap warnings: 0
-- Determinism failures: 0
-- Placement recipe determinism failures: 0
+- Missing foliage placements: 0
 
-Edited field recipe test:
-- Asset position round-trip: PASS
-- Asset rotation round-trip: PASS
+Default dressed Village Well Square sample:
+- 13 placements
+- 4 foliage placements
+- ~12.6k triangles
+- 64 deduplicated materials
+- validation warnings: 0
 
 ## Existing suites
 - RPG Architecture Pack I: PASS
 - RPG Architecture Pack II: PASS
+- Surface Engine / Field Foundation suite: PASS
+- 96 Surface determinism cases: PASS
+- 27 field preset/seed determinism cases: PASS
+- Field edit round-trip: PASS
 
 ## Headless export
-`examples/field.recipe.json` was exported through `cli/worldforge.mjs`:
+Foliage recipe:
 - Recipe JSON: PASS
 - Scene JSON: PASS
 - OBJ: PASS
 - MTL: PASS
 
-Default Village Well Square sample:
-- 9 placements
-- ~10.7k triangles
-- 51 deduplicated materials
+Field 0.2 dressed recipe:
+- Recipe JSON: PASS
+- Scene JSON: PASS
+- OBJ: PASS
+- MTL: PASS
 
 ## Visual audit
-Three representative field scenes were rendered from the neutral scene spec and inspected:
-- Village Well Square
-- Castle Courtyard
-- Desert Market
+Standalone foliage gallery inspected:
+- oak, pine, palm
+- shrubs, flowers, crops
+- fallen log, stump, rocks
+- reeds, vines, dead tree
 
-The fields show coherent ground surfaces, paths/plazas, architecture, and props without the earlier coordinate-plane intersection issue.
+Dressed field gallery inspected:
+- Village Well Square
+- Mountain Path
+- Desert Market
+- Dockside Lane

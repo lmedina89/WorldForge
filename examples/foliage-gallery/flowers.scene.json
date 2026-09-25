@@ -1,0 +1,966 @@
+{
+  "schema": "worldforge.scene.v1",
+  "generatorVersion": "0.8.0",
+  "recipe": {
+    "schema": "worldforge.recipe.v1",
+    "generatorVersion": "0.8.0",
+    "engineVersion": "0.1.0",
+    "type": "foliage",
+    "seed": 8104,
+    "family": "flowers",
+    "biome": "farmland",
+    "variant": "auto",
+    "condition": "healthy",
+    "scale": 1,
+    "density": 0.8,
+    "spread": 1.2
+  },
+  "materials": {
+    "folTrunk": {
+      "id": "folTrunk",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#725036"
+    },
+    "folBark": {
+      "id": "folBark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#503726"
+    },
+    "folLeaf": {
+      "id": "folLeaf",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#6f8c48"
+    },
+    "folLeaf2": {
+      "id": "folLeaf2",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#8aa65c"
+    },
+    "folLeafDark": {
+      "id": "folLeafDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#566e39"
+    },
+    "folDry": {
+      "id": "folDry",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#a08a55"
+    },
+    "folFlower": {
+      "id": "folFlower",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#e2c85f"
+    },
+    "folFlower2": {
+      "id": "folFlower2",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#d1919d"
+    },
+    "folRock": {
+      "id": "folRock",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#74736b"
+    },
+    "folRockLight": {
+      "id": "folRockLight",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#8a8b82"
+    },
+    "folCrop": {
+      "id": "folCrop",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#a18f4f"
+    },
+    "folCropDark": {
+      "id": "folCropDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#756d3e"
+    },
+    "folVine": {
+      "id": "folVine",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#4f7045"
+    }
+  },
+  "nodes": [
+    {
+      "kind": "box",
+      "name": "stem_0",
+      "size": [
+        0.025,
+        0.025,
+        0.2959909034706652
+      ],
+      "position": [
+        -0.09271642932089931,
+        -0.6898407902562356,
+        0.1479954517353326
+      ],
+      "rotation": [
+        0,
+        0,
+        1.7698671739575897
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "flower_0",
+      "radius": 0.07,
+      "position": [
+        -0.09271642932089931,
+        -0.6898407902562356,
+        0.3309909034706652
+      ],
+      "scale": [
+        1,
+        1,
+        0.55
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folFlower2",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "stem_1",
+      "size": [
+        0.025,
+        0.025,
+        0.3420772137120366
+      ],
+      "position": [
+        -0.560665228033856,
+        1.1431332719541116,
+        0.1710386068560183
+      ],
+      "rotation": [
+        0,
+        0,
+        0.291937839194242
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "flower_1",
+      "radius": 0.07,
+      "position": [
+        -0.560665228033856,
+        1.1431332719541116,
+        0.3770772137120366
+      ],
+      "scale": [
+        1,
+        1,
+        0.55
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folFlower",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "stem_2",
+      "size": [
+        0.025,
+        0.025,
+        0.3867891300469637
+      ],
+      "position": [
+        -0.2725906920647622,
+        -0.8382318265519502,
+        0.19339456502348185
+      ],
+      "rotation": [
+        0,
+        0,
+        2.9829316019315697
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "flower_2",
+      "radius": 0.07,
+      "position": [
+        -0.2725906920647622,
+        -0.8382318265519502,
+        0.4217891300469637
+      ],
+      "scale": [
+        1,
+        1,
+        0.55
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folFlower",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "stem_3",
+      "size": [
+        0.025,
+        0.025,
+        0.2441232620179653
+      ],
+      "position": [
+        -1.3528339219776073,
+        -0.09897315187849012,
+        0.12206163100898265
+      ],
+      "rotation": [
+        0,
+        0,
+        0.973326066686088
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "flower_3",
+      "radius": 0.07,
+      "position": [
+        -1.3528339219776073,
+        -0.09897315187849012,
+        0.27912326201796533
+      ],
+      "scale": [
+        1,
+        1,
+        0.55
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folFlower2",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "stem_4",
+      "size": [
+        0.025,
+        0.025,
+        0.22688504179939628
+      ],
+      "position": [
+        0.8627093491509613,
+        -0.6780444579058669,
+        0.11344252089969814
+      ],
+      "rotation": [
+        0,
+        0,
+        2.407285406814096
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "flower_4",
+      "radius": 0.07,
+      "position": [
+        0.8627093491509613,
+        -0.6780444579058669,
+        0.2618850417993963
+      ],
+      "scale": [
+        1,
+        1,
+        0.55
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folFlower",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "stem_5",
+      "size": [
+        0.025,
+        0.025,
+        0.4050568150542676
+      ],
+      "position": [
+        0.28069598901002324,
+        -0.5448187478918735,
+        0.2025284075271338
+      ],
+      "rotation": [
+        0,
+        0,
+        1.7571272633577477
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "flower_5",
+      "radius": 0.07,
+      "position": [
+        0.28069598901002324,
+        -0.5448187478918735,
+        0.44005681505426764
+      ],
+      "scale": [
+        1,
+        1,
+        0.55
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folFlower",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "stem_6",
+      "size": [
+        0.025,
+        0.025,
+        0.2599955517612398
+      ],
+      "position": [
+        -0.22207820197904263,
+        -0.3866954221228506,
+        0.1299977758806199
+      ],
+      "rotation": [
+        0,
+        0,
+        1.1118381684311003
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "flower_6",
+      "radius": 0.07,
+      "position": [
+        -0.22207820197904263,
+        -0.3866954221228506,
+        0.2949955517612398
+      ],
+      "scale": [
+        1,
+        1,
+        0.55
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folFlower2",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "stem_7",
+      "size": [
+        0.025,
+        0.025,
+        0.3274114729464054
+      ],
+      "position": [
+        -0.6621131248445696,
+        0.25477488266971904,
+        0.1637057364732027
+      ],
+      "rotation": [
+        0,
+        0,
+        2.0407872910507714
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "flower_7",
+      "radius": 0.07,
+      "position": [
+        -0.6621131248445696,
+        0.25477488266971904,
+        0.3624114729464054
+      ],
+      "scale": [
+        1,
+        1,
+        0.55
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folFlower",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "stem_8",
+      "size": [
+        0.025,
+        0.025,
+        0.27450579654425383
+      ],
+      "position": [
+        -1.394945085194854,
+        0.6762107379722071,
+        0.13725289827212692
+      ],
+      "rotation": [
+        0,
+        0,
+        2.3571383759089737
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "flower_8",
+      "radius": 0.07,
+      "position": [
+        -1.394945085194854,
+        0.6762107379722071,
+        0.3095057965442538
+      ],
+      "scale": [
+        1,
+        1,
+        0.55
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folFlower",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "stem_9",
+      "size": [
+        0.025,
+        0.025,
+        0.3970620070584118
+      ],
+      "position": [
+        1.4909259877788543,
+        -0.6151291680191172,
+        0.1985310035292059
+      ],
+      "rotation": [
+        0,
+        0,
+        3.0130882383736663
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "flower_9",
+      "radius": 0.07,
+      "position": [
+        1.4909259877788543,
+        -0.6151291680191172,
+        0.4320620070584118
+      ],
+      "scale": [
+        1,
+        1,
+        0.55
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folFlower2",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "stem_10",
+      "size": [
+        0.025,
+        0.025,
+        0.2921603888645768
+      ],
+      "position": [
+        0.3320828735125043,
+        -0.11334438006568483,
+        0.1460801944322884
+      ],
+      "rotation": [
+        0,
+        0,
+        2.169752548137098
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "flower_10",
+      "radius": 0.07,
+      "position": [
+        0.3320828735125043,
+        -0.11334438006568483,
+        0.32716038886457677
+      ],
+      "scale": [
+        1,
+        1,
+        0.55
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folFlower",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "stem_11",
+      "size": [
+        0.025,
+        0.025,
+        0.30878294399008155
+      ],
+      "position": [
+        -1.0538987514946945,
+        -0.2540088615452068,
+        0.15439147199504077
+      ],
+      "rotation": [
+        0,
+        0,
+        1.1842304442942513
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "flower_11",
+      "radius": 0.07,
+      "position": [
+        -1.0538987514946945,
+        -0.2540088615452068,
+        0.3437829439900816
+      ],
+      "scale": [
+        1,
+        1,
+        0.55
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folFlower",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "stem_12",
+      "size": [
+        0.025,
+        0.025,
+        0.24860261421650648
+      ],
+      "position": [
+        -0.3823081963329463,
+        -0.6230200876342749,
+        0.12430130710825324
+      ],
+      "rotation": [
+        0,
+        0,
+        1.1848454982108587
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "flower_12",
+      "radius": 0.07,
+      "position": [
+        -0.3823081963329463,
+        -0.6230200876342749,
+        0.28360261421650645
+      ],
+      "scale": [
+        1,
+        1,
+        0.55
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folFlower2",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "stem_13",
+      "size": [
+        0.025,
+        0.025,
+        0.4014597731083631
+      ],
+      "position": [
+        0.24330080797830858,
+        0.7642110094967564,
+        0.20072988655418156
+      ],
+      "rotation": [
+        0,
+        0,
+        0.055267753278049295
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "flower_13",
+      "radius": 0.07,
+      "position": [
+        0.24330080797830858,
+        0.7642110094967564,
+        0.43645977310836315
+      ],
+      "scale": [
+        1,
+        1,
+        0.55
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folFlower",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "stem_14",
+      "size": [
+        0.025,
+        0.025,
+        0.33693547066301105
+      ],
+      "position": [
+        0.24274878215190793,
+        -0.8383227630564765,
+        0.16846773533150552
+      ],
+      "rotation": [
+        0,
+        0,
+        3.118353011279695
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "flower_14",
+      "radius": 0.07,
+      "position": [
+        0.24274878215190793,
+        -0.8383227630564765,
+        0.371935470663011
+      ],
+      "scale": [
+        1,
+        1,
+        0.55
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folFlower",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "stem_15",
+      "size": [
+        0.025,
+        0.025,
+        0.24899101400747894
+      ],
+      "position": [
+        0.008486949619441036,
+        0.735171940862978,
+        0.12449550700373947
+      ],
+      "rotation": [
+        0,
+        0,
+        2.0003279728434826
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "flower_15",
+      "radius": 0.07,
+      "position": [
+        0.008486949619441036,
+        0.735171940862978,
+        0.28399101400747895
+      ],
+      "scale": [
+        1,
+        1,
+        0.55
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folFlower2",
+      "tags": [
+        "foliage",
+        "flower"
+      ]
+    }
+  ],
+  "metadata": {
+    "engine": "foliage",
+    "engineVersion": "0.1.0",
+    "biome": "farmland",
+    "recipeWarnings": []
+  },
+  "validation": {
+    "errors": [],
+    "warnings": [],
+    "stats": {
+      "nodeCount": 32,
+      "materialCount": 13,
+      "approxVertexCount": 448,
+      "approxTriangleCount": 768
+    }
+  },
+  "asset": {
+    "schema": "worldforge.asset.v1",
+    "worldforgeVersion": "0.8.0",
+    "engine": {
+      "name": "foliage",
+      "version": "0.1.0"
+    },
+    "id": "foliage-8104",
+    "assetType": "foliage",
+    "seed": 8104,
+    "anchor": {
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "pivot": "ground-center"
+    },
+    "facing": null,
+    "footprint": {
+      "shape": "box",
+      "width": 3.0258710729737084,
+      "depth": 2.1214560350105884
+    },
+    "bounds": {
+      "min": [
+        -1.464945085194854,
+        -0.9083227630564765,
+        0
+      ],
+      "max": [
+        1.5609259877788544,
+        1.2131332719541117,
+        0.4785568150542676
+      ],
+      "size": [
+        3.0258710729737084,
+        2.1214560350105884,
+        0.4785568150542676
+      ]
+    },
+    "collision": {
+      "enabled": false,
+      "shape": "bounds"
+    },
+    "occlusion": {
+      "enabled": false
+    },
+    "tags": [
+      "foliage",
+      "flowers"
+    ]
+  }
+}

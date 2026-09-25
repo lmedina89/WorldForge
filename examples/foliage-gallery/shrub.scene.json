@@ -1,0 +1,357 @@
+{
+  "schema": "worldforge.scene.v1",
+  "generatorVersion": "0.8.0",
+  "recipe": {
+    "schema": "worldforge.recipe.v1",
+    "generatorVersion": "0.8.0",
+    "engineVersion": "0.1.0",
+    "type": "foliage",
+    "seed": 8103,
+    "family": "shrub",
+    "biome": "forest",
+    "variant": "auto",
+    "condition": "healthy",
+    "scale": 1,
+    "density": 0.7,
+    "spread": 1.1
+  },
+  "materials": {
+    "folTrunk": {
+      "id": "folTrunk",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#60432f"
+    },
+    "folBark": {
+      "id": "folBark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#413126"
+    },
+    "folLeaf": {
+      "id": "folLeaf",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#466f40"
+    },
+    "folLeaf2": {
+      "id": "folLeaf2",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#608a50"
+    },
+    "folLeafDark": {
+      "id": "folLeafDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#355534"
+    },
+    "folDry": {
+      "id": "folDry",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#756847"
+    },
+    "folFlower": {
+      "id": "folFlower",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#d9c866"
+    },
+    "folFlower2": {
+      "id": "folFlower2",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#b5839c"
+    },
+    "folRock": {
+      "id": "folRock",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#74736b"
+    },
+    "folRockLight": {
+      "id": "folRockLight",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#8a8b82"
+    },
+    "folCrop": {
+      "id": "folCrop",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#87915a"
+    },
+    "folCropDark": {
+      "id": "folCropDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#756d3e"
+    },
+    "folVine": {
+      "id": "folVine",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#4f7045"
+    }
+  },
+  "nodes": [
+    {
+      "kind": "dodecahedron",
+      "name": "shrub_0",
+      "radius": 0.5329700056975708,
+      "position": [
+        -0.2874496698168795,
+        0.3061981722916935,
+        0.3304414035324939
+      ],
+      "scale": [
+        1,
+        1,
+        0.5790808221092448
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folLeafDark",
+      "tags": [
+        "foliage",
+        "canopy"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "shrub_1",
+      "radius": 0.3941651331773028,
+      "position": [
+        0.19119233613867656,
+        -0.8526859746492825,
+        0.24438238256992773
+      ],
+      "scale": [
+        1,
+        1,
+        0.8785402714391239
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folLeaf",
+      "tags": [
+        "foliage",
+        "canopy"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "shrub_2",
+      "radius": 0.5407829801365733,
+      "position": [
+        0.20283987535332484,
+        0.1447109945636312,
+        0.33528544768467544
+      ],
+      "scale": [
+        1,
+        1,
+        0.8046308367862367
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folLeafDark",
+      "tags": [
+        "foliage",
+        "canopy"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "shrub_3",
+      "radius": 0.35086769038345667,
+      "position": [
+        -0.06112952993707046,
+        -0.7968229741707537,
+        0.21753796803774314
+      ],
+      "scale": [
+        1,
+        1,
+        0.6311048001167365
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folLeaf",
+      "tags": [
+        "foliage",
+        "canopy"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "shrub_4",
+      "radius": 0.3222212511394173,
+      "position": [
+        -0.7346453637334803,
+        -0.323601093371564,
+        0.19977717570643871
+      ],
+      "scale": [
+        1,
+        1,
+        0.6021736582973972
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folLeafDark",
+      "tags": [
+        "foliage",
+        "canopy"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "shrub_5",
+      "radius": 0.40199947902467104,
+      "position": [
+        0.05017046197352784,
+        -0.040785739095915687,
+        0.24923967699529603
+      ],
+      "scale": [
+        1,
+        1,
+        0.8361648096470162
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folLeaf",
+      "tags": [
+        "foliage",
+        "canopy"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "shrub_6",
+      "radius": 0.4100787998922169,
+      "position": [
+        0.7338490605819539,
+        0.1830608672543447,
+        0.2542488559331745
+      ],
+      "scale": [
+        1,
+        1,
+        0.666979731922038
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folLeafDark",
+      "tags": [
+        "foliage",
+        "canopy"
+      ]
+    }
+  ],
+  "metadata": {
+    "engine": "foliage",
+    "engineVersion": "0.1.0",
+    "biome": "forest",
+    "recipeWarnings": []
+  },
+  "validation": {
+    "errors": [],
+    "warnings": [],
+    "stats": {
+      "nodeCount": 7,
+      "materialCount": 13,
+      "approxVertexCount": 140,
+      "approxTriangleCount": 252
+    }
+  },
+  "asset": {
+    "schema": "worldforge.asset.v1",
+    "worldforgeVersion": "0.8.0",
+    "engine": {
+      "name": "foliage",
+      "version": "0.1.0"
+    },
+    "id": "foliage-8103",
+    "assetType": "foliage",
+    "seed": 8103,
+    "anchor": {
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "pivot": "ground-center"
+    },
+    "facing": null,
+    "footprint": {
+      "shape": "box",
+      "width": 2.2007944753470685,
+      "depth": 2.0860192858158495
+    },
+    "bounds": {
+      "min": [
+        -1.0568666148728976,
+        -1.2468511078265854,
+        -0.10190756052349831
+      ],
+      "max": [
+        1.1439278604741707,
+        0.8391681779892644,
+        0.7704161095117212
+      ],
+      "size": [
+        2.2007944753470685,
+        2.0860192858158495,
+        0.8723236700352195
+      ]
+    },
+    "collision": {
+      "enabled": false,
+      "shape": "bounds"
+    },
+    "occlusion": {
+      "enabled": true
+    },
+    "tags": [
+      "foliage",
+      "shrub"
+    ]
+  }
+}

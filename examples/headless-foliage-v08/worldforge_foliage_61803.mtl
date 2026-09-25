@@ -1,0 +1,51 @@
+newmtl folTrunk
+Kd 0.41961 0.29412 0.20000
+Ns 10
+
+newmtl folBark
+Kd 0.30196 0.21569 0.16078
+Ns 10
+
+newmtl folLeaf
+Kd 0.37255 0.50980 0.28627
+Ns 10
+
+newmtl folLeaf2
+Kd 0.46667 0.60000 0.35294
+Ns 10
+
+newmtl folLeafDark
+Kd 0.28627 0.40784 0.23137
+Ns 10
+
+newmtl folDry
+Kd 0.54510 0.46275 0.31373
+Ns 10
+
+newmtl folFlower
+Kd 0.90196 0.81961 0.42745
+Ns 10
+
+newmtl folFlower2
+Kd 0.78039 0.56078 0.64706
+Ns 10
+
+newmtl folRock
+Kd 0.45490 0.45098 0.41961
+Ns 10
+
+newmtl folRockLight
+Kd 0.54118 0.54510 0.50980
+Ns 10
+
+newmtl folCrop
+Kd 0.52941 0.56863 0.35294
+Ns 10
+
+newmtl folCropDark
+Kd 0.45882 0.42745 0.24314
+Ns 10
+
+newmtl folVine
+Kd 0.30980 0.43922 0.27059
+Ns 10

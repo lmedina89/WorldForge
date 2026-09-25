@@ -97,3 +97,30 @@ export function installSurfaceMaterials(spec, surface='grass', pathMaterial='dir
   defineMaterial(spec,'surfaceFlower2',{color:'#b58b9b'});
   defineMaterial(spec,'surfaceWater',{color:'#547d86',roughness:.35,metalness:.02});
 }
+
+export function installFoliageMaterials(spec, biome='temperate', condition='healthy') {
+  const palettes={
+    temperate:{trunk:'#6b4b33',bark:'#4d3729',leaf:'#5f8249',leaf2:'#77995a',leafDark:'#49683b',dry:'#8b7650',flower:'#e6d16d',flower2:'#c78fa5'},
+    forest:{trunk:'#60432f',bark:'#413126',leaf:'#466f40',leaf2:'#608a50',leafDark:'#355534',dry:'#756847',flower:'#d9c866',flower2:'#b5839c'},
+    mountain:{trunk:'#594737',bark:'#3e342b',leaf:'#486a4b',leaf2:'#5c7e5a',leafDark:'#354f3b',dry:'#746b55',flower:'#d9cc86',flower2:'#9b91b5'},
+    farmland:{trunk:'#725036',bark:'#503726',leaf:'#6f8c48',leaf2:'#8aa65c',leafDark:'#566e39',dry:'#a08a55',flower:'#e2c85f',flower2:'#d1919d'},
+    swamp:{trunk:'#514638',bark:'#39342c',leaf:'#4e7253',leaf2:'#68856a',leafDark:'#394f3f',dry:'#71684d',flower:'#c8c56e',flower2:'#987aa4'},
+    desert:{trunk:'#7e5d3c',bark:'#59422e',leaf:'#70845b',leaf2:'#89996a',leafDark:'#566849',dry:'#9c865d',flower:'#d8b767',flower2:'#bf7d79'},
+    ruins:{trunk:'#5e4936',bark:'#41352a',leaf:'#596d4c',leaf2:'#70805d',leafDark:'#43533c',dry:'#80735a',flower:'#c9bc78',flower2:'#a9879a'}
+  };
+  const p=palettes[biome]||palettes.temperate;
+  const dead=condition==='dead'||condition==='dry';
+  defineMaterial(spec,'folTrunk',{color:dead?p.dry:p.trunk});
+  defineMaterial(spec,'folBark',{color:p.bark});
+  defineMaterial(spec,'folLeaf',{color:dead?p.dry:p.leaf});
+  defineMaterial(spec,'folLeaf2',{color:dead?p.dry:p.leaf2});
+  defineMaterial(spec,'folLeafDark',{color:dead?p.dry:p.leafDark});
+  defineMaterial(spec,'folDry',{color:p.dry});
+  defineMaterial(spec,'folFlower',{color:p.flower});
+  defineMaterial(spec,'folFlower2',{color:p.flower2});
+  defineMaterial(spec,'folRock',{color:biome==='desert'?'#8e7658':biome==='mountain'?'#696d6a':'#74736b'});
+  defineMaterial(spec,'folRockLight',{color:biome==='desert'?'#aa8e68':'#8a8b82'});
+  defineMaterial(spec,'folCrop',{color:biome==='farmland'?'#a18f4f':'#87915a'});
+  defineMaterial(spec,'folCropDark',{color:'#756d3e'});
+  defineMaterial(spec,'folVine',{color:'#4f7045'});
+}

@@ -1,0 +1,806 @@
+{
+  "schema": "worldforge.scene.v1",
+  "generatorVersion": "0.8.0",
+  "recipe": {
+    "schema": "worldforge.recipe.v1",
+    "generatorVersion": "0.8.0",
+    "engineVersion": "0.1.0",
+    "type": "foliage",
+    "seed": 8109,
+    "family": "reeds",
+    "biome": "swamp",
+    "variant": "auto",
+    "condition": "healthy",
+    "scale": 1,
+    "density": 0.8,
+    "spread": 1.1
+  },
+  "materials": {
+    "folTrunk": {
+      "id": "folTrunk",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#514638"
+    },
+    "folBark": {
+      "id": "folBark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#39342c"
+    },
+    "folLeaf": {
+      "id": "folLeaf",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#4e7253"
+    },
+    "folLeaf2": {
+      "id": "folLeaf2",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#68856a"
+    },
+    "folLeafDark": {
+      "id": "folLeafDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#394f3f"
+    },
+    "folDry": {
+      "id": "folDry",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#71684d"
+    },
+    "folFlower": {
+      "id": "folFlower",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#c8c56e"
+    },
+    "folFlower2": {
+      "id": "folFlower2",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#987aa4"
+    },
+    "folRock": {
+      "id": "folRock",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#74736b"
+    },
+    "folRockLight": {
+      "id": "folRockLight",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#8a8b82"
+    },
+    "folCrop": {
+      "id": "folCrop",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#87915a"
+    },
+    "folCropDark": {
+      "id": "folCropDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#756d3e"
+    },
+    "folVine": {
+      "id": "folVine",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#4f7045"
+    }
+  },
+  "nodes": [
+    {
+      "kind": "box",
+      "name": "reed_0",
+      "size": [
+        0.025,
+        0.025,
+        0.9918645738856867
+      ],
+      "position": [
+        0.6059442345919646,
+        -0.5471649474875302,
+        0.49593228694284336
+      ],
+      "rotation": [
+        -0.011468692054040733,
+        -0.021608426840975883,
+        0
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "reed"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "reedHead_0",
+      "size": [
+        0.05,
+        0.05,
+        0.2
+      ],
+      "position": [
+        0.6059442345919646,
+        -0.5471649474875302,
+        1.0718645738856867
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folDry",
+      "tags": [
+        "foliage",
+        "reed"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "reed_1",
+      "size": [
+        0.025,
+        0.025,
+        1.4572863666107878
+      ],
+      "position": [
+        0.32081034890413423,
+        -0.7914581404110187,
+        0.7286431833053939
+      ],
+      "rotation": [
+        -0.028747050324454904,
+        -0.03772881249897182,
+        0
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "reed"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "reed_2",
+      "size": [
+        0.025,
+        0.025,
+        1.3589324343716727
+      ],
+      "position": [
+        0.554722279850763,
+        -0.7571822403603676,
+        0.6794662171858363
+      ],
+      "rotation": [
+        -0.004001683811657129,
+        0.04729607808403671,
+        0
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "reed"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "reedHead_2",
+      "size": [
+        0.05,
+        0.05,
+        0.2
+      ],
+      "position": [
+        0.554722279850763,
+        -0.7571822403603676,
+        1.4389324343716727
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folDry",
+      "tags": [
+        "foliage",
+        "reed"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "reed_3",
+      "size": [
+        0.025,
+        0.025,
+        1.0573049819096922
+      ],
+      "position": [
+        -0.3838004410577235,
+        -0.08170966409052986,
+        0.5286524909548461
+      ],
+      "rotation": [
+        0.0060830541420727954,
+        -0.00912790452130139,
+        0
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "reed"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "reed_4",
+      "size": [
+        0.025,
+        0.025,
+        0.934674746496603
+      ],
+      "position": [
+        -0.07993902442782318,
+        0.7661524233505973,
+        0.4673373732483015
+      ],
+      "rotation": [
+        0.03458994368556888,
+        -0.011332236672751607,
+        0
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "reed"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "reedHead_4",
+      "size": [
+        0.05,
+        0.05,
+        0.2
+      ],
+      "position": [
+        -0.07993902442782318,
+        0.7661524233505973,
+        1.014674746496603
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folDry",
+      "tags": [
+        "foliage",
+        "reed"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "reed_5",
+      "size": [
+        0.025,
+        0.025,
+        1.3382535625714809
+      ],
+      "position": [
+        -0.7953621105781646,
+        0.08404535737892378,
+        0.6691267812857404
+      ],
+      "rotation": [
+        0.019110061461105943,
+        0.021275222278200084,
+        0
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "reed"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "reed_6",
+      "size": [
+        0.025,
+        0.025,
+        1.2118261673953383
+      ],
+      "position": [
+        -0.835008457488179,
+        -0.21559573767236967,
+        0.6059130836976692
+      ],
+      "rotation": [
+        -0.010664855362847447,
+        0.020914001646451658,
+        0
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "reed"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "reedHead_6",
+      "size": [
+        0.05,
+        0.05,
+        0.2
+      ],
+      "position": [
+        -0.835008457488179,
+        -0.21559573767236967,
+        1.2918261673953384
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folDry",
+      "tags": [
+        "foliage",
+        "reed"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "reed_7",
+      "size": [
+        0.025,
+        0.025,
+        1.1246647986816243
+      ],
+      "position": [
+        0.5260256868091258,
+        0.10654141676118471,
+        0.5623323993408121
+      ],
+      "rotation": [
+        0.017116027185693383,
+        -0.0032388889696449014,
+        0
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "reed"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "reed_8",
+      "size": [
+        0.025,
+        0.025,
+        1.0044430019333959
+      ],
+      "position": [
+        0.38330967502350416,
+        -0.9177885176513887,
+        0.5022215009666979
+      ],
+      "rotation": [
+        -0.03340622009709478,
+        -0.006082999496720733,
+        0
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "reed"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "reedHead_8",
+      "size": [
+        0.05,
+        0.05,
+        0.2
+      ],
+      "position": [
+        0.38330967502350416,
+        -0.9177885176513887,
+        1.084443001933396
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folDry",
+      "tags": [
+        "foliage",
+        "reed"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "reed_9",
+      "size": [
+        0.025,
+        0.025,
+        1.30839041499421
+      ],
+      "position": [
+        -1.0362932615984617,
+        -0.1719750372781251,
+        0.654195207497105
+      ],
+      "rotation": [
+        0.00933124569710344,
+        -0.004318936821073295,
+        0
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "reed"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "reed_10",
+      "size": [
+        0.025,
+        0.025,
+        1.3995354517828673
+      ],
+      "position": [
+        0.82055260728884,
+        -0.14080035632096843,
+        0.6997677258914337
+      ],
+      "rotation": [
+        -0.04366825856268406,
+        0.0006465681828558417,
+        0
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "reed"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "reedHead_10",
+      "size": [
+        0.05,
+        0.05,
+        0.2
+      ],
+      "position": [
+        0.82055260728884,
+        -0.14080035632096843,
+        1.4795354517828674
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folDry",
+      "tags": [
+        "foliage",
+        "reed"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "reed_11",
+      "size": [
+        0.025,
+        0.025,
+        1.0866549114929511
+      ],
+      "position": [
+        0.05623012520659715,
+        0.650129490131758,
+        0.5433274557464756
+      ],
+      "rotation": [
+        0.03314083281438798,
+        0.03140393206849694,
+        0
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "reed"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "reed_12",
+      "size": [
+        0.025,
+        0.025,
+        0.8909654723014683
+      ],
+      "position": [
+        -0.6836871460267486,
+        -0.5742969798374692,
+        0.44548273615073414
+      ],
+      "rotation": [
+        -0.02474779251497239,
+        -0.04876135871745646,
+        0
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "reed"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "reedHead_12",
+      "size": [
+        0.05,
+        0.05,
+        0.2
+      ],
+      "position": [
+        -0.6836871460267486,
+        -0.5742969798374692,
+        0.9709654723014682
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folDry",
+      "tags": [
+        "foliage",
+        "reed"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "reed_13",
+      "size": [
+        0.025,
+        0.025,
+        1.0661934118019416
+      ],
+      "position": [
+        0.8456419410068572,
+        0.2712641012104622,
+        0.5330967059009708
+      ],
+      "rotation": [
+        -0.04091868065297604,
+        0.01783203384838998,
+        0
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "reed"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "reed_14",
+      "size": [
+        0.025,
+        0.025,
+        0.9568768965546042
+      ],
+      "position": [
+        0.11931920945559285,
+        0.9672834297108952,
+        0.4784384482773021
+      ],
+      "rotation": [
+        0.01680372201371938,
+        -0.008523744018748405,
+        0
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "reed"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "reedHead_14",
+      "size": [
+        0.05,
+        0.05,
+        0.2
+      ],
+      "position": [
+        0.11931920945559285,
+        0.9672834297108952,
+        1.0368768965546042
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folDry",
+      "tags": [
+        "foliage",
+        "reed"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "reed_15",
+      "size": [
+        0.025,
+        0.025,
+        0.928028081310913
+      ],
+      "position": [
+        0.6241966923090821,
+        -0.7784920462582019,
+        0.4640140406554565
+      ],
+      "rotation": [
+        0.01841750568710268,
+        0.011113430839031935,
+        0
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "reed"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "reed_16",
+      "size": [
+        0.025,
+        0.025,
+        0.8292756589362398
+      ],
+      "position": [
+        0.23831337833991215,
+        -0.3439405301998074,
+        0.4146378294681199
+      ],
+      "rotation": [
+        0.01686084184329957,
+        -0.018190401955507696,
+        0
+      ],
+      "material": "folVine",
+      "tags": [
+        "foliage",
+        "reed"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "reedHead_16",
+      "size": [
+        0.05,
+        0.05,
+        0.2
+      ],
+      "position": [
+        0.23831337833991215,
+        -0.3439405301998074,
+        0.9092756589362397
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folDry",
+      "tags": [
+        "foliage",
+        "reed"
+      ]
+    }
+  ],
+  "metadata": {
+    "engine": "foliage",
+    "engineVersion": "0.1.0",
+    "biome": "swamp",
+    "recipeWarnings": []
+  },
+  "validation": {
+    "errors": [],
+    "warnings": [],
+    "stats": {
+      "nodeCount": 26,
+      "materialCount": 13,
+      "approxVertexCount": 208,
+      "approxTriangleCount": 312
+    }
+  },
+  "asset": {
+    "schema": "worldforge.asset.v1",
+    "worldforgeVersion": "0.8.0",
+    "engine": {
+      "name": "foliage",
+      "version": "0.1.0"
+    },
+    "id": "foliage-8109",
+    "assetType": "foliage",
+    "seed": 8109,
+    "anchor": {
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "pivot": "ground-center"
+    },
+    "facing": null,
+    "footprint": {
+      "shape": "box",
+      "width": 1.9192657541365197,
+      "depth": 1.9393391748231776
+    },
+    "bounds": {
+      "min": [
+        -1.0516189447496254,
+        -0.9470557451122823,
+        -0.0003105580110078776
+      ],
+      "max": [
+        0.8676468093868942,
+        0.9922834297108952,
+        1.5795354517828675
+      ],
+      "size": [
+        1.9192657541365197,
+        1.9393391748231776,
+        1.5798460097938753
+      ]
+    },
+    "collision": {
+      "enabled": false,
+      "shape": "bounds"
+    },
+    "occlusion": {
+      "enabled": false
+    },
+    "tags": [
+      "foliage",
+      "reeds"
+    ]
+  }
+}

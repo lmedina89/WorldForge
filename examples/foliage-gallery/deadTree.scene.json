@@ -1,0 +1,515 @@
+{
+  "schema": "worldforge.scene.v1",
+  "generatorVersion": "0.8.0",
+  "recipe": {
+    "schema": "worldforge.recipe.v1",
+    "generatorVersion": "0.8.0",
+    "engineVersion": "0.1.0",
+    "type": "foliage",
+    "seed": 8111,
+    "family": "tree",
+    "biome": "ruins",
+    "variant": "oak",
+    "condition": "dead",
+    "scale": 1,
+    "density": 0.5,
+    "spread": 1
+  },
+  "materials": {
+    "folTrunk": {
+      "id": "folTrunk",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#80735a"
+    },
+    "folBark": {
+      "id": "folBark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#41352a"
+    },
+    "folLeaf": {
+      "id": "folLeaf",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#80735a"
+    },
+    "folLeaf2": {
+      "id": "folLeaf2",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#80735a"
+    },
+    "folLeafDark": {
+      "id": "folLeafDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#80735a"
+    },
+    "folDry": {
+      "id": "folDry",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#80735a"
+    },
+    "folFlower": {
+      "id": "folFlower",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#c9bc78"
+    },
+    "folFlower2": {
+      "id": "folFlower2",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#a9879a"
+    },
+    "folRock": {
+      "id": "folRock",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#74736b"
+    },
+    "folRockLight": {
+      "id": "folRockLight",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#8a8b82"
+    },
+    "folCrop": {
+      "id": "folCrop",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#87915a"
+    },
+    "folCropDark": {
+      "id": "folCropDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#756d3e"
+    },
+    "folVine": {
+      "id": "folVine",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#4f7045"
+    }
+  },
+  "nodes": [
+    {
+      "kind": "mesh",
+      "name": "treeTrunk",
+      "vertices": [
+        [
+          0.3,
+          0,
+          0
+        ],
+        [
+          0.18704694055762008,
+          0.23454944474040892,
+          0
+        ],
+        [
+          -0.06675628018689429,
+          0.2924783736545471,
+          0
+        ],
+        [
+          -0.2702906603707257,
+          0.13016512173526745,
+          0
+        ],
+        [
+          -0.27029066037072574,
+          -0.1301651217352674,
+          0
+        ],
+        [
+          -0.06675628018689438,
+          -0.2924783736545471,
+          0
+        ],
+        [
+          0.18704694055762,
+          -0.23454944474040895,
+          0
+        ],
+        [
+          0.192,
+          0,
+          2.753282497088425
+        ],
+        [
+          0.11971004195687686,
+          0.15011164463386173,
+          2.753282497088425
+        ],
+        [
+          -0.04272401931961235,
+          0.18718615913891015,
+          2.753282497088425
+        ],
+        [
+          -0.17298602263726445,
+          0.08330567791057118,
+          2.753282497088425
+        ],
+        [
+          -0.17298602263726448,
+          -0.08330567791057114,
+          2.753282497088425
+        ],
+        [
+          -0.0427240193196124,
+          -0.18718615913891015,
+          2.753282497088425
+        ],
+        [
+          0.1197100419568768,
+          -0.15011164463386176,
+          2.753282497088425
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          8
+        ],
+        [
+          0,
+          8,
+          7
+        ],
+        [
+          1,
+          2,
+          9
+        ],
+        [
+          1,
+          9,
+          8
+        ],
+        [
+          2,
+          3,
+          10
+        ],
+        [
+          2,
+          10,
+          9
+        ],
+        [
+          3,
+          4,
+          11
+        ],
+        [
+          3,
+          11,
+          10
+        ],
+        [
+          4,
+          5,
+          12
+        ],
+        [
+          4,
+          12,
+          11
+        ],
+        [
+          5,
+          6,
+          13
+        ],
+        [
+          5,
+          13,
+          12
+        ],
+        [
+          6,
+          0,
+          7
+        ],
+        [
+          6,
+          7,
+          13
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          7,
+          8,
+          9
+        ],
+        [
+          0,
+          3,
+          2
+        ],
+        [
+          7,
+          9,
+          10
+        ],
+        [
+          0,
+          4,
+          3
+        ],
+        [
+          7,
+          10,
+          11
+        ],
+        [
+          0,
+          5,
+          4
+        ],
+        [
+          7,
+          11,
+          12
+        ],
+        [
+          0,
+          6,
+          5
+        ],
+        [
+          7,
+          12,
+          13
+        ]
+      ],
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0.011197470743209127
+      ],
+      "material": "folTrunk",
+      "tags": [
+        "foliage",
+        "trunk"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "branch_0",
+      "size": [
+        0.12,
+        0.12,
+        1.371125891606789
+      ],
+      "position": [
+        0,
+        0,
+        1.8980815514790557
+      ],
+      "rotation": [
+        1.5868337338932346,
+        0,
+        -0.06681989443022757
+      ],
+      "material": "folTrunk",
+      "tags": [
+        "foliage",
+        "branch"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "branch_1",
+      "size": [
+        0.12,
+        0.12,
+        1.2940326649928464
+      ],
+      "position": [
+        0,
+        0,
+        2.100754905984563
+      ],
+      "rotation": [
+        1.4558094523337226,
+        0,
+        1.5651176298057679
+      ],
+      "material": "folTrunk",
+      "tags": [
+        "foliage",
+        "branch"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "branch_2",
+      "size": [
+        0.12,
+        0.12,
+        1.5767172337393276
+      ],
+      "position": [
+        0,
+        0,
+        1.9947311476457745
+      ],
+      "rotation": [
+        1.6489365353577325,
+        0,
+        2.8609480729600447
+      ],
+      "material": "folTrunk",
+      "tags": [
+        "foliage",
+        "branch"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "branch_3",
+      "size": [
+        0.12,
+        0.12,
+        1.6587746991659515
+      ],
+      "position": [
+        0,
+        0,
+        1.5746109356624092
+      ],
+      "rotation": [
+        1.6970885190323481,
+        0,
+        3.5730433585882238
+      ],
+      "material": "folTrunk",
+      "tags": [
+        "foliage",
+        "branch"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "branch_4",
+      "size": [
+        0.12,
+        0.12,
+        1.2354733586194924
+      ],
+      "position": [
+        0,
+        0,
+        2.4499148198328244
+      ],
+      "rotation": [
+        1.5259956784711706,
+        0,
+        5.075442751644931
+      ],
+      "material": "folTrunk",
+      "tags": [
+        "foliage",
+        "branch"
+      ]
+    }
+  ],
+  "metadata": {
+    "engine": "foliage",
+    "engineVersion": "0.1.0",
+    "biome": "ruins",
+    "recipeWarnings": []
+  },
+  "validation": {
+    "errors": [],
+    "warnings": [],
+    "stats": {
+      "nodeCount": 6,
+      "materialCount": 13,
+      "approxVertexCount": 54,
+      "approxTriangleCount": 84
+    }
+  },
+  "asset": {
+    "schema": "worldforge.asset.v1",
+    "worldforgeVersion": "0.8.0",
+    "engine": {
+      "name": "foliage",
+      "version": "0.1.0"
+    },
+    "id": "foliage-8111",
+    "assetType": "foliage",
+    "seed": 8111,
+    "anchor": {
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "pivot": "ground-center"
+    },
+    "facing": null,
+    "footprint": {
+      "shape": "box",
+      "width": 1.2999157780291393,
+      "depth": 1.5586767429121606
+    },
+    "bounds": {
+      "min": [
+        -0.6499578890145696,
+        -0.7793383714560803,
+        0
+      ],
+      "max": [
+        0.6499578890145696,
+        0.7793383714560803,
+        2.753282497088425
+      ],
+      "size": [
+        1.2999157780291393,
+        1.5586767429121606,
+        2.753282497088425
+      ]
+    },
+    "collision": {
+      "enabled": true,
+      "shape": "bounds"
+    },
+    "occlusion": {
+      "enabled": true
+    },
+    "tags": [
+      "foliage",
+      "tree"
+    ]
+  }
+}

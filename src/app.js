@@ -9,7 +9,7 @@ import { WORLDFORGE_VERSION } from './core/schema.js';
 
 const $=id=>document.getElementById(id);
 let mode='building',currentGroup=null,currentSpec=null,selectedPlacementId=null,selectionHelper=null;
-const panels={building:$('buildingPanel'),prop:$('propPanel'),surface:$('surfacePanel'),field:$('fieldPanel'),terrain:$('terrainPanel'),landscape:$('landscapePanel')};
+const panels={building:$('buildingPanel'),prop:$('propPanel'),foliage:$('foliagePanel'),surface:$('surfacePanel'),field:$('fieldPanel'),terrain:$('terrainPanel'),landscape:$('landscapePanel')};
 
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x0d1310);scene.fog=new THREE.Fog(0x0d1310,55,150);
 const camera=new THREE.OrthographicCamera(-12,12,8,-8,.1,400);camera.up.set(0,0,1);camera.position.set(15,-18,13);camera.lookAt(0,0,2);
@@ -50,6 +50,7 @@ function readRecipe(){
   const seed=+$('seed').value;
   if(mode==='landscape')return normalizeRecipe({type:'landscape',seed,feature:$('feature').value,size:+$('terrainSize').value,relief:+$('relief').value,roughness:+$('roughness').value,terracing:+$('terracing').value,path:$('path').checked,rocks:$('rocks').checked,gridResolution:+$('gridResolution').value});
   if(mode==='prop')return normalizeRecipe({type:'prop',seed,family:$('propFamily').value,condition:$('propCondition').value,style:$('propStyle').value,variant:$('propVariant').value,scale:+$('propScale').value});
+  if(mode==='foliage')return normalizeRecipe({type:'foliage',seed,family:$('foliageFamily').value,biome:$('foliageBiome').value,variant:$('foliageVariant').value,condition:$('foliageCondition').value,scale:+$('foliageScale').value,density:+$('foliageDensity').value,spread:+$('foliageSpread').value});
   if(mode==='terrain')return normalizeRecipe({type:'terrain',seed,patch:$('terrainPatch').value,size:+$('patchSize').value,roughness:+$('patchRoughness').value,pathWidth:+$('pathWidth').value,wear:+$('wear').value,gridResolution:+$('patchResolution').value});
   if(mode==='surface')return normalizeRecipe({type:'surface',seed,surface:$('surfaceType').value,size:+$('surfaceSize').value,variation:+$('surfaceVariation').value,wear:+$('surfaceWear').value,pathPattern:$('surfacePathPattern').value,pathWidth:+$('surfacePathWidth').value,pathMaterial:$('surfacePathMaterial').value,detailDensity:+$('surfaceDetailDensity').value,edgeBlend:$('surfaceEdgeBlend').checked,gridResolution:+$('surfaceResolution').value});
   if(mode==='field')return normalizeRecipe({type:'field',seed,preset:$('fieldPreset').value,size:+$('fieldSize').value,density:+$('fieldDensity').value,surface:$('fieldSurface').value,buildingEngine:$('fieldBuildingEngine').value,dressing:+$('fieldDressing').value,placements:null});
@@ -66,6 +67,8 @@ function writeRecipe(recipe){
     $('template').value=r.template||'auto';$('facade').value=r.facade||'auto';$('wealth').value=r.wealth||'modest';$('age').value=r.age||'mature';$('construction').value=r.construction||'auto';syncBuildingEngineUI();
   } else if(mode==='prop'){
     $('propFamily').value=r.family;$('propCondition').value=r.condition;$('propStyle').value=r.style;$('propVariant').value=r.variant;$('propScale').value=r.scale;
+  } else if(mode==='foliage'){
+    $('foliageFamily').value=r.family;$('foliageBiome').value=r.biome;$('foliageVariant').value=r.variant;$('foliageCondition').value=r.condition;$('foliageScale').value=r.scale;$('foliageDensity').value=r.density;$('foliageSpread').value=r.spread;
   } else if(mode==='terrain'){
     $('terrainPatch').value=r.patch;$('patchSize').value=r.size;$('patchRoughness').value=r.roughness;$('pathWidth').value=r.pathWidth;$('wear').value=r.wear;$('patchResolution').value=r.gridResolution;
   } else if(mode==='surface'){
@@ -83,12 +86,14 @@ function spanFor(recipe){
   if(recipe.type==='terrain'||recipe.type==='surface')return Math.max(7,recipe.size*.62);
   if(recipe.type==='field')return Math.max(12,recipe.size*.63);
   if(recipe.type==='prop')return Math.max(3.6,4.2*recipe.scale);
+  if(recipe.type==='foliage')return Math.max(4.2,5.2*recipe.scale*recipe.spread);
   if(recipe.type==='building')return Math.max(10,Math.max(recipe.width||6,recipe.depth||5)*.92);
   return 10;
 }
 function targetHeight(recipe){
   if(recipe.type==='building')return Math.max(2.2,Math.min(5.2,1.2+(recipe.floors||2)*1.15));
   if(recipe.type==='prop')return recipe.family==='well'?1.15:.8;
+  if(recipe.type==='foliage')return recipe.family==='tree'?2.3:.65;
   if(recipe.type==='terrain'||recipe.type==='surface')return .15;
   if(recipe.type==='field')return 2.0;
   return 1.5;
@@ -96,7 +101,7 @@ function targetHeight(recipe){
 function setDefaultCamera(recipe){
   if(recipe.type==='terrain'||recipe.type==='surface')camera.position.set(12,-15,14);
   else if(recipe.type==='field')camera.position.set(20,-24,20);
-  else if(recipe.type==='prop')camera.position.set(8,-10,7);
+  else if(recipe.type==='prop'||recipe.type==='foliage')camera.position.set(8,-10,7);
   else camera.position.set(15,-18,13);
   controls.target.set(0,0,targetHeight(recipe));camera.lookAt(controls.target);controls.update();
 }
@@ -121,9 +126,9 @@ function regenerate(){selectedPlacementId=null;renderRecipe(readRecipe(),{resetC
 function fitCamera(span){const aspect=Math.max(.5,$('canvasHost').clientWidth/Math.max(1,$('canvasHost').clientHeight));camera.left=-span*aspect;camera.right=span*aspect;camera.top=span;camera.bottom=-span;camera.updateProjectionMatrix();controls.target.set(0,0,currentSpec?targetHeight(currentSpec.recipe):2.2);}
 function setView(v){
   const t=currentSpec?targetHeight(currentSpec.recipe):2.2;controls.target.set(0,0,t);
-  if(v==='field')camera.position.set(mode==='field'?20:mode==='prop'?8:15,mode==='field'?-24:mode==='prop'?-10:-18,mode==='field'?20:mode==='terrain'||mode==='surface'?14:mode==='prop'?7:13);
-  else if(v==='front')camera.position.set(0,-Math.max(24,spanFor(currentSpec?.recipe||{})*2),mode==='prop'?2.8:mode==='field'?7:4.5);
-  else if(v==='side')camera.position.set(Math.max(24,spanFor(currentSpec?.recipe||{})*2),0,mode==='prop'?2.8:mode==='field'?7:4.5);
+  if(v==='field')camera.position.set(mode==='field'?20:(mode==='prop'||mode==='foliage')?8:15,mode==='field'?-24:(mode==='prop'||mode==='foliage')?-10:-18,mode==='field'?20:mode==='terrain'||mode==='surface'?14:(mode==='prop'||mode==='foliage')?7:13);
+  else if(v==='front')camera.position.set(0,-Math.max(24,spanFor(currentSpec?.recipe||{})*2),(mode==='prop'||mode==='foliage')?2.8:mode==='field'?7:4.5);
+  else if(v==='side')camera.position.set(Math.max(24,spanFor(currentSpec?.recipe||{})*2),0,(mode==='prop'||mode==='foliage')?2.8:mode==='field'?7:4.5);
   else return;
   camera.lookAt(controls.target);controls.update();
 }
@@ -195,7 +200,7 @@ $('fieldDeleteAsset').onclick=()=>editField((p,r)=>{if(p.locked)return false;r.p
 $('fieldClearSelection').onclick=()=>{selectedPlacementId=null;updateSelectionHelper();updateSelectedUi();};
 $('fieldCenterSelection').onclick=()=>{const obj=placementObject(selectedPlacementId);if(!obj)return;const box=new THREE.Box3().setFromObject(obj),c=new THREE.Vector3();box.getCenter(c);controls.target.copy(c);camera.lookAt(c);controls.update();};
 
-const outputMap={width:'widthOut',depth:'depthOut',floors:'floorsOut',pitch:'pitchOut',terrainSize:'terrainSizeOut',relief:'reliefOut',roughness:'roughnessOut',terracing:'terracingOut',gridResolution:'gridResolutionOut',propScale:'propScaleOut',patchSize:'patchSizeOut',patchRoughness:'patchRoughnessOut',pathWidth:'pathWidthOut',wear:'wearOut',patchResolution:'patchResolutionOut',surfaceSize:'surfaceSizeOut',surfaceVariation:'surfaceVariationOut',surfaceWear:'surfaceWearOut',surfacePathWidth:'surfacePathWidthOut',surfaceDetailDensity:'surfaceDetailDensityOut',surfaceResolution:'surfaceResolutionOut',fieldSize:'fieldSizeOut',fieldDensity:'fieldDensityOut',fieldDressing:'fieldDressingOut'};
+const outputMap={foliageScale:'foliageScaleOut',foliageDensity:'foliageDensityOut',foliageSpread:'foliageSpreadOut',width:'widthOut',depth:'depthOut',floors:'floorsOut',pitch:'pitchOut',terrainSize:'terrainSizeOut',relief:'reliefOut',roughness:'roughnessOut',terracing:'terracingOut',gridResolution:'gridResolutionOut',propScale:'propScaleOut',patchSize:'patchSizeOut',patchRoughness:'patchRoughnessOut',pathWidth:'pathWidthOut',wear:'wearOut',patchResolution:'patchResolutionOut',surfaceSize:'surfaceSizeOut',surfaceVariation:'surfaceVariationOut',surfaceWear:'surfaceWearOut',surfacePathWidth:'surfacePathWidthOut',surfaceDetailDensity:'surfaceDetailDensityOut',surfaceResolution:'surfaceResolutionOut',fieldSize:'fieldSizeOut',fieldDensity:'fieldDensityOut',fieldDressing:'fieldDressingOut'};
 function syncOutputs(){for(const [id,outId] of Object.entries(outputMap)){const el=$(id),out=$(outId);if(el&&out)out.value=el.value;}}
 for(const id of Object.keys(outputMap)){const el=$(id);if(el)el.oninput=()=>syncOutputs();}syncOutputs();
 function resize(){const host=$('canvasHost'),w=Math.max(320,Math.floor(host.clientWidth)),h=Math.max(220,Math.floor(host.clientHeight));renderer.setSize(w,h,false);fitCamera(currentSpec?spanFor(currentSpec.recipe):10);}window.addEventListener('resize',resize);

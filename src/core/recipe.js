@@ -1,4 +1,4 @@
-import { DEFAULT_BUILDING, DEFAULT_LANDSCAPE, DEFAULT_PROP, DEFAULT_TERRAIN, DEFAULT_SURFACE, DEFAULT_FIELD, RECIPE_SCHEMA, WORLDFORGE_VERSION, ENGINE_VERSIONS } from './schema.js';
+import { DEFAULT_BUILDING, DEFAULT_LANDSCAPE, DEFAULT_PROP, DEFAULT_TERRAIN, DEFAULT_SURFACE, DEFAULT_FOLIAGE, DEFAULT_FIELD, RECIPE_SCHEMA, WORLDFORGE_VERSION, ENGINE_VERSIONS } from './schema.js';
 import { clamp } from './rng.js';
 
 const BUILDING_FAMILIES = new Set(['cottage','house','shop','inn','shack','barn','warehouse','peasantHouse','farmhouse','smithy','chapel','stable','guildHall','merchantHouse','watchtower','gatehouse','keep','castleWall','barracks','watermill','windmill','dock','dockWarehouse','temple','mageTower','ruinedFort','desertHouse','desertMarket','mineEntrance','cityGate','sewerEntrance','townHall']);
@@ -25,6 +25,10 @@ const SURFACE_PATHS = new Set(['none','straight','curve','tee','cross','plaza'])
 const SURFACE_PATH_MATERIALS = new Set(['dirt','stone','cobblestone','sand']);
 const FIELD_PRESETS = new Set(['villageWellSquare','ruralHouseLane','marketCorner','castleCourtyard','castleGateApproach','mountainPath','mineEntranceClearing','desertMarket','docksideLane']);
 const FIELD_SURFACES = new Set(['auto',...SURFACES]);
+const FOLIAGE_FAMILIES = new Set(['tree','shrub','flowers','crops','stump','fallenLog','vines','rockCluster','reeds']);
+const FOLIAGE_BIOMES = new Set(['temperate','forest','mountain','farmland','swamp','desert','ruins']);
+const FOLIAGE_VARIANTS = new Set(['auto','oak','pine','birch','fruit','palm','mixed']);
+const FOLIAGE_CONDITIONS = new Set(['healthy','dry','dead']);
 
 function finiteNumber(v, fallback) { const n = Number(v); return Number.isFinite(n) ? n : fallback; }
 function legacyBuildingEngine(input){
@@ -55,7 +59,7 @@ function normalizePlacement(p,index=0){
 }
 
 export function normalizeRecipe(input = {}) {
-  const type = ['building','landscape','prop','terrain','surface','field'].includes(input.type) ? input.type : 'building';
+  const type = ['building','landscape','prop','terrain','surface','foliage','field'].includes(input.type) ? input.type : 'building';
   if (type === 'landscape') {
     const d=DEFAULT_LANDSCAPE; return {schema:RECIPE_SCHEMA,generatorVersion:WORLDFORGE_VERSION,engineVersion:input.engineVersion||ENGINE_VERSIONS.landscape,type,seed:Math.trunc(finiteNumber(input.seed,d.seed)),feature:FEATURES.has(input.feature)?input.feature:d.feature,size:clamp(finiteNumber(input.size,d.size),18,80),relief:clamp(finiteNumber(input.relief,d.relief),1,24),roughness:clamp(finiteNumber(input.roughness,d.roughness),0,1),terracing:clamp(finiteNumber(input.terracing,d.terracing),0,1),path:input.path??d.path,rocks:input.rocks??d.rocks,gridResolution:Math.trunc(clamp(finiteNumber(input.gridResolution,d.gridResolution),24,128))};
   }
@@ -67,6 +71,10 @@ export function normalizeRecipe(input = {}) {
   }
   if(type === 'surface'){
     const d=DEFAULT_SURFACE; return {schema:RECIPE_SCHEMA,generatorVersion:WORLDFORGE_VERSION,engineVersion:input.engineVersion||ENGINE_VERSIONS.surface,type,seed:Math.trunc(finiteNumber(input.seed,d.seed)),surface:SURFACES.has(input.surface)?input.surface:d.surface,size:clamp(finiteNumber(input.size,d.size),8,64),variation:clamp(finiteNumber(input.variation,d.variation),0,1),wear:clamp(finiteNumber(input.wear,d.wear),0,1),pathPattern:SURFACE_PATHS.has(input.pathPattern)?input.pathPattern:d.pathPattern,pathWidth:clamp(finiteNumber(input.pathWidth,d.pathWidth),.8,8),pathMaterial:SURFACE_PATH_MATERIALS.has(input.pathMaterial)?input.pathMaterial:d.pathMaterial,detailDensity:clamp(finiteNumber(input.detailDensity,d.detailDensity),0,1),edgeBlend:input.edgeBlend??d.edgeBlend,gridResolution:Math.trunc(clamp(finiteNumber(input.gridResolution,d.gridResolution),16,96))};
+  }
+  if(type === 'foliage'){
+    const d=DEFAULT_FOLIAGE;
+    return {schema:RECIPE_SCHEMA,generatorVersion:WORLDFORGE_VERSION,engineVersion:input.engineVersion||ENGINE_VERSIONS.foliage,type,seed:Math.trunc(finiteNumber(input.seed,d.seed)),family:FOLIAGE_FAMILIES.has(input.family)?input.family:d.family,biome:FOLIAGE_BIOMES.has(input.biome)?input.biome:d.biome,variant:FOLIAGE_VARIANTS.has(input.variant)?input.variant:d.variant,condition:FOLIAGE_CONDITIONS.has(input.condition)?input.condition:d.condition,scale:clamp(finiteNumber(input.scale,d.scale),.4,2.5),density:clamp(finiteNumber(input.density,d.density),0,1),spread:clamp(finiteNumber(input.spread,d.spread),.35,2.5)};
   }
   if(type === 'field'){
     const d=DEFAULT_FIELD;
@@ -103,6 +111,7 @@ export function validateRecipe(recipe) {
     if(r.engineVersion==='1.0.0'&&['crossGable','shed','gambrel','conical','parapet'].includes(recipe.roof))warnings.push('Building Engine 1.0 supports gable, hip and flat roofs only.');
   }
   if(r.type==='prop'&&r.family==='fence'&&r.scale>2)warnings.push('Very large fence scale may not match field proportions.');
+  if(r.type==='foliage'&&r.family==='tree'&&r.scale>2)warnings.push('Very large trees may be heavy or dominate small fields.');
   if(r.type==='field'&&r.placements&&r.placements.length>80)warnings.push('Large field placement count may be heavy on mobile.');
   return {recipe:r,warnings};
 }

@@ -1,0 +1,548 @@
+{
+  "schema": "worldforge.scene.v1",
+  "generatorVersion": "0.8.0",
+  "recipe": {
+    "schema": "worldforge.recipe.v1",
+    "generatorVersion": "0.8.0",
+    "engineVersion": "0.1.0",
+    "type": "foliage",
+    "seed": 8106,
+    "family": "fallenLog",
+    "biome": "forest",
+    "variant": "auto",
+    "condition": "healthy",
+    "scale": 1,
+    "density": 0.5,
+    "spread": 1
+  },
+  "materials": {
+    "folTrunk": {
+      "id": "folTrunk",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#60432f"
+    },
+    "folBark": {
+      "id": "folBark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#413126"
+    },
+    "folLeaf": {
+      "id": "folLeaf",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#466f40"
+    },
+    "folLeaf2": {
+      "id": "folLeaf2",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#608a50"
+    },
+    "folLeafDark": {
+      "id": "folLeafDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#355534"
+    },
+    "folDry": {
+      "id": "folDry",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#756847"
+    },
+    "folFlower": {
+      "id": "folFlower",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#d9c866"
+    },
+    "folFlower2": {
+      "id": "folFlower2",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#b5839c"
+    },
+    "folRock": {
+      "id": "folRock",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#74736b"
+    },
+    "folRockLight": {
+      "id": "folRockLight",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#8a8b82"
+    },
+    "folCrop": {
+      "id": "folCrop",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#87915a"
+    },
+    "folCropDark": {
+      "id": "folCropDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#756d3e"
+    },
+    "folVine": {
+      "id": "folVine",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#4f7045"
+    }
+  },
+  "nodes": [
+    {
+      "kind": "mesh",
+      "name": "fallenLog",
+      "vertices": [
+        [
+          0.38,
+          0,
+          0
+        ],
+        [
+          0.2687005768508881,
+          0.26870057685088805,
+          0
+        ],
+        [
+          2.3268289183799712e-17,
+          0.38,
+          0
+        ],
+        [
+          -0.26870057685088805,
+          0.2687005768508881,
+          0
+        ],
+        [
+          -0.38,
+          4.6536578367599424e-17,
+          0
+        ],
+        [
+          -0.2687005768508881,
+          -0.26870057685088805,
+          0
+        ],
+        [
+          -6.980486755139913e-17,
+          -0.38,
+          0
+        ],
+        [
+          0.268700576850888,
+          -0.2687005768508881,
+          0
+        ],
+        [
+          0.34,
+          0,
+          3.673256350308657
+        ],
+        [
+          0.2404163056034262,
+          0.24041630560342617,
+          3.673256350308657
+        ],
+        [
+          2.0818995585505005e-17,
+          0.34,
+          3.673256350308657
+        ],
+        [
+          -0.24041630560342617,
+          0.2404163056034262,
+          3.673256350308657
+        ],
+        [
+          -0.34,
+          4.163799117101001e-17,
+          3.673256350308657
+        ],
+        [
+          -0.24041630560342622,
+          -0.24041630560342617,
+          3.673256350308657
+        ],
+        [
+          -6.245698675651501e-17,
+          -0.34,
+          3.673256350308657
+        ],
+        [
+          0.2404163056034261,
+          -0.24041630560342622,
+          3.673256350308657
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          9
+        ],
+        [
+          0,
+          9,
+          8
+        ],
+        [
+          1,
+          2,
+          10
+        ],
+        [
+          1,
+          10,
+          9
+        ],
+        [
+          2,
+          3,
+          11
+        ],
+        [
+          2,
+          11,
+          10
+        ],
+        [
+          3,
+          4,
+          12
+        ],
+        [
+          3,
+          12,
+          11
+        ],
+        [
+          4,
+          5,
+          13
+        ],
+        [
+          4,
+          13,
+          12
+        ],
+        [
+          5,
+          6,
+          14
+        ],
+        [
+          5,
+          14,
+          13
+        ],
+        [
+          6,
+          7,
+          15
+        ],
+        [
+          6,
+          15,
+          14
+        ],
+        [
+          7,
+          0,
+          8
+        ],
+        [
+          7,
+          8,
+          15
+        ],
+        [
+          0,
+          2,
+          1
+        ],
+        [
+          8,
+          9,
+          10
+        ],
+        [
+          0,
+          3,
+          2
+        ],
+        [
+          8,
+          10,
+          11
+        ],
+        [
+          0,
+          4,
+          3
+        ],
+        [
+          8,
+          11,
+          12
+        ],
+        [
+          0,
+          5,
+          4
+        ],
+        [
+          8,
+          12,
+          13
+        ],
+        [
+          0,
+          6,
+          5
+        ],
+        [
+          8,
+          13,
+          14
+        ],
+        [
+          0,
+          7,
+          6
+        ],
+        [
+          8,
+          14,
+          15
+        ]
+      ],
+      "position": [
+        -1.8366281751543285,
+        0,
+        0.4
+      ],
+      "rotation": [
+        0,
+        1.5707963267948966,
+        0
+      ],
+      "material": "folTrunk",
+      "tags": [
+        "foliage",
+        "log"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "logBranch_0",
+      "size": [
+        0.1,
+        0.1,
+        0.7643806850537658
+      ],
+      "position": [
+        -0.5142558890432121,
+        0,
+        0.48
+      ],
+      "rotation": [
+        1.5707963267948966,
+        0,
+        0.793803430022672
+      ],
+      "material": "folTrunk",
+      "tags": [
+        "foliage",
+        "branch"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "logBranch_1",
+      "size": [
+        0.1,
+        0.1,
+        0.8433514133095741
+      ],
+      "position": [
+        0.5142558890432121,
+        0,
+        0.48
+      ],
+      "rotation": [
+        1.5707963267948966,
+        0,
+        -0.6088167174253614
+      ],
+      "material": "folTrunk",
+      "tags": [
+        "foliage",
+        "branch"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "logMoss_0",
+      "radius": 0.22,
+      "position": [
+        0.9961694465005031,
+        -0.09957653602585198,
+        0.72
+      ],
+      "scale": [
+        1.4,
+        0.7,
+        0.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folLeafDark",
+      "tags": [
+        "foliage",
+        "canopy"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "logMoss_1",
+      "radius": 0.22,
+      "position": [
+        1.1609395619470415,
+        0.16717384692281484,
+        0.72
+      ],
+      "scale": [
+        1.4,
+        0.7,
+        0.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folLeafDark",
+      "tags": [
+        "foliage",
+        "canopy"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "logMoss_2",
+      "radius": 0.22,
+      "position": [
+        0.38651596729235926,
+        0.03727116907015443,
+        0.72
+      ],
+      "scale": [
+        1.4,
+        0.7,
+        0.28
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "folLeafDark",
+      "tags": [
+        "foliage",
+        "canopy"
+      ]
+    }
+  ],
+  "metadata": {
+    "engine": "foliage",
+    "engineVersion": "0.1.0",
+    "biome": "forest",
+    "recipeWarnings": []
+  },
+  "validation": {
+    "errors": [],
+    "warnings": [],
+    "stats": {
+      "nodeCount": 6,
+      "materialCount": 13,
+      "approxVertexCount": 92,
+      "approxTriangleCount": 160
+    }
+  },
+  "asset": {
+    "schema": "worldforge.asset.v1",
+    "worldforgeVersion": "0.8.0",
+    "engine": {
+      "name": "foliage",
+      "version": "0.1.0"
+    },
+    "id": "foliage-8106",
+    "assetType": "foliage",
+    "seed": 8106,
+    "anchor": {
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "pivot": "ground-center"
+    },
+    "facing": null,
+    "footprint": {
+      "shape": "box",
+      "width": 3.673256350308657,
+      "depth": 0.76
+    },
+    "bounds": {
+      "min": [
+        -1.8366281751543285,
+        -0.38,
+        0.020000000000000018
+      ],
+      "max": [
+        1.8366281751543285,
+        0.38,
+        0.7816
+      ],
+      "size": [
+        3.673256350308657,
+        0.76,
+        0.7615999999999999
+      ]
+    },
+    "collision": {
+      "enabled": true,
+      "shape": "bounds"
+    },
+    "occlusion": {
+      "enabled": true
+    },
+    "tags": [
+      "foliage",
+      "fallenLog"
+    ]
+  }
+}

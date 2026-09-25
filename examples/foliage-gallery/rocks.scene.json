@@ -1,0 +1,357 @@
+{
+  "schema": "worldforge.scene.v1",
+  "generatorVersion": "0.8.0",
+  "recipe": {
+    "schema": "worldforge.recipe.v1",
+    "generatorVersion": "0.8.0",
+    "engineVersion": "0.1.0",
+    "type": "foliage",
+    "seed": 8108,
+    "family": "rockCluster",
+    "biome": "mountain",
+    "variant": "auto",
+    "condition": "healthy",
+    "scale": 1,
+    "density": 0.7,
+    "spread": 1.2
+  },
+  "materials": {
+    "folTrunk": {
+      "id": "folTrunk",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#594737"
+    },
+    "folBark": {
+      "id": "folBark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#3e342b"
+    },
+    "folLeaf": {
+      "id": "folLeaf",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#486a4b"
+    },
+    "folLeaf2": {
+      "id": "folLeaf2",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#5c7e5a"
+    },
+    "folLeafDark": {
+      "id": "folLeafDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#354f3b"
+    },
+    "folDry": {
+      "id": "folDry",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#746b55"
+    },
+    "folFlower": {
+      "id": "folFlower",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#d9cc86"
+    },
+    "folFlower2": {
+      "id": "folFlower2",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#9b91b5"
+    },
+    "folRock": {
+      "id": "folRock",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#696d6a"
+    },
+    "folRockLight": {
+      "id": "folRockLight",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#8a8b82"
+    },
+    "folCrop": {
+      "id": "folCrop",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#87915a"
+    },
+    "folCropDark": {
+      "id": "folCropDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#756d3e"
+    },
+    "folVine": {
+      "id": "folVine",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#4f7045"
+    }
+  },
+  "nodes": [
+    {
+      "kind": "dodecahedron",
+      "name": "rock_0",
+      "radius": 0.28037211862392725,
+      "position": [
+        0.3212929183469652,
+        -0.176784923673566,
+        0.08971907795965672
+      ],
+      "scale": [
+        1.1967796310316772,
+        1.1034323581145145,
+        0.5288075821753592
+      ],
+      "rotation": [
+        -0.013718480523675691,
+        -0.0777783184312284,
+        0.6993796797194759
+      ],
+      "material": "folRockLight",
+      "tags": [
+        "foliage",
+        "rock"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "rock_1",
+      "radius": 0.49446165962144734,
+      "position": [
+        0.2006819558929758,
+        0.592061961148038,
+        0.15822773107886315
+      ],
+      "scale": [
+        1.1403204430360347,
+        0.9492701111244969,
+        0.5907927702041342
+      ],
+      "rotation": [
+        -0.019776921626180416,
+        0.060162350162863754,
+        2.9679683652584155
+      ],
+      "material": "folRock",
+      "tags": [
+        "foliage",
+        "rock"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "rock_2",
+      "radius": 0.4125154414400458,
+      "position": [
+        -0.6349219212438442,
+        0.4512260040374006,
+        0.13200494126081466
+      ],
+      "scale": [
+        1.434313387842849,
+        0.9289054626482539,
+        0.673196982042864
+      ],
+      "rotation": [
+        -0.15358088845387102,
+        0.14121492402628066,
+        2.623177073305717
+      ],
+      "material": "folRock",
+      "tags": [
+        "foliage",
+        "rock"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "rock_3",
+      "radius": 0.5266815578518436,
+      "position": [
+        0.7749612563643856,
+        -0.9979266793228277,
+        0.16853809851258994
+      ],
+      "scale": [
+        1.4858262609690427,
+        1.1176476882887072,
+        0.6353092439752073
+      ],
+      "rotation": [
+        -0.016264709830284108,
+        0.01407919786870479,
+        2.614047392172138
+      ],
+      "material": "folRockLight",
+      "tags": [
+        "foliage",
+        "rock"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "rock_4",
+      "radius": 0.5256018894072623,
+      "position": [
+        0.599172786370516,
+        -0.36741485376614835,
+        0.16819260461032393
+      ],
+      "scale": [
+        0.9174925867002458,
+        0.9742824688553811,
+        0.6776920559117571
+      ],
+      "rotation": [
+        -0.07232469972223043,
+        0.17175575969740747,
+        0.19372369506091652
+      ],
+      "material": "folRock",
+      "tags": [
+        "foliage",
+        "rock"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "rock_5",
+      "radius": 0.5718348648305982,
+      "position": [
+        0.41143088041084125,
+        0.10088102627235702,
+        0.18298715674579144
+      ],
+      "scale": [
+        1.446753335231915,
+        0.8354524663067423,
+        0.432103603282012
+      ],
+      "rotation": [
+        0.14720714977011085,
+        0.044663543254137045,
+        1.5895945651769796
+      ],
+      "material": "folRock",
+      "tags": [
+        "foliage",
+        "rock"
+      ]
+    },
+    {
+      "kind": "dodecahedron",
+      "name": "rock_6",
+      "radius": 0.5828870265884325,
+      "position": [
+        0.2502477883238322,
+        -0.1773158655961337,
+        0.1865238485082984
+      ],
+      "scale": [
+        1.1795818850398063,
+        1.0188872317783535,
+        0.452424089112319
+      ],
+      "rotation": [
+        0.15465531256049875,
+        0.19844486210495232,
+        1.2804320556832243
+      ],
+      "material": "folRockLight",
+      "tags": [
+        "foliage",
+        "rock"
+      ]
+    }
+  ],
+  "metadata": {
+    "engine": "foliage",
+    "engineVersion": "0.1.0",
+    "biome": "mountain",
+    "recipeWarnings": []
+  },
+  "validation": {
+    "errors": [],
+    "warnings": [],
+    "stats": {
+      "nodeCount": 7,
+      "materialCount": 13,
+      "approxVertexCount": 140,
+      "approxTriangleCount": 252
+    }
+  },
+  "asset": {
+    "schema": "worldforge.asset.v1",
+    "worldforgeVersion": "0.8.0",
+    "engine": {
+      "name": "foliage",
+      "version": "0.1.0"
+    },
+    "id": "foliage-8108",
+    "assetType": "foliage",
+    "seed": 8108,
+    "anchor": {
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "pivot": "ground-center"
+    },
+    "facing": null,
+    "footprint": {
+      "shape": "box",
+      "width": 3.1328551016879542,
+      "depth": 3.057059690690335
+    },
+    "bounds": {
+      "min": [
+        -1.3788102958046813,
+        -1.9027848929014497,
+        -0.30072489507063527
+      ],
+      "max": [
+        1.754044805883273,
+        1.154274797788885,
+        0.667212377223862
+      ],
+      "size": [
+        3.1328551016879542,
+        3.057059690690335,
+        0.9679372722944972
+      ]
+    },
+    "collision": {
+      "enabled": true,
+      "shape": "bounds"
+    },
+    "occlusion": {
+      "enabled": false
+    },
+    "tags": [
+      "foliage",
+      "rockCluster"
+    ]
+  }
+}
