@@ -1,0 +1,21 @@
+{
+  "schema": "worldforge.recipe.v1",
+  "generatorVersion": "0.2.0",
+  "type": "building",
+  "seed": 43027,
+  "family": "shop",
+  "style": "abandonedEdge",
+  "material": "wood",
+  "condition": "abandoned",
+  "width": 4.85,
+  "depth": 3.7,
+  "floors": 1,
+  "roof": "gable",
+  "pitch": 41,
+  "features": {
+    "chimney": false,
+    "porch": true,
+    "sign": true,
+    "extension": false
+  }
+}

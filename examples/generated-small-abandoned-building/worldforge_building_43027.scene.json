@@ -1,0 +1,1243 @@
+{
+  "schema": "worldforge.scene.v1",
+  "generatorVersion": "0.2.0",
+  "recipe": {
+    "schema": "worldforge.recipe.v1",
+    "generatorVersion": "0.2.0",
+    "type": "building",
+    "seed": 43027,
+    "family": "shop",
+    "style": "abandonedEdge",
+    "material": "wood",
+    "condition": "abandoned",
+    "width": 4.85,
+    "depth": 3.7,
+    "floors": 1,
+    "roof": "gable",
+    "pitch": 41,
+    "features": {
+      "chimney": false,
+      "porch": true,
+      "sign": true,
+      "extension": false
+    }
+  },
+  "materials": {
+    "wall": {
+      "id": "wall",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#8a6646"
+    },
+    "wallDark": {
+      "id": "wallDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#674a35"
+    },
+    "timber": {
+      "id": "timber",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#4d3426"
+    },
+    "trim": {
+      "id": "trim",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#a77a52"
+    },
+    "roof": {
+      "id": "roof",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#76523b"
+    },
+    "roofDark": {
+      "id": "roofDark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#533a2f"
+    },
+    "stone": {
+      "id": "stone",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#777d83"
+    },
+    "stoneLight": {
+      "id": "stoneLight",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#a7adb5"
+    },
+    "glass": {
+      "id": "glass",
+      "roughness": 0.2,
+      "metalness": 0.05,
+      "flatShading": true,
+      "color": "#4a7896"
+    },
+    "board": {
+      "id": "board",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#705036"
+    },
+    "deadGreen": {
+      "id": "deadGreen",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#667052"
+    },
+    "rust": {
+      "id": "rust",
+      "roughness": 0.95,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#784c3a"
+    },
+    "dark": {
+      "id": "dark",
+      "roughness": 0.85,
+      "metalness": 0,
+      "flatShading": true,
+      "color": "#35393b"
+    }
+  },
+  "nodes": [
+    {
+      "kind": "box",
+      "name": "foundation",
+      "size": [
+        5.13,
+        3.9800000000000004,
+        0.42
+      ],
+      "position": [
+        0,
+        0,
+        0.21
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stone",
+      "tags": [
+        "structural"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "walls",
+      "size": [
+        4.85,
+        3.7,
+        2.45
+      ],
+      "position": [
+        0,
+        0,
+        1.645
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "wall",
+      "tags": [
+        "structural"
+      ]
+    },
+    {
+      "kind": "box",
+      "name": "rightWallTone",
+      "size": [
+        0.035,
+        3.62,
+        2.37
+      ],
+      "position": [
+        2.4429999999999996,
+        0,
+        1.645
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "wallDark",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "frontPost_-2.07",
+      "size": [
+        0.15,
+        0.09,
+        2.37
+      ],
+      "position": [
+        -2.0749999999999997,
+        -1.895,
+        1.645
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "frontPost_-0.82",
+      "size": [
+        0.15,
+        0.09,
+        2.37
+      ],
+      "position": [
+        -0.8249999999999997,
+        -1.895,
+        1.645
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "frontPost_0.43",
+      "size": [
+        0.15,
+        0.09,
+        2.37
+      ],
+      "position": [
+        0.42500000000000027,
+        -1.895,
+        1.645
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "frontPost_1.68",
+      "size": [
+        0.15,
+        0.09,
+        2.37
+      ],
+      "position": [
+        1.6750000000000003,
+        -1.895,
+        1.645
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "frontBeam_1",
+      "size": [
+        4.7299999999999995,
+        0.09,
+        0.15
+      ],
+      "position": [
+        0,
+        -1.895,
+        2.69
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "mesh",
+      "name": "mainRoof",
+      "vertices": [
+        [
+          -2.6999999999999997,
+          -2.1750000000000003,
+          2.85
+        ],
+        [
+          2.6999999999999997,
+          -2.1750000000000003,
+          2.85
+        ],
+        [
+          -2.6999999999999997,
+          2.1750000000000003,
+          2.85
+        ],
+        [
+          2.6999999999999997,
+          2.1750000000000003,
+          2.85
+        ],
+        [
+          -2.6999999999999997,
+          0,
+          4.740698654750293
+        ],
+        [
+          2.6999999999999997,
+          0,
+          4.740698654750293
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          5
+        ],
+        [
+          0,
+          5,
+          4
+        ],
+        [
+          2,
+          4,
+          5
+        ],
+        [
+          2,
+          5,
+          3
+        ],
+        [
+          0,
+          4,
+          2
+        ],
+        [
+          1,
+          3,
+          5
+        ]
+      ],
+      "position": [
+        0,
+        0,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "roof",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "door",
+      "size": [
+        0.95,
+        0.08,
+        1.95
+      ],
+      "position": [
+        -0.4314732552319765,
+        -1.905,
+        1.4
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "trim",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "doorBrace",
+      "size": [
+        1.03,
+        0.11,
+        0.15
+      ],
+      "position": [
+        -0.4314732552319765,
+        -1.9500000000000002,
+        1.47
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.12
+      ],
+      "material": "board",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "window_0",
+      "size": [
+        0.5560905738819389,
+        0.06,
+        0.7105601777380331
+      ],
+      "position": [
+        -1.6249999999999998,
+        -1.9100000000000001,
+        1.97
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "sill_0",
+      "size": [
+        0.6796662569668143,
+        0.13,
+        0.1
+      ],
+      "position": [
+        -1.6249999999999998,
+        -1.945,
+        1.5606555497813503
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "board_0_a",
+      "size": [
+        0.6487723361955955,
+        0.1,
+        0.13
+      ],
+      "position": [
+        -1.6249999999999998,
+        -1.9800000000000002,
+        2.07
+      ],
+      "rotation": [
+        0,
+        0,
+        0.18
+      ],
+      "material": "board",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "board_0_b",
+      "size": [
+        0.6487723361955955,
+        0.1,
+        0.13
+      ],
+      "position": [
+        -1.6249999999999998,
+        -1.9800000000000002,
+        1.79
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.13
+      ],
+      "material": "board",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "window_1",
+      "size": [
+        0.6467594876999035,
+        0.06,
+        0.8264149009498768
+      ],
+      "position": [
+        1.6249999999999998,
+        -1.9100000000000001,
+        1.97
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "sill_1",
+      "size": [
+        0.7904838182998821,
+        0.13,
+        0.1
+      ],
+      "position": [
+        1.6249999999999998,
+        -1.945,
+        1.4939131548875708
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "board_1_a",
+      "size": [
+        0.7545527356498875,
+        0.1,
+        0.13
+      ],
+      "position": [
+        1.6249999999999998,
+        -1.9800000000000002,
+        2.07
+      ],
+      "rotation": [
+        0,
+        0,
+        0.18
+      ],
+      "material": "board",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "board_1_b",
+      "size": [
+        0.7545527356498875,
+        0.1,
+        0.13
+      ],
+      "position": [
+        1.6249999999999998,
+        -1.9800000000000002,
+        1.79
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.13
+      ],
+      "material": "board",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "window_2",
+      "size": [
+        0.06,
+        0.576,
+        0.7360000000000001
+      ],
+      "position": [
+        2.485,
+        -1.1,
+        1.92
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "sill_2",
+      "size": [
+        0.13,
+        0.7040000000000001,
+        0.1
+      ],
+      "position": [
+        2.52,
+        -1.1,
+        1.496
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "board_2_a",
+      "size": [
+        0.1,
+        0.672,
+        0.13
+      ],
+      "position": [
+        2.5549999999999997,
+        -1.1,
+        2.02
+      ],
+      "rotation": [
+        0.18,
+        0,
+        0
+      ],
+      "material": "board",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "board_2_b",
+      "size": [
+        0.1,
+        0.672,
+        0.13
+      ],
+      "position": [
+        2.5549999999999997,
+        -1.1,
+        1.74
+      ],
+      "rotation": [
+        -0.13,
+        0,
+        0
+      ],
+      "material": "board",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "window_3",
+      "size": [
+        0.06,
+        0.576,
+        0.7360000000000001
+      ],
+      "position": [
+        2.485,
+        0.44999999999999996,
+        1.92
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "glass",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "sill_3",
+      "size": [
+        0.13,
+        0.7040000000000001,
+        0.1
+      ],
+      "position": [
+        2.52,
+        0.44999999999999996,
+        1.496
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "board_3_a",
+      "size": [
+        0.1,
+        0.672,
+        0.13
+      ],
+      "position": [
+        2.5549999999999997,
+        0.44999999999999996,
+        2.02
+      ],
+      "rotation": [
+        0.18,
+        0,
+        0
+      ],
+      "material": "board",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "board_3_b",
+      "size": [
+        0.1,
+        0.672,
+        0.13
+      ],
+      "position": [
+        2.5549999999999997,
+        0.44999999999999996,
+        1.74
+      ],
+      "rotation": [
+        -0.13,
+        0,
+        0
+      ],
+      "material": "board",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "porchDeck",
+      "size": [
+        2.15,
+        0.95,
+        0.18
+      ],
+      "position": [
+        -0.4314732552319765,
+        -2.43,
+        0.52
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "stoneLight",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "porchPost_-1.28",
+      "size": [
+        0.12,
+        0.12,
+        1.65
+      ],
+      "position": [
+        -1.2814732552319765,
+        -2.63,
+        1.32
+      ],
+      "rotation": [
+        0,
+        0,
+        0.028600072581321002
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "porchPost_0.42",
+      "size": [
+        0.12,
+        0.12,
+        1.65
+      ],
+      "position": [
+        0.4185267447680235,
+        -2.63,
+        1.32
+      ],
+      "rotation": [
+        0,
+        0,
+        -0.02271734498441219
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "mesh",
+      "name": "porchRoof",
+      "vertices": [
+        [
+          -1.075,
+          -0.575,
+          2.62
+        ],
+        [
+          1.075,
+          -0.575,
+          2.62
+        ],
+        [
+          -1.075,
+          0.575,
+          2.62
+        ],
+        [
+          1.075,
+          0.575,
+          2.62
+        ],
+        [
+          -1.075,
+          0,
+          2.9792998773478634
+        ],
+        [
+          1.075,
+          0,
+          2.9792998773478634
+        ]
+      ],
+      "faces": [
+        [
+          0,
+          1,
+          5
+        ],
+        [
+          0,
+          5,
+          4
+        ],
+        [
+          2,
+          4,
+          5
+        ],
+        [
+          2,
+          5,
+          3
+        ],
+        [
+          0,
+          4,
+          2
+        ],
+        [
+          1,
+          3,
+          5
+        ]
+      ],
+      "position": [
+        -0.4314732552319765,
+        -2.43,
+        0
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "roofDark",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "signArm",
+      "size": [
+        0.85,
+        0.08,
+        0.08
+      ],
+      "position": [
+        -2.775,
+        -1.9300000000000002,
+        2.17
+      ],
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "sign",
+      "size": [
+        0.72,
+        0.09,
+        0.58
+      ],
+      "position": [
+        -3.155,
+        -1.9500000000000002,
+        1.8399999999999999
+      ],
+      "rotation": [
+        0,
+        0,
+        0.05777583628892899
+      ],
+      "material": "board",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "crate_0",
+      "size": [
+        0.4928127843001858,
+        0.4928127843001858,
+        0.4928127843001858
+      ],
+      "position": [
+        3.2781750543043016,
+        -1.0863597440300512,
+        0.2464063921500929
+      ],
+      "rotation": [
+        0,
+        0.6104030887596309,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "crate_1",
+      "size": [
+        0.43793993462342773,
+        0.43793993462342773,
+        0.43793993462342773
+      ],
+      "position": [
+        3.244779347814619,
+        -0.4366224618861452,
+        0.21896996731171386
+      ],
+      "rotation": [
+        0,
+        0.09996615734416991,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "crate_2",
+      "size": [
+        0.3374262061249465,
+        0.3374262061249465,
+        0.3374262061249465
+      ],
+      "position": [
+        3.4714016985148186,
+        -0.30438341049011797,
+        0.16871310306247325
+      ],
+      "rotation": [
+        0,
+        0.4562828405527398,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "crate_3",
+      "size": [
+        0.39332799169234933,
+        0.39332799169234933,
+        0.39332799169234933
+      ],
+      "position": [
+        3.3681877721101046,
+        -1.0368909810669722,
+        0.19666399584617467
+      ],
+      "rotation": [
+        0,
+        0.6438996532000602,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "crate_4",
+      "size": [
+        0.4852495868736878,
+        0.4852495868736878,
+        0.4852495868736878
+      ],
+      "position": [
+        3.5472129920497535,
+        -1.445174806029536,
+        0.2426247934368439
+      ],
+      "rotation": [
+        0,
+        0.035218252404592934,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "crate_5",
+      "size": [
+        0.3048917650757358,
+        0.3048917650757358,
+        0.3048917650757358
+      ],
+      "position": [
+        2.9663698591291903,
+        -1.720061473385431,
+        0.1524458825378679
+      ],
+      "rotation": [
+        0,
+        0.892114958865568,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "crate_6",
+      "size": [
+        0.44525210250169045,
+        0.44525210250169045,
+        0.44525210250169045
+      ],
+      "position": [
+        2.818588111549616,
+        -1.0228672564495356,
+        0.22262605125084522
+      ],
+      "rotation": [
+        0,
+        0.41059095589444045,
+        0
+      ],
+      "material": "timber",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "debris_0",
+      "size": [
+        0.49167992919683456,
+        0.2897820854559541,
+        0.08609466621652245
+      ],
+      "position": [
+        -1.5108650213107464,
+        -1.267809380311519,
+        0.043047333108261226
+      ],
+      "rotation": [
+        0.19326007617637514,
+        2.2507951078005135,
+        0.19680941989645362
+      ],
+      "material": "board",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "debris_1",
+      "size": [
+        0.5814229153329507,
+        0.20229840497486293,
+        0.08554402624722571
+      ],
+      "position": [
+        0.5851410391624086,
+        -2.689225837495178,
+        0.042772013123612854
+      ],
+      "rotation": [
+        0.09446800881996753,
+        2.1695808740332723,
+        -0.034191334899514925
+      ],
+      "material": "board",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "debris_2",
+      "size": [
+        0.25559492281172425,
+        0.24752602418884634,
+        0.11225895471172406
+      ],
+      "position": [
+        0.9738083865377121,
+        -1.4259591489797458,
+        0.05612947735586203
+      ],
+      "rotation": [
+        -0.03729947693645955,
+        0.9233278503641486,
+        -0.005282206740230333
+      ],
+      "material": "board",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "debris_3",
+      "size": [
+        0.36528685595840216,
+        0.1755203661043197,
+        0.0983574706944637
+      ],
+      "position": [
+        0.9809150344226509,
+        -2.096267006918788,
+        0.04917873534723185
+      ],
+      "rotation": [
+        0.11317099817097187,
+        1.269939748290926,
+        0.1688553878106177
+      ],
+      "material": "board",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "debris_4",
+      "size": [
+        0.26558208372443914,
+        0.19072188967838882,
+        0.1139142436417751
+      ],
+      "position": [
+        -0.7445147827966139,
+        -1.4807480450486765,
+        0.05695712182088755
+      ],
+      "rotation": [
+        -0.028527394868433475,
+        0.20482567325234413,
+        -0.1685858373530209
+      ],
+      "material": "board",
+      "tags": []
+    },
+    {
+      "kind": "box",
+      "name": "deadGrowth",
+      "size": [
+        0.65,
+        0.65,
+        0.18
+      ],
+      "position": [
+        2.905,
+        -2.17,
+        0.09
+      ],
+      "rotation": [
+        0,
+        0.5314680538140237,
+        0
+      ],
+      "material": "deadGreen",
+      "tags": []
+    }
+  ],
+  "metadata": {
+    "resolvedMaterial": "wood",
+    "effectiveRecipe": {
+      "schema": "worldforge.recipe.v1",
+      "generatorVersion": "0.2.0",
+      "type": "building",
+      "seed": 43027,
+      "family": "shop",
+      "style": "abandonedEdge",
+      "material": "wood",
+      "condition": "abandoned",
+      "width": 4.85,
+      "depth": 3.7,
+      "floors": 1,
+      "roof": "gable",
+      "pitch": 41,
+      "features": {
+        "chimney": false,
+        "porch": true,
+        "sign": true,
+        "extension": false
+      }
+    },
+    "recipeWarnings": []
+  },
+  "validation": {
+    "errors": [],
+    "warnings": [],
+    "stats": {
+      "nodeCount": 46,
+      "materialCount": 13,
+      "approxVertexCount": 364,
+      "approxTriangleCount": 540
+    }
+  }
+}
