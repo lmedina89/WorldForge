@@ -4,7 +4,7 @@
 <body><div id="app">
 <aside class="panel">
   <div class="brand"><b>WORLDFORGE</b><span id="version">v—</span></div><p class="sub">Deterministic procedural world asset lab</p>
-  <div class="tabs tabs8"><button class="tab active" data-mode="building">BUILDING</button><button class="tab" data-mode="prop">PROPS</button><button class="tab" data-mode="foliage">FOLIAGE</button><button class="tab" data-mode="surface">SURFACE</button><button class="tab" data-mode="traversal">ELEVATION</button><button class="tab" data-mode="field">FIELD</button><button class="tab" data-mode="terrain">TERRAIN</button><button class="tab" data-mode="landscape">LANDSCAPE</button></div>
+  <div class="tabs tabs9"><button class="tab active" data-mode="building">BUILDING</button><button class="tab" data-mode="prop">PROPS</button><button class="tab" data-mode="foliage">FOLIAGE</button><button class="tab" data-mode="surface">SURFACE</button><button class="tab" data-mode="traversal">ELEVATION</button><button class="tab" data-mode="field">FIELD</button><button class="tab" data-mode="settlement">SETTLEMENT</button><button class="tab" data-mode="terrain">TERRAIN</button><button class="tab" data-mode="landscape">LANDSCAPE</button></div>
   <label>Seed<div class="seedrow"><input id="seed" type="number" value="48127"><button id="randomize">↻</button></div></label>
   <section id="buildingPanel">
     <label>Building engine<select id="buildingEngine"><option value="1.3.0" selected>1.3 — RPG Architecture II</option><option value="1.2.0">1.2 — RPG Architecture I</option><option value="1.1.0">1.1 — Variety Engine</option><option value="1.0.0">1.0 — Protected Legacy</option></select></label>
@@ -66,6 +66,23 @@
     <label>Density <input id="fieldDensity" type="range" min="0" max="1" step="0.05" value="0.55"><output id="fieldDensityOut"></output></label>
     <label>Dressing <input id="fieldDressing" type="range" min="0" max="1" step="0.05" value="0.55"><output id="fieldDressingOut"></output></label>
     <label>Elevation strength <input id="fieldElevation" type="range" min="0" max="1" step="0.05" value="0.65"><output id="fieldElevationOut"></output></label>
+  </section>
+  <section id="settlementPanel" hidden>
+    <label>Settlement grammar<select id="settlementGrammar"><option value="ringVillage">Ring Village</option><option value="crossroadsVillage">Crossroads Village</option><option value="hillsideVillage">Hillside Village</option></select></label>
+    <div class="cols"><label>Biome<select id="settlementBiome"><option value="temperate">Temperate</option><option value="mountain">Mountain</option><option value="farmland">Farmland</option></select></label><label>Building engine<select id="settlementBuildingEngine"><option value="1.3.0" selected>1.3 — RPG World</option><option value="1.2.0">1.2 — RPG Village/Castle</option><option value="1.1.0">1.1 — Variety</option></select></label></div>
+    <div class="cols"><label>Wealth<select id="settlementWealth"><option value="poor">Poor</option><option value="modest" selected>Modest</option><option value="prosperous">Prosperous</option></select></label><label>Age<select id="settlementAge"><option value="new">New</option><option value="mature">Mature</option><option value="old" selected>Old</option></select></label></div>
+    <label>Town size <input id="settlementSize" type="range" min="36" max="84" step="2" value="52"><output id="settlementSizeOut"></output></label>
+    <label>Buildings <input id="settlementBuildingCount" type="range" min="10" max="32" step="1" value="18"><output id="settlementBuildingCountOut"></output></label>
+    <label>Density <input id="settlementDensity" type="range" min="0.25" max="1" step="0.05" value="0.62"><output id="settlementDensityOut"></output></label>
+    <label>Dressing <input id="settlementDressing" type="range" min="0" max="1" step="0.05" value="0.65"><output id="settlementDressingOut"></output></label>
+    <label>Elevation <input id="settlementElevation" type="range" min="0" max="1" step="0.05" value="0.45"><output id="settlementElevationOut"></output></label>
+    <div class="sectionTitle">CHARACTER PREVIEW</div>
+    <label><span class="checkline"><input id="characterPreview" type="checkbox" checked> Pixel character in field</span></label>
+    <div class="characterButtons"><button id="characterReset">RESET CHARACTER</button><button id="characterCenter">CENTER CAMERA</button></div>
+    <div class="characterPad"><button data-char-move="-1,1">↖</button><button data-char-move="0,1">↑</button><button data-char-move="1,1">↗</button><button data-char-move="-1,0">←</button><button id="characterPadReset">●</button><button data-char-move="1,0">→</button><button data-char-move="-1,-1">↙</button><button data-char-move="0,-1">↓</button><button data-char-move="1,-1">↘</button></div>
+    <p class="miniNote">Arrow/WASD or the pad moves the temporary 8-direction pixel walker across settlement walk levels.</p>
+  </section>
+  <section id="placementEditorPanel" hidden>
     <div class="sectionTitle fieldEditTitle">FIELD EDITOR</div>
     <div id="selectedAsset" class="selectedAsset">Tap an asset to select it</div>
     <div class="cols precisionOptions"><label>Nudge step<select id="fieldNudgeStep"><option value="0.1">0.10</option><option value="0.25" selected>0.25</option><option value="0.5">0.50</option><option value="1">1.00</option></select></label><label>Rotation snap<select id="fieldRotationSnap"><option value="15" selected>15°</option><option value="30">30°</option><option value="45">45°</option><option value="90">90°</option></select></label></div>

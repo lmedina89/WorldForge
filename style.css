@@ -9,3 +9,11 @@
 
 /* v0.9.1 precision placement editor */
 .precisionOptions{margin-top:6px}.transformGrid{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}.transformGrid label{margin:3px 0;font-size:10px}.transformGrid input{width:100%;margin-top:3px;padding:7px;background:#0b100d;border:1px solid #34463c;color:#e4eee8}.wideEditButton{width:100%;background:#18251e;border:1px solid #456452;color:#dbe6df;padding:8px;margin:5px 0}.snapButtons{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin:7px 0}.snapButtons button{background:#121b16;border:1px solid var(--line);color:#b9c9bf;padding:8px;font-size:10px}.guideToggle{display:flex;align-items:center;justify-content:center;gap:6px;border:1px solid var(--line);margin:0;padding:7px;background:#101813;color:#b9c9bf;font-size:10px}@media(max-width:780px){.transformGrid{grid-template-columns:1fr 1fr}.snapButtons{grid-template-columns:1fr 1fr}}
+
+/* v0.9.3 settlement composer + character preview */
+.tabs9{grid-template-columns:repeat(3,1fr)}
+.characterButtons{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0}
+.characterButtons button,.characterPad button{background:#121b16;border:1px solid var(--line);color:#c8d8ce;padding:8px}
+.characterPad{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;max-width:210px;margin:8px auto}
+.miniNote{font-size:10px;color:#71867a;line-height:1.4}
+@media(max-width:780px){.tabs9{grid-template-columns:1fr 1fr 1fr}.characterPad{max-width:260px}}

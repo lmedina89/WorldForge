@@ -47,14 +47,14 @@ function footprintFor(spec,bounds){
   }
   if(['terrain','landscape','surface'].includes(r.type)) return {shape:'box',width:r.size||bounds.size[0],depth:r.size||bounds.size[1]};
   if(r.type==='traversal') return {shape:'box',width:Math.max(.1,r.width||bounds.size[0]),depth:Math.max(.1,r.length||bounds.size[1])};
-  if(r.type==='field') return {shape:'box',width:Math.max(r.size||0,bounds.size[0]),depth:Math.max(r.size||0,bounds.size[1])};
+  if(r.type==='field'||r.type==='settlement') return {shape:'box',width:Math.max(r.size||0,bounds.size[0]),depth:Math.max(r.size||0,bounds.size[1])};
   return {shape:'box',width:Math.max(.1,bounds.size[0]),depth:Math.max(.1,bounds.size[1])};
 }
 
 export function attachAssetMetadata(spec){
   const r=spec.recipe,bounds=computeBounds(spec),footprint=footprintFor(spec,bounds);
   const foliageBlocking=r.type==='foliage'&&['tree','fallenLog','stump','rockCluster'].includes(r.family);
-  const blocking=r.type==='foliage'?foliageBlocking:r.type==='traversal'?['cliff','terrace','retainingWall'].includes(r.family):!['terrain','landscape','surface','field'].includes(r.type);
+  const blocking=r.type==='foliage'?foliageBlocking:r.type==='traversal'?['cliff','terrace','retainingWall'].includes(r.family):!['terrain','landscape','surface','field','settlement'].includes(r.type);
   spec.asset={
     schema:ASSET_SCHEMA,
     worldforgeVersion:WORLDFORGE_VERSION,

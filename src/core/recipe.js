@@ -1,4 +1,4 @@
-import { DEFAULT_BUILDING, DEFAULT_LANDSCAPE, DEFAULT_PROP, DEFAULT_TERRAIN, DEFAULT_SURFACE, DEFAULT_TRAVERSAL, DEFAULT_FOLIAGE, DEFAULT_FIELD, RECIPE_SCHEMA, WORLDFORGE_VERSION, ENGINE_VERSIONS } from './schema.js';
+import { DEFAULT_BUILDING, DEFAULT_LANDSCAPE, DEFAULT_PROP, DEFAULT_TERRAIN, DEFAULT_SURFACE, DEFAULT_TRAVERSAL, DEFAULT_FOLIAGE, DEFAULT_FIELD, DEFAULT_SETTLEMENT, RECIPE_SCHEMA, WORLDFORGE_VERSION, ENGINE_VERSIONS } from './schema.js';
 import { clamp } from './rng.js';
 
 const BUILDING_FAMILIES = new Set(['cottage','house','shop','inn','shack','barn','warehouse','peasantHouse','farmhouse','smithy','chapel','stable','guildHall','merchantHouse','watchtower','gatehouse','keep','castleWall','barracks','watermill','windmill','dock','dockWarehouse','temple','mageTower','ruinedFort','desertHouse','desertMarket','mineEntrance','cityGate','sewerEntrance','townHall']);
@@ -33,6 +33,8 @@ const TRAVERSAL_FAMILIES = new Set(['bridge','stairs','slope','cliff','terrace',
 const TRAVERSAL_STYLES = new Set(['stone','wood','earth','rope']);
 const TRAVERSAL_VARIANTS = new Set(['auto','straight','arched','suspension','broken','rough']);
 const FIELD_ENGINES = new Set(['0.1.0','0.2.0','0.3.0']);
+const SETTLEMENT_GRAMMARS = new Set(['ringVillage','crossroadsVillage','hillsideVillage']);
+const SETTLEMENT_BIOMES = new Set(['temperate','mountain','farmland']);
 
 function finiteNumber(v, fallback) { const n = Number(v); return Number.isFinite(n) ? n : fallback; }
 function legacyBuildingEngine(input){
@@ -66,12 +68,13 @@ function normalizePlacement(p,index=0){
     scale:clamp(finiteNumber(p.scale,1),.25,4),
     locked:!!p.locked,
     selectable:p.selectable!==false,
-    allowOverlap:!!p.allowOverlap
+    allowOverlap:!!p.allowOverlap,
+    ...(p.meta&&typeof p.meta==='object'?{meta:p.meta}:{})
   };
 }
 
 export function normalizeRecipe(input = {}) {
-  const type = ['building','landscape','prop','terrain','surface','traversal','foliage','field'].includes(input.type) ? input.type : 'building';
+  const type = ['building','landscape','prop','terrain','surface','traversal','foliage','field','settlement'].includes(input.type) ? input.type : 'building';
   if (type === 'landscape') {
     const d=DEFAULT_LANDSCAPE; return {schema:RECIPE_SCHEMA,generatorVersion:WORLDFORGE_VERSION,engineVersion:input.engineVersion||ENGINE_VERSIONS.landscape,type,seed:Math.trunc(finiteNumber(input.seed,d.seed)),feature:FEATURES.has(input.feature)?input.feature:d.feature,size:clamp(finiteNumber(input.size,d.size),18,80),relief:clamp(finiteNumber(input.relief,d.relief),1,24),roughness:clamp(finiteNumber(input.roughness,d.roughness),0,1),terracing:clamp(finiteNumber(input.terracing,d.terracing),0,1),path:input.path??d.path,rocks:input.rocks??d.rocks,gridResolution:Math.trunc(clamp(finiteNumber(input.gridResolution,d.gridResolution),24,128))};
   }
@@ -96,6 +99,11 @@ export function normalizeRecipe(input = {}) {
     const d=DEFAULT_FIELD;
     const placements=Array.isArray(input.placements)?input.placements.map(normalizePlacement).filter(Boolean):null;
     return {schema:RECIPE_SCHEMA,generatorVersion:WORLDFORGE_VERSION,engineVersion:legacyFieldEngine(input),type,seed:Math.trunc(finiteNumber(input.seed,d.seed)),preset:FIELD_PRESETS.has(input.preset)?input.preset:d.preset,size:clamp(finiteNumber(input.size,d.size),26,64),density:clamp(finiteNumber(input.density,d.density),0,1),surface:FIELD_SURFACES.has(input.surface)?input.surface:d.surface,buildingEngine:BUILDING_ENGINES.has(input.buildingEngine)?input.buildingEngine:d.buildingEngine,dressing:clamp(finiteNumber(input.dressing,d.dressing),0,1),elevation:clamp(finiteNumber(input.elevation,d.elevation),0,1),placements};
+  }
+  if(type === 'settlement'){
+    const d=DEFAULT_SETTLEMENT;
+    const placements=Array.isArray(input.placements)?input.placements.map(normalizePlacement).filter(Boolean):null;
+    return {schema:RECIPE_SCHEMA,generatorVersion:WORLDFORGE_VERSION,engineVersion:input.engineVersion||ENGINE_VERSIONS.settlement,type,seed:Math.trunc(finiteNumber(input.seed,d.seed)),grammar:SETTLEMENT_GRAMMARS.has(input.grammar)?input.grammar:d.grammar,size:clamp(finiteNumber(input.size,d.size),36,84),buildingCount:Math.trunc(clamp(finiteNumber(input.buildingCount,d.buildingCount),10,32)),density:clamp(finiteNumber(input.density,d.density),0.25,1),buildingEngine:BUILDING_ENGINES.has(input.buildingEngine)?input.buildingEngine:d.buildingEngine,biome:SETTLEMENT_BIOMES.has(input.biome)?input.biome:d.biome,wealth:WEALTH.has(input.wealth)?input.wealth:d.wealth,age:AGES.has(input.age)?input.age:d.age,dressing:clamp(finiteNumber(input.dressing,d.dressing),0,1),elevation:clamp(finiteNumber(input.elevation,d.elevation),0,1),characterPreview:input.characterPreview??d.characterPreview,placements};
   }
 
   const d=DEFAULT_BUILDING, features=input.features||{}, engineVersion=legacyBuildingEngine(input), modern=['1.1.0','1.2.0','1.3.0'].includes(engineVersion), rpg=['1.2.0','1.3.0'].includes(engineVersion), rpg2=engineVersion==='1.3.0';
@@ -130,5 +138,6 @@ export function validateRecipe(recipe) {
   if(r.type==='foliage'&&r.family==='tree'&&r.scale>2)warnings.push('Very large trees may be heavy or dominate small fields.');
   if(r.type==='traversal'&&r.family==='bridge'&&r.height<1.1)warnings.push('Low bridge clearance may not support pass-under traversal.');
   if(r.type==='field'&&r.placements&&r.placements.length>80)warnings.push('Large field placement count may be heavy on mobile.');
+  if(r.type==='settlement'&&r.buildingCount>26)warnings.push('Very large settlements may be heavy on mobile.');
   return {recipe:r,warnings};
 }

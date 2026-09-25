@@ -113,7 +113,7 @@ function primitiveForNode(n){
 }
 function collisionPrimitives(spec,bounds){
   const r=spec.recipe||{};
-  if(['surface','terrain','landscape','field'].includes(r.type))return [];
+  if(['surface','terrain','landscape','field','settlement'].includes(r.type))return [];
   if(r.type==='traversal'){
     const t=spec.metadata?.traversal||{};
     if(['bridge','stairs','slope'].includes(r.family))return [];
@@ -134,7 +134,7 @@ function collisionPrimitives(spec,bounds){
 
 function collisionProfile(spec,bounds,sockets){
   const r=spec.recipe||{};
-  const enabled=(r.type==='traversal'||spec.asset?.collision?.enabled!==false)&&!['surface','terrain','landscape','field'].includes(r.type);
+  const enabled=(r.type==='traversal'||spec.asset?.collision?.enabled!==false)&&!['surface','terrain','landscape','field','settlement'].includes(r.type);
   let mode='none';
   if(enabled){
     if(r.type==='building'&&['gatehouse','cityGate','mineEntrance','sewerEntrance'].includes(r.family))mode='compound-with-portal';
@@ -159,7 +159,7 @@ function placementRules(spec,sockets){
   const r=spec.recipe||{};
   return {
     requiresGround:!['surface','terrain','landscape'].includes(r.type),
-    avoidOverlap:!['surface','terrain','landscape','field'].includes(r.type),
+    avoidOverlap:!['surface','terrain','landscape','field','settlement'].includes(r.type),
     canRotate:true,
     preferredFacing:r.type==='building'?'south':null,
     roadSocket:sockets.find(s=>s.type==='road')?.id||null,
@@ -212,11 +212,11 @@ function productionForField(spec){
     schema:PRODUCTION_SCHEMA,
     version:PRODUCTION_VERSION,
     enrichedWith:WORLDFORGE_VERSION,
-    source:{type:'field',engineVersion:spec.recipe?.engineVersion||null,seed:spec.recipe?.seed??null,generatorVersion:spec.recipe?.generatorVersion||spec.generatorVersion||null},
+    source:{type:spec.recipe?.type||'field',engineVersion:spec.recipe?.engineVersion||null,seed:spec.recipe?.seed??null,generatorVersion:spec.recipe?.generatorVersion||spec.generatorVersion||null},
     coordinateSystem:{up:'Z',forward:'-Y',units:'worldforge-unit',space:'world'},
     bounds:clone(bounds),
     placements,
-    navigation:{walkGraph:clone(spec.metadata?.walkGraph||{levels:[0],segments:[]}),placementCount:placements.length},
+    navigation:{walkGraph:clone(spec.metadata?.walkGraph||{levels:[0],segments:[]}),placementCount:placements.length,...(spec.recipe?.type==='settlement'?{roads:clone(spec.metadata?.roads||{}),walkZones:clone(spec.metadata?.walkZones||[]),walkTransitions:clone(spec.metadata?.walkTransitions||[]),districts:clone(spec.metadata?.districts||[]),characterSpawn:clone(spec.metadata?.characterSpawn||[0,0,0])}:{})},
     collision:{mode:'per-placement',placementIds:placements.filter(p=>p.production.collision.enabled).map(p=>p.id)},
     sockets:placements.flatMap(p=>p.production.sockets.map(s=>({...s,id:`${p.id}:${s.id}`,placementId:p.id}))),
     exportHints:{sharedMaterials:true,generateLODLater:true,generateUVAtlasLater:true,gameMetadataReady:true}
@@ -225,7 +225,7 @@ function productionForField(spec){
 
 export function attachProductionMetadata(spec){
   if(!spec.asset)attachAssetMetadata(spec);
-  spec.production=spec.recipe?.type==='field'?productionForField(spec):buildSingleProduction(spec,{space:'local'});
+  spec.production=['field','settlement'].includes(spec.recipe?.type)?productionForField(spec):buildSingleProduction(spec,{space:'local'});
   return spec;
 }
 
@@ -241,6 +241,6 @@ export function enrichExistingScene(inputSpec){
 
 export function productionSummary(spec){
   const p=spec.production||attachProductionMetadata(spec).production;
-  if(spec.recipe?.type==='field')return {schema:p.schema,version:p.version,type:'field',placements:p.placements.length,sockets:p.sockets.length,walkLevels:p.navigation.walkGraph?.levels?.length||0,collisionPlacements:p.collision.placementIds.length};
+  if(['field','settlement'].includes(spec.recipe?.type))return {schema:p.schema,version:p.version,type:spec.recipe.type,placements:p.placements.length,sockets:p.sockets.length,walkLevels:p.navigation.walkGraph?.levels?.length||0,collisionPlacements:p.collision.placementIds.length};
   return {schema:p.schema,version:p.version,type:spec.recipe?.type,sockets:p.sockets.length,walkSurfaces:p.walkSurfaces.length,collisionPrimitives:p.collision.primitives.length,collisionMode:p.collision.mode};
 }

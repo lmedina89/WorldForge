@@ -1,4 +1,4 @@
-export const WORLDFORGE_VERSION = '0.9.2';
+export const WORLDFORGE_VERSION = '0.9.3';
 export const RECIPE_SCHEMA = 'worldforge.recipe.v1';
 export const SCENE_SCHEMA = 'worldforge.scene.v1';
 export const ASSET_SCHEMA = 'worldforge.asset.v1';
@@ -15,7 +15,8 @@ export const ENGINE_VERSIONS = Object.freeze({
   field: '0.3.0',
   foliage: '0.1.0',
   traversal: '0.1.0',
-  production: PRODUCTION_VERSION
+  production: PRODUCTION_VERSION,
+  settlement: '0.1.0'
 });
 
 export const DEFAULT_BUILDING = Object.freeze({
@@ -84,6 +85,16 @@ export const DEFAULT_FOLIAGE = Object.freeze({
   engineVersion: ENGINE_VERSIONS.foliage, type: 'foliage', seed: 61803,
   family: 'tree', biome: 'temperate', variant: 'oak', condition: 'healthy',
   scale: 1, density: 0.55, spread: 1.0
+});
+
+
+export const DEFAULT_SETTLEMENT = Object.freeze({
+  schema: RECIPE_SCHEMA, generatorVersion: WORLDFORGE_VERSION,
+  engineVersion: ENGINE_VERSIONS.settlement, type: 'settlement', seed: 731904,
+  grammar: 'ringVillage', size: 52, buildingCount: 18, density: 0.62,
+  buildingEngine: ENGINE_VERSIONS.buildingLatest, biome: 'temperate',
+  wealth: 'modest', age: 'old', dressing: 0.65, elevation: 0.45,
+  characterPreview: true
 });
 
 export const DEFAULT_FIELD = Object.freeze({

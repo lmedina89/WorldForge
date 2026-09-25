@@ -6,7 +6,7 @@ import { snapScalar, snapRotationRadians, nearestLevel, nearestEdgeAdjustment } 
 
 function hashFile(p){return crypto.createHash('sha256').update(fs.readFileSync(p)).digest('hex');}
 const oldDir='../worldforge-v0.9.1/src/generators', newDir='src/generators';
-const protectedFiles=fs.readdirSync(newDir).filter(f=>f.endsWith('.js')&&f!=='index.js').sort();
+const protectedFiles=fs.readdirSync(oldDir).filter(f=>f.endsWith('.js')&&f!=='index.js').sort();
 for(const f of protectedFiles) assert.equal(hashFile(`${newDir}/${f}`),hashFile(`${oldDir}/${f}`),`${f} changed; production metadata must not alter generator implementations`);
 
 assert.equal(snapScalar(2.13,.25),2.25);

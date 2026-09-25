@@ -10,8 +10,9 @@ import { enrichExistingScene } from './core/production-metadata.js';
 import { snapScalar, snapRotationRadians, nearestLevel, nearestEdgeAdjustment, worldTraversalConnections } from './core/placement-tools.js';
 
 const $=id=>document.getElementById(id);
-let mode='building',currentGroup=null,currentSpec=null,selectedPlacementId=null,selectionHelper=null,selectionGuideGroup=null,fieldLevelView='all';
-const panels={building:$('buildingPanel'),prop:$('propPanel'),foliage:$('foliagePanel'),surface:$('surfacePanel'),traversal:$('traversalPanel'),field:$('fieldPanel'),terrain:$('terrainPanel'),landscape:$('landscapePanel')};
+let mode='building',currentGroup=null,currentSpec=null,selectedPlacementId=null,selectionHelper=null,selectionGuideGroup=null,fieldLevelView='all',characterSprite=null,characterPos=[0,0,0],characterDir='S';
+const panels={building:$('buildingPanel'),prop:$('propPanel'),foliage:$('foliagePanel'),surface:$('surfacePanel'),traversal:$('traversalPanel'),field:$('fieldPanel'),settlement:$('settlementPanel'),terrain:$('terrainPanel'),landscape:$('landscapePanel')};
+const isCompositeMode=()=>mode==='field'||mode==='settlement';
 
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x0d1310);scene.fog=new THREE.Fog(0x0d1310,55,150);
 const camera=new THREE.OrthographicCamera(-12,12,8,-8,.1,400);camera.up.set(0,0,1);camera.position.set(15,-18,13);camera.lookAt(0,0,2);
@@ -27,8 +28,10 @@ function showMode(next){
   mode=next;selectedPlacementId=null;clearSelectionHelper();
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.mode===mode));
   Object.entries(panels).forEach(([key,p])=>p.hidden=key!==mode);
-  ground.visible=!['surface','field','terrain'].includes(mode);
-  grid.visible=!['surface','field'].includes(mode);
+  ground.visible=!['surface','field','settlement','terrain'].includes(mode);
+  grid.visible=!['surface','field','settlement'].includes(mode);
+  if($('placementEditorPanel'))$('placementEditorPanel').hidden=!isCompositeMode();
+  if(mode!=='settlement')hideCharacter();
   updateSelectedUi();
 }
 
@@ -57,6 +60,7 @@ function readRecipe(){
   if(mode==='terrain')return normalizeRecipe({type:'terrain',seed,patch:$('terrainPatch').value,size:+$('patchSize').value,roughness:+$('patchRoughness').value,pathWidth:+$('pathWidth').value,wear:+$('wear').value,gridResolution:+$('patchResolution').value});
   if(mode==='surface')return normalizeRecipe({type:'surface',seed,surface:$('surfaceType').value,size:+$('surfaceSize').value,variation:+$('surfaceVariation').value,wear:+$('surfaceWear').value,pathPattern:$('surfacePathPattern').value,pathWidth:+$('surfacePathWidth').value,pathMaterial:$('surfacePathMaterial').value,detailDensity:+$('surfaceDetailDensity').value,edgeBlend:$('surfaceEdgeBlend').checked,gridResolution:+$('surfaceResolution').value});
   if(mode==='field')return normalizeRecipe({type:'field',seed,preset:$('fieldPreset').value,size:+$('fieldSize').value,density:+$('fieldDensity').value,surface:$('fieldSurface').value,buildingEngine:$('fieldBuildingEngine').value,dressing:+$('fieldDressing').value,elevation:+$('fieldElevation').value,placements:null});
+  if(mode==='settlement')return normalizeRecipe({type:'settlement',seed,grammar:$('settlementGrammar').value,size:+$('settlementSize').value,buildingCount:+$('settlementBuildingCount').value,density:+$('settlementDensity').value,buildingEngine:$('settlementBuildingEngine').value,biome:$('settlementBiome').value,wealth:$('settlementWealth').value,age:$('settlementAge').value,dressing:+$('settlementDressing').value,elevation:+$('settlementElevation').value,characterPreview:$('characterPreview').checked,placements:null});
   return normalizeRecipe({type:'building',engineVersion:$('buildingEngine').value,seed,family:$('family').value,style:$('style').value,material:$('material').value,condition:$('condition').value,width:+$('width').value,depth:+$('depth').value,floors:+$('floors').value,roof:$('roof').value,pitch:+$('pitch').value,template:$('template').value,facade:$('facade').value,wealth:$('wealth').value,age:$('age').value,construction:$('construction').value,features:{chimney:$('chimney').checked,porch:$('porch').checked,sign:$('sign').checked,extension:$('extension').checked}});
 }
 
@@ -80,6 +84,8 @@ function writeRecipe(recipe){
     $('surfaceType').value=r.surface;$('surfaceSize').value=r.size;$('surfaceVariation').value=r.variation;$('surfaceWear').value=r.wear;$('surfacePathPattern').value=r.pathPattern;$('surfacePathWidth').value=r.pathWidth;$('surfacePathMaterial').value=r.pathMaterial;$('surfaceDetailDensity').value=r.detailDensity;$('surfaceEdgeBlend').checked=!!r.edgeBlend;$('surfaceResolution').value=r.gridResolution;
   } else if(mode==='field'){
     $('fieldPreset').value=r.preset;$('fieldSize').value=r.size;$('fieldDensity').value=r.density;$('fieldSurface').value=r.surface;$('fieldBuildingEngine').value=r.buildingEngine;$('fieldDressing').value=r.dressing;$('fieldElevation').value=r.elevation;
+  } else if(mode==='settlement'){
+    $('settlementGrammar').value=r.grammar;$('settlementSize').value=r.size;$('settlementBuildingCount').value=r.buildingCount;$('settlementDensity').value=r.density;$('settlementBuildingEngine').value=r.buildingEngine;$('settlementBiome').value=r.biome;$('settlementWealth').value=r.wealth;$('settlementAge').value=r.age;$('settlementDressing').value=r.dressing;$('settlementElevation').value=r.elevation;$('characterPreview').checked=!!r.characterPreview;
   } else {
     for(const [id,key] of [['feature','feature'],['terrainSize','size'],['relief','relief'],['roughness','roughness'],['terracing','terracing'],['gridResolution','gridResolution']])$(id).value=r[key];$('path').checked=!!r.path;$('rocks').checked=!!r.rocks;
   }
@@ -89,7 +95,7 @@ function writeRecipe(recipe){
 function spanFor(recipe){
   if(recipe.type==='landscape')return Math.max(20,recipe.size*.7);
   if(recipe.type==='terrain'||recipe.type==='surface')return Math.max(7,recipe.size*.62);
-  if(recipe.type==='field')return Math.max(12,recipe.size*.63);
+  if(recipe.type==='field'||recipe.type==='settlement')return Math.max(12,recipe.size*.63);
   if(recipe.type==='prop')return Math.max(3.6,4.2*recipe.scale);
   if(recipe.type==='traversal')return Math.max(5,Math.max(recipe.width||3,recipe.length||8)*.72);
   if(recipe.type==='foliage')return Math.max(4.2,5.2*recipe.scale*recipe.spread);
@@ -102,19 +108,19 @@ function targetHeight(recipe){
   if(recipe.type==='traversal')return Math.max(.8,(recipe.height||2.2)*.55);
   if(recipe.type==='foliage')return recipe.family==='tree'?2.3:.65;
   if(recipe.type==='terrain'||recipe.type==='surface')return .15;
-  if(recipe.type==='field')return 2.0;
+  if(recipe.type==='field'||recipe.type==='settlement')return 2.0;
   return 1.5;
 }
 function setDefaultCamera(recipe){
   if(recipe.type==='terrain'||recipe.type==='surface')camera.position.set(12,-15,14);
-  else if(recipe.type==='field')camera.position.set(20,-24,20);
+  else if(recipe.type==='field'||recipe.type==='settlement')camera.position.set(24,-30,24);
   else if(recipe.type==='prop'||recipe.type==='foliage'||recipe.type==='traversal')camera.position.set(8,-10,7);
   else camera.position.set(15,-18,13);
   controls.target.set(0,0,targetHeight(recipe));camera.lookAt(controls.target);controls.update();
 }
 function updateModeEnvironment(){
-  ground.visible=!['surface','field','terrain'].includes(mode);
-  grid.visible=!['surface','field'].includes(mode);
+  ground.visible=!['surface','field','settlement','terrain'].includes(mode);
+  grid.visible=!['surface','field','settlement'].includes(mode);
 }
 function renderRecipe(recipe,{resetCamera=true}={}){
   clearSelectionHelper();
@@ -128,14 +134,15 @@ function renderRecipe(recipe,{resetCamera=true}={}){
   $('validation').textContent=v.errors.length?'ERROR':v.warnings.length?`${v.warnings.length} WARN`:'VALID';$('validation').dataset.state=v.errors.length?'bad':v.warnings.length?'warn':'good';
   if(selectedPlacementId&&!currentSpec.recipe.placements?.some(p=>p.id===selectedPlacementId))selectedPlacementId=null;
   updateSelectionHelper();updateSelectedUi();applyLevelFilter();
+  if(mode==='settlement'&&currentSpec.recipe.characterPreview!==false)resetCharacter();else hideCharacter();
 }
 function regenerate(){selectedPlacementId=null;renderRecipe(readRecipe(),{resetCamera:true});}
 function fitCamera(span){const aspect=Math.max(.5,$('canvasHost').clientWidth/Math.max(1,$('canvasHost').clientHeight));camera.left=-span*aspect;camera.right=span*aspect;camera.top=span;camera.bottom=-span;camera.updateProjectionMatrix();controls.target.set(0,0,currentSpec?targetHeight(currentSpec.recipe):2.2);}
 function setView(v){
   const t=currentSpec?targetHeight(currentSpec.recipe):2.2;controls.target.set(0,0,t);
-  if(v==='field')camera.position.set(mode==='field'?20:(mode==='prop'||mode==='foliage'||mode==='traversal')?8:15,mode==='field'?-24:(mode==='prop'||mode==='foliage'||mode==='traversal')?-10:-18,mode==='field'?20:mode==='terrain'||mode==='surface'?14:(mode==='prop'||mode==='foliage'||mode==='traversal')?7:13);
-  else if(v==='front')camera.position.set(0,-Math.max(24,spanFor(currentSpec?.recipe||{})*2),(mode==='prop'||mode==='foliage'||mode==='traversal')?2.8:mode==='field'?7:4.5);
-  else if(v==='side')camera.position.set(Math.max(24,spanFor(currentSpec?.recipe||{})*2),0,(mode==='prop'||mode==='foliage'||mode==='traversal')?2.8:mode==='field'?7:4.5);
+  if(v==='field')camera.position.set(isCompositeMode()?20:(mode==='prop'||mode==='foliage'||mode==='traversal')?8:15,isCompositeMode()?-24:(mode==='prop'||mode==='foliage'||mode==='traversal')?-10:-18,isCompositeMode()?20:mode==='terrain'||mode==='surface'?14:(mode==='prop'||mode==='foliage'||mode==='traversal')?7:13);
+  else if(v==='front')camera.position.set(0,-Math.max(24,spanFor(currentSpec?.recipe||{})*2),(mode==='prop'||mode==='foliage'||mode==='traversal')?2.8:isCompositeMode()?7:4.5);
+  else if(v==='side')camera.position.set(Math.max(24,spanFor(currentSpec?.recipe||{})*2),0,(mode==='prop'||mode==='foliage'||mode==='traversal')?2.8:isCompositeMode()?7:4.5);
   else return;
   camera.lookAt(controls.target);controls.update();
 }
@@ -147,7 +154,7 @@ function clearSelectionHelper(){
 function placementRecord(id){return currentSpec?.metadata?.placements?.find(p=>p.id===id)||null;}
 function placementObject(id){return currentGroup?.children?.find(o=>o.userData?.placementId===id)||null;}
 function updateSelectionHelper(){
-  clearSelectionHelper();if(mode!=='field'||!selectedPlacementId)return;
+  clearSelectionHelper();if(!isCompositeMode()||!selectedPlacementId)return;
   const obj=placementObject(selectedPlacementId),rec=placementRecord(selectedPlacementId);if(!obj||!rec)return;
   const box=new THREE.Box3().setFromObject(obj);if(!box.isEmpty()){selectionHelper=new THREE.Box3Helper(box,0x8ff0b5);selectionHelper.name='WorldForgeSelection';scene.add(selectionHelper);}
   if(!$('fieldShowGuides')?.checked)return;
@@ -174,7 +181,7 @@ function selectPlacement(id){
 }
 function cloneJson(v){return JSON.parse(JSON.stringify(v));}
 function editField(mutator){
-  if(mode!=='field'||!currentSpec?.recipe?.placements||!selectedPlacementId)return;
+  if(!isCompositeMode()||!currentSpec?.recipe?.placements||!selectedPlacementId)return;
   const r=cloneJson(currentSpec.recipe),p=r.placements.find(x=>x.id===selectedPlacementId);if(!p)return;
   if(mutator(p,r)===false)return;
   renderRecipe(r,{resetCamera:false});
@@ -190,7 +197,7 @@ function placementVisualLevel(rec){
   return z<.65?0:z<3.5?1:2;
 }
 function applyLevelFilter(){
-  if(mode!=='field'||!currentGroup)return;
+  if(!isCompositeMode()||!currentGroup)return;
   const groups=currentGroup.userData?.placementGroups;
   if(!groups)return;
   for(const [id,g] of groups.entries()){
@@ -204,11 +211,63 @@ function applyLevelFilter(){
 let pointerDown=null;
 renderer.domElement.addEventListener('pointerdown',e=>{pointerDown={x:e.clientX,y:e.clientY};});
 renderer.domElement.addEventListener('pointerup',e=>{
-  if(mode!=='field'||!currentGroup||!pointerDown)return;
+  if(!isCompositeMode()||!currentGroup||!pointerDown)return;
   const moved=Math.hypot(e.clientX-pointerDown.x,e.clientY-pointerDown.y);pointerDown=null;if(moved>8)return;
   const rect=renderer.domElement.getBoundingClientRect();pointer.x=((e.clientX-rect.left)/rect.width)*2-1;pointer.y=-((e.clientY-rect.top)/rect.height)*2+1;raycaster.setFromCamera(pointer,camera);
   const hits=raycaster.intersectObject(currentGroup,true);for(const h of hits){let o=h.object,id=o.userData?.placementId;while(!id&&o.parent&&o!==currentGroup){o=o.parent;id=o.userData?.placementId;}if(id){selectPlacement(id);return;}}
 });
+
+
+function pixelCharacterTexture(dir='S'){
+  const c=document.createElement('canvas');c.width=24;c.height=32;const x=c.getContext('2d');x.imageSmoothingEnabled=false;x.clearRect(0,0,24,32);
+  const skin='#d6a06c',hair='#3e2a22',shirt='#276b87',trim='#d8c26b',pants='#3b3e52',boot='#2a211e';
+  x.fillStyle='rgba(0,0,0,.25)';x.fillRect(7,29,10,2);
+  x.fillStyle=boot;x.fillRect(7,25,4,5);x.fillRect(13,25,4,5);
+  x.fillStyle=pants;x.fillRect(7,20,10,6);
+  x.fillStyle=shirt;x.fillRect(5,12,14,9);x.fillStyle=trim;x.fillRect(5,17,14,2);
+  x.fillStyle=skin;x.fillRect(8,5,8,8);x.fillStyle=hair;x.fillRect(7,4,10,4);x.fillRect(7,7,2,4);x.fillRect(15,7,2,4);
+  if(['S','SE','SW'].includes(dir)){x.fillStyle='#1b1b1b';x.fillRect(10,8,1,1);x.fillRect(13,8,1,1);}
+  if(dir==='N'){x.fillStyle=hair;x.fillRect(8,8,8,5);}
+  if(dir==='E'||dir==='NE'||dir==='SE'){x.fillStyle=skin;x.fillRect(16,8,2,2);}
+  if(dir==='W'||dir==='NW'||dir==='SW'){x.fillStyle=skin;x.fillRect(6,8,2,2);}
+  const tex=new THREE.CanvasTexture(c);tex.magFilter=THREE.NearestFilter;tex.minFilter=THREE.NearestFilter;tex.generateMipmaps=false;return tex;
+}
+function ensureCharacter(){
+  if(characterSprite)return characterSprite;
+  const mat=new THREE.SpriteMaterial({map:pixelCharacterTexture(characterDir),transparent:true,alphaTest:.05,depthTest:true,depthWrite:false});
+  characterSprite=new THREE.Sprite(mat);characterSprite.name='WorldForgeCharacterPreview';characterSprite.scale.set(1.45,2.0,1);characterSprite.center.set(.5,0);scene.add(characterSprite);return characterSprite;
+}
+function hideCharacter(){if(characterSprite)characterSprite.visible=false;}
+function sampleCharacterZ(x,y){
+  const transitions=currentSpec?.metadata?.walkTransitions||[];
+  for(const t of transitions){const b=t.bounds||[];if(b.length===4&&x>=b[0]&&x<=b[2]&&y>=b[1]&&y<=b[3]){const v=t.axis==='x'?x:y,den=(t.to-t.from)||1,q=Math.max(0,Math.min(1,(v-t.from)/den));return t.z0+(t.z1-t.z0)*q;}}
+  const zones=currentSpec?.metadata?.walkZones||[];let best=0;
+  for(const z of zones){const b=z.bounds||[];if(b.length===4&&x>=b[0]&&x<=b[2]&&y>=b[1]&&y<=b[3])best=Math.max(best,Number(z.z)||0);}
+  return best;
+}
+function characterBlocked(x,y,z){
+  const records=currentSpec?.metadata?.placements||[];
+  for(const p of records){if(p.recipe?.type!=='building')continue;if(Math.abs((p.position?.[2]||0)-z)>1.2)continue;
+    const fp=p.asset?.footprint||{width:1,depth:1},a=p.rotation||0,c=Math.abs(Math.cos(a)),si=Math.abs(Math.sin(a)),w=(fp.width*c+fp.depth*si)*(p.scale||1)*.88,d=(fp.width*si+fp.depth*c)*(p.scale||1)*.88;
+    if(Math.abs(x-(p.position?.[0]||0))<w/2&&Math.abs(y-(p.position?.[1]||0))<d/2)return true;
+  }return false;
+}
+function resetCharacter(){
+  if(mode!=='settlement'||$('characterPreview')?.checked===false){hideCharacter();return;}
+  const c=ensureCharacter(),spawn=currentSpec?.metadata?.characterSpawn||[0,-3,.12];characterPos=[spawn[0],spawn[1],sampleCharacterZ(spawn[0],spawn[1])];c.position.set(characterPos[0],characterPos[1],characterPos[2]+.06);c.visible=true;
+}
+function updateCharacterDirection(dx,dy){
+  characterDir=Math.abs(dx)>Math.abs(dy)?(dx>0?'E':'W'):(dy>0?'N':'S');
+  if(Math.abs(dx)>.2&&Math.abs(dy)>.2)characterDir=(dy>0?'N':'S')+(dx>0?'E':'W');
+  if(characterSprite){const old=characterSprite.material.map;characterSprite.material.map=pixelCharacterTexture(characterDir);characterSprite.material.needsUpdate=true;old?.dispose?.();}
+}
+function moveCharacter(dx,dy){
+  if(mode!=='settlement'||!currentSpec)return;const c=ensureCharacter();if(!c.visible)resetCharacter();
+  const step=.48,nx=characterPos[0]+dx*step,ny=characterPos[1]+dy*step,half=(currentSpec.recipe.size||52)*.49;
+  if(Math.abs(nx)>half||Math.abs(ny)>half)return;const nz=sampleCharacterZ(nx,ny);if(characterBlocked(nx,ny,nz))return;
+  updateCharacterDirection(dx,dy);characterPos=[nx,ny,nz];c.position.set(nx,ny,nz+.06);
+}
+function centerCharacter(){if(!characterSprite?.visible)return;controls.target.set(characterPos[0],characterPos[1],characterPos[2]+1);camera.lookAt(controls.target);controls.update();}
 
 function download(blob,name){const a=document.createElement('a');const url=URL.createObjectURL(blob);a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);}
 function recipeName(){return `worldforge_${mode}_${currentSpec?.recipe?.seed||$('seed').value}`;}
@@ -254,7 +313,13 @@ $('fieldClearSelection').onclick=()=>{selectedPlacementId=null;updateSelectionHe
 $('fieldCenterSelection').onclick=()=>{const obj=placementObject(selectedPlacementId);if(!obj)return;const box=new THREE.Box3().setFromObject(obj),c=new THREE.Vector3();box.getCenter(c);controls.target.copy(c);camera.lookAt(c);controls.update();};
 document.querySelectorAll('[data-level-view]').forEach(b=>b.onclick=()=>{fieldLevelView=b.dataset.levelView;applyLevelFilter();updateSelectionHelper();});
 
-const outputMap={traversalWidth:'traversalWidthOut',traversalLength:'traversalLengthOut',traversalHeight:'traversalHeightOut',foliageScale:'foliageScaleOut',foliageDensity:'foliageDensityOut',foliageSpread:'foliageSpreadOut',width:'widthOut',depth:'depthOut',floors:'floorsOut',pitch:'pitchOut',terrainSize:'terrainSizeOut',relief:'reliefOut',roughness:'roughnessOut',terracing:'terracingOut',gridResolution:'gridResolutionOut',propScale:'propScaleOut',patchSize:'patchSizeOut',patchRoughness:'patchRoughnessOut',pathWidth:'pathWidthOut',wear:'wearOut',patchResolution:'patchResolutionOut',surfaceSize:'surfaceSizeOut',surfaceVariation:'surfaceVariationOut',surfaceWear:'surfaceWearOut',surfacePathWidth:'surfacePathWidthOut',surfaceDetailDensity:'surfaceDetailDensityOut',surfaceResolution:'surfaceResolutionOut',fieldSize:'fieldSizeOut',fieldDensity:'fieldDensityOut',fieldDressing:'fieldDressingOut',fieldElevation:'fieldElevationOut'};
+
+$('characterPreview').onchange=()=>{if($('characterPreview').checked)resetCharacter();else hideCharacter();};
+$('characterReset').onclick=resetCharacter;$('characterCenter').onclick=centerCharacter;$('characterPadReset').onclick=resetCharacter;
+document.querySelectorAll('[data-char-move]').forEach(b=>b.onclick=()=>{const [x,y]=b.dataset.charMove.split(',').map(Number);moveCharacter(x,y);});
+window.addEventListener('keydown',e=>{if(mode!=='settlement'||['INPUT','SELECT','TEXTAREA'].includes(document.activeElement?.tagName))return;const m={ArrowUp:[0,1],w:[0,1],W:[0,1],ArrowDown:[0,-1],s:[0,-1],S:[0,-1],ArrowLeft:[-1,0],a:[-1,0],A:[-1,0],ArrowRight:[1,0],d:[1,0],D:[1,0],q:[-1,1],Q:[-1,1],e:[1,1],E:[1,1],z:[-1,-1],Z:[-1,-1],c:[1,-1],C:[1,-1]}[e.key];if(m){e.preventDefault();moveCharacter(...m);}});
+
+const outputMap={traversalWidth:'traversalWidthOut',traversalLength:'traversalLengthOut',traversalHeight:'traversalHeightOut',foliageScale:'foliageScaleOut',foliageDensity:'foliageDensityOut',foliageSpread:'foliageSpreadOut',width:'widthOut',depth:'depthOut',floors:'floorsOut',pitch:'pitchOut',terrainSize:'terrainSizeOut',relief:'reliefOut',roughness:'roughnessOut',terracing:'terracingOut',gridResolution:'gridResolutionOut',propScale:'propScaleOut',patchSize:'patchSizeOut',patchRoughness:'patchRoughnessOut',pathWidth:'pathWidthOut',wear:'wearOut',patchResolution:'patchResolutionOut',surfaceSize:'surfaceSizeOut',surfaceVariation:'surfaceVariationOut',surfaceWear:'surfaceWearOut',surfacePathWidth:'surfacePathWidthOut',surfaceDetailDensity:'surfaceDetailDensityOut',surfaceResolution:'surfaceResolutionOut',fieldSize:'fieldSizeOut',fieldDensity:'fieldDensityOut',fieldDressing:'fieldDressingOut',fieldElevation:'fieldElevationOut',settlementSize:'settlementSizeOut',settlementBuildingCount:'settlementBuildingCountOut',settlementDensity:'settlementDensityOut',settlementDressing:'settlementDressingOut',settlementElevation:'settlementElevationOut'};
 function syncOutputs(){for(const [id,outId] of Object.entries(outputMap)){const el=$(id),out=$(outId);if(el&&out)out.value=el.value;}}
 for(const id of Object.keys(outputMap)){const el=$(id);if(el)el.oninput=()=>syncOutputs();}syncOutputs();
 function resize(){const host=$('canvasHost'),w=Math.max(320,Math.floor(host.clientWidth)),h=Math.max(220,Math.floor(host.clientHeight));renderer.setSize(w,h,false);fitCamera(currentSpec?spanFor(currentSpec.recipe):10);}window.addEventListener('resize',resize);
