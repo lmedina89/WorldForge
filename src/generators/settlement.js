@@ -200,6 +200,7 @@ export function generateSettlement(input){
   const recipe=normalizeRecipe({...input,type:'settlement'}),{warnings:recipeWarnings}=validateRecipe(recipe),r=rngFromSeed(recipe.seed);
   const layout=recipe.placements?.length?{placements:clone(recipe.placements),...skeletonFor(recipe)}:
     recipe.grammar==='crossroadsVillage'?crossroadsPlacements(recipe,r):recipe.grammar==='hillsideVillage'?hillsidePlacements(recipe,r):ringPlacements(recipe,r);
+  if(Array.isArray(recipe.characterSpawn)&&recipe.characterSpawn.length>=3)layout.characterSpawn=[recipe.characterSpawn[0],recipe.characterSpawn[1],recipe.characterSpawn[2]];
   if(!recipe.placements?.length)addDressing(layout.placements,recipe,r);
   const spec=createSceneSpec({...recipe,placements:layout.placements});
   addSettlementRoads(spec,layout,recipe);

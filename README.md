@@ -1,3 +1,21 @@
+# WorldForge v0.9.4 — Settlement Playtest Pass
+
+WorldForge v0.9.4 keeps the protected generation stack intact and builds a better settlement review loop around the v0.9.3 composer. This pass adds a quick **playtest mode** for the temporary pixel walker, a walk-zone debug overlay, a follow-camera toggle, character spawn persistence, and simple automatic building fade when the character moves behind structures.
+
+## Added
+- Enter/exit **PLAYTEST** directly from the settlement tab.
+- Mobile-friendly on-screen playtest pad overlay.
+- **Walk debug** overlay for settlement walk zones and transition ramps/stairs.
+- **Follow camera** toggle for the settlement preview character.
+- **Set current as spawn** so a preferred test start point persists with the settlement recipe/project.
+- Character grounding/contact shadow polish and simple building occlusion fade.
+
+## Compatibility
+- Existing building, field, traversal, foliage, prop, terrain, surface, and settlement generators remain additive and unchanged in intent.
+- Existing settlement recipes continue to load; recipes without `characterSpawn` receive grammar defaults.
+
+---
+
 # WorldForge v0.9.2 — Production Metadata + Sockets
 
 WorldForge v0.9.2 adds the first game-production layer **without changing existing generated geometry**. Buildings, props, traversal pieces, foliage, and fields now receive deterministic gameplay metadata that a game runtime or later WorldForge export stage can consume directly.

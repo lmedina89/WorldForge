@@ -1,3 +1,19 @@
+# WorldForge v0.9.4 — Settlement Playtest Pass
+
+## Added
+- Settlement **PLAYTEST** mode with viewport overlay controls.
+- Walk-zone / transition debug overlay toggle.
+- Follow-camera toggle for the preview walker.
+- Persistent `characterSpawn` in settlement recipes/projects.
+- Simple automatic building fade to keep the preview walker visible near structures.
+- Character contact shadow / grounding polish.
+
+## Compatibility
+- Settlement grammar generation remains deterministic.
+- Protected building/field/traversal/foliage/source generators remain untouched in behavior.
+
+---
+
 # WorldForge v0.9.2 — Production Metadata + Sockets
 
 ## Added

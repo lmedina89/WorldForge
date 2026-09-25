@@ -1,4 +1,4 @@
-export const WORLDFORGE_VERSION = '0.9.3';
+export const WORLDFORGE_VERSION = '0.9.4';
 export const RECIPE_SCHEMA = 'worldforge.recipe.v1';
 export const SCENE_SCHEMA = 'worldforge.scene.v1';
 export const ASSET_SCHEMA = 'worldforge.asset.v1';
@@ -94,7 +94,8 @@ export const DEFAULT_SETTLEMENT = Object.freeze({
   grammar: 'ringVillage', size: 52, buildingCount: 18, density: 0.62,
   buildingEngine: ENGINE_VERSIONS.buildingLatest, biome: 'temperate',
   wealth: 'modest', age: 'old', dressing: 0.65, elevation: 0.45,
-  characterPreview: true
+  characterPreview: true,
+  characterSpawn: [0, -3, 0.12]
 });
 
 export const DEFAULT_FIELD = Object.freeze({
