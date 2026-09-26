@@ -13,9 +13,12 @@ assert.match(html,/data-mode="vehicle"/);
 assert.match(css,/\[hidden\]\{display:none!important\}/,'styled hidden elements must remain hidden');
 for(const id of ['vehiclePanel','vehicleLoadBenchmark','vehicleImport','vehicleDirection','vehicleFrameSize','vehicleForwardOffset','vehicleBake','vehicleExportMeta'])assert.match(html,new RegExp(`id="${id}"`));
 assert.match(app,/VehicleBaker/);
-assert.match(baker,/VEHICLE_BAKER_VERSION = '0\.1\.0'/);
+assert.match(baker,/VEHICLE_BAKER_VERSION = '0\.1\.1'/);
 assert.match(baker,/\{ id:'N'/);
 assert.match(baker,/\{ id:'NW'/);
+
+assert.match(baker,/AUTO_FIT_TARGET = 0\.74/,'auto-fit framing constant missing');
+assert.match(baker,/BAKE_OVERSAMPLE = 3/,'oversampled bake constant missing');
 
 assert.equal(glb.toString('ascii',0,4),'glTF');
 const total=glb.readUInt32LE(8);assert.equal(total,glb.length);
@@ -34,4 +37,4 @@ assert.equal(doc.textures?.length,11);
 assert.equal(doc.animations?.length,1);
 assert.ok(doc.materials.every(m=>m.pbrMetallicRoughness),'all benchmark materials must use metallic/roughness');
 
-console.log(JSON.stringify({ok:true,vehicleBaker:'0.1.0',benchmarkMeshes:doc.meshes.length,materials:doc.materials.length,textures:doc.textures.length,animations:doc.animations.length,directions:8},null,2));
+console.log(JSON.stringify({ok:true,vehicleBaker:'0.1.1',benchmarkMeshes:doc.meshes.length,materials:doc.materials.length,textures:doc.textures.length,animations:doc.animations.length,directions:8},null,2));

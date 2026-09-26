@@ -1,3 +1,12 @@
+# WorldForge Changelog
+
+## v0.9.5.2 — Vehicle Baker readability pass
+- Vehicle Baker bumped to 0.1.1.
+- Auto-fit bake framing so 8-direction sprites fill more of each square frame.
+- Higher-resolution bake with downsampling for cleaner 96/128/192/256px sheets.
+- Dedicated bake-light rig for brighter, more readable RTS sprite exports.
+- Softer/lighter bake shadow to reduce muddy low-size output.
+
 # WorldForge v0.9.5.1 — Vehicle Baker UI Hotfix
 
 ## Fixed
