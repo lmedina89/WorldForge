@@ -1,4 +1,4 @@
-export const WORLDFORGE_VERSION = '0.9.4';
+export const WORLDFORGE_VERSION = '0.9.5';
 export const RECIPE_SCHEMA = 'worldforge.recipe.v1';
 export const SCENE_SCHEMA = 'worldforge.scene.v1';
 export const ASSET_SCHEMA = 'worldforge.asset.v1';
@@ -16,7 +16,8 @@ export const ENGINE_VERSIONS = Object.freeze({
   foliage: '0.1.0',
   traversal: '0.1.0',
   production: PRODUCTION_VERSION,
-  settlement: '0.1.0'
+  settlement: '0.1.0',
+  vehicleBaker: '0.1.0'
 });
 
 export const DEFAULT_BUILDING = Object.freeze({

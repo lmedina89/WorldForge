@@ -1,3 +1,25 @@
+# WorldForge v0.9.5 — Vehicle Baker 0.1
+
+WorldForge v0.9.5 adds the first RTS-oriented pipeline **beside** the existing RPG/world generators. The protected generator stack remains unchanged. The new **VEHICLE** tab loads a GLB, normalizes it into WorldForge's Z-up scene, previews it with a fixed RTS orthographic camera, and bakes a deterministic 8-direction transparent sprite sheet.
+
+## Vehicle Baker 0.1
+- New **VEHICLE** tab; no existing Building/Field/Settlement generator was repurposed.
+- Import a local `.glb` or load the included BTR-82 benchmark.
+- Fixed RTS 3/4 orthographic camera and automatic center/ground/scale normalization.
+- Preview and bake directions: **N, NE, E, SE, S, SW, W, NW**.
+- 96 / 128 / 192 / 256 px frame presets.
+- Optional soft baked shadow on a transparent PNG.
+- Horizontal 8-frame PNG output plus a separate **EXPORT META JSON** control for `worldforge.vehicle-sprite.v1` metadata with frame rectangles, direction rotations, camera preset, source stats, and sprite pivot.
+- Forward-axis calibration for GLBs whose nose is not +X; the included BTR is pre-calibrated to −90°.
+
+## Included benchmark
+`assets/low_poly_btr_82.glb` is the user's BTR-82 test vehicle. Its original Sketchfab spec/gloss material declarations were mapped to standard metallic/roughness glTF so the asset loads in the current Three.js runtime while preserving geometry, textures, hierarchy, and animation data. See `ATTRIBUTION.md` for the required CC BY 4.0 credit.
+
+## Compatibility
+All existing WorldForge generator source files are unchanged from the v0.9.4 Playtest Pass baseline. Vehicle Baker is implemented separately in `src/vehicle/vehicle-baker.js`.
+
+---
+
 # WorldForge v0.9.4 — Settlement Playtest Pass
 
 WorldForge v0.9.4 keeps the protected generation stack intact and builds a better settlement review loop around the v0.9.3 composer. This pass adds a quick **playtest mode** for the temporary pixel walker, a walk-zone debug overlay, a follow-camera toggle, character spawn persistence, and simple automatic building fade when the character moves behind structures.

@@ -8,19 +8,21 @@ import { saveProject, listProjects, getProject, deleteProject } from './storage/
 import { WORLDFORGE_VERSION } from './core/schema.js';
 import { enrichExistingScene } from './core/production-metadata.js';
 import { snapScalar, snapRotationRadians, nearestLevel, nearestEdgeAdjustment, worldTraversalConnections } from './core/placement-tools.js';
+import { VehicleBaker, VEHICLE_BAKER_VERSION } from './vehicle/vehicle-baker.js';
 
 const $=id=>document.getElementById(id);
 let mode='building',currentGroup=null,currentSpec=null,selectedPlacementId=null,selectionHelper=null,selectionGuideGroup=null,fieldLevelView='all',characterSprite=null,characterShadow=null,walkDebugGroup=null,characterPos=[0,0,0],characterDir='S',playtestActive=false,walkDebugEnabled=false,followCameraEnabled=true,playtestCameraOffset=new THREE.Vector3(16,-18,12),settlementCharacterSpawnOverride=null;
-const panels={building:$('buildingPanel'),prop:$('propPanel'),foliage:$('foliagePanel'),surface:$('surfacePanel'),traversal:$('traversalPanel'),field:$('fieldPanel'),settlement:$('settlementPanel'),terrain:$('terrainPanel'),landscape:$('landscapePanel')};
+const panels={building:$('buildingPanel'),prop:$('propPanel'),foliage:$('foliagePanel'),surface:$('surfacePanel'),traversal:$('traversalPanel'),field:$('fieldPanel'),settlement:$('settlementPanel'),vehicle:$('vehiclePanel'),terrain:$('terrainPanel'),landscape:$('landscapePanel')};
 const isCompositeMode=()=>mode==='field'||mode==='settlement';
 
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x0d1310);scene.fog=new THREE.Fog(0x0d1310,55,150);
 const camera=new THREE.OrthographicCamera(-12,12,8,-8,.1,400);camera.up.set(0,0,1);camera.position.set(15,-18,13);camera.lookAt(0,0,2);
-const renderer=new THREE.WebGLRenderer({antialias:false,preserveDrawingBuffer:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(1.25,devicePixelRatio||1));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;$('canvasHost').appendChild(renderer.domElement);
+const renderer=new THREE.WebGLRenderer({antialias:false,alpha:true,preserveDrawingBuffer:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(1.25,devicePixelRatio||1));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;$('canvasHost').appendChild(renderer.domElement);
 const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.target.set(0,0,2);
 scene.add(new THREE.AmbientLight(0xbfd0c8,1.15));const sun=new THREE.DirectionalLight(0xffe6bd,2.6);sun.position.set(-12,-16,22);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);scene.add(sun);
 const ground=new THREE.Mesh(new THREE.PlaneGeometry(180,180),new THREE.MeshStandardMaterial({color:0x536849,roughness:1}));ground.position.z=-.02;ground.receiveShadow=true;scene.add(ground);
 const grid=new THREE.GridHelper(80,80,0x34443a,0x243029);grid.rotation.x=Math.PI/2;grid.position.z=.012;scene.add(grid);
+const vehicleBaker=new VehicleBaker({scene,camera,renderer,controls});
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
 $('version').textContent='v'+WORLDFORGE_VERSION;
 
@@ -29,10 +31,13 @@ function showMode(next){
   if(mode!=='settlement'&&playtestActive)setPlaytest(false);
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.mode===mode));
   Object.entries(panels).forEach(([key,p])=>p.hidden=key!==mode);
-  ground.visible=!['surface','field','settlement','terrain'].includes(mode);
-  grid.visible=!['surface','field','settlement'].includes(mode);
+  document.querySelectorAll('.proceduralUi').forEach(el=>el.hidden=mode==='vehicle');
+  if(currentGroup)currentGroup.visible=mode!=='vehicle';
+  vehicleBaker.setActive(mode==='vehicle');
+  updateModeEnvironment();
   if($('placementEditorPanel'))$('placementEditorPanel').hidden=!isCompositeMode();
   if(mode!=='settlement'){hideCharacter();settlementCharacterSpawnOverride=null;}
+  if(mode==='vehicle'){$('modeLabel').textContent='VEHICLE BAKER';$('seedLabel').textContent='8-DIR';}
   syncPlaytestButtons();
   updateSelectedUi();
 }
@@ -121,8 +126,8 @@ function setDefaultCamera(recipe){
   controls.target.set(0,0,targetHeight(recipe));camera.lookAt(controls.target);controls.update();
 }
 function updateModeEnvironment(){
-  ground.visible=!['surface','field','settlement','terrain'].includes(mode);
-  grid.visible=!['surface','field','settlement'].includes(mode);
+  ground.visible=!['surface','field','settlement','terrain','vehicle'].includes(mode);
+  grid.visible=!['surface','field','settlement','vehicle'].includes(mode);
 }
 function renderRecipe(recipe,{resetCamera=true}={}){
   clearSelectionHelper();
@@ -358,6 +363,27 @@ function updatePlacementOcclusion(){
   }
 }
 
+function vehicleAspect(){const host=$('canvasHost');return Math.max(.5,host.clientWidth/Math.max(1,host.clientHeight));}
+function updateVehicleUi(info=vehicleBaker.sourceInfo){
+  if(!info){$('vehicleSourceName').textContent='No vehicle loaded';$('vehicleStats').textContent='Import a GLB or load the included BTR benchmark.';return;}
+  $('vehicleSourceName').textContent=info.name;
+  $('vehicleStats').textContent=`${info.meshCount.toLocaleString()} meshes · ~${info.triangleCount.toLocaleString()} tris · ${info.animationCount} animation${info.animationCount===1?'':'s'} · source ${info.sourceDimensions.x} × ${info.sourceDimensions.y} × ${info.sourceDimensions.z}`;
+}
+async function loadVehicleBenchmark(){
+  $('status').textContent='Loading included BTR-82 benchmark…';
+  try{const info=await vehicleBaker.loadURL('assets/low_poly_btr_82.glb','low_poly_btr_82.glb');updateVehicleUi(info);vehicleBaker.setForwardOffset(+$('vehicleForwardOffset').value||0);vehicleBaker.setDirection(+$('vehicleDirection').value||0);vehicleBaker.fitPreview(vehicleAspect());$('status').textContent=`Vehicle Baker ${VEHICLE_BAKER_VERSION} ready · BTR benchmark loaded · ${info.meshCount} meshes · ~${info.triangleCount.toLocaleString()} tris.`;}
+  catch(err){$('status').textContent='Vehicle load failed: '+err.message;}
+}
+async function activateVehicleMode(){
+  showMode('vehicle');
+  if(!vehicleBaker.hasModel())await loadVehicleBenchmark();else{vehicleBaker.shadowCatcher.visible=$('vehicleShadow').checked;vehicleBaker.fitPreview(vehicleAspect());updateVehicleUi();$('status').textContent=`Vehicle Baker ${VEHICLE_BAKER_VERSION} ready.`;}
+}
+function setVehicleDirection(index){
+  index=((Number(index)||0)%8+8)%8;$('vehicleDirection').value=String(index);vehicleBaker.setDirection(index);
+  document.querySelectorAll('[data-vehicle-dir]').forEach(b=>b.classList.toggle('active',Number(b.dataset.vehicleDir)===index));
+}
+function vehicleMetaBlob(){const frame=+$('vehicleFrameSize').value||128;const meta=vehicleBaker.metadata(frame,$('vehicleShadow').checked);return new Blob([JSON.stringify(meta,null,2)],{type:'application/json'});}
+
 function download(blob,name){const a=document.createElement('a');const url=URL.createObjectURL(blob);a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);}
 function recipeName(){return `worldforge_${mode}_${currentSpec?.recipe?.seed||$('seed').value}`;}
 
@@ -380,8 +406,19 @@ $('deleteProject').onclick=async()=>{const id=$('projectSelect').value;if(!id)re
 async function refreshProjects(){try{const items=await listProjects();$('projectSelect').innerHTML='<option value="">Saved projects…</option>'+items.map(p=>`<option value="${p.id}">${escapeHtml(p.name)} · ${p.recipe.type} · ${p.recipe.seed}</option>`).join('');}catch{$('projectSelect').innerHTML='<option value="">Local storage unavailable</option>';}}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
 
+$('vehicleLoadBenchmark').onclick=loadVehicleBenchmark;
+$('vehicleImport').onclick=()=>$('vehicleFile').click();
+$('vehicleFile').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;$('status').textContent=`Loading ${file.name}…`;try{const info=await vehicleBaker.loadFile(file);updateVehicleUi(info);vehicleBaker.setForwardOffset(+$('vehicleForwardOffset').value||0);setVehicleDirection(+$('vehicleDirection').value||0);vehicleBaker.fitPreview(vehicleAspect());$('status').textContent=`Loaded ${file.name} · ${info.meshCount} meshes · ~${info.triangleCount.toLocaleString()} tris.`;}catch(err){$('status').textContent='Vehicle import failed: '+err.message;}e.target.value='';};
+$('vehicleDirection').onchange=()=>setVehicleDirection(+$('vehicleDirection').value||0);
+$('vehicleForwardOffset').oninput=()=>{vehicleBaker.setForwardOffset(+$('vehicleForwardOffset').value||0);setVehicleDirection(+$('vehicleDirection').value||0);};
+$('vehicleShadow').onchange=()=>{vehicleBaker.shadowCatcher.visible=mode==='vehicle'&&vehicleBaker.hasModel()&&$('vehicleShadow').checked;};
+$('vehicleResetCamera').onclick=()=>vehicleBaker.fitPreview(vehicleAspect());
+$('vehicleExportMeta').onclick=()=>{if(!vehicleBaker.hasModel())return $('status').textContent='Load a GLB vehicle first.';const base=(vehicleBaker.sourceName||'vehicle').replace(/\.(glb|gltf)$/i,'');download(vehicleMetaBlob(),`${base}.vehicle.json`);$('status').textContent='Vehicle metadata exported.';};
+document.querySelectorAll('[data-vehicle-dir]').forEach(b=>b.onclick=()=>setVehicleDirection(+b.dataset.vehicleDir));
+$('vehicleBake').onclick=async()=>{if(!vehicleBaker.hasModel())return $('status').textContent='Load a GLB vehicle first.';const btn=$('vehicleBake');btn.disabled=true;$('status').textContent='Baking 8 deterministic vehicle directions…';try{const result=await vehicleBaker.bakeSpriteSheet({frameSize:+$('vehicleFrameSize').value||128,includeShadow:$('vehicleShadow').checked});download(result.blob,`${result.baseName}_8dir_${result.metadata.frame.width}px.png`);$('status').textContent=`Baked 8 directions · ${result.metadata.frame.width}px frames · transparent PNG. Use EXPORT META JSON for the matching metadata file.`;vehicleBaker.fitPreview(vehicleAspect());}catch(err){$('status').textContent='Vehicle bake failed: '+err.message;}finally{btn.disabled=false;}};
+
 $('buildingEngine').onchange=()=>{syncBuildingEngineUI();regenerate();};
-document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{showMode(b.dataset.mode);regenerate();});
+document.querySelectorAll('.tab').forEach(b=>b.onclick=async()=>{const next=b.dataset.mode;if(next==='vehicle')await activateVehicleMode();else{showMode(next);regenerate();}});
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));
 document.querySelectorAll('[data-nudge]').forEach(b=>b.onclick=()=>{const [x,y]=b.dataset.nudge.split(',').map(Number);nudge(x,y);});
 $('fieldLevelDown').onclick=()=>{const step=editorStep();editField(p=>{if(!p.locked)p.position[2]=(p.position[2]||0)-step;});};
@@ -418,6 +455,6 @@ window.addEventListener('keydown',e=>{if(mode!=='settlement'||['INPUT','SELECT',
 const outputMap={traversalWidth:'traversalWidthOut',traversalLength:'traversalLengthOut',traversalHeight:'traversalHeightOut',foliageScale:'foliageScaleOut',foliageDensity:'foliageDensityOut',foliageSpread:'foliageSpreadOut',width:'widthOut',depth:'depthOut',floors:'floorsOut',pitch:'pitchOut',terrainSize:'terrainSizeOut',relief:'reliefOut',roughness:'roughnessOut',terracing:'terracingOut',gridResolution:'gridResolutionOut',propScale:'propScaleOut',patchSize:'patchSizeOut',patchRoughness:'patchRoughnessOut',pathWidth:'pathWidthOut',wear:'wearOut',patchResolution:'patchResolutionOut',surfaceSize:'surfaceSizeOut',surfaceVariation:'surfaceVariationOut',surfaceWear:'surfaceWearOut',surfacePathWidth:'surfacePathWidthOut',surfaceDetailDensity:'surfaceDetailDensityOut',surfaceResolution:'surfaceResolutionOut',fieldSize:'fieldSizeOut',fieldDensity:'fieldDensityOut',fieldDressing:'fieldDressingOut',fieldElevation:'fieldElevationOut',settlementSize:'settlementSizeOut',settlementBuildingCount:'settlementBuildingCountOut',settlementDensity:'settlementDensityOut',settlementDressing:'settlementDressingOut',settlementElevation:'settlementElevationOut'};
 function syncOutputs(){for(const [id,outId] of Object.entries(outputMap)){const el=$(id),out=$(outId);if(el&&out)out.value=el.value;}}
 for(const id of Object.keys(outputMap)){const el=$(id);if(el)el.oninput=()=>syncOutputs();}syncOutputs();
-function resize(){const host=$('canvasHost'),w=Math.max(320,Math.floor(host.clientWidth)),h=Math.max(220,Math.floor(host.clientHeight));renderer.setSize(w,h,false);fitCamera(currentSpec?spanFor(currentSpec.recipe):10);}window.addEventListener('resize',resize);
+function resize(){const host=$('canvasHost'),w=Math.max(320,Math.floor(host.clientWidth)),h=Math.max(220,Math.floor(host.clientHeight));renderer.setSize(w,h,false);if(mode==='vehicle')vehicleBaker.fitPreview(w/Math.max(1,h));else fitCamera(currentSpec?spanFor(currentSpec.recipe):10);}window.addEventListener('resize',resize);
 syncBuildingEngineUI();resize();refreshProjects();regenerate();syncPlaytestButtons();
 (function animate(){requestAnimationFrame(animate);if(playtestActive&&followCameraEnabled&&characterSprite?.visible){const target=new THREE.Vector3(characterPos[0],characterPos[1],characterPos[2]+1);controls.target.lerp(target,.16);const desired=target.clone().add(playtestCameraOffset);camera.position.lerp(desired,.14);camera.lookAt(controls.target);}controls.update();renderer.render(scene,camera);})();

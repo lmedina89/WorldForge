@@ -30,3 +30,15 @@ body.playtest .viewport{min-height:100dvh}
 .playtestPad button{width:56px;height:56px;font-size:18px}
 body.playtest .hint{bottom:14px}
 @media(max-width:780px){#playtestHud{inset:10px 10px auto 10px}.playtestTop{display:grid;grid-template-columns:1fr 1fr}.playtestPad{grid-template-columns:repeat(3,60px);align-self:center}}
+
+/* v0.9.5 vehicle baker */
+.tabs10{grid-template-columns:repeat(3,1fr)}
+.vehicleSourceCard{display:flex;flex-direction:column;gap:5px;border:1px solid #355242;background:#0d1511;padding:10px;margin:8px 0 10px}
+.vehicleSourceCard b{color:#e4eee8;font-size:12px;overflow-wrap:anywhere}
+.vehicleSourceCard span{color:#789083;font-size:10px;line-height:1.45}
+.vehicleButtons{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:7px 0}
+.vehicleButtons button,.vehicleDirButtons button{background:#121b16;border:1px solid var(--line);color:#c8d8ce;padding:8px}
+.vehicleDirButtons{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:8px 0}
+.vehicleDirButtons button.active{background:#294636;color:#effff5;border-color:#5d8b70}
+#vehicleBake:disabled{opacity:.55;cursor:progress}
+@media(max-width:780px){.tabs10{grid-template-columns:1fr 1fr 1fr}.vehicleDirButtons{grid-template-columns:repeat(4,1fr)}}

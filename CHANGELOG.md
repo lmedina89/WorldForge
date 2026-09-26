@@ -1,3 +1,21 @@
+# WorldForge v0.9.5 — Vehicle Baker 0.1
+
+## Added
+- Separate **VEHICLE** tab and `src/vehicle/vehicle-baker.js` module.
+- GLB import plus included BTR-82 benchmark loader.
+- Automatic Y-up → WorldForge Z-up conversion, centering, grounding, and normalized preview scale.
+- Fixed orthographic RTS camera with 8 deterministic direction rotations.
+- Transparent horizontal 8-frame PNG bake at 96/128/192/256 px per frame.
+- Optional soft transparent shadow catcher.
+- `worldforge.vehicle-sprite.v1` JSON metadata export with frame rectangles, direction order, camera preset, source stats, calibration, and pivot.
+- Static packaging regression test for the Vehicle Baker and included benchmark.
+
+## Compatibility
+- Protected WorldForge generator source tree is byte-identical to the v0.9.4 baseline.
+- BTR benchmark materials were converted from archived spec/gloss declarations to standard metallic/roughness glTF for current Three.js compatibility; geometry, textures, hierarchy, and animation data remain present.
+
+---
+
 # WorldForge v0.9.4 — Settlement Playtest Pass
 
 ## Added
