@@ -1,3 +1,23 @@
+# WorldForge v0.11.0 — Skirmish Lab 0.1
+
+WorldForge now has its first playable RTS vertical slice. Generate an RTS map, open **SKIRMISH**, and start a scenario with the real articulated Aegis-X v2 tank plus a gameplay-owned Construction Yard. The terrain generator still never prebuilds faction bases.
+
+## First playable loop
+- Drive the real Aegis-X across the map using the tracked navigation layer.
+- Tap terrain to aim the independent turret and gun.
+- Fire ballistic projectiles from `MuzzleSocket` with muzzle flash, impact/explosion particles, smoke and damage.
+- Destroy the red training emplacement.
+- Spend credits to place Power Plant, Refinery, Barracks, Vehicle Factory and Gun Turret assets on valid buildable terrain inside construction radius.
+- Structures construct in place and update the prototype power/economy state.
+
+### Controls
+**Mobile:** on-screen directional pad + FIRE; tap terrain to aim.
+**Desktop:** WASD/arrow keys drive; Space fires.
+
+This is intentionally a prototype/reference implementation. Pathfinding orders, unit selection, production queues, harvesting, enemy AI and full fog-of-war combat simulation come later.
+
+---
+
 # WorldForge v0.10.0 — RTS Map Forge 0.2
 
 RTS Map Forge 0.2 adds movement-class-aware tactical terrain while keeping faction structures separate from terrain generation. The map export now contains enough navigation metadata for the browser skirmish prototype — and later a Godot migration — to make different unit classes genuinely care about geography.

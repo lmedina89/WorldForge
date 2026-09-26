@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export const RTS_MAP_FORGE_VERSION='0.2.0';
+export const RTS_MAP_FORGE_VERSION='0.2.1';
 export const RTS_MAP_SCHEMA='worldforge.rts-map.v1';
 
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -369,6 +369,29 @@ export class RTSMapForge{
 
   setMovementPreview(kind='off'){
     this.movementPreview=MOVEMENT_ORDER.includes(kind)?kind:'off';this._buildMovementOverlay();
+  }
+
+  movementAt(x,y,kind='tracked'){
+    const nav=this.metadata?.navigation;if(!nav||!this.recipe)return {allowed:false,cost:Infinity,index:-1};
+    const size=this.recipe.size,H=size/2,N=nav.resolution,cell=size/N;
+    const ix=Math.floor((x+H)/cell),iy=Math.floor((y+H)/cell);
+    if(ix<0||iy<0||ix>=N||iy>=N)return {allowed:false,cost:Infinity,index:-1};
+    const index=iy*N+ix,bit=nav.movementBitLegend?.[kind]||0,raw=nav.costs?.[kind]?.[index]||0;
+    return {allowed:!!(nav.movementMask[index]&bit),cost:raw?raw/nav.costScale:Infinity,index,ix,iy,flags:nav.terrainFlags[index],slopeDeg:nav.slopeDegrees[index],height:nav.heights[index]};
+  }
+
+  buildableAt(x,y){
+    const nav=this.metadata?.navigation;if(!nav)return false;const cell=this.movementAt(x,y,'tracked');if(cell.index<0)return false;
+    return !!(cell.flags&(nav.terrainFlagLegend?.buildable||1));
+  }
+
+  surfaceHeightAt(x,y){
+    const bridge=this._bridgeAt(x,y);if(!bridge)return this.heightAt(x,y);
+    const f=bridge._frame,dx=x-f.x,dy=y-f.y,c=Math.cos(f.angle),ss=Math.sin(f.angle),lx=dx*c+dy*ss;
+    const deckHalf=f.deckLength*.5,deckTop=f.deckZ+f.deckThickness;
+    if(Math.abs(lx)<=deckHalf)return deckTop;
+    const side=lx>=0?1:-1,outer=side>0?f.outerA:f.outerB,t=clamp((Math.abs(lx)-deckHalf)/Math.max(.001,f.approachLength),0,1);
+    return THREE.MathUtils.lerp(deckTop,outer.z,t);
   }
 
   _buildFog(){

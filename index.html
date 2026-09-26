@@ -4,7 +4,7 @@
 <body><div id="app">
 <aside class="panel">
   <div class="brand"><b>WORLDFORGE</b><span id="version">v—</span></div><p class="sub">Deterministic procedural world asset lab</p>
-  <div class="tabs tabs11"><button class="tab active" data-mode="building">BUILDING</button><button class="tab" data-mode="prop">PROPS</button><button class="tab" data-mode="foliage">FOLIAGE</button><button class="tab" data-mode="surface">SURFACE</button><button class="tab" data-mode="traversal">ELEVATION</button><button class="tab" data-mode="field">FIELD</button><button class="tab" data-mode="settlement">SETTLEMENT</button><button class="tab" data-mode="vehicle">VEHICLE</button><button class="tab" data-mode="rtsmap">RTS MAP</button><button class="tab" data-mode="terrain">TERRAIN</button><button class="tab" data-mode="landscape">LANDSCAPE</button></div>
+  <div class="tabs tabs11"><button class="tab active" data-mode="building">BUILDING</button><button class="tab" data-mode="prop">PROPS</button><button class="tab" data-mode="foliage">FOLIAGE</button><button class="tab" data-mode="surface">SURFACE</button><button class="tab" data-mode="traversal">ELEVATION</button><button class="tab" data-mode="field">FIELD</button><button class="tab" data-mode="settlement">SETTLEMENT</button><button class="tab" data-mode="vehicle">VEHICLE</button><button class="tab" data-mode="rtsmap">RTS MAP</button><button class="tab" data-mode="skirmish">SKIRMISH</button><button class="tab" data-mode="terrain">TERRAIN</button><button class="tab" data-mode="landscape">LANDSCAPE</button></div>
   <label id="seedControl" class="proceduralUi">Seed<div class="seedrow"><input id="seed" type="number" value="48127"><button id="randomize">↻</button></div></label>
   <section id="buildingPanel">
     <label>Building engine<select id="buildingEngine"><option value="1.3.0" selected>1.3 — RPG Architecture II</option><option value="1.2.0">1.2 — RPG Architecture I</option><option value="1.1.0">1.1 — Variety Engine</option><option value="1.0.0">1.0 — Protected Legacy</option></select></label>
@@ -128,6 +128,26 @@
     <p class="miniNote"><b>Terrain only:</b> start regions are reserved/buildable terrain metadata, not prebuilt faction bases. Buildings remain separate assets and must be purchased/placed by the future RTS economy and AI systems.</p>
     <p class="miniNote">Generated tactical structure includes ridge barriers, deliberate passes, valleys/ravines, mountain pockets, hidden expansion bowls, high ground, roads, raised/graded river bridges, resource zones, forests/rocks, and class-specific traversal metadata. Tracked, wheeled, infantry, amphibious and air movement are audited separately.</p>
   </section>
+  <section id="skirmishPanel" hidden>
+    <div class="sectionTitle">SKIRMISH LAB 0.1 · FIRST PLAYABLE LOOP</div>
+    <div class="skirmishStatusCard"><b id="skirmishEconomy">$5,000 · POWER 0 / 0</b><span id="skirmishTankStatus">AEGIS-X · 1200 / 1200 HP</span></div>
+    <div class="skirmishButtons"><button id="skirmishStart" class="skirmishPrimary">START / RESUME SKIRMISH</button><button id="skirmishReset">RESET SKIRMISH</button></div>
+    <p class="miniNote"><b>Scenario start:</b> a gameplay-owned Construction Yard and one real Aegis-X v2 test tank spawn in your reserved start region. Map Forge still creates terrain only.</p>
+    <div class="sectionTitle">CONSTRUCTION</div>
+    <div class="skirmishBuildGrid">
+      <button data-skirmish-build="powerPlant"><b>POWER PLANT</b><span>$500</span></button>
+      <button data-skirmish-build="refinery"><b>REFINERY</b><span>$900</span></button>
+      <button data-skirmish-build="barracks"><b>BARRACKS</b><span>$650</span></button>
+      <button data-skirmish-build="vehicleFactory"><b>VEHICLE FACTORY</b><span>$1,200</span></button>
+      <button data-skirmish-build="gunTurret"><b>GUN TURRET</b><span>$600</span></button>
+      <button id="skirmishCancelBuild"><b>CANCEL</b><span>placement</span></button>
+    </div>
+    <p class="miniNote">Select a structure, then tap valid buildable terrain near one of your completed structures. Credits are deducted immediately and the structure constructs in-place.</p>
+    <div class="sectionTitle">COMBAT TEST</div>
+    <div class="skirmishButtons"><button id="skirmishFollow">FOLLOW TANK: ON</button><button id="skirmishFirePanel">FIRE MAIN GUN</button></div>
+    <p class="miniNote">Hold the drive pad or WASD to drive the articulated Aegis-X across tracked-vehicle terrain. Tap the battlefield to aim the independent turret. FIRE launches a real projectile from <code>MuzzleSocket</code> with muzzle flash, ballistic drop, impact particles, damage, explosion and smoke.</p>
+    <div id="skirmishMessage" class="mapScore">Skirmish not started.</div>
+  </section>
   <section id="placementEditorPanel" hidden>
     <div class="sectionTitle fieldEditTitle">FIELD EDITOR</div>
     <div id="selectedAsset" class="selectedAsset">Tap an asset to select it</div>
@@ -154,5 +174,11 @@
   <div class="sectionTitle proceduralUi">RECIPE / EXPORT</div><input id="recipeFile" type="file" accept="application/json,.json" hidden><input id="sceneUpgradeFile" type="file" accept="application/json,.json" hidden><div class="exports proceduralUi"><button id="importRecipe">IMPORT RECIPE</button><button id="upgradeScene">UPGRADE OLD SCENE</button><button id="exportJSON">RECIPE JSON</button><button id="exportScene">SCENE JSON</button><button id="exportAsset">ASSET JSON</button><button id="exportProduction">GAME META</button><button id="exportGLB">GLB</button><button id="exportPNG">PNG</button></div>
   <div class="validationRow proceduralUi"><span>VALIDATION</span><b id="validation" data-state="good">VALID</b></div><div id="status">Ready.</div>
 </aside>
-<main class="viewport"><div class="hud"><span id="modeLabel">BUILDING</span><span id="seedLabel">SEED 48127</span></div><div id="playtestHud" hidden><div class="playtestTop"><button id="playtestExit">EXIT PLAYTEST</button><button id="playtestHudReset">RESET</button><button id="playtestHudSpawn">SET SPAWN</button><button id="playtestHudDebug">WALK DEBUG: OFF</button><button id="playtestHudFollow">FOLLOW CAMERA: ON</button></div><div class="playtestPad"><button data-play-move="-1,1">↖</button><button data-play-move="0,1">↑</button><button data-play-move="1,1">↗</button><button data-play-move="-1,0">←</button><button data-play-reset>●</button><button data-play-move="1,0">→</button><button data-play-move="-1,-1">↙</button><button data-play-move="0,-1">↓</button><button data-play-move="1,-1">↘</button></div></div><div id="canvasHost"></div><div id="mapMinimapWrap" hidden><canvas id="mapMinimap" aria-label="RTS map minimap"></canvas><span>MAP</span></div><div class="hint" id="viewportHint">Drag to orbit · wheel/pinch to zoom · same recipe = same asset</div></main>
+<main class="viewport"><div class="hud"><span id="modeLabel">BUILDING</span><span id="seedLabel">SEED 48127</span></div><div id="skirmishHud" hidden>
+  <div class="skirmishHudTop"><button id="skirmishExit">EXIT SKIRMISH</button><span id="skirmishHudStats">$5,000 · HP 1200</span></div>
+  <div class="skirmishHudBottom">
+    <div class="skirmishDrive"><span></span><button data-skirmish-drive="forward">▲</button><span></span><button data-skirmish-drive="left">◀</button><button data-skirmish-drive="back">▼</button><button data-skirmish-drive="right">▶</button></div>
+    <button id="skirmishFire" class="skirmishFire">FIRE</button>
+  </div>
+</div><div id="playtestHud" hidden><div class="playtestTop"><button id="playtestExit">EXIT PLAYTEST</button><button id="playtestHudReset">RESET</button><button id="playtestHudSpawn">SET SPAWN</button><button id="playtestHudDebug">WALK DEBUG: OFF</button><button id="playtestHudFollow">FOLLOW CAMERA: ON</button></div><div class="playtestPad"><button data-play-move="-1,1">↖</button><button data-play-move="0,1">↑</button><button data-play-move="1,1">↗</button><button data-play-move="-1,0">←</button><button data-play-reset>●</button><button data-play-move="1,0">→</button><button data-play-move="-1,-1">↙</button><button data-play-move="0,-1">↓</button><button data-play-move="1,-1">↘</button></div></div><div id="canvasHost"></div><div id="mapMinimapWrap" hidden><canvas id="mapMinimap" aria-label="RTS map minimap"></canvas><span>MAP</span></div><div class="hint" id="viewportHint">Drag to orbit · wheel/pinch to zoom · same recipe = same asset</div></main>
 </div><script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script><script type="module" src="src/app.js"></script></body></html>

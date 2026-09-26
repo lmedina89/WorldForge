@@ -1,5 +1,19 @@
 # WorldForge Changelog
 
+## v0.11.0 — Skirmish Lab 0.1 / First Playable Combat + Construction Loop
+- Added a dedicated SKIRMISH workspace using RTS Map Forge terrain as the playable battlefield.
+- Added the exact articulated Aegis-X v2 GLB as the player test tank.
+- Added direct tank driving with tracked-terrain validation, hull steering, independent turret traverse, gun pitch and structure collision.
+- Added tap-to-aim and main-gun firing from the real `MuzzleSocket`.
+- Added ballistic shell travel/drop, muzzle flash/light, impact particles, explosions, smoke and target damage/destruction.
+- Added first gameplay-owned RTS structure set: Construction Yard, Power Plant, Refinery, Barracks, Vehicle Factory and Gun Turret.
+- Added credits, power supply/use, build-radius validation, buildable-terrain validation, structure collision checks and in-place construction progress.
+- Terrain generation remains building-free; the scenario layer owns the starting Construction Yard and all purchased structures.
+- Added mobile drive pad + FIRE HUD and desktop WASD/arrow/Space controls.
+- Existing Vehicle Forge, RTS Map Forge and protected RPG/world generators remain separate and unchanged except for integration wiring/version metadata.
+
+# WorldForge Changelog
+
 ## v0.10.0 — RTS Map Forge 0.2 / Class Traversal + Bridge/Foliage Fix
 - Fixed RTS Map Forge tree orientation. Three.js cone/cylinder foliage primitives are now rotated once into WorldForge Z-up; procedural trees randomize yaw/scale only and remain upright.
 - Rebuilt river bridges around sampled banks/water: decks are raised above both banks and water, carry explicit clearance metadata, and include graded approach meshes on both sides.
