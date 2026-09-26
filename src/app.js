@@ -10,10 +10,11 @@ import { enrichExistingScene } from './core/production-metadata.js';
 import { snapScalar, snapRotationRadians, nearestLevel, nearestEdgeAdjustment, worldTraversalConnections } from './core/placement-tools.js';
 import { VehicleBaker, VEHICLE_BAKER_VERSION } from './vehicle/vehicle-baker.js';
 import { generateLowPolyVehicle, loadAegisReferenceVehicle, isAegisReferenceVehicle, VEHICLE_GENERATOR_VERSION, VEHICLE_ARCHETYPES } from './vehicle/vehicle-generator.js';
+import { RTSMapForge, RTS_MAP_FORGE_VERSION } from './rts-map/rts-map-forge.js';
 
 const $=id=>document.getElementById(id);
 let mode='building',currentGroup=null,currentSpec=null,selectedPlacementId=null,selectionHelper=null,selectionGuideGroup=null,fieldLevelView='all',characterSprite=null,characterShadow=null,walkDebugGroup=null,characterPos=[0,0,0],characterDir='S',playtestActive=false,walkDebugEnabled=false,followCameraEnabled=true,playtestCameraOffset=new THREE.Vector3(16,-18,12),settlementCharacterSpawnOverride=null;
-const panels={building:$('buildingPanel'),prop:$('propPanel'),foliage:$('foliagePanel'),surface:$('surfacePanel'),traversal:$('traversalPanel'),field:$('fieldPanel'),settlement:$('settlementPanel'),vehicle:$('vehiclePanel'),terrain:$('terrainPanel'),landscape:$('landscapePanel')};
+const panels={building:$('buildingPanel'),prop:$('propPanel'),foliage:$('foliagePanel'),surface:$('surfacePanel'),traversal:$('traversalPanel'),field:$('fieldPanel'),settlement:$('settlementPanel'),vehicle:$('vehiclePanel'),rtsmap:$('rtsMapPanel'),terrain:$('terrainPanel'),landscape:$('landscapePanel')};
 const isCompositeMode=()=>mode==='field'||mode==='settlement';
 
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x0d1310);scene.fog=new THREE.Fog(0x0d1310,55,150);
@@ -24,23 +25,45 @@ scene.add(new THREE.AmbientLight(0xbfd0c8,1.15));const sun=new THREE.Directional
 const ground=new THREE.Mesh(new THREE.PlaneGeometry(180,180),new THREE.MeshStandardMaterial({color:0x536849,roughness:1}));ground.position.z=-.02;ground.receiveShadow=true;scene.add(ground);
 const grid=new THREE.GridHelper(80,80,0x34443a,0x243029);grid.rotation.x=Math.PI/2;grid.position.z=.012;scene.add(grid);
 const vehicleBaker=new VehicleBaker({scene,camera,renderer,controls});
+const rtsMapForge=new RTSMapForge({scene,camera,renderer,controls});
+let mapLastView='overview',mapZonesVisible=true,mapMiniLast=0;
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
 $('version').textContent='v'+WORLDFORGE_VERSION;
 
+function configureControlsForMode(){
+  const mapMode=mode==='rtsmap';
+  controls.enableRotate=!mapMode;
+  controls.enablePan=true;
+  controls.screenSpacePanning=true;
+  controls.mouseButtons.LEFT=mapMode?THREE.MOUSE.PAN:THREE.MOUSE.ROTATE;
+  controls.mouseButtons.RIGHT=THREE.MOUSE.PAN;
+  controls.touches.ONE=mapMode?THREE.TOUCH.PAN:THREE.TOUCH.ROTATE;
+  controls.touches.TWO=THREE.TOUCH.DOLLY_PAN;
+}
+function configureSceneForMode(){
+  const mapMode=mode==='rtsmap';
+  document.body.classList.toggle('rts-map-mode',mapMode);
+  if(mapMode){scene.background.set(0x91a9ac);scene.fog.color.set(0x91a9ac);scene.fog.near=380;scene.fog.far=Math.max(1100,(rtsMapForge.recipe?.size||1024)*1.35);}
+  else{camera.up.set(0,0,1);scene.background.set(0x0d1310);scene.fog.color.set(0x0d1310);scene.fog.near=55;scene.fog.far=150;}
+  $('mapMinimapWrap').hidden=!mapMode;
+  $('viewportHint').textContent=mapMode?'Drag to pan · wheel/pinch to zoom · tap minimap to jump · editor overview is not gameplay camera':'Drag to orbit · wheel/pinch to zoom · same recipe = same asset';
+  configureControlsForMode();
+}
 function showMode(next){
   mode=next;selectedPlacementId=null;clearSelectionHelper();
   if(mode!=='settlement'&&playtestActive)setPlaytest(false);
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.mode===mode));
   Object.entries(panels).forEach(([key,p])=>p.hidden=key!==mode);
-  document.querySelectorAll('.proceduralUi').forEach(el=>el.hidden=mode==='vehicle');
-  if(currentGroup)currentGroup.visible=mode!=='vehicle';
+  document.querySelectorAll('.proceduralUi').forEach(el=>el.hidden=mode==='vehicle'||mode==='rtsmap');
+  if(currentGroup)currentGroup.visible=!['vehicle','rtsmap'].includes(mode);
   vehicleBaker.setActive(mode==='vehicle');
-  updateModeEnvironment();
+  rtsMapForge.setActive(mode==='rtsmap');
+  updateModeEnvironment();configureSceneForMode();
   if($('placementEditorPanel'))$('placementEditorPanel').hidden=!isCompositeMode();
   if(mode!=='settlement'){hideCharacter();settlementCharacterSpawnOverride=null;}
   if(mode==='vehicle'){$('modeLabel').textContent='VEHICLE BAKER';$('seedLabel').textContent='8-DIR';}
-  syncPlaytestButtons();
-  updateSelectedUi();
+  if(mode==='rtsmap'){$('modeLabel').textContent='RTS MAP FORGE';$('seedLabel').textContent=`${rtsMapForge.recipe?.size||1024}M`;}
+  syncPlaytestButtons();updateSelectedUi();
 }
 
 function syncBuildingEngineUI(){
@@ -127,8 +150,8 @@ function setDefaultCamera(recipe){
   controls.target.set(0,0,targetHeight(recipe));camera.lookAt(controls.target);controls.update();
 }
 function updateModeEnvironment(){
-  ground.visible=!['surface','field','settlement','terrain','vehicle'].includes(mode);
-  grid.visible=!['surface','field','settlement','vehicle'].includes(mode);
+  ground.visible=!['surface','field','settlement','terrain','vehicle','rtsmap'].includes(mode);
+  grid.visible=!['surface','field','settlement','vehicle','rtsmap'].includes(mode);
 }
 function renderRecipe(recipe,{resetCamera=true}={}){
   clearSelectionHelper();
@@ -408,6 +431,54 @@ function setVehicleDirection(index){
 }
 function vehicleMetaBlob(){const frame=+$('vehicleFrameSize').value||128;const meta=vehicleBaker.metadata(frame,$('vehicleShadow').checked);return new Blob([JSON.stringify(meta,null,2)],{type:'application/json'});}
 
+
+function readRTSMapRecipe(){
+  return {
+    seed:+$('mapSeed').value||731904,
+    size:+$('mapSize').value||1024,
+    players:+$('mapPlayers').value||4,
+    biome:$('mapBiome').value,
+    tacticalProfile:$('mapTacticalProfile').value,
+    relief:+$('mapRelief').value||.72,
+    forest:+$('mapForest').value||.55,
+    resources:+$('mapResources').value||.62,
+    river:$('mapRiver').checked,
+    roads:$('mapRoads').checked,
+    startProtection:$('mapStartProtection').value
+  };
+}
+function updateRTSMapScore(){
+  const m=rtsMapForge.metadata;if(!m){$('mapTacticalScore').textContent='Generate a map to audit tactical structure.';return;}
+  const s=m.tacticalScore,n=m.navigation.stats;
+  $('mapTacticalScore').innerHTML=`<b>TACTICAL AUDIT</b><br>Route diversity ${s.routeDiversity}% · Defensible regions ${s.defensibleRegions}% · Expansion options ${s.expansionOptions}% · Spawn separation ${s.spawnSeparation}%<br>${s.passes} designed passes · ${s.hiddenPockets} hidden pockets · ${n.walkablePercent}% walkable · ${n.buildablePercent}% buildable`;
+}
+function drawRTSMapMinimap(){if(mode==='rtsmap')rtsMapForge.drawMinimap($('mapMinimap'));}
+function setRTSMapView(view){
+  if(!rtsMapForge.recipe)return;mapLastView=view;
+  const host=$('canvasHost'),aspect=Math.max(.5,host.clientWidth/Math.max(1,host.clientHeight));
+  rtsMapForge.setView(view,aspect);drawRTSMapMinimap();
+  for(const [id,v] of [['mapViewOverview','overview'],['mapViewTop','top'],['mapViewStart','start'],['mapViewTactical','tactical']])$(id).classList.toggle('active',v===view);
+}
+function generateRTSMap({resetView=true}={}){
+  $('status').textContent=`RTS Map Forge ${RTS_MAP_FORGE_VERSION} · generating tactical battlefield…`;
+  try{
+    const meta=rtsMapForge.generate(readRTSMapRecipe());
+    rtsMapForge.overlay.visible=mapZonesVisible;
+    $('mapFogPreview').textContent=`FOG PREVIEW: ${rtsMapForge.fogPreview?'ON':'OFF'}`;
+    $('mapShowZones').textContent=`TACTICAL ZONES: ${mapZonesVisible?'ON':'OFF'}`;
+    $('modeLabel').textContent='RTS MAP FORGE';$('seedLabel').textContent=`${meta.recipe.size.toLocaleString()}M`;
+    configureSceneForMode();updateRTSMapScore();
+    if(resetView)setRTSMapView('overview');else setRTSMapView(mapLastView);
+    drawRTSMapMinimap();
+    $('status').textContent=`RTS Map Forge ${RTS_MAP_FORGE_VERSION} · ${meta.recipe.size.toLocaleString()} × ${meta.recipe.size.toLocaleString()} m · ${meta.startRegions.length} reserved starts · ${meta.expansionZones.length} expansion zones · ${meta.resourceZones.length} resource fields · ${meta.terrain.chunkCount} terrain chunks · ~${meta.terrain.approxTriangles.toLocaleString()} terrain tris.`;
+  }catch(err){$('status').textContent='RTS map generation failed: '+err.message;}
+}
+function activateRTSMapMode(){
+  showMode('rtsmap');
+  if(!rtsMapForge.recipe)generateRTSMap({resetView:true});else{configureSceneForMode();rtsMapForge.overlay.visible=mapZonesVisible;setRTSMapView(mapLastView);updateRTSMapScore();drawRTSMapMinimap();$('status').textContent=`RTS Map Forge ${RTS_MAP_FORGE_VERSION} ready · ${rtsMapForge.recipe.size.toLocaleString()} m battlefield.`;}
+}
+function rtsMapBaseName(){const r=rtsMapForge.recipe||readRTSMapRecipe();return `worldforge_rtsmap_${r.size}m_${r.seed}`;}
+
 function download(blob,name){const a=document.createElement('a');const url=URL.createObjectURL(blob);a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1500);}
 function recipeName(){return `worldforge_${mode}_${currentSpec?.recipe?.seed||$('seed').value}`;}
 
@@ -452,8 +523,23 @@ $('vehicleExportMeta').onclick=()=>{if(!vehicleBaker.hasModel())return $('status
 document.querySelectorAll('[data-vehicle-dir]').forEach(b=>b.onclick=()=>setVehicleDirection(+b.dataset.vehicleDir));
 $('vehicleBake').onclick=async()=>{if(!vehicleBaker.hasModel())return $('status').textContent='Load a GLB vehicle first.';const btn=$('vehicleBake');btn.disabled=true;$('status').textContent='Baking 8 deterministic vehicle directions…';try{const result=await vehicleBaker.bakeSpriteSheet({frameSize:+$('vehicleFrameSize').value||128,includeShadow:$('vehicleShadow').checked});download(result.blob,`${result.baseName}_8dir_${result.metadata.frame.width}px.png`);$('status').textContent=`Baked 8 directions · ${result.metadata.frame.width}px frames · transparent PNG. Use EXPORT META JSON for the matching metadata file.`;vehicleBaker.fitPreview(vehicleAspect());}catch(err){$('status').textContent='Vehicle bake failed: '+err.message;}finally{btn.disabled=false;}};
 
+$('mapGenerate').onclick=()=>generateRTSMap({resetView:true});
+$('mapRandomize').onclick=()=>{$('mapSeed').value=crypto.getRandomValues(new Uint32Array(1))[0]%1000000;generateRTSMap({resetView:true});};
+$('mapViewOverview').onclick=()=>setRTSMapView('overview');
+$('mapViewTop').onclick=()=>setRTSMapView('top');
+$('mapViewStart').onclick=()=>setRTSMapView('start');
+$('mapViewTactical').onclick=()=>setRTSMapView('tactical');
+$('mapFogPreview').onclick=()=>{rtsMapForge.setFogPreview(!rtsMapForge.fogPreview);$('mapFogPreview').textContent=`FOG PREVIEW: ${rtsMapForge.fogPreview?'ON':'OFF'}`;drawRTSMapMinimap();};
+$('mapShowZones').onclick=()=>{mapZonesVisible=!mapZonesVisible;rtsMapForge.overlay.visible=mode==='rtsmap'&&mapZonesVisible;$('mapShowZones').textContent=`TACTICAL ZONES: ${mapZonesVisible?'ON':'OFF'}`;};
+$('mapExportRecipe').onclick=()=>{if(!rtsMapForge.recipe)return;$('status').textContent='Exporting RTS map recipe…';download(new Blob([JSON.stringify(rtsMapForge.exportRecipe(),null,2)],{type:'application/json'}),rtsMapBaseName()+'.recipe.json');};
+$('mapExportMeta').onclick=()=>{if(!rtsMapForge.metadata)return;$('status').textContent='Exporting RTS gameplay metadata…';download(new Blob([JSON.stringify(rtsMapForge.exportMetadata(),null,2)],{type:'application/json'}),rtsMapBaseName()+'.map.json');};
+$('mapExportGLB').onclick=()=>{if(!rtsMapForge.recipe)return;const oldFog=rtsMapForge.fogMesh?.visible;if(rtsMapForge.fogMesh)rtsMapForge.fogMesh.visible=false;new GLTFExporter().parse(rtsMapForge.root,r=>{download(new Blob([r],{type:'model/gltf-binary'}),rtsMapBaseName()+'.glb');$('status').textContent='RTS terrain GLB exported. Gameplay regions remain in MAP META JSON.';if(rtsMapForge.fogMesh)rtsMapForge.fogMesh.visible=oldFog;},e=>{if(rtsMapForge.fogMesh)rtsMapForge.fogMesh.visible=oldFog;$('status').textContent='RTS terrain GLB export failed: '+e;},{binary:true,onlyVisible:true});};
+$('mapExportPNG').onclick=()=>renderer.domElement.toBlob(b=>download(b,rtsMapBaseName()+'.png'));
+$('mapMinimap').addEventListener('pointerdown',e=>{if(mode!=='rtsmap')return;const r=$('mapMinimap').getBoundingClientRect();rtsMapForge.jumpFromMinimap((e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height);drawRTSMapMinimap();});
+for(const id of ['mapRelief','mapForest','mapResources'])$(id).oninput=()=>syncOutputs();
+
 $('buildingEngine').onchange=()=>{syncBuildingEngineUI();regenerate();};
-document.querySelectorAll('.tab').forEach(b=>b.onclick=async()=>{const next=b.dataset.mode;if(next==='vehicle')await activateVehicleMode();else{showMode(next);regenerate();}});
+document.querySelectorAll('.tab').forEach(b=>b.onclick=async()=>{const next=b.dataset.mode;if(next==='vehicle')await activateVehicleMode();else if(next==='rtsmap')activateRTSMapMode();else{showMode(next);regenerate();}});
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));
 document.querySelectorAll('[data-nudge]').forEach(b=>b.onclick=()=>{const [x,y]=b.dataset.nudge.split(',').map(Number);nudge(x,y);});
 $('fieldLevelDown').onclick=()=>{const step=editorStep();editField(p=>{if(!p.locked)p.position[2]=(p.position[2]||0)-step;});};
@@ -487,9 +573,9 @@ document.querySelectorAll('[data-play-move]').forEach(b=>b.onclick=()=>{const [x
 document.querySelectorAll('[data-play-reset]').forEach(b=>b.onclick=resetCharacter);
 window.addEventListener('keydown',e=>{if(mode!=='settlement'||['INPUT','SELECT','TEXTAREA'].includes(document.activeElement?.tagName))return;const m={ArrowUp:[0,1],w:[0,1],W:[0,1],ArrowDown:[0,-1],s:[0,-1],S:[0,-1],ArrowLeft:[-1,0],a:[-1,0],A:[-1,0],ArrowRight:[1,0],d:[1,0],D:[1,0],q:[-1,1],Q:[-1,1],e:[1,1],E:[1,1],z:[-1,-1],Z:[-1,-1],c:[1,-1],C:[1,-1]}[e.key];if(m){e.preventDefault();moveCharacter(...m);} if(e.key==='p'||e.key==='P'){e.preventDefault();setPlaytest(!playtestActive);} if(e.key==='g'||e.key==='G'){e.preventDefault();setWalkDebugEnabled(!walkDebugEnabled);}});
 
-const outputMap={traversalWidth:'traversalWidthOut',traversalLength:'traversalLengthOut',traversalHeight:'traversalHeightOut',foliageScale:'foliageScaleOut',foliageDensity:'foliageDensityOut',foliageSpread:'foliageSpreadOut',width:'widthOut',depth:'depthOut',floors:'floorsOut',pitch:'pitchOut',terrainSize:'terrainSizeOut',relief:'reliefOut',roughness:'roughnessOut',terracing:'terracingOut',gridResolution:'gridResolutionOut',propScale:'propScaleOut',patchSize:'patchSizeOut',patchRoughness:'patchRoughnessOut',pathWidth:'pathWidthOut',wear:'wearOut',patchResolution:'patchResolutionOut',surfaceSize:'surfaceSizeOut',surfaceVariation:'surfaceVariationOut',surfaceWear:'surfaceWearOut',surfacePathWidth:'surfacePathWidthOut',surfaceDetailDensity:'surfaceDetailDensityOut',surfaceResolution:'surfaceResolutionOut',fieldSize:'fieldSizeOut',fieldDensity:'fieldDensityOut',fieldDressing:'fieldDressingOut',fieldElevation:'fieldElevationOut',settlementSize:'settlementSizeOut',settlementBuildingCount:'settlementBuildingCountOut',settlementDensity:'settlementDensityOut',settlementDressing:'settlementDressingOut',settlementElevation:'settlementElevationOut'};
+const outputMap={traversalWidth:'traversalWidthOut',traversalLength:'traversalLengthOut',traversalHeight:'traversalHeightOut',foliageScale:'foliageScaleOut',foliageDensity:'foliageDensityOut',foliageSpread:'foliageSpreadOut',width:'widthOut',depth:'depthOut',floors:'floorsOut',pitch:'pitchOut',terrainSize:'terrainSizeOut',relief:'reliefOut',roughness:'roughnessOut',terracing:'terracingOut',gridResolution:'gridResolutionOut',propScale:'propScaleOut',patchSize:'patchSizeOut',patchRoughness:'patchRoughnessOut',pathWidth:'pathWidthOut',wear:'wearOut',patchResolution:'patchResolutionOut',surfaceSize:'surfaceSizeOut',surfaceVariation:'surfaceVariationOut',surfaceWear:'surfaceWearOut',surfacePathWidth:'surfacePathWidthOut',surfaceDetailDensity:'surfaceDetailDensityOut',surfaceResolution:'surfaceResolutionOut',fieldSize:'fieldSizeOut',fieldDensity:'fieldDensityOut',fieldDressing:'fieldDressingOut',fieldElevation:'fieldElevationOut',settlementSize:'settlementSizeOut',settlementBuildingCount:'settlementBuildingCountOut',settlementDensity:'settlementDensityOut',settlementDressing:'settlementDressingOut',settlementElevation:'settlementElevationOut',mapRelief:'mapReliefOut',mapForest:'mapForestOut',mapResources:'mapResourcesOut'};
 function syncOutputs(){for(const [id,outId] of Object.entries(outputMap)){const el=$(id),out=$(outId);if(el&&out)out.value=el.value;}}
 for(const id of Object.keys(outputMap)){const el=$(id);if(el)el.oninput=()=>syncOutputs();}syncOutputs();
-function resize(){const host=$('canvasHost'),w=Math.max(320,Math.floor(host.clientWidth)),h=Math.max(220,Math.floor(host.clientHeight));renderer.setSize(w,h,false);if(mode==='vehicle')vehicleBaker.fitPreview(w/Math.max(1,h));else fitCamera(currentSpec?spanFor(currentSpec.recipe):10);}window.addEventListener('resize',resize);
+function resize(){const host=$('canvasHost'),w=Math.max(320,Math.floor(host.clientWidth)),h=Math.max(220,Math.floor(host.clientHeight));renderer.setSize(w,h,false);if(mode==='vehicle')vehicleBaker.fitPreview(w/Math.max(1,h));else if(mode==='rtsmap'){rtsMapForge.setView(mapLastView,w/Math.max(1,h));drawRTSMapMinimap();}else fitCamera(currentSpec?spanFor(currentSpec.recipe):10);}window.addEventListener('resize',resize);
 syncBuildingEngineUI();resize();refreshProjects();regenerate();syncPlaytestButtons();
-(function animate(){requestAnimationFrame(animate);if(playtestActive&&followCameraEnabled&&characterSprite?.visible){const target=new THREE.Vector3(characterPos[0],characterPos[1],characterPos[2]+1);controls.target.lerp(target,.16);const desired=target.clone().add(playtestCameraOffset);camera.position.lerp(desired,.14);camera.lookAt(controls.target);}controls.update();renderer.render(scene,camera);})();
+(function animate(t=0){requestAnimationFrame(animate);if(playtestActive&&followCameraEnabled&&characterSprite?.visible){const target=new THREE.Vector3(characterPos[0],characterPos[1],characterPos[2]+1);controls.target.lerp(target,.16);const desired=target.clone().add(playtestCameraOffset);camera.position.lerp(desired,.14);camera.lookAt(controls.target);}controls.update();if(mode==='rtsmap'&&t-mapMiniLast>140){drawRTSMapMinimap();mapMiniLast=t;}renderer.render(scene,camera);})();

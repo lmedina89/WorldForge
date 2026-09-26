@@ -1,5 +1,18 @@
 # WorldForge v0.9.8
 
+## RTS Map Forge 0.1 — v0.9.9
+
+WorldForge now includes an **RTS MAP** workspace for the browser RTS prototype. It is deliberately separate from the older small RPG terrain/surface generators. Map Forge builds gameplay-scale terrain and tactical metadata, not faction bases.
+
+Current map sizes: **512 / 768 / 1024 / 1536 meters**. The generator uses chunked heightfield meshes plus intentional tactical grammars for ridge barriers, carved passes, ravines, low concealed routes, high ground, mountain-backed start pockets, hidden expansion bowls, roads, rivers/bridges, forest/rock dressing, and resource fields.
+
+Reserved start regions contain no faction structures. In the eventual skirmish prototype, the player and AI economy systems will purchase and place their own buildings inside suitable build regions.
+
+RTS Map exports include a deterministic recipe and `worldforge.rts-map-meta.v1` gameplay metadata. The metadata contains reserved starts/expansions, resources, routes/crossings, a 64×64 sampled navigation grid, buildability/water/cliff flags, and tactical-audit scores.
+
+The WorldForge whole-map views are editor tools. **START REGION**, **RTS CAMERA**, the minimap, and terrain-conforming **FOG PREVIEW** exist to inspect how the eventual scrolling/fog-of-war game view will feel without restricting the editor itself.
+
+
 ## Vehicle Forge 0.3 — Aegis HMMWV + Attack Helicopter integration
 
 Vehicle Forge now carries three Aegis-quality production targets side-by-side: the procedural **Aegis-grade MBT grammar**, the exact approved **Aegis HMMWV-50 v2** articulated reference asset, and the exact approved **Aegis Talon AH-X** articulated attack-helicopter reference asset.

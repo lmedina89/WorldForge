@@ -1,5 +1,21 @@
 # WorldForge Changelog
 
+## v0.9.9 — RTS Map Forge 0.1 / Tactical Battlefield Foundation
+- Added RTS Map Forge as a separate protected module alongside the existing RPG/world and Vehicle Forge systems.
+- Added chunked 512 m, 768 m, 1,024 m, and 1,536 m battlefields designed for browser/mobile prototype testing.
+- Tactical topology is generated before dressing: corner/edge start regions, mountain/ridge pockets, carved passes, valleys/ravines, high ground, hidden expansion bowls, flank routes, river crossings, and contested resource areas.
+- Added temperate, drylands, and alpine visual palettes; scalable forest and rock dressing uses instanced meshes.
+- Added optional river/bridge network and three-role road network (main route, flank route, central connector).
+- Start regions are reservation/buildability metadata only. RTS Map Forge does **not** generate faction buildings or completed bases.
+- Added 64×64 compact navigation metadata with sampled height plus walkable/buildable/water/cliff flags for later pathfinding/economy/gameplay prototyping.
+- Added tactical audit metrics for route diversity, defensible regions, expansion options, spawn separation, passes, hidden pockets, and buildable land.
+- Added editor 3/4, top-map, start-region, and close RTS camera presets.
+- Added terrain-conforming fog-of-war preview and clickable minimap; fog preview is an editor/test aid, not yet the final skirmish visibility simulation.
+- Added map recipe, gameplay metadata, terrain GLB, and screenshot export controls.
+- Existing 15 `src/generators/*.js` files remain byte-identical to v0.9.8.
+
+# WorldForge Changelog
+
 ## v0.9.8 — Vehicle Forge 0.3 / Aegis HMMWV + AH-X
 - Adds the exact approved **Aegis HMMWV-50 v2** as a reference-grade Forge archetype.
 - Adds the exact approved **Aegis Talon AH-X** attack helicopter as a reference-grade Forge archetype.

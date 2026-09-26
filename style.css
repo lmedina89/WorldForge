@@ -47,3 +47,16 @@ body.playtest .hint{bottom:14px}
 /* v0.9.6 Vehicle Forge 0.1 */
 #vehiclePanel .vehicleGenerate{background:#315b43;border-color:#6f9e80;color:#fff;font-weight:700}
 #vehiclePanel input[type=number]{width:100%;margin-top:5px;padding:8px;background:#0b100d;border:1px solid #34463c;color:#e4eee8}
+
+/* v0.9.9 RTS Map Forge 0.1 */
+.tabs11{grid-template-columns:repeat(3,1fr)}
+.mapViewButtons{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:7px 0}
+.mapViewButtons button{background:#121b16;border:1px solid var(--line);color:#c8d8ce;padding:9px;font-size:10px}
+.mapViewButtons button.active{background:#294636;color:#effff5;border-color:#5d8b70}
+.mapScore{border:1px solid #30483a;background:#0d1511;padding:9px;color:#b9c9bf;font-size:10px;line-height:1.5;margin:8px 0}
+#mapMinimapWrap{position:absolute;right:14px;bottom:34px;z-index:3;width:min(180px,27vw);aspect-ratio:1;border:1px solid rgba(220,235,225,.45);background:rgba(7,11,9,.82);padding:5px;pointer-events:auto}
+#mapMinimapWrap canvas{width:100%!important;height:100%!important;image-rendering:auto;touch-action:none}
+#mapMinimapWrap span{position:absolute;left:7px;top:6px;font-size:9px;letter-spacing:.12em;color:#dce8e0;background:rgba(5,8,7,.65);padding:2px 4px;pointer-events:none}
+body.rts-map-mode canvas{image-rendering:auto}
+body.rts-map-mode .viewport{background:radial-gradient(circle at 50% 40%,#9aada4,#65776e 76%)}
+@media(max-width:780px){.tabs11{grid-template-columns:1fr 1fr 1fr}#mapMinimapWrap{right:8px;bottom:36px;width:28vw;min-width:108px;max-width:150px}.mapViewButtons{grid-template-columns:1fr 1fr}}
