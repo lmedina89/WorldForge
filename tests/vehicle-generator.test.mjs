@@ -1,0 +1,15 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+const ROOT=path.resolve(path.dirname(new URL(import.meta.url).pathname),'..');
+const gen=fs.readFileSync(path.join(ROOT,'src/vehicle/vehicle-generator.js'),'utf8');
+const app=fs.readFileSync(path.join(ROOT,'src/app.js'),'utf8');
+const html=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');
+assert.match(gen,/VEHICLE_GENERATOR_VERSION='0\.1\.0'/);
+for(const key of ['mbt','lightTank','apc','ifv','mrap','spg','mlrs','sam','spaag','recon','truck'])assert.match(gen,new RegExp(`\\b${key}:\\{`));
+for(const moduleName of ['turret','troop','ifv','cab','casemate','rocketPod','samRack','aaTurret','sensor','cargo'])assert.match(gen,new RegExp(`['\"]${moduleName}['\"]`));
+assert.match(gen,/flatShading:true/);
+assert.match(app,/generateLowPolyVehicle/);
+assert.match(app,/installGenerated/);
+assert.match(html,/VEHICLE FORGE 0\.1/);
+console.log(JSON.stringify({ok:true,vehicleGenerator:'0.1.0',families:11,styles:3,palettes:4},null,2));

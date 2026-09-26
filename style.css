@@ -43,3 +43,7 @@ body.playtest .hint{bottom:14px}
 .vehicleDirButtons button.active{background:#294636;color:#effff5;border-color:#5d8b70}
 #vehicleBake:disabled{opacity:.55;cursor:progress}
 @media(max-width:780px){.tabs10{grid-template-columns:1fr 1fr 1fr}.vehicleDirButtons{grid-template-columns:repeat(4,1fr)}}
+
+/* v0.9.6 Vehicle Forge 0.1 */
+#vehiclePanel .vehicleGenerate{background:#315b43;border-color:#6f9e80;color:#fff;font-weight:700}
+#vehiclePanel input[type=number]{width:100%;margin-top:5px;padding:8px;background:#0b100d;border:1px solid #34463c;color:#e4eee8}

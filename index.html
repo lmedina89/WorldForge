@@ -85,17 +85,24 @@
     <p class="miniNote">Arrow/WASD or the pad moves the temporary 8-direction pixel walker across settlement walk levels.</p>
   </section>
   <section id="vehiclePanel" hidden>
-    <div class="sectionTitle">VEHICLE BAKER 0.1.1</div>
-    <div class="vehicleSourceCard"><b id="vehicleSourceName">No vehicle loaded</b><span id="vehicleStats">Import a GLB or load the included BTR benchmark.</span></div>
+    <div class="sectionTitle">VEHICLE FORGE 0.1 · LOW-POLY RTS</div>
+    <div class="cols"><label>Vehicle family<select id="vehicleArchetype"><option value="mbt">Main Battle Tank</option><option value="lightTank">Light Tank</option><option value="apc">Tracked APC</option><option value="ifv">8×8 IFV</option><option value="mrap">MRAP / Armored Car</option><option value="spg">Self-Propelled Artillery</option><option value="mlrs">Multiple Rocket Launcher</option><option value="sam">SAM Carrier</option><option value="spaag">Anti-Air Gun</option><option value="recon">Recon Vehicle</option><option value="truck">Military Cargo Truck</option></select></label><label>Design language<select id="vehicleStyle"><option value="angular" selected>Angular</option><option value="industrial">Industrial</option><option value="compact">Compact</option></select></label></div>
+    <div class="cols"><label>Palette<select id="vehiclePalette"><option value="olive" selected>Olive</option><option value="desert">Desert</option><option value="slate">Slate</option><option value="red">Red faction</option></select></label><label>Vehicle seed<input id="vehicleSeed" type="number" min="1" max="999999" value="48127"></label></div>
+    <div class="vehicleButtons"><button id="vehicleGenerate" class="vehicleGenerate">GENERATE VEHICLE</button><button id="vehicleRandomize">RANDOM VARIANT</button></div>
+    <div class="vehicleButtons"><button id="vehicleExportGLB">EXPORT VEHICLE GLB</button><button id="vehicleExportRecipe">EXPORT RECIPE</button></div>
+    <p class="miniNote">Deterministic low-poly geometry. Vehicle families use different chassis, propulsion, hull profiles, mission modules and weapons so silhouettes remain readable at mobile RTS distance.</p>
+
+    <div class="sectionTitle">VEHICLE BAKER 0.1.2 / IMPORT</div>
+    <div class="vehicleSourceCard"><b id="vehicleSourceName">No vehicle loaded</b><span id="vehicleStats">Generate a low-poly vehicle, import a GLB, or load the included BTR benchmark.</span></div>
     <input id="vehicleFile" type="file" accept=".glb,.gltf,model/gltf-binary,model/gltf+json" hidden>
     <div class="vehicleButtons"><button id="vehicleLoadBenchmark">LOAD INCLUDED BTR</button><button id="vehicleImport">IMPORT GLB</button></div>
     <div class="cols"><label>Preview direction<select id="vehicleDirection"><option value="0">N</option><option value="1">NE</option><option value="2">E</option><option value="3">SE</option><option value="4">S</option><option value="5">SW</option><option value="6">W</option><option value="7">NW</option></select></label><label>Sprite frame<select id="vehicleFrameSize"><option value="96">96 × 96</option><option value="128" selected>128 × 128</option><option value="192">192 × 192</option><option value="256">256 × 256</option></select></label></div>
-    <label>Model forward offset °<input id="vehicleForwardOffset" type="number" min="-180" max="180" step="1" value="-90"></label>
+    <label>Model forward offset °<input id="vehicleForwardOffset" type="number" min="-180" max="180" step="1" value="0"></label>
     <div class="checks"><label><input id="vehicleShadow" type="checkbox" checked> Bake soft shadow</label><label><input type="checkbox" checked disabled> Transparent PNG</label></div>
     <div class="vehicleDirButtons"><button data-vehicle-dir="0">N</button><button data-vehicle-dir="1">NE</button><button data-vehicle-dir="2">E</button><button data-vehicle-dir="3">SE</button><button data-vehicle-dir="4">S</button><button data-vehicle-dir="5">SW</button><button data-vehicle-dir="6">W</button><button data-vehicle-dir="7">NW</button></div>
     <div class="vehicleButtons"><button id="vehicleResetCamera">RESET RTS CAMERA</button><button id="vehicleExportMeta">EXPORT META JSON</button></div>
     <button id="vehicleBake" class="primary">BAKE 8-DIRECTION SPRITE SHEET</button>
-    <p class="miniNote">Fixed deterministic RTS camera · auto-fit framing · brighter bake-light rig · higher-resolution bake/downsample · horizontal sheet order N → NE → E → SE → S → SW → W → NW. The included BTR is pre-calibrated at −90°. For other GLBs, offset 0 assumes the source model nose points +X after Y-up conversion.</p>
+    <p class="miniNote">The generated models are intended to be usable directly as lightweight 3D GLBs or baked to sprites. Imported GLBs assume forward +X at offset 0; adjust offset when needed. The included BTR benchmark is auto-calibrated to −90°.</p>
   </section>
   <section id="placementEditorPanel" hidden>
     <div class="sectionTitle fieldEditTitle">FIELD EDITOR</div>

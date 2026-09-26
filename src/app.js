@@ -9,6 +9,7 @@ import { WORLDFORGE_VERSION } from './core/schema.js';
 import { enrichExistingScene } from './core/production-metadata.js';
 import { snapScalar, snapRotationRadians, nearestLevel, nearestEdgeAdjustment, worldTraversalConnections } from './core/placement-tools.js';
 import { VehicleBaker, VEHICLE_BAKER_VERSION } from './vehicle/vehicle-baker.js';
+import { generateLowPolyVehicle, VEHICLE_GENERATOR_VERSION, VEHICLE_ARCHETYPES } from './vehicle/vehicle-generator.js';
 
 const $=id=>document.getElementById(id);
 let mode='building',currentGroup=null,currentSpec=null,selectedPlacementId=null,selectionHelper=null,selectionGuideGroup=null,fieldLevelView='all',characterSprite=null,characterShadow=null,walkDebugGroup=null,characterPos=[0,0,0],characterDir='S',playtestActive=false,walkDebugEnabled=false,followCameraEnabled=true,playtestCameraOffset=new THREE.Vector3(16,-18,12),settlementCharacterSpawnOverride=null;
@@ -365,18 +366,26 @@ function updatePlacementOcclusion(){
 
 function vehicleAspect(){const host=$('canvasHost');return Math.max(.5,host.clientWidth/Math.max(1,host.clientHeight));}
 function updateVehicleUi(info=vehicleBaker.sourceInfo){
-  if(!info){$('vehicleSourceName').textContent='No vehicle loaded';$('vehicleStats').textContent='Import a GLB or load the included BTR benchmark.';return;}
-  $('vehicleSourceName').textContent=info.name;
-  $('vehicleStats').textContent=`${info.meshCount.toLocaleString()} meshes · ~${info.triangleCount.toLocaleString()} tris · ${info.animationCount} animation${info.animationCount===1?'':'s'} · source ${info.sourceDimensions.x} × ${info.sourceDimensions.y} × ${info.sourceDimensions.z}`;
+  if(!info){$('vehicleSourceName').textContent='No vehicle loaded';$('vehicleStats').textContent='Generate a low-poly vehicle, import a GLB, or load the included BTR benchmark.';return;}
+  $('vehicleSourceName').textContent=info.generatedInfo?.label?`${info.generatedInfo.label} · seed ${info.generatedInfo.seed}`:info.name;
+  const generated=info.generatedInfo?` · ${info.generatedInfo.style} / ${info.generatedInfo.palette}`:'';
+  $('vehicleStats').textContent=`${info.meshCount.toLocaleString()} meshes · ~${info.triangleCount.toLocaleString()} tris${generated} · source ${info.sourceDimensions.x} × ${info.sourceDimensions.y} × ${info.sourceDimensions.z}`;
+}
+function vehicleForgeRecipe(){return {type:$('vehicleArchetype').value,seed:+$('vehicleSeed').value||48127,style:$('vehicleStyle').value,palette:$('vehiclePalette').value};}
+function generateVehicleFromUi(){
+  const recipe=vehicleForgeRecipe();const result=generateLowPolyVehicle(recipe);const name=`vf_${recipe.type}_${recipe.seed}.glb`;
+  const info=vehicleBaker.installGenerated(result.group,name,{generatedRecipe:result.recipe,generatedInfo:result.info});
+  $('vehicleForwardOffset').value='0';vehicleBaker.setForwardOffset(0);setVehicleDirection(+$('vehicleDirection').value||0);vehicleBaker.fitPreview(vehicleAspect());updateVehicleUi(info);
+  $('status').textContent=`Vehicle Forge ${VEHICLE_GENERATOR_VERSION} · ${result.info.label} generated · ${info.meshCount} meshes · ~${info.triangleCount.toLocaleString()} tris.`;
 }
 async function loadVehicleBenchmark(){
   $('status').textContent='Loading included BTR-82 benchmark…';
-  try{const info=await vehicleBaker.loadURL('assets/low_poly_btr_82.glb','low_poly_btr_82.glb');updateVehicleUi(info);vehicleBaker.setForwardOffset(+$('vehicleForwardOffset').value||0);vehicleBaker.setDirection(+$('vehicleDirection').value||0);vehicleBaker.fitPreview(vehicleAspect());$('status').textContent=`Vehicle Baker ${VEHICLE_BAKER_VERSION} ready · BTR benchmark loaded · ${info.meshCount} meshes · ~${info.triangleCount.toLocaleString()} tris.`;}
+  try{const info=await vehicleBaker.loadURL('assets/low_poly_btr_82.glb','low_poly_btr_82.glb');$('vehicleForwardOffset').value='-90';updateVehicleUi(info);vehicleBaker.setForwardOffset(-90);vehicleBaker.setDirection(+$('vehicleDirection').value||0);vehicleBaker.fitPreview(vehicleAspect());$('status').textContent=`Vehicle Baker ${VEHICLE_BAKER_VERSION} ready · BTR benchmark loaded · ${info.meshCount} meshes · ~${info.triangleCount.toLocaleString()} tris.`;}
   catch(err){$('status').textContent='Vehicle load failed: '+err.message;}
 }
 async function activateVehicleMode(){
   showMode('vehicle');
-  if(!vehicleBaker.hasModel())await loadVehicleBenchmark();else{vehicleBaker.shadowCatcher.visible=$('vehicleShadow').checked;vehicleBaker.fitPreview(vehicleAspect());updateVehicleUi();$('status').textContent=`Vehicle Baker ${VEHICLE_BAKER_VERSION} ready.`;}
+  if(!vehicleBaker.hasModel())generateVehicleFromUi();else{vehicleBaker.shadowCatcher.visible=$('vehicleShadow').checked;vehicleBaker.fitPreview(vehicleAspect());updateVehicleUi();$('status').textContent=`Vehicle Baker ${VEHICLE_BAKER_VERSION} ready.`;}
 }
 function setVehicleDirection(index){
   index=((Number(index)||0)%8+8)%8;$('vehicleDirection').value=String(index);vehicleBaker.setDirection(index);
@@ -406,9 +415,17 @@ $('deleteProject').onclick=async()=>{const id=$('projectSelect').value;if(!id)re
 async function refreshProjects(){try{const items=await listProjects();$('projectSelect').innerHTML='<option value="">Saved projects…</option>'+items.map(p=>`<option value="${p.id}">${escapeHtml(p.name)} · ${p.recipe.type} · ${p.recipe.seed}</option>`).join('');}catch{$('projectSelect').innerHTML='<option value="">Local storage unavailable</option>';}}
 function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));}
 
+$('vehicleGenerate').onclick=generateVehicleFromUi;
+$('vehicleRandomize').onclick=()=>{$('vehicleSeed').value=crypto.getRandomValues(new Uint32Array(1))[0]%1000000;generateVehicleFromUi();};
+$('vehicleArchetype').onchange=generateVehicleFromUi;
+$('vehicleStyle').onchange=generateVehicleFromUi;
+$('vehiclePalette').onchange=generateVehicleFromUi;
+$('vehicleExportRecipe').onclick=()=>{const recipe=vehicleBaker.sourceInfo?.generatedRecipe;if(!recipe)return $('status').textContent='The current vehicle is imported; generate a Vehicle Forge asset first.';download(new Blob([JSON.stringify(recipe,null,2)],{type:'application/json'}),`vehicle_${recipe.type}_${recipe.seed}.recipe.json`);};
+$('vehicleExportGLB').onclick=()=>{const obj=vehicleBaker.canonicalObject();if(!obj)return $('status').textContent='Load or generate a vehicle first.';const base=(vehicleBaker.sourceName||'vehicle').replace(/\.(glb|gltf)$/i,'');new GLTFExporter().parse(obj,r=>{download(new Blob([r],{type:'model/gltf-binary'}),`${base}.glb`);$('status').textContent='Vehicle GLB exported.';},e=>$('status').textContent='Vehicle GLB export failed: '+e,{binary:true,onlyVisible:true});};
+
 $('vehicleLoadBenchmark').onclick=loadVehicleBenchmark;
 $('vehicleImport').onclick=()=>$('vehicleFile').click();
-$('vehicleFile').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;$('status').textContent=`Loading ${file.name}…`;try{const info=await vehicleBaker.loadFile(file);updateVehicleUi(info);vehicleBaker.setForwardOffset(+$('vehicleForwardOffset').value||0);setVehicleDirection(+$('vehicleDirection').value||0);vehicleBaker.fitPreview(vehicleAspect());$('status').textContent=`Loaded ${file.name} · ${info.meshCount} meshes · ~${info.triangleCount.toLocaleString()} tris.`;}catch(err){$('status').textContent='Vehicle import failed: '+err.message;}e.target.value='';};
+$('vehicleFile').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;$('status').textContent=`Loading ${file.name}…`;try{const info=await vehicleBaker.loadFile(file);$('vehicleForwardOffset').value='0';updateVehicleUi(info);vehicleBaker.setForwardOffset(0);setVehicleDirection(+$('vehicleDirection').value||0);vehicleBaker.fitPreview(vehicleAspect());$('status').textContent=`Loaded ${file.name} · ${info.meshCount} meshes · ~${info.triangleCount.toLocaleString()} tris. Adjust forward offset if its nose is not aligned.`;}catch(err){$('status').textContent='Vehicle import failed: '+err.message;}e.target.value='';};
 $('vehicleDirection').onchange=()=>setVehicleDirection(+$('vehicleDirection').value||0);
 $('vehicleForwardOffset').oninput=()=>{vehicleBaker.setForwardOffset(+$('vehicleForwardOffset').value||0);setVehicleDirection(+$('vehicleDirection').value||0);};
 $('vehicleShadow').onchange=()=>{vehicleBaker.shadowCatcher.visible=mode==='vehicle'&&vehicleBaker.hasModel()&&$('vehicleShadow').checked;};

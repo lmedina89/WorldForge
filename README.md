@@ -206,3 +206,7 @@ This is intentionally a foundation for v1.0 movement/collision integration rathe
 - **v1.0** — first complete RPG field-building workflow: field-generation polish, traversal/collision export, field save/export workflow, and game-facing integration cleanup.
 
 See `TEST_REPORT.md` for regression, determinism and compatibility results.
+
+
+## Vehicle Forge 0.1 (v0.9.6)
+The VEHICLE tab can now generate deterministic low-poly RTS vehicles directly in WorldForge. Choose a vehicle family, design language, palette, and seed, then generate. The output is real 3D geometry intended either for direct mobile RTS use or for the built-in directional Sprite Baker. Vehicle generation is isolated from the protected RPG generators.

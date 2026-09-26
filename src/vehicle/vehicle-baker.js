@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-export const VEHICLE_BAKER_VERSION = '0.1.1';
+export const VEHICLE_BAKER_VERSION = '0.1.2';
 export const VEHICLE_DIRECTIONS = Object.freeze([
   { id:'N',  degrees: 90 },
   { id:'NE', degrees: 45 },
@@ -115,11 +115,21 @@ export class VehicleBaker{
     finally{URL.revokeObjectURL(url);}
   }
 
+  installGenerated(object3D,name='generated_vehicle',extraInfo={}){
+    return this._installScene(object3D,name,{sourceUp:'Z',animations:[],extraInfo});
+  }
+
   _install(gltf,name){
+    return this._installScene(gltf.scene,name,{sourceUp:'Y',animations:gltf.animations||[],extraInfo:{}});
+  }
+
+  _installScene(sourceScene,name,{sourceUp='Y',animations=[],extraInfo={}}={}){
     if(this.modelRoot){this.container.remove(this.modelRoot);disposeObject(this.modelRoot);}
     const pivot=new THREE.Group();pivot.name='VehiclePivot';
-    const axis=new THREE.Group();axis.name='GLTF_Y_Up_to_WorldForge_Z_Up';axis.rotation.x=Math.PI/2;
-    axis.add(gltf.scene);pivot.add(axis);this.container.add(pivot);this.modelRoot=pivot;
+    if(sourceUp==='Y'){
+      const axis=new THREE.Group();axis.name='GLTF_Y_Up_to_WorldForge_Z_Up';axis.rotation.x=Math.PI/2;axis.add(sourceScene);pivot.add(axis);
+    }else pivot.add(sourceScene);
+    this.container.add(pivot);this.modelRoot=pivot;
 
     pivot.updateMatrixWorld(true);
     let box=new THREE.Box3().setFromObject(pivot),size=new THREE.Vector3();box.getSize(size);
@@ -129,8 +139,8 @@ export class VehicleBaker{
     box=new THREE.Box3().setFromObject(pivot);const center=new THREE.Vector3();box.getCenter(center);
     pivot.position.x-=center.x;pivot.position.y-=center.y;pivot.position.z-=box.min.z;pivot.updateMatrixWorld(true);
 
-    gltf.scene.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
-    const counts=triangleCount(gltf.scene),normalizedBox=new THREE.Box3().setFromObject(pivot),normalizedSize=new THREE.Vector3();normalizedBox.getSize(normalizedSize);
+    sourceScene.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
+    const counts=triangleCount(sourceScene),normalizedBox=new THREE.Box3().setFromObject(pivot),normalizedSize=new THREE.Vector3();normalizedBox.getSize(normalizedSize);
     this.sourceName=name;this.sourceInfo={
       name,
       sourceDimensions:{x:+sourceSize.x.toFixed(4),y:+sourceSize.y.toFixed(4),z:+sourceSize.z.toFixed(4)},
@@ -138,8 +148,9 @@ export class VehicleBaker{
       normalizationScale:+scale.toFixed(6),
       meshCount:counts.meshes,
       triangleCount:counts.triangles,
-      animationCount:gltf.animations?.length||0,
-      animations:(gltf.animations||[]).map(a=>a.name||'unnamed')
+      animationCount:animations.length,
+      animations:animations.map(a=>a.name||'unnamed'),
+      ...extraInfo
     };
     this._recomputeOptimalSpan();
     this.setDirection(0);
@@ -203,6 +214,14 @@ export class VehicleBaker{
     this.controls.target.copy(VEHICLE_CAMERA_TARGET);this.camera.position.copy(VEHICLE_CAMERA_POSITION);this.camera.lookAt(this.controls.target);this.controls.update();
   }
 
+  canonicalObject(){
+    if(!this.modelRoot)return null;
+    const clone=this.modelRoot.clone(true);
+    clone.rotation.z=THREE.MathUtils.degToRad(this.forwardOffsetDeg);
+    clone.updateMatrixWorld(true);
+    return clone;
+  }
+
   metadata(frameSize=128,includeShadow=true){
     const dir=VEHICLE_DIRECTIONS.map((d,i)=>({id:d.id,index:i,degrees:d.degrees+this.forwardOffsetDeg,x:i*frameSize,y:0,width:frameSize,height:frameSize}));
     const metaCamera=new THREE.OrthographicCamera();
@@ -245,7 +264,7 @@ export class VehicleBaker{
     this.renderer.getSize(old.size);
     this.scene.background=null;
     this.shadowCatcher.visible=!!includeShadow;
-    this.shadowCatcher.material.opacity=includeShadow?.16:0;
+    this.shadowCatcher.material.opacity=includeShadow ? .16 : 0;
     this.bakeLightRig.visible=true;
     this.renderer.setPixelRatio(1);
     this.renderer.setSize(renderSize,renderSize,false);

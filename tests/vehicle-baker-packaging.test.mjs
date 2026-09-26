@@ -11,9 +11,9 @@ const glb=fs.readFileSync(path.join(ROOT,'assets/low_poly_btr_82.glb'));
 
 assert.match(html,/data-mode="vehicle"/);
 assert.match(css,/\[hidden\]\{display:none!important\}/,'styled hidden elements must remain hidden');
-for(const id of ['vehiclePanel','vehicleLoadBenchmark','vehicleImport','vehicleDirection','vehicleFrameSize','vehicleForwardOffset','vehicleBake','vehicleExportMeta'])assert.match(html,new RegExp(`id="${id}"`));
+for(const id of ['vehiclePanel','vehicleGenerate','vehicleRandomize','vehicleExportGLB','vehicleExportRecipe','vehicleArchetype','vehicleStyle','vehiclePalette','vehicleSeed','vehicleLoadBenchmark','vehicleImport','vehicleDirection','vehicleFrameSize','vehicleForwardOffset','vehicleBake','vehicleExportMeta'])assert.match(html,new RegExp(`id="${id}"`));
 assert.match(app,/VehicleBaker/);
-assert.match(baker,/VEHICLE_BAKER_VERSION = '0\.1\.1'/);
+assert.match(baker,/VEHICLE_BAKER_VERSION = '0\.1\.2'/);
 assert.match(baker,/\{ id:'N'/);
 assert.match(baker,/\{ id:'NW'/);
 
@@ -37,4 +37,4 @@ assert.equal(doc.textures?.length,11);
 assert.equal(doc.animations?.length,1);
 assert.ok(doc.materials.every(m=>m.pbrMetallicRoughness),'all benchmark materials must use metallic/roughness');
 
-console.log(JSON.stringify({ok:true,vehicleBaker:'0.1.1',benchmarkMeshes:doc.meshes.length,materials:doc.materials.length,textures:doc.textures.length,animations:doc.animations.length,directions:8},null,2));
+console.log(JSON.stringify({ok:true,vehicleBaker:'0.1.2',benchmarkMeshes:doc.meshes.length,materials:doc.materials.length,textures:doc.textures.length,animations:doc.animations.length,directions:8},null,2));

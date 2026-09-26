@@ -1,5 +1,16 @@
 # WorldForge Changelog
 
+## v0.9.6 — Vehicle Forge 0.1
+- Added deterministic low-poly Vehicle Forge generator as a separate vehicle engine.
+- 11 silhouette families: MBT, light tank, tracked APC, 8×8 IFV, MRAP, SPG, MLRS, SAM carrier, SPAAG, recon vehicle, cargo truck.
+- 3 design languages and 4 solid-color palettes.
+- Seeded dimensional/detail variation keeps related vehicles distinct without changing the family role.
+- Generated vehicles can be exported directly as GLB or passed into the existing 8-direction Sprite Baker.
+- Imported BTR workflow remains available and separate.
+- Existing Building / Field / Settlement / Terrain generator implementations remain untouched.
+
+# WorldForge Changelog
+
 ## v0.9.5.2 — Vehicle Baker readability pass
 - Vehicle Baker bumped to 0.1.1.
 - Auto-fit bake framing so 8-direction sprites fill more of each square frame.
