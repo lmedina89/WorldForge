@@ -1,0 +1,11 @@
+{
+  "schema": "worldforge.vehicle-generator.v2",
+  "version": "0.2.0",
+  "type": "mbt",
+  "seed": 93044,
+  "style": "angular",
+  "palette": "slate",
+  "silhouette": "wedge",
+  "detail": "enhanced",
+  "roadWheels": "7"
+}

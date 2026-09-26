@@ -1,5 +1,18 @@
 # WorldForge Changelog
 
+## v0.9.7 — Vehicle Forge 0.2 / Aegis-grade MBT grammar
+- Replaces the crude MBT box grammar with a new purpose-built Aegis-X-quality procedural MBT generator.
+- Adds Wedge, Heavy and Compact silhouette families with controlled proportion envelopes rather than unconstrained random dimensions.
+- Adds faceted/sloped lower and upper hull geometry, long glacis, front cheek armor, segmented composite side skirts, engine deck breakup and rear power-pack detail.
+- Adds proper tracked running gear: 6/7 road wheels, distinct idler and sprocket, return rollers and multi-piece track silhouette.
+- Adds a low-profile faceted turret, cheek/applique armor, rear bustle/racks, independent GunPitchRoot with mantlet/thermal sleeve/bore evacuator/barrel, independent RWSRoot/RWSGunPitchRoot, cupolas, sights, APS panels, smoke banks and antennas.
+- Adds production hierarchy/sockets: VehicleRoot, HullRoot, TurretSocket, TurretRoot, GunPitchRoot, RWSRoot, MuzzleSocket, RWSMuzzleSocket, smoke sockets and EngineEffectSocket.
+- Adds MBT silhouette/detail/road-wheel controls and three example Aegis-grade MBT recipes.
+- Existing non-MBT Vehicle Forge 0.1 families remain available unchanged until upgraded family-by-family to the same quality bar.
+- Existing RPG/building/field/settlement generator implementations remain protected and untouched.
+
+# WorldForge Changelog
+
 ## v0.9.6 — Vehicle Forge 0.1
 - Added deterministic low-poly Vehicle Forge generator as a separate vehicle engine.
 - 11 silhouette families: MBT, light tank, tracked APC, 8×8 IFV, MRAP, SPG, MLRS, SAM carrier, SPAAG, recon vehicle, cargo truck.

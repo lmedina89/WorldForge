@@ -1,3 +1,23 @@
+# WorldForge v0.9.7
+
+## Vehicle Forge 0.2 — Aegis-grade MBT foundation
+
+Vehicle Forge now has a production-oriented MBT grammar designed around the corrected Aegis-X v2 quality target. Generated MBTs use purpose-built faceted geometry and a functional game hierarchy instead of stacked box primitives.
+
+### New MBT controls
+- Silhouette: Auto / Wedge / Heavy / Compact
+- Detail: Enhanced / Standard
+- Road wheels: Auto / 6 / 7
+- Existing design-language, palette and deterministic seed controls remain available.
+
+### Functional hierarchy
+`VehicleRoot → HullRoot → TurretSocket → TurretRoot → GunPitchRoot`, plus independent `RWSRoot`, muzzle/smoke/exhaust sockets and named running-gear/detail nodes. GLB exports preserve these names for later game-side articulation.
+
+### Quality policy
+The corrected Aegis-X v2 is the minimum quality benchmark for future Vehicle Forge family upgrades. Other current vehicle families remain available using their older 0.1 grammar; they have deliberately not been cosmetically relabeled as Aegis-grade.
+
+---
+
 # WorldForge v0.9.5.1 — Vehicle Baker UI Hotfix
 
 

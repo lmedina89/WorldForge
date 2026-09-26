@@ -368,11 +368,17 @@ function vehicleAspect(){const host=$('canvasHost');return Math.max(.5,host.clie
 function updateVehicleUi(info=vehicleBaker.sourceInfo){
   if(!info){$('vehicleSourceName').textContent='No vehicle loaded';$('vehicleStats').textContent='Generate a low-poly vehicle, import a GLB, or load the included BTR benchmark.';return;}
   $('vehicleSourceName').textContent=info.generatedInfo?.label?`${info.generatedInfo.label} · seed ${info.generatedInfo.seed}`:info.name;
-  const generated=info.generatedInfo?` · ${info.generatedInfo.style} / ${info.generatedInfo.palette}`:'';
+  const generated=info.generatedInfo?` · ${info.generatedInfo.style}${info.generatedInfo.silhouette?` / ${info.generatedInfo.silhouette}`:''} / ${info.generatedInfo.palette}${info.generatedInfo.quality?` · ${info.generatedInfo.quality}`:''}`:'';
   $('vehicleStats').textContent=`${info.meshCount.toLocaleString()} meshes · ~${info.triangleCount.toLocaleString()} tris${generated} · source ${info.sourceDimensions.x} × ${info.sourceDimensions.y} × ${info.sourceDimensions.z}`;
 }
-function vehicleForgeRecipe(){return {type:$('vehicleArchetype').value,seed:+$('vehicleSeed').value||48127,style:$('vehicleStyle').value,palette:$('vehiclePalette').value};}
+function vehicleForgeRecipe(){return {type:$('vehicleArchetype').value,seed:+$('vehicleSeed').value||48127,style:$('vehicleStyle').value,palette:$('vehiclePalette').value,silhouette:$('vehicleSilhouette').value,detail:$('vehicleDetail').value,roadWheels:$('vehicleRoadWheels').value};}
+function syncVehicleForgeUi(){
+  const mbt=$('vehicleArchetype').value==='mbt';
+  for(const id of ['vehicleSilhouette','vehicleDetail','vehicleRoadWheels'])$(''+id).disabled=!mbt;
+  $('vehicleMbtNote').hidden=!mbt;
+}
 function generateVehicleFromUi(){
+  syncVehicleForgeUi();
   const recipe=vehicleForgeRecipe();const result=generateLowPolyVehicle(recipe);const name=`vf_${recipe.type}_${recipe.seed}.glb`;
   const info=vehicleBaker.installGenerated(result.group,name,{generatedRecipe:result.recipe,generatedInfo:result.info});
   $('vehicleForwardOffset').value='0';vehicleBaker.setForwardOffset(0);setVehicleDirection(+$('vehicleDirection').value||0);vehicleBaker.fitPreview(vehicleAspect());updateVehicleUi(info);
@@ -417,9 +423,12 @@ function escapeHtml(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':
 
 $('vehicleGenerate').onclick=generateVehicleFromUi;
 $('vehicleRandomize').onclick=()=>{$('vehicleSeed').value=crypto.getRandomValues(new Uint32Array(1))[0]%1000000;generateVehicleFromUi();};
-$('vehicleArchetype').onchange=generateVehicleFromUi;
+$('vehicleArchetype').onchange=()=>{syncVehicleForgeUi();generateVehicleFromUi();};
 $('vehicleStyle').onchange=generateVehicleFromUi;
 $('vehiclePalette').onchange=generateVehicleFromUi;
+$('vehicleSilhouette').onchange=generateVehicleFromUi;
+$('vehicleDetail').onchange=generateVehicleFromUi;
+$('vehicleRoadWheels').onchange=generateVehicleFromUi;
 $('vehicleExportRecipe').onclick=()=>{const recipe=vehicleBaker.sourceInfo?.generatedRecipe;if(!recipe)return $('status').textContent='The current vehicle is imported; generate a Vehicle Forge asset first.';download(new Blob([JSON.stringify(recipe,null,2)],{type:'application/json'}),`vehicle_${recipe.type}_${recipe.seed}.recipe.json`);};
 $('vehicleExportGLB').onclick=()=>{const obj=vehicleBaker.canonicalObject();if(!obj)return $('status').textContent='Load or generate a vehicle first.';const base=(vehicleBaker.sourceName||'vehicle').replace(/\.(glb|gltf)$/i,'');new GLTFExporter().parse(obj,r=>{download(new Blob([r],{type:'model/gltf-binary'}),`${base}.glb`);$('status').textContent='Vehicle GLB exported.';},e=>$('status').textContent='Vehicle GLB export failed: '+e,{binary:true,onlyVisible:true});};
 
