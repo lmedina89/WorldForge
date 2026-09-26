@@ -1,4 +1,4 @@
-export const WORLDFORGE_VERSION = '0.9.5';
+export const WORLDFORGE_VERSION = '0.9.5.1';
 export const RECIPE_SCHEMA = 'worldforge.recipe.v1';
 export const SCENE_SCHEMA = 'worldforge.scene.v1';
 export const ASSET_SCHEMA = 'worldforge.asset.v1';

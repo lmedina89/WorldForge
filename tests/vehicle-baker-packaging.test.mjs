@@ -6,9 +6,11 @@ const ROOT=path.resolve(path.dirname(new URL(import.meta.url).pathname),'..');
 const html=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');
 const app=fs.readFileSync(path.join(ROOT,'src/app.js'),'utf8');
 const baker=fs.readFileSync(path.join(ROOT,'src/vehicle/vehicle-baker.js'),'utf8');
+const css=fs.readFileSync(path.join(ROOT,'style.css'),'utf8');
 const glb=fs.readFileSync(path.join(ROOT,'assets/low_poly_btr_82.glb'));
 
 assert.match(html,/data-mode="vehicle"/);
+assert.match(css,/\[hidden\]\{display:none!important\}/,'styled hidden elements must remain hidden');
 for(const id of ['vehiclePanel','vehicleLoadBenchmark','vehicleImport','vehicleDirection','vehicleFrameSize','vehicleForwardOffset','vehicleBake','vehicleExportMeta'])assert.match(html,new RegExp(`id="${id}"`));
 assert.match(app,/VehicleBaker/);
 assert.match(baker,/VEHICLE_BAKER_VERSION = '0\.1\.0'/);

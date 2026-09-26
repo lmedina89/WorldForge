@@ -1,6 +1,11 @@
-# WorldForge v0.9.5 Test Report — Vehicle Baker 0.1
+# WorldForge v0.9.5.1 Test Report — Vehicle Baker UI Hotfix
 
 Status: **PASS**
+
+## v0.9.5.1 UI regression
+- Global hidden-state CSS safeguard: **PASS**.
+- Playtest HUD honors `hidden` outside Settlement Playtest: **PASS**.
+- Vehicle-mode procedural controls honor `hidden`: **PASS**.
 
 ## Vehicle Baker 0.1
 - Vehicle tab/UI static wiring: **PASS**.

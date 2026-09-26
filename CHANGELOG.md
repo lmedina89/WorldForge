@@ -1,3 +1,16 @@
+# WorldForge v0.9.5.1 — Vehicle Baker UI Hotfix
+
+## Fixed
+- Added a global `[hidden]{display:none!important}` safeguard so styled controls honor the HTML hidden state.
+- Settlement Playtest HUD no longer overlays Vehicle Baker on mobile.
+- Procedural-only controls such as Seed stay hidden in Vehicle mode.
+
+## Compatibility
+- No procedural generator source files changed.
+- Vehicle Baker geometry/camera/bake logic is unchanged from v0.9.5.
+
+---
+
 # WorldForge v0.9.5 — Vehicle Baker 0.1
 
 ## Added

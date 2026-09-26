@@ -1,6 +1,14 @@
-# WorldForge v0.9.5 — Vehicle Baker 0.1
+# WorldForge v0.9.5.1 — Vehicle Baker UI Hotfix
 
-WorldForge v0.9.5 adds the first RTS-oriented pipeline **beside** the existing RPG/world generators. The protected generator stack remains unchanged. The new **VEHICLE** tab loads a GLB, normalizes it into WorldForge's Z-up scene, previews it with a fixed RTS orthographic camera, and bakes a deterministic 8-direction transparent sprite sheet.
+
+## v0.9.5.1 mobile UI hotfix
+
+- Restores standards-correct handling for the HTML `hidden` attribute.
+- Prevents the Settlement Playtest HUD from appearing over Vehicle Baker.
+- Hides seed/procedural-only controls while Vehicle mode is active as originally intended.
+- No generator geometry, recipes, settlement logic, or Vehicle Baker rendering logic changed.
+
+WorldForge v0.9.5.1 keeps the v0.9.5 RTS-oriented pipeline **beside** the existing RPG/world generators. The protected generator stack remains unchanged. The new **VEHICLE** tab loads a GLB, normalizes it into WorldForge's Z-up scene, previews it with a fixed RTS orthographic camera, and bakes a deterministic 8-direction transparent sprite sheet.
 
 ## Vehicle Baker 0.1
 - New **VEHICLE** tab; no existing Building/Field/Settlement generator was repurposed.
