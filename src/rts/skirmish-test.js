@@ -5,8 +5,10 @@ import { RTSSimulation, RTS_SIMULATION_VERSION } from './sim/rts-simulation.js';
 import { COMMAND_SOURCES } from './sim/command-bus.js';
 import { RTS_COMMANDS } from './sim/rts-commands.js';
 import { LOCOMOTORS, WEAPONS, UNIT_DEFINITIONS } from './data/rts-definitions.js';
+import { instantiateMasterBuilding, masterBuildingForRole } from './rts-asset-library.js';
+import { loadAegisReferenceVehicle } from '../vehicle/vehicle-generator.js';
 
-export const SKIRMISH_VERSION='0.2.0';
+export const SKIRMISH_VERSION='0.3.0';
 
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const angleDelta=(a,b)=>Math.atan2(Math.sin(a-b),Math.cos(a-b));
@@ -18,8 +20,8 @@ export class SkirmishTest{
     this.scene=scene;this.camera=camera;this.renderer=renderer;this.controls=controls;this.mapForge=mapForge;this.onStateChange=onStateChange;
     this.loader=new GLTFLoader();this.root=new THREE.Group();this.root.name='WorldForgeSkirmish';this.root.visible=false;scene.add(this.root);
     this.effects=new THREE.Group();this.effects.name='SkirmishEffects';this.root.add(this.effects);
-    this.active=false;this.started=false;this.mapSignature='';this.tank=null;this.enemyTargets=[];this.buildings=[];this.fx=[];this.projectileViews=new Map();this.renderEvents=[];
-    this.drive={forward:false,back:false,left:false,right:false};this.aimPoint=new THREE.Vector3();this.pendingBuild=null;this.follow=true;this.lastMessage='';this.buildSerial=1;
+    this.active=false;this.started=false;this.mapSignature='';this.tank=null;this.supportUnits=[];this.supportSerial=0;this.enemyTargets=[];this.buildings=[];this.fx=[];this.projectileViews=new Map();this.renderEvents=[];
+    this.drive={forward:false,back:false,left:false,right:false};this.aimPoint=new THREE.Vector3();this.pendingBuild=null;this.follow=true;this.lastMessage='';this.buildSerial=1;this.playerPalette='aegis';this.enemyPalette='crimson';
     this.raycaster=new THREE.Raycaster();this.pointer=new THREE.Vector2();this.aimMarker=this._makeAimMarker();this.root.add(this.aimMarker);this.aimMarker.visible=false;
     this.sim=new RTSSimulation({hz:30,seed:1});this.playerFaction=null;this.enemyFaction=null;this.lastUiTick=-999;this._configureSimulation();
   }
@@ -27,6 +29,7 @@ export class SkirmishTest{
   get credits(){return this.playerFaction?.credits??0;}
   get powerSupply(){return this.playerFaction?.powerSupply??0;}
   get powerUse(){return this.playerFaction?.powerUse??0;}
+  setFactionPalettes(player='aegis',enemy='crimson'){this.playerPalette=player||'aegis';this.enemyPalette=enemy||'crimson';}
 
   _configureSimulation(){
     this.sim.onCommand(RTS_COMMANDS.DRIVE_INPUT,(cmd)=>{
@@ -68,11 +71,11 @@ export class SkirmishTest{
     if(this.started&&!reset){this.setActive(true);this._setCamera();this._emit();return;}
     this.mapSignature=sig;this._clearSession();
     this.sim.reset({seed:this.mapForge.recipe?.seed||1});this.lastUiTick=-999;this.playerFaction=this.sim.createFaction('player',{credits:5000});this.enemyFaction=this.sim.createFaction('enemy',{credits:0});this.pendingBuild=null;this.buildSerial=1;
-    await this._spawnPlayerTank();this._spawnStartingConstructionYard();this._spawnTrainingTarget();this.started=true;this.setActive(true);this._setCamera();this._emit('Skirmish ready · 30 Hz deterministic simulation active. Drive, aim, fire, and build normally.');
+    await this._spawnPlayerTank();await this._spawnStartingConstructionYard();this._spawnTrainingTarget();this.started=true;this.setActive(true);this._setCamera();this._emit('Skirmish ready · real master HQ/Power assets enabled · drive, aim, fire, and build normally.');
   }
 
   _clearSession(){
-    this.clearDrive();this.tank=null;this.enemyTargets=[];this.buildings=[];this.fx=[];this.projectileViews.clear();this.renderEvents=[];this.aimMarker.visible=false;this.started=false;
+    this.clearDrive();this.tank=null;this.supportUnits=[];this.supportSerial=0;this.enemyTargets=[];this.buildings=[];this.fx=[];this.projectileViews.clear();this.renderEvents=[];this.aimMarker.visible=false;this.started=false;
     while(this.root.children.length){const c=this.root.children[this.root.children.length-1];this.root.remove(c);if(c!==this.aimMarker)disposeObject(c);}
     this.effects=new THREE.Group();this.effects.name='SkirmishEffects';this.root.add(this.effects);this.aimMarker=this._makeAimMarker();this.root.add(this.aimMarker);this.aimMarker.visible=false;
   }
@@ -81,22 +84,45 @@ export class SkirmishTest{
     const def=UNIT_DEFINITIONS.aegisMbt,loc=LOCOMOTORS[def.locomotor],weapon=WEAPONS[def.primaryWeapon];
     const gltf=await this.loader.loadAsync(def.asset);const source=cloneMaterials(gltf.scene);source.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
     const axis=new THREE.Group();axis.name='AegisX_ZUpAxis';axis.rotation.x=Math.PI/2;axis.add(source);const vehicle=new THREE.Group();vehicle.name='Player_AegisX';vehicle.add(axis);this.root.add(vehicle);
-    const start=this.mapForge.metadata.startRegions[0],toward=new THREE.Vector2(-start.x,-start.y).normalize(),x=start.x+toward.x*42,y=start.y+toward.y*42,z=this.mapForge.surfaceHeightAt(x,y)-.1,heading=Math.atan2(toward.y,toward.x);
+    const start=this.mapForge.metadata.startRegions[0],toward=new THREE.Vector2(-start.x,-start.y).normalize(),x=start.x+toward.x*58,y=start.y+toward.y*58,z=this.mapForge.surfaceHeightAt(x,y)-.1,heading=Math.atan2(toward.y,toward.x);
     const turret=source.getObjectByName('TurretRoot'),gun=source.getObjectByName('GunPitchRoot'),muzzle=source.getObjectByName(weapon.muzzleSocket);if(!turret||!gun||!muzzle)throw new Error('Aegis-X articulation nodes are missing.');
     const aim={x:x+Math.cos(heading)*100,y:y+Math.sin(heading)*100,z:this.mapForge.surfaceHeightAt(x+Math.cos(heading)*100,y+Math.sin(heading)*100)+1.5};
     const e=this.sim.createEntity('unit',{unitType:def.id,owner:'player',transform:{x,y,z,heading},health:{current:def.maxHp,max:def.maxHp,destroyed:false},locomotor:{...loc},input:{forward:false,back:false,left:false,right:false},turret:{yaw:0,pitch:0,yawRate:1.9,pitchRate:.8,aimPoint:aim},weapon:{id:weapon.id,cooldown:0}},'player');
     vehicle.position.set(x,y,z);vehicle.rotation.z=heading;this.tank={entityId:e.id,root:vehicle,source,axis,turret,gun,muzzle,definition:def};this.aimPoint.set(aim.x,aim.y,aim.z);
   }
 
+
+  async spawnSupportUnit(archetype){
+    if(!this.started)return false;
+    const map={hmmwv50:UNIT_DEFINITIONS.aegisHmmwv,attackHeli:UNIT_DEFINITIONS.aegisTalon},def=map[archetype];if(!def)return false;
+    const paletteMap={aegis:'olive',desert:'desert',crimson:'red',slate:'slate',blackops:'slate'},result=await loadAegisReferenceVehicle({type:archetype,palette:paletteMap[this.playerPalette]||'olive',seed:(this.mapForge.recipe?.seed||1)+this.supportSerial});
+    const source=result.group;source.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
+    const axis=new THREE.Group();axis.name='SupportUnit_YUp_to_ZUp';axis.rotation.x=Math.PI/2;axis.add(source);const root=new THREE.Group();root.name=`Support_${def.id}_${++this.supportSerial}`;root.add(axis);this.root.add(root);
+    const base=this.tank?this.sim.entities.get(this.tank.entityId)?.components.transform:null,start=this.mapForge.metadata.startRegions[0],bx=base?.x??start.x,by=base?.y??start.y,heading=base?.heading??0,side=new THREE.Vector2(-Math.sin(heading),Math.cos(heading));
+    const offset=14+this.supportSerial*7,x=bx+side.x*offset-Math.cos(heading)*8,y=by+side.y*offset-Math.sin(heading)*8,loc=LOCOMOTORS[def.locomotor],ground=this.mapForge.surfaceHeightAt(x,y),z=loc.movementClass==='air'?ground+(loc.preferredAltitude||22):ground-.1;
+    const e=this.sim.createEntity('unit',{unitType:def.id,owner:'player',transform:{x,y,z,heading},health:{current:def.maxHp,max:def.maxHp,destroyed:false},locomotor:{...loc}},'player');root.position.set(x,y,z);root.rotation.z=heading;
+    const view={entityId:e.id,root,source,axis,definition:def,archetype,rotorMain:source.getObjectByName('MainRotorRoot'),rotorTail:source.getObjectByName('TailRotorRoot'),wheels:['FL','FR','RL','RR'].map(k=>source.getObjectByName(`WheelSpinRoot_${k}`)).filter(Boolean)};this.supportUnits.push(view);this._emit(`${def.label} master asset deployed for skirmish testing.`);return true;
+  }
+
   _buildingComponents(type,x,y,{owner='player',complete=false}={}){
     const def=RTS_BUILDINGS[type];return {buildingType:type,owner,transform:{x,y,z:this.mapForge.surfaceHeightAt(x,y),heading:0},health:{current:def.hp,max:def.hp,destroyed:false},building:{footprint:[...def.footprint],buildRadius:def.buildRadius||0,powerUse:def.powerUse||0,powerSupply:def.powerSupply||0},construction:{progress:complete?1:0,duration:1.8,complete:!!complete}};
   }
-  _createBuildingView(entity,{palette='olive',name=null}={}){
-    const type=entity.components.buildingType,asset=createRTSBuilding(type,{palette}),g=asset.group,t=entity.components.transform,c=entity.components.construction;g.position.set(t.x,t.y,t.z);g.name=name||`${entity.components.owner.toUpperCase()}_${type}_${entity.id}`;g.scale.z=c.complete?1:Math.max(.03,c.progress);this.root.add(g);
-    const view={entityId:entity.id,id:g.name,type,group:g,def:asset.definition,owner:entity.components.owner};this.buildings.push(view);return view;
+  async _createBuildingView(entity,{palette=null,name=null}={}){
+    const type=entity.components.buildingType,t=entity.components.transform,c=entity.components.construction,def=RTS_BUILDINGS[type];
+    const factionPalette=palette||(entity.components.owner==='enemy'?this.enemyPalette:this.playerPalette);
+    let g,masterAsset=null;const master=masterBuildingForRole(type);
+    if(master){
+      try{
+        const loaded=await instantiateMasterBuilding(master.id,{palette:factionPalette});masterAsset=master.id;
+        const axis=new THREE.Group();axis.name='MasterBuilding_YUp_to_ZUp';axis.rotation.x=Math.PI/2;axis.add(loaded.group);g=new THREE.Group();g.name='MasterBuildingView';g.add(axis);
+      }catch(err){console.warn('Master building load failed; using procedural fallback.',type,err);}
+    }
+    if(!g){const fallbackPalette=factionPalette==='crimson'?'red':factionPalette==='desert'?'desert':factionPalette==='slate'?'slate':'olive';g=createRTSBuilding(type,{palette:fallbackPalette}).group;}
+    g.position.set(t.x,t.y,t.z);g.name=name||`${entity.components.owner.toUpperCase()}_${type}_${entity.id}`;g.scale.z=c.complete?1:Math.max(.03,c.progress);this.root.add(g);
+    const view={entityId:entity.id,id:g.name,type,group:g,def,owner:entity.components.owner,masterAsset,functional:{radar:g.getObjectByName('RadarYawRoot'),fans:[1,2,3,4].map(i=>g.getObjectByName(`CoolingFanRoot_${i}`)).filter(Boolean)}};this.buildings.push(view);return view;
   }
-  _spawnStartingConstructionYard(){
-    const start=this.mapForge.metadata.startRegions[0],e=this.sim.createEntity('building',this._buildingComponents('constructionYard',start.x,start.y,{owner:'player',complete:true}),'player');this._createBuildingView(e,{name:'PLAYER_ConstructionYard'});
+  async _spawnStartingConstructionYard(){
+    const start=this.mapForge.metadata.startRegions[0],e=this.sim.createEntity('building',this._buildingComponents('constructionYard',start.x,start.y,{owner:'player',complete:true}),'player');await this._createBuildingView(e,{name:'PLAYER_CommandNexus'});
   }
   _spawnTrainingTarget(){
     const start=this.mapForge.metadata.startRegions[0],toward=new THREE.Vector2(-start.x,-start.y).normalize(),side=new THREE.Vector2(-toward.y,toward.x),x=start.x+toward.x*145+side.x*24,y=start.y+toward.y*145+side.y*24;
@@ -181,7 +207,8 @@ export class SkirmishTest{
   }
   _syncViews(){
     if(this.tank){const e=this.sim.entities.get(this.tank.entityId);if(e){const t=e.components.transform,tur=e.components.turret;this.tank.root.position.set(t.x,t.y,t.z);this.tank.root.rotation.z=t.heading;this.tank.turret.rotation.y=tur.yaw;this.tank.gun.rotation.z=tur.pitch;}}
-    for(const v of this.buildings){const e=this.sim.entities.get(v.entityId);if(!e)continue;const t=e.components.transform,c=e.components.construction;v.group.position.set(t.x,t.y,t.z);if(c&&!c.complete)v.group.scale.z=Math.max(.03,c.progress);}
+    for(const v of this.supportUnits){const e=this.sim.entities.get(v.entityId);if(!e)continue;const t=e.components.transform;v.root.position.set(t.x,t.y,t.z);v.root.rotation.z=t.heading;if(v.rotorMain)v.rotorMain.rotation.y+=.18;if(v.rotorTail)v.rotorTail.rotation.x+=.24;}
+    for(const v of this.buildings){const e=this.sim.entities.get(v.entityId);if(!e)continue;const t=e.components.transform,c=e.components.construction;v.group.position.set(t.x,t.y,t.z);if(c&&!c.complete)v.group.scale.z=Math.max(.03,c.progress);else v.group.scale.z=1;if(v.functional?.radar)v.functional.radar.rotation.y+=.006;if(v.functional?.fans)for(const f of v.functional.fans)f.rotation.y+=.08;}
     for(const [id,mesh] of [...this.projectileViews.entries()]){const e=this.sim.entities.get(id);if(!e){this.effects.remove(mesh);disposeObject(mesh);this.projectileViews.delete(id);}else{const t=e.components.transform;mesh.position.set(t.x,t.y,t.z);}}
   }
 
@@ -194,9 +221,10 @@ export class SkirmishTest{
     this.mapForge.drawMinimap(canvas);if(!canvas||!this.mapForge.recipe)return;const ctx=canvas.getContext('2d'),w=canvas.width,size=this.mapForge.recipe.size,H=size/2,s=w/size;
     for(const v of this.buildings){const e=this.sim.entities.get(v.entityId);if(!e||e.components.health?.destroyed)continue;const t=e.components.transform;ctx.fillStyle=e.components.owner==='player'?'#6de38d':'#da6958';ctx.fillRect((t.x+H)*s-2,w-(t.y+H)*s-2,4,4);}
     for(const v of this.enemyTargets){const e=this.sim.entities.get(v.entityId);if(!e||e.components.health?.destroyed)continue;const t=e.components.transform;ctx.fillStyle='#df6657';ctx.beginPath();ctx.arc((t.x+H)*s,w-(t.y+H)*s,4,0,Math.PI*2);ctx.fill();}
+    for(const v of this.supportUnits){const e=this.sim.entities.get(v.entityId);if(!e||e.components.health?.destroyed)continue;const t=e.components.transform;ctx.fillStyle='#7fdba0';ctx.beginPath();ctx.arc((t.x+H)*s,w-(t.y+H)*s,3,0,Math.PI*2);ctx.fill();}
     if(this.tank){const e=this.sim.entities.get(this.tank.entityId);if(e){const t=e.components.transform;ctx.fillStyle='#a9ffb6';ctx.beginPath();ctx.arc((t.x+H)*s,w-(t.y+H)*s,5,0,Math.PI*2);ctx.fill();}}
   }
 
-  state(){const tank=this.tank&&this.sim.entities.get(this.tank.entityId),hp=tank?.components.health;return {credits:this.credits,powerSupply:this.powerSupply,powerUse:this.powerUse,powerNet:(this.playerFaction?.powerNet??0),tankHp:hp?.current||0,tankMaxHp:hp?.max||0,pendingBuild:this.pendingBuild,buildingCount:this.buildings.length,fireReady:(tank?.components.weapon?.cooldown||0)<=0,message:this.lastMessage,simTick:this.sim.clock.tick,simHz:this.sim.clock.hz,simPaused:this.sim.paused,entityCount:this.sim.entities.count(),stateHash:this.sim.stateHash(),commandLog:this.sim.commands.recent(6),simulationVersion:RTS_SIMULATION_VERSION};}
+  state(){const tank=this.tank&&this.sim.entities.get(this.tank.entityId),hp=tank?.components.health;return {credits:this.credits,powerSupply:this.powerSupply,powerUse:this.powerUse,powerNet:(this.playerFaction?.powerNet??0),tankHp:hp?.current||0,tankMaxHp:hp?.max||0,pendingBuild:this.pendingBuild,buildingCount:this.buildings.length,supportUnitCount:this.supportUnits.length,fireReady:(tank?.components.weapon?.cooldown||0)<=0,message:this.lastMessage,simTick:this.sim.clock.tick,simHz:this.sim.clock.hz,simPaused:this.sim.paused,entityCount:this.sim.entities.count(),stateHash:this.sim.stateHash(),commandLog:this.sim.commands.recent(6),simulationVersion:RTS_SIMULATION_VERSION};}
   _emit(message=null){if(message)this.lastMessage=message;this.onStateChange?.(this.state());}
 }

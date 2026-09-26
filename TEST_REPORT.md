@@ -1,3 +1,31 @@
+# WorldForge v0.13.0 Test Report — Building Forge 0.1 / Master Asset Integration
+
+Status: **PASS**
+
+## New master-asset coverage
+- Command Nexus HQ v1.3 packaged and registered: **PASS**.
+- Grid Bastion Power Plant v1.0 packaged and registered: **PASS**.
+- Five faction presets plus custom color-slot wiring: **PASS**.
+- Required root/socket registry for both master buildings: **PASS**.
+- Native Y-up Building Forge export path: **PASS**.
+- Skirmish master replacement for Construction Yard + Power Plant: **PASS**.
+- Real HMMWV-50 / Talon AH-X skirmish test-depot hooks: **PASS**.
+- Building Forge functional-root preview hooks: **PASS**.
+- DOM audit: **279 IDs / 279 unique / 238 unique app references / 0 missing / 0 duplicates**.
+
+## Regression / compatibility
+- Full automated suite: **16/16 PASS**.
+- Entire `src/generators/*.js` tree vs v0.12.0: **15/15 byte-identical**.
+- RTS Map Forge vs v0.12.0: **byte-identical**.
+- Vehicle Generator / Vehicle Baker vs v0.12.0: **byte-identical**.
+- Existing Aegis-X / HMMWV-50 / Talon GLBs vs v0.12.0: **byte-identical**.
+- New master-building assets are additive under `assets/buildings/`.
+
+## Browser smoke-test note
+The container can serve the build locally, but outbound DNS is unavailable, so the browser cannot fetch the Three.js CDN modules used by the GitHub Pages build. JavaScript syntax, DOM wiring, asset packaging, master registry, simulation integration and all automated regression suites pass. GitHub Pages/iPhone remains the visual runtime smoke test.
+
+---
+
 # WorldForge v0.12.0 Test Report — RTS Simulation Foundation 0.1
 
 Status: **PASS**

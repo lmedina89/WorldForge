@@ -9,7 +9,7 @@ const app=fs.readFileSync(path.join(root,'src/app.js'),'utf8');
 const sk=fs.readFileSync(path.join(root,'src/rts/skirmish-test.js'),'utf8');
 const buildings=fs.readFileSync(path.join(root,'src/rts/rts-building-assets.js'),'utf8');
 const defs=fs.readFileSync(path.join(root,'src/rts/data/rts-definitions.js'),'utf8');
-assert.match(sk,/SKIRMISH_VERSION='0\.2\.0'/);
+assert.match(sk,/SKIRMISH_VERSION='0\.3\.0'/);
 assert.match(buildings,/RTS_BUILDING_VERSION='0\.1\.0'/);
 for(const id of ['constructionYard','powerPlant','refinery','barracks','vehicleFactory','gunTurret'])assert.ok(defs.includes(`${id}:`),`missing building definition ${id}`);
 assert.ok(buildings.includes('BUILDING_DEFINITIONS'),'render assets must consume shared building definitions');
@@ -22,4 +22,4 @@ assert.ok(defs.includes("muzzleSocket:'MuzzleSocket'"),'weapon definition missin
 assert.ok(app.includes("next==='skirmish'"));
 assert.ok(app.includes('skirmish.update(dt)'));
 for(const id of ['skirmishSimStatus','skirmishSimPause','skirmishSimStep','skirmishExportSnapshot','skirmishCommandLog'])assert.match(html,new RegExp(`id=\"${id}\"`));
-console.log(JSON.stringify({ok:true,skirmish:'0.2.0',buildings:6,tankBytes:fs.statSync(tank).size}));
+console.log(JSON.stringify({ok:true,skirmish:'0.3.0',buildings:6,tankBytes:fs.statSync(tank).size}));

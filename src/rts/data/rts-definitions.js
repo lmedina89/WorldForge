@@ -1,9 +1,9 @@
-export const RTS_DEFINITIONS_VERSION='0.1.0';
+export const RTS_DEFINITIONS_VERSION='0.2.0';
 
 
 export const BUILDING_DEFINITIONS=Object.freeze({
-  constructionYard:Object.freeze({id:'constructionYard',label:'Construction Yard',cost:0,hp:2200,footprint:[24,20],powerUse:0,powerSupply:0,buildRadius:125,category:'core'}),
-  powerPlant:Object.freeze({id:'powerPlant',label:'Power Plant',cost:500,hp:900,footprint:[18,14],powerUse:0,powerSupply:100,category:'power'}),
+  constructionYard:Object.freeze({id:'constructionYard',label:'Command Nexus HQ',cost:0,hp:3200,footprint:[50,39],powerUse:0,powerSupply:0,buildRadius:165,category:'core',masterAsset:'commandNexus'}),
+  powerPlant:Object.freeze({id:'powerPlant',label:'Grid Bastion Power Plant',cost:500,hp:1200,footprint:[37,33],powerUse:0,powerSupply:100,category:'power',masterAsset:'gridBastion'}),
   refinery:Object.freeze({id:'refinery',label:'Refinery',cost:900,hp:1250,footprint:[24,18],powerUse:18,powerSupply:0,category:'economy'}),
   barracks:Object.freeze({id:'barracks',label:'Barracks',cost:650,hp:900,footprint:[17,12],powerUse:10,powerSupply:0,category:'production'}),
   vehicleFactory:Object.freeze({id:'vehicleFactory',label:'Vehicle Factory',cost:1200,hp:1700,footprint:[30,23],powerUse:30,powerSupply:0,category:'production'}),

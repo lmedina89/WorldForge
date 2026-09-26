@@ -1,5 +1,19 @@
 # WorldForge Changelog
 
+## v0.13.0 — Building Forge 0.1 / Master Asset Integration
+- Added dedicated **RTS BLDG** workspace.
+- Added exact Aegis Command Nexus HQ v1.3 and Grid Bastion Power Plant v1.0 master GLBs to `assets/buildings/`.
+- Added shared master-building registry, required-root/socket validation and semantic faction material slots.
+- Added five faction presets plus custom Base/Primary/Secondary/Accent color controls.
+- Added functional preview animation for radar/fan roots.
+- Added native Y-up building GLB export and reusable building-definition JSON export.
+- Skirmish Lab 0.3 now replaces the blocky starting Construction Yard and Power Plant with their exact master GLBs.
+- Updated gameplay footprints/build radius to match the real master-building scale.
+- Added player/enemy faction-skin selection to Skirmish.
+- Added real Aegis HMMWV-50 and Talon AH-X deploy buttons as simulation-owned reference-asset test units.
+- Structures without approved masters continue using explicit fallback prototype geometry rather than being falsely labeled production-ready.
+- All 15 protected `src/generators/*.js` files, RTS Map Forge, Vehicle Forge/Baker and existing Aegis vehicle GLBs remain byte-identical to v0.12.0.
+
 ## v0.12.0 — RTS Simulation Foundation 0.1 / Protected Skirmish Refactor
 - Added a fixed 30 Hz simulation clock independent of render FPS.
 - Added stable numeric entity IDs and a serializable `EntityStore`.

@@ -1,3 +1,31 @@
+# WorldForge v0.13.0 — Building Forge 0.1 / Master Asset Integration
+
+WorldForge now has a dedicated **RTS BLDG** workspace for approved high-quality military building masters. The first two master assets are the exact **Aegis Command Nexus HQ v1.3** and **Aegis Grid Bastion Power Plant v1.0** GLBs. Forge does not procedurally downgrade these buildings; it loads their original geometry, validates their functional hierarchy, applies faction material slots, and exports faction variants.
+
+## Building Forge 0.1
+- Exact master GLB registry for Command Nexus HQ and Grid Bastion Power Plant.
+- Five faction palette presets: Aegis Olive, Desert Tan, Crimson, Slate Blue, Black Ops.
+- Editable **Base / Primary / Secondary / Accent** color slots for custom factions.
+- Neutral authored steel, glass, electrical, hazard and utility materials remain independent unless a master explicitly maps them to a faction slot.
+- Functional-root preview animation: HQ radar rotates; Power Plant cooling fans spin.
+- Master-asset validation reports mesh/triangle counts, functional roots, sockets and missing required nodes.
+- Exports native Y-up faction GLBs plus `worldforge.rts-building-master.v1` definition JSON.
+- Future Refinery, Barracks, Vehicle Factory and defense masters can be added to the same registry without changing Skirmish architecture.
+
+## Skirmish Lab 0.3
+- The old blocky starting Construction Yard is replaced at runtime by the exact **Command Nexus HQ v1.3** master GLB.
+- Purchased Power Plants now use the exact **Grid Bastion Power Plant v1.0** master GLB.
+- Construction/placement/economy state remains simulation-owned; the master GLBs are rendering/functional views of those entities.
+- Player and enemy faction skins can be selected before starting/resetting a skirmish.
+- The existing real Aegis-X v2 remains the direct-drive combat vehicle.
+- Added a real-asset test depot for the approved **Aegis HMMWV-50 v2** and **Aegis Talon AH-X** GLBs. They enter the simulation as real unit entities rather than placeholder geometry; direct vehicle-specific driving/flight/combat behavior remains future work.
+- Structures without approved master GLBs (Refinery, Barracks, Vehicle Factory, Gun Turret) intentionally keep their fallback prototype geometry until real masters are built.
+
+## Protected compatibility
+This is additive. All 15 files under `src/generators/` are byte-identical to v0.12.0. RTS Map Forge, Vehicle Forge/Baker and the packaged Aegis vehicle GLBs are also byte-identical.
+
+---
+
 # WorldForge v0.12.0 — RTS Simulation Foundation 0.1
 
 WorldForge now has a protected fixed-tick RTS simulation spine underneath Skirmish Lab. The visual/editor systems are preserved: Map Forge, Vehicle Forge, the approved Aegis assets, the RPG/world generator stack, and the existing Skirmish controls remain in place. The new layer changes who owns gameplay state: simulation data is authoritative and Three.js renders that state.
