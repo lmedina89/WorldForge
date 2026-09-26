@@ -1,0 +1,57 @@
+{
+  "schema": "worldforge.vehicle.recipe.v2-draft",
+  "name": "Aegis HMMWV-50 v2",
+  "family": "wheeled-light-tactical",
+  "role": "armed-recon-utility",
+  "style": "aegis-angular-modern",
+  "features": {
+    "wheelCount": 4,
+    "armoredCab": true,
+    "roofHeavyMGVisual": true,
+    "fourDoorRoots": true,
+    "frontSteeringRoots": true,
+    "wheelSpinRoots": true,
+    "turretTraverse": true,
+    "gunElevation": true,
+    "brushGuard": true,
+    "armoredGlass": true,
+    "suspensionDetail": true
+  },
+  "functionalHierarchy": {
+    "VehicleRoot": [
+      "ChassisRoot"
+    ],
+    "ChassisRoot": [
+      "BodyRoot",
+      "SteeringRoot_FL",
+      "SteeringRoot_FR",
+      "WheelSpinRoot_RL",
+      "WheelSpinRoot_RR"
+    ],
+    "SteeringRoot_FL": [
+      "WheelSpinRoot_FL"
+    ],
+    "SteeringRoot_FR": [
+      "WheelSpinRoot_FR"
+    ],
+    "BodyRoot": [
+      "DoorRoot_FL",
+      "DoorRoot_FR",
+      "DoorRoot_RL",
+      "DoorRoot_RR",
+      "TurretSocket"
+    ],
+    "TurretSocket": [
+      "TurretRoot"
+    ],
+    "TurretRoot": [
+      "GunPitchRoot"
+    ]
+  },
+  "sockets": [
+    "MuzzleSocket",
+    "ExhaustSocket",
+    "HeadlightSocket_L",
+    "HeadlightSocket_R"
+  ]
+}

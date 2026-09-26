@@ -9,7 +9,7 @@ import { WORLDFORGE_VERSION } from './core/schema.js';
 import { enrichExistingScene } from './core/production-metadata.js';
 import { snapScalar, snapRotationRadians, nearestLevel, nearestEdgeAdjustment, worldTraversalConnections } from './core/placement-tools.js';
 import { VehicleBaker, VEHICLE_BAKER_VERSION } from './vehicle/vehicle-baker.js';
-import { generateLowPolyVehicle, VEHICLE_GENERATOR_VERSION, VEHICLE_ARCHETYPES } from './vehicle/vehicle-generator.js';
+import { generateLowPolyVehicle, loadAegisReferenceVehicle, isAegisReferenceVehicle, VEHICLE_GENERATOR_VERSION, VEHICLE_ARCHETYPES } from './vehicle/vehicle-generator.js';
 
 const $=id=>document.getElementById(id);
 let mode='building',currentGroup=null,currentSpec=null,selectedPlacementId=null,selectionHelper=null,selectionGuideGroup=null,fieldLevelView='all',characterSprite=null,characterShadow=null,walkDebugGroup=null,characterPos=[0,0,0],characterDir='S',playtestActive=false,walkDebugEnabled=false,followCameraEnabled=true,playtestCameraOffset=new THREE.Vector3(16,-18,12),settlementCharacterSpawnOverride=null;
@@ -373,16 +373,25 @@ function updateVehicleUi(info=vehicleBaker.sourceInfo){
 }
 function vehicleForgeRecipe(){return {type:$('vehicleArchetype').value,seed:+$('vehicleSeed').value||48127,style:$('vehicleStyle').value,palette:$('vehiclePalette').value,silhouette:$('vehicleSilhouette').value,detail:$('vehicleDetail').value,roadWheels:$('vehicleRoadWheels').value};}
 function syncVehicleForgeUi(){
-  const mbt=$('vehicleArchetype').value==='mbt';
+  const type=$('vehicleArchetype').value;const mbt=type==='mbt';const reference=isAegisReferenceVehicle(type);
   for(const id of ['vehicleSilhouette','vehicleDetail','vehicleRoadWheels'])$(''+id).disabled=!mbt;
   $('vehicleMbtNote').hidden=!mbt;
+  $('vehicleReferenceNote').hidden=!reference;
+  $('vehicleStyle').disabled=reference;
+  $('vehicleSeed').disabled=reference;
+  $('vehicleRandomize').disabled=reference;
 }
-function generateVehicleFromUi(){
+async function generateVehicleFromUi(){
   syncVehicleForgeUi();
-  const recipe=vehicleForgeRecipe();const result=generateLowPolyVehicle(recipe);const name=`vf_${recipe.type}_${recipe.seed}.glb`;
-  const info=vehicleBaker.installGenerated(result.group,name,{generatedRecipe:result.recipe,generatedInfo:result.info});
-  $('vehicleForwardOffset').value='0';vehicleBaker.setForwardOffset(0);setVehicleDirection(+$('vehicleDirection').value||0);vehicleBaker.fitPreview(vehicleAspect());updateVehicleUi(info);
-  $('status').textContent=`Vehicle Forge ${VEHICLE_GENERATOR_VERSION} · ${result.info.label} generated · ${info.meshCount} meshes · ~${info.triangleCount.toLocaleString()} tris.`;
+  const recipe=vehicleForgeRecipe();const name=`vf_${recipe.type}_${recipe.seed}.glb`;
+  $('status').textContent=`Vehicle Forge ${VEHICLE_GENERATOR_VERSION} · building ${VEHICLE_ARCHETYPES[recipe.type]?.label||recipe.type}…`;
+  try{
+    const result=isAegisReferenceVehicle(recipe.type)?await loadAegisReferenceVehicle(recipe):generateLowPolyVehicle(recipe);
+    const extra={generatedRecipe:result.recipe,generatedInfo:result.info};
+    const info=result.sourceUp==='Y'?vehicleBaker.installGeneratedYUp(result.group,name,extra):vehicleBaker.installGenerated(result.group,name,extra);
+    $('vehicleForwardOffset').value='0';vehicleBaker.setForwardOffset(0);setVehicleDirection(+$('vehicleDirection').value||0);vehicleBaker.fitPreview(vehicleAspect());updateVehicleUi(info);
+    $('status').textContent=`Vehicle Forge ${VEHICLE_GENERATOR_VERSION} · ${result.info.label} ready · ${info.meshCount} meshes · ~${info.triangleCount.toLocaleString()} tris · ${result.info.quality||'generated'}.`;
+  }catch(err){$('status').textContent='Vehicle generation failed: '+err.message;}
 }
 async function loadVehicleBenchmark(){
   $('status').textContent='Loading included BTR-82 benchmark…';
@@ -391,7 +400,7 @@ async function loadVehicleBenchmark(){
 }
 async function activateVehicleMode(){
   showMode('vehicle');
-  if(!vehicleBaker.hasModel())generateVehicleFromUi();else{vehicleBaker.shadowCatcher.visible=$('vehicleShadow').checked;vehicleBaker.fitPreview(vehicleAspect());updateVehicleUi();$('status').textContent=`Vehicle Baker ${VEHICLE_BAKER_VERSION} ready.`;}
+  if(!vehicleBaker.hasModel())await generateVehicleFromUi();else{vehicleBaker.shadowCatcher.visible=$('vehicleShadow').checked;vehicleBaker.fitPreview(vehicleAspect());updateVehicleUi();$('status').textContent=`Vehicle Baker ${VEHICLE_BAKER_VERSION} ready.`;}
 }
 function setVehicleDirection(index){
   index=((Number(index)||0)%8+8)%8;$('vehicleDirection').value=String(index);vehicleBaker.setDirection(index);

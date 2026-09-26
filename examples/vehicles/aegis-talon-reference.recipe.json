@@ -1,0 +1,48 @@
+{
+  "schema": "worldforge.vehicle.recipe.v2-draft",
+  "name": "Aegis Talon AH-X",
+  "family": "rotary-wing-attack",
+  "role": "attack-helicopter",
+  "style": "aegis-angular-modern",
+  "referenceIntent": "Aegis-X MBT v2 quality bar translated to rotary wing",
+  "features": {
+    "mainRotorBlades": 4,
+    "tailRotorBlades": 4,
+    "rotorRadar": true,
+    "stubWings": true,
+    "rocketPods": 2,
+    "antiArmorMissiles": 4,
+    "chinGun": true,
+    "noseSensorTurret": true,
+    "landingGear": "three-point-wheel",
+    "engineNacelles": 2,
+    "teamPanels": true
+  },
+  "functionalHierarchy": {
+    "AircraftRoot": [
+      "FuselageRoot",
+      "MainRotorRoot",
+      "TailRotorRoot",
+      "SensorTurretRoot",
+      "GunYawRoot"
+    ],
+    "GunYawRoot": [
+      "GunPitchRoot"
+    ],
+    "FuselageRoot": [
+      "Hardpoint_L_Inboard",
+      "Hardpoint_L_Outboard",
+      "Hardpoint_R_Inboard",
+      "Hardpoint_R_Outboard"
+    ]
+  },
+  "sockets": [
+    "GunMuzzleSocket",
+    "RocketEffectSocket_L",
+    "RocketEffectSocket_R",
+    "EngineExhaustSocket_L",
+    "EngineExhaustSocket_R",
+    "MainRotorEffectSocket",
+    "TailRotorEffectSocket"
+  ]
+}

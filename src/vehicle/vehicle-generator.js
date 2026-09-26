@@ -1,9 +1,12 @@
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-export const VEHICLE_GENERATOR_VERSION='0.2.0';
+export const VEHICLE_GENERATOR_VERSION='0.3.0';
 
 export const VEHICLE_ARCHETYPES=Object.freeze({
   mbt:{label:'Main Battle Tank',drive:'tracked',quality:'aegis'},
+  hmmwv50:{label:'Aegis HMMWV-50',drive:'wheeled4',quality:'aegis-reference',reference:true},
+  attackHeli:{label:'Aegis Talon AH-X',drive:'rotaryWing',quality:'aegis-reference',reference:true},
   lightTank:{label:'Light Tank',drive:'tracked',length:6.0,width:3.0,height:1.25,wheels:5,module:'turret',weapon:'cannon',weaponScale:.72},
   apc:{label:'Tracked APC',drive:'tracked',length:6.8,width:3.2,height:1.75,wheels:6,module:'troop',weapon:'mg',weaponScale:.36},
   ifv:{label:'8×8 IFV',drive:'wheeled8',length:7.2,width:3.0,height:1.75,wheels:4,module:'ifv',weapon:'autocannon',weaponScale:.62},
@@ -28,6 +31,76 @@ const PALETTES=Object.freeze({
   slate:{armor:0x59636b,armor2:0x454d54,armor3:0x68757e,dark:0x1d2226,track:0x15191c,accent:0x8ea4ad,team:0x66a1b5,glass:0x21333c,light:0xbdd0d5},
   red:{armor:0x6e4a43,armor2:0x523732,armor3:0x80574f,dark:0x211f1e,track:0x191716,accent:0xa96859,team:0xc75745,glass:0x28373a,light:0xd59c74}
 });
+
+
+export const AEGIS_REFERENCE_VEHICLES=Object.freeze({
+  hmmwv50:{
+    label:'Aegis HMMWV-50',asset:'assets/aegis_hmmwv50_v2.glb',root:'VehicleRoot',drive:'wheeled4',quality:'aegis-reference',
+    functionalNodes:['VehicleRoot','ChassisRoot','BodyRoot','SteeringRoot_FL','SteeringRoot_FR','WheelSpinRoot_FL','WheelSpinRoot_FR','WheelSpinRoot_RL','WheelSpinRoot_RR','DoorRoot_FL','DoorRoot_FR','DoorRoot_RL','DoorRoot_RR','TurretSocket','TurretRoot','GunPitchRoot'],
+    sockets:['MuzzleSocket','ExhaustSocket','HeadlightSocket_L','HeadlightSocket_R']
+  },
+  attackHeli:{
+    label:'Aegis Talon AH-X',asset:'assets/aegis_talon_ahx.glb',root:'AircraftRoot',drive:'rotaryWing',quality:'aegis-reference',
+    functionalNodes:['AircraftRoot','FuselageRoot','MainRotorRoot','TailRotorRoot','SensorTurretRoot','GunYawRoot','GunPitchRoot'],
+    sockets:['GunMuzzleSocket','RocketEffectSocket_L','RocketEffectSocket_R','EngineExhaustSocket_L','EngineExhaustSocket_R','MainRotorEffectSocket','TailRotorEffectSocket']
+  }
+});
+
+const referenceLoader=new GLTFLoader();
+const referenceCache=new Map();
+
+export function isAegisReferenceVehicle(type){return !!AEGIS_REFERENCE_VEHICLES[type];}
+
+function paletteColorForMaterial(name,p){
+  if(name==='Armor_Olive')return p.armor;
+  if(name==='Armor_Dark')return p.armor2;
+  if(name==='Armor_Highlight')return p.armor3;
+  if(name==='Faction_Accent'||name==='Team_Accent')return p.team;
+  if(name==='Armored_Glass'||name==='Canopy_Optics'||name==='Sensor_Lens')return p.glass;
+  if(name==='Lamp_Lens')return p.light;
+  if(name==='Gunmetal'||name==='Mechanical_Dark')return p.dark;
+  if(name==='Rubber')return 0x1b1d1b;
+  return null;
+}
+
+function applyAegisReferencePalette(root,paletteName){
+  const p=PALETTES[paletteName]||PALETTES.olive;
+  root.traverse(o=>{
+    if(!o.isMesh||!o.material)return;
+    const mats=Array.isArray(o.material)?o.material:[o.material];
+    const next=mats.map(src=>{
+      const m=src.clone();
+      const c=paletteColorForMaterial(m.name,p);
+      if(c!=null&&m.color)m.color.setHex(c);
+      m.flatShading=true;m.needsUpdate=true;
+      return m;
+    });
+    o.material=Array.isArray(o.material)?next:next[0];
+    o.castShadow=true;o.receiveShadow=true;
+  });
+}
+
+async function loadReferenceRoot(spec){
+  let promise=referenceCache.get(spec.asset);
+  if(!promise){promise=referenceLoader.loadAsync(spec.asset);referenceCache.set(spec.asset,promise);}
+  const gltf=await promise;
+  const source=gltf.scene.getObjectByName(spec.root)||gltf.scene;
+  const clone=source.clone(true);
+  // VehicleBaker disposes replaced assets; detach geometry from the cached template so reloads stay valid.
+  clone.traverse(o=>{if(o.isMesh&&o.geometry)o.geometry=o.geometry.clone();});
+  return clone;
+}
+
+export async function loadAegisReferenceVehicle(recipe={}){
+  const type=recipe.type;const spec=AEGIS_REFERENCE_VEHICLES[type];
+  if(!spec)throw new Error(`Unknown Aegis reference vehicle: ${type}`);
+  const paletteName=PALETTES[recipe.palette]?recipe.palette:'olive';
+  const root=await loadReferenceRoot(spec);applyAegisReferencePalette(root,paletteName);
+  const normalizedRecipe={schema:'worldforge.vehicle-generator.v3',version:VEHICLE_GENERATOR_VERSION,type,seed:Number(recipe.seed)||48127,style:'aegis-reference',palette:paletteName,referenceAsset:spec.asset};
+  const info={label:spec.label,drive:spec.drive,archetype:type,seed:normalizedRecipe.seed,style:'aegis-reference',palette:paletteName,quality:spec.quality,referenceAsset:spec.asset,functionalHierarchy:true,functionalNodes:[...spec.functionalNodes],sockets:[...spec.sockets]};
+  root.userData.vehicleRecipe=normalizedRecipe;root.userData.vehicleInfo=info;
+  return {group:root,recipe:normalizedRecipe,info,sourceUp:'Y'};
+}
 
 function mulberry32(seed){let a=(Number(seed)||1)>>>0;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
 function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
@@ -308,7 +381,9 @@ function generateLegacyVehicle(type,base,recipe,r,m){
 }
 
 export function generateLowPolyVehicle(recipe={}){
-  const type=VEHICLE_ARCHETYPES[recipe.type]?recipe.type:'mbt';const base=VEHICLE_ARCHETYPES[type];const seed=Number(recipe.seed)||48127;const r=mulberry32(seed);
+  const type=VEHICLE_ARCHETYPES[recipe.type]?recipe.type:'mbt';
+  if(isAegisReferenceVehicle(type))throw new Error(`${type} is an Aegis reference archetype; use loadAegisReferenceVehicle().`);
+  const base=VEHICLE_ARCHETYPES[type];const seed=Number(recipe.seed)||48127;const r=mulberry32(seed);
   const style=['industrial','angular','compact'].includes(recipe.style)?recipe.style:'angular';const paletteName=PALETTES[recipe.palette]?recipe.palette:'olive';const materials=buildMaterials(paletteName);
   const built=type==='mbt'?generateAegisMBT({...recipe,style,palette:paletteName},r,materials):generateLegacyVehicle(type,base,{...recipe,style,palette:paletteName},r,materials);
   const g=built.root;const cfg=built.cfg;const silhouette=type==='mbt'?cfg.silhouette:null;

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-export const VEHICLE_BAKER_VERSION = '0.1.2';
+export const VEHICLE_BAKER_VERSION = '0.1.3';
 export const VEHICLE_DIRECTIONS = Object.freeze([
   { id:'N',  degrees: 90 },
   { id:'NE', degrees: 45 },
@@ -117,6 +117,10 @@ export class VehicleBaker{
 
   installGenerated(object3D,name='generated_vehicle',extraInfo={}){
     return this._installScene(object3D,name,{sourceUp:'Z',animations:[],extraInfo});
+  }
+
+  installGeneratedYUp(object3D,name='generated_vehicle',extraInfo={}){
+    return this._installScene(object3D,name,{sourceUp:'Y',animations:[],extraInfo});
   }
 
   _install(gltf,name){

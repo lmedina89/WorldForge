@@ -1,5 +1,20 @@
 # WorldForge Changelog
 
+## v0.9.8 — Vehicle Forge 0.3 / Aegis HMMWV + AH-X
+- Adds the exact approved **Aegis HMMWV-50 v2** as a reference-grade Forge archetype.
+- Adds the exact approved **Aegis Talon AH-X** attack helicopter as a reference-grade Forge archetype.
+- Preserves the HMMWV articulation hierarchy: steering roots, wheel-spin roots, four door roots, turret traverse, gun pitch, muzzle/exhaust/headlight sockets.
+- Preserves the helicopter articulation hierarchy: main/tail rotor roots, sensor turret, chin-gun yaw/pitch, weapon hardpoints and effect sockets.
+- Adds palette recoloring for both reference assets while preserving geometry and hierarchy.
+- Adds a Y-up generated/reference install path to Vehicle Baker 0.1.3 so reference GLBs retain their proper source coordinate system.
+- Reference archetypes intentionally disable seed/style randomization until their full procedural grammars are generalized from these approved assets.
+- Procedural Aegis MBT grammar remains unchanged.
+- Existing RPG/building/field/settlement generator implementations remain protected and untouched.
+
+---
+
+# WorldForge Changelog
+
 ## v0.9.7 — Vehicle Forge 0.2 / Aegis-grade MBT grammar
 - Replaces the crude MBT box grammar with a new purpose-built Aegis-X-quality procedural MBT generator.
 - Adds Wedge, Heavy and Compact silhouette families with controlled proportion envelopes rather than unconstrained random dimensions.

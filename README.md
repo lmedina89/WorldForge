@@ -1,3 +1,22 @@
+# WorldForge v0.9.8
+
+## Vehicle Forge 0.3 — Aegis HMMWV + Attack Helicopter integration
+
+Vehicle Forge now carries three Aegis-quality production targets side-by-side: the procedural **Aegis-grade MBT grammar**, the exact approved **Aegis HMMWV-50 v2** articulated reference asset, and the exact approved **Aegis Talon AH-X** articulated attack-helicopter reference asset.
+
+### New Aegis reference-grade families
+- **Aegis HMMWV-50** — 336 meshes / ~7,316 triangles. Preserves front steering roots, four wheel-spin roots, four door hinge roots, turret traverse, independent gun pitch, and muzzle/exhaust/headlight sockets.
+- **Aegis Talon AH-X** — 127 meshes / ~2,900 triangles. Preserves main/tail rotor roots, sensor turret, independent chin-gun yaw/pitch, four weapon hardpoints, and gun/rocket/engine/rotor effect sockets.
+- Both exact reference assets support WorldForge faction palettes without altering their geometry or hierarchy.
+
+### Why these are reference archetypes first
+The approved HMMWV and AH-X geometry is loaded directly so WorldForge cannot accidentally lower the visual standard while those family grammars are still being generalized. Seed/style controls are disabled for these two reference archetypes for now; palette recoloring, GLB export, metadata export and 8-direction sprite baking remain available. Future family grammar work starts from these exact quality targets.
+
+### Compatibility
+The RPG/world generator stack remains protected. All 15 files under `src/generators/` are byte-identical to v0.9.7.
+
+---
+
 # WorldForge v0.9.7
 
 ## Vehicle Forge 0.2 — Aegis-grade MBT foundation
