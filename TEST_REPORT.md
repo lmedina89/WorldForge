@@ -1,3 +1,36 @@
+# WorldForge v0.12.0 Test Report — RTS Simulation Foundation 0.1
+
+Status: **PASS**
+
+## Simulation foundation
+- Fixed 30 Hz stepping and bounded accumulator behavior: **PASS**.
+- Pause + single-tick stepping: **PASS**.
+- Stable entity IDs and serializable entity snapshots: **PASS**.
+- Ordered tick-scheduled command queue and command source metadata: **PASS**.
+- Deterministic seeded simulation state/hash repeatability: **PASS**.
+- Shared building/locomotor/unit/weapon definitions: **PASS**.
+- Tracked / wheeled / helicopter locomotor profiles present: **PASS**.
+- Semantic RTS command vocabulary includes MOVE / STOP / ATTACK / BUILD / PRODUCE plus direct-drive adapters: **PASS**.
+- Skirmish drive, aim, fire and build placement are routed through the command stream: **PASS**.
+- Simulation-owned tank health/transform/turret/weapon cooldown, building construction, projectile state and damage: **PASS**.
+- Live simulation debug UI, pause, step, command log and snapshot export: **PASS**.
+- DOM audit: **263 IDs / 263 unique / 222 unique app references / 0 missing / 0 duplicates**.
+
+## Regression / compatibility
+- Full automated suite: **15/15 PASS**.
+- Entire `src/generators/*.js` tree vs v0.11.0: **15/15 byte-identical**.
+- `src/rts-map/rts-map-forge.js` vs v0.11.0: **byte-identical**.
+- Vehicle Generator 0.3 and Vehicle Baker 0.1.3 vs v0.11.0: **byte-identical**.
+- All packaged GLB assets vs v0.11.0: **byte-identical**.
+- RTS Map Forge traversal/bridge/foliage tests: **PASS**.
+- Vehicle Forge / Aegis reference tests: **PASS**.
+- Settlement / field / surface / placement / production metadata regression tests: **PASS**.
+
+## Browser smoke-test note
+Chromium is installed in this container, but the environment blocks local/file-page navigation by administrator policy, so I could not execute a final GPU click-through. JavaScript syntax, DOM wiring, data-layer behavior, deterministic simulation tests, packaged assets, and all regression suites pass. The first GitHub Pages/iPhone launch remains the final visual/runtime smoke test.
+
+---
+
 # WorldForge v0.11.0 Test Report — Skirmish Lab 0.1
 
 Status: **PASS**

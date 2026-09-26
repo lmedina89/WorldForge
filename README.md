@@ -1,3 +1,32 @@
+# WorldForge v0.12.0 — RTS Simulation Foundation 0.1
+
+WorldForge now has a protected fixed-tick RTS simulation spine underneath Skirmish Lab. The visual/editor systems are preserved: Map Forge, Vehicle Forge, the approved Aegis assets, the RPG/world generator stack, and the existing Skirmish controls remain in place. The new layer changes who owns gameplay state: simulation data is authoritative and Three.js renders that state.
+
+## Simulation foundation
+- Fixed **30 Hz** gameplay clock independent of render FPS, with bounded catch-up steps.
+- Stable numeric entity IDs through a dedicated `EntityStore`.
+- Ordered semantic command queue with command source (`player`, `ai`, `script`, `system`) and execution tick.
+- Shared command vocabulary prepared for `MOVE`, `STOP`, `ATTACK`, `GUARD`, `PATROL`, `BUILD`, `PRODUCE`, direct-drive input, aim and fire.
+- Central faction state for credits, power supply/use, ownership and snapshots.
+- Pure data definitions for buildings, locomotors, units and weapons. The Three.js building generator now consumes the same building definitions as the simulation instead of owning gameplay values itself.
+- Seeded simulation RNG, serializable snapshots and deterministic state hashes for replay/debug/network groundwork.
+- Pause, resume, single-tick advance, live tick/entity/hash readout, recent command log and snapshot export in the SKIRMISH panel.
+
+## Skirmish Lab 0.2 migration
+The current playable loop is still intact, but key state has moved under the simulation layer:
+- Aegis-X transform, health, locomotor input, turret aim and weapon cooldown are simulation components.
+- Direct drive controls become queued commands rather than mutating the Three.js tank directly.
+- Aim, fire and building placement enter the command stream.
+- Building construction progress is simulation-owned; Three.js only reflects scale/progress.
+- Shells are simulation entities with velocity, gravity, lifetime, damage and collision state; the renderer creates the visible shell, muzzle flash, impacts, smoke and explosions.
+- Credits and power are owned by `FactionState`.
+- The real `MuzzleSocket` is retained as a temporary render-to-simulation compatibility adapter for exact projectile spawn position while the rest of the projectile state is simulation-owned.
+
+## Compatibility rule
+This is an additive RTS-side refactor, not a WorldForge rewrite. All 15 files under `src/generators/` are byte-identical to v0.11.0. RTS Map Forge 0.2.1, Vehicle Forge 0.3, Vehicle Baker 0.1.3 and all packaged GLBs are unchanged.
+
+---
+
 # WorldForge v0.11.0 — Skirmish Lab 0.1
 
 WorldForge now has its first playable RTS vertical slice. Generate an RTS map, open **SKIRMISH**, and start a scenario with the real articulated Aegis-X v2 tank plus a gameplay-owned Construction Yard. The terrain generator still never prebuilds faction bases.

@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { BUILDING_DEFINITIONS } from './data/rts-definitions.js';
 
 export const RTS_BUILDING_VERSION='0.1.0';
 
@@ -9,14 +10,7 @@ const PALETTES={
   red:{armor:0x6a5148,dark:0x2b2524,trim:0x8f6a5e,accent:0xd8a247,glass:0x46565f,concrete:0x6c6763}
 };
 
-export const RTS_BUILDINGS=Object.freeze({
-  constructionYard:{id:'constructionYard',label:'Construction Yard',cost:0,hp:2200,footprint:[24,20],powerUse:0,powerSupply:0,buildRadius:125,category:'core'},
-  powerPlant:{id:'powerPlant',label:'Power Plant',cost:500,hp:900,footprint:[18,14],powerUse:0,powerSupply:100,category:'power'},
-  refinery:{id:'refinery',label:'Refinery',cost:900,hp:1250,footprint:[24,18],powerUse:18,powerSupply:0,category:'economy'},
-  barracks:{id:'barracks',label:'Barracks',cost:650,hp:900,footprint:[17,12],powerUse:10,powerSupply:0,category:'production'},
-  vehicleFactory:{id:'vehicleFactory',label:'Vehicle Factory',cost:1200,hp:1700,footprint:[30,23],powerUse:30,powerSupply:0,category:'production'},
-  gunTurret:{id:'gunTurret',label:'Gun Turret',cost:600,hp:700,footprint:[9,9],powerUse:12,powerSupply:0,category:'defense'}
-});
+export const RTS_BUILDINGS=BUILDING_DEFINITIONS;
 
 function materials(name='olive'){
   const p=PALETTES[name]||PALETTES.olive;

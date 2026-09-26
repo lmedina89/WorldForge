@@ -497,6 +497,9 @@ function updateSkirmishUi(state=skirmish.state()){
   $('skirmishHudStats').textContent=`$${state.credits.toLocaleString()} · HP ${Math.round(state.tankHp)} · ${state.powerNet>=0?'+':''}${state.powerNet} PWR`;
   $('skirmishMessage').textContent=state.message||`Skirmish Lab ${SKIRMISH_VERSION} ready.`;
   $('skirmishFollow').textContent=`FOLLOW TANK: ${skirmish.follow?'ON':'OFF'}`;
+  $('skirmishSimStatus').textContent=`SIM ${state.simHz} HZ · TICK ${state.simTick} · ${state.entityCount} ENTITIES · HASH ${state.stateHash}`;
+  $('skirmishSimPause').textContent=state.simPaused?'RESUME SIM':'PAUSE SIM';
+  $('skirmishCommandLog').textContent=state.commandLog?.length?state.commandLog.map(c=>`#${c.executedTick} ${c.source.toUpperCase()} ${c.type}`).join('\n'):'No commands executed yet.';
   document.querySelectorAll('[data-skirmish-build]').forEach(b=>b.classList.toggle('active',b.dataset.skirmishBuild===state.pendingBuild));
   if(mode==='skirmish')$('seedLabel').textContent=`$${state.credits.toLocaleString()}`;
 }
@@ -507,7 +510,7 @@ async function activateSkirmishMode({reset=false}={}){
     catch(err){$('status').textContent='Skirmish map generation failed: '+err.message;return;}
   }
   showMode('skirmish');rtsMapForge.overlay.visible=false;rtsMapForge.movementOverlay.visible=false;rtsMapForge.setFogPreview(false);
-  try{await skirmish.start({reset});configureSceneForMode();skirmish.resizeCamera();drawRTSMapMinimap();updateSkirmishUi();$('status').textContent=`Skirmish Lab ${SKIRMISH_VERSION} · real Aegis-X v2 loaded · construction + combat test active.`;}
+  try{await skirmish.start({reset});configureSceneForMode();skirmish.resizeCamera();drawRTSMapMinimap();updateSkirmishUi();$('status').textContent=`Skirmish Lab ${SKIRMISH_VERSION} · 30 Hz RTS simulation active · real Aegis-X v2 construction/combat test ready.`;}
   catch(err){$('status').textContent='Skirmish start failed: '+err.message;}
 }
 
@@ -579,6 +582,9 @@ document.querySelectorAll('[data-skirmish-build]').forEach(b=>b.onclick=()=>{ski
 $('skirmishFollow').onclick=()=>{skirmish.setFollow(!skirmish.follow);updateSkirmishUi();};
 $('skirmishFirePanel').onclick=()=>{skirmish.fire();updateSkirmishUi();};
 $('skirmishFire').onclick=()=>{skirmish.fire();updateSkirmishUi();};
+$('skirmishSimPause').onclick=()=>{skirmish.setSimulationPaused(!skirmish.sim.paused);updateSkirmishUi();};
+$('skirmishSimStep').onclick=()=>{skirmish.stepSimulation();updateSkirmishUi();drawRTSMapMinimap();};
+$('skirmishExportSnapshot').onclick=()=>{const snap=skirmish.exportSnapshot();download(new Blob([JSON.stringify(snap,null,2)],{type:'application/json'}),`worldforge_skirmish_tick_${snap.tick}.snapshot.json`);$('status').textContent=`Simulation snapshot exported at tick ${snap.tick}.`;};
 document.querySelectorAll('[data-skirmish-drive]').forEach(b=>{
   const key=b.dataset.skirmishDrive;
   const down=e=>{e.preventDefault();b.setPointerCapture?.(e.pointerId);skirmish.setDrive(key,true);};

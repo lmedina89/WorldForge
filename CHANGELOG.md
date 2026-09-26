@@ -1,5 +1,19 @@
 # WorldForge Changelog
 
+## v0.12.0 — RTS Simulation Foundation 0.1 / Protected Skirmish Refactor
+- Added a fixed 30 Hz simulation clock independent of render FPS.
+- Added stable numeric entity IDs and a serializable `EntityStore`.
+- Added an ordered command bus with tick scheduling and player/AI/script/system command sources.
+- Added the shared RTS command vocabulary for move/stop/attack/guard/patrol/build/produce plus direct-drive, aim and fire adapters.
+- Added central faction state for credits, power and entity ownership.
+- Added data-driven building, locomotor, unit and weapon definitions separate from Three.js rendering.
+- Migrated Aegis-X drive state, health, turret aim, weapon cooldown, construction progress, projectiles, damage and faction economy into simulation-owned data while preserving the existing Skirmish Lab UI and visuals.
+- Added seeded simulation RNG, deterministic snapshots/state hashes and JSON snapshot export.
+- Added pause/resume, single-tick stepping, live tick/entity/hash status and recent command log to Skirmish Lab.
+- Kept the existing real `MuzzleSocket` as a compatibility adapter for exact shell spawn position; projectile motion/damage are now simulation-owned.
+- Protected all 15 existing `src/generators/*.js` files byte-for-byte; RTS Map Forge, Vehicle Forge/Baker and packaged GLBs are unchanged.
+
+
 ## v0.11.0 — Skirmish Lab 0.1 / First Playable Combat + Construction Loop
 - Added a dedicated SKIRMISH workspace using RTS Map Forge terrain as the playable battlefield.
 - Added the exact articulated Aegis-X v2 GLB as the player test tank.

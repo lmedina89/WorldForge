@@ -1,0 +1,12 @@
+export const RTS_COMMANDS=Object.freeze({
+  MOVE:'MOVE',
+  STOP:'STOP',
+  ATTACK:'ATTACK',
+  GUARD:'GUARD',
+  PATROL:'PATROL',
+  BUILD:'BUILD',
+  PRODUCE:'PRODUCE',
+  DRIVE_INPUT:'DRIVE_INPUT',
+  AIM:'AIM',
+  FIRE:'FIRE'
+});

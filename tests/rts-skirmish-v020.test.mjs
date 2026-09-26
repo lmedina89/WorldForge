@@ -1,0 +1,25 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const here=path.dirname(fileURLToPath(import.meta.url)),root=path.resolve(here,'..');
+const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
+const app=fs.readFileSync(path.join(root,'src/app.js'),'utf8');
+const sk=fs.readFileSync(path.join(root,'src/rts/skirmish-test.js'),'utf8');
+const buildings=fs.readFileSync(path.join(root,'src/rts/rts-building-assets.js'),'utf8');
+const defs=fs.readFileSync(path.join(root,'src/rts/data/rts-definitions.js'),'utf8');
+assert.match(sk,/SKIRMISH_VERSION='0\.2\.0'/);
+assert.match(buildings,/RTS_BUILDING_VERSION='0\.1\.0'/);
+for(const id of ['constructionYard','powerPlant','refinery','barracks','vehicleFactory','gunTurret'])assert.ok(defs.includes(`${id}:`),`missing building definition ${id}`);
+assert.ok(buildings.includes('BUILDING_DEFINITIONS'),'render assets must consume shared building definitions');
+for(const node of ['BuildingRoot','DoorRoot','ProductionExit','TurretRoot','GunPitchRoot','MuzzleSocket'])assert.ok(buildings.includes(node),`missing building node ${node}`);
+const tank=path.join(root,'assets/aegis_x_mbt_v2.glb');assert.ok(fs.existsSync(tank));assert.ok(fs.statSync(tank).size>50000);
+const buf=fs.readFileSync(tank);let off=12,json=null;while(off<buf.length){const len=buf.readUInt32LE(off),type=buf.readUInt32LE(off+4);off+=8;const chunk=buf.subarray(off,off+len);off+=len;if(type===0x4E4F534A){json=JSON.parse(chunk.toString('utf8').replace(/\u0000+$/,'').trim());break;}}assert.ok(json,'GLB JSON chunk missing');const names=new Set((json.nodes||[]).map(n=>n.name));for(const name of ['VehicleRoot','HullRoot','TurretRoot','GunPitchRoot','MuzzleSocket'])assert.ok(names.has(name),`Aegis-X node missing: ${name}`);
+for(const id of ['skirmishPanel','skirmishHud','skirmishFire','skirmishStart','skirmishReset'])assert.match(html,new RegExp(`id="${id}"`));
+for(const phrase of ['UNIT_DEFINITIONS.aegisMbt','movementAt(nx,ny,loc.movementClass)','placeSelectedBuilding','_muzzleFlash','_impact','RTSSimulation','RTS_COMMANDS.FIRE','RTS_COMMANDS.BUILD'])assert.ok(sk.includes(phrase),`skirmish source missing ${phrase}`);
+assert.ok(defs.includes("muzzleSocket:'MuzzleSocket'"),'weapon definition missing MuzzleSocket');
+assert.ok(app.includes("next==='skirmish'"));
+assert.ok(app.includes('skirmish.update(dt)'));
+for(const id of ['skirmishSimStatus','skirmishSimPause','skirmishSimStep','skirmishExportSnapshot','skirmishCommandLog'])assert.match(html,new RegExp(`id=\"${id}\"`));
+console.log(JSON.stringify({ok:true,skirmish:'0.2.0',buildings:6,tankBytes:fs.statSync(tank).size}));

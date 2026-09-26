@@ -129,7 +129,7 @@
     <p class="miniNote">Generated tactical structure includes ridge barriers, deliberate passes, valleys/ravines, mountain pockets, hidden expansion bowls, high ground, roads, raised/graded river bridges, resource zones, forests/rocks, and class-specific traversal metadata. Tracked, wheeled, infantry, amphibious and air movement are audited separately.</p>
   </section>
   <section id="skirmishPanel" hidden>
-    <div class="sectionTitle">SKIRMISH LAB 0.1 · FIRST PLAYABLE LOOP</div>
+    <div class="sectionTitle">SKIRMISH LAB 0.2 · RTS SIMULATION FOUNDATION</div>
     <div class="skirmishStatusCard"><b id="skirmishEconomy">$5,000 · POWER 0 / 0</b><span id="skirmishTankStatus">AEGIS-X · 1200 / 1200 HP</span></div>
     <div class="skirmishButtons"><button id="skirmishStart" class="skirmishPrimary">START / RESUME SKIRMISH</button><button id="skirmishReset">RESET SKIRMISH</button></div>
     <p class="miniNote"><b>Scenario start:</b> a gameplay-owned Construction Yard and one real Aegis-X v2 test tank spawn in your reserved start region. Map Forge still creates terrain only.</p>
@@ -145,7 +145,12 @@
     <p class="miniNote">Select a structure, then tap valid buildable terrain near one of your completed structures. Credits are deducted immediately and the structure constructs in-place.</p>
     <div class="sectionTitle">COMBAT TEST</div>
     <div class="skirmishButtons"><button id="skirmishFollow">FOLLOW TANK: ON</button><button id="skirmishFirePanel">FIRE MAIN GUN</button></div>
-    <p class="miniNote">Hold the drive pad or WASD to drive the articulated Aegis-X across tracked-vehicle terrain. Tap the battlefield to aim the independent turret. FIRE launches a real projectile from <code>MuzzleSocket</code> with muzzle flash, ballistic drop, impact particles, damage, explosion and smoke.</p>
+    <p class="miniNote">Hold the drive pad or WASD to drive the articulated Aegis-X across tracked-vehicle terrain. Tap the battlefield to aim the independent turret. FIRE now enters the fixed-tick command stream; projectile gameplay state is simulation-owned while Three.js renders the shell and effects.</p>
+    <div class="sectionTitle">SIMULATION DEBUG</div>
+    <div id="skirmishSimStatus" class="skirmishSimStatus">SIM 30 HZ · TICK 0 · 0 ENTITIES</div>
+    <div class="skirmishButtons"><button id="skirmishSimPause">PAUSE SIM</button><button id="skirmishSimStep">STEP 1 TICK</button></div>
+    <button id="skirmishExportSnapshot" class="wideEditButton">EXPORT SIM SNAPSHOT</button>
+    <div id="skirmishCommandLog" class="skirmishCommandLog">No commands executed yet.</div>
     <div id="skirmishMessage" class="mapScore">Skirmish not started.</div>
   </section>
   <section id="placementEditorPanel" hidden>
