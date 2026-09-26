@@ -109,7 +109,7 @@
     <p class="miniNote">The generated models are intended to be usable directly as lightweight 3D GLBs or baked to sprites. Imported GLBs assume forward +X at offset 0; adjust offset when needed. The included BTR benchmark is auto-calibrated to −90°.</p>
   </section>
   <section id="rtsMapPanel" hidden>
-    <div class="sectionTitle">RTS MAP FORGE 0.1 · TACTICAL BATTLEFIELD</div>
+    <div class="sectionTitle">RTS MAP FORGE 0.2 · TACTICAL TRAVERSAL</div>
     <label>Map seed<div class="seedrow"><input id="mapSeed" type="number" value="731904"><button id="mapRandomize">↻</button></div></label>
     <div class="cols"><label>Battlefield size<select id="mapSize"><option value="512">Small · 512 m</option><option value="768">Medium · 768 m</option><option value="1024" selected>Large · 1,024 m</option><option value="1536">Huge · 1,536 m</option></select></label><label>Start regions<select id="mapPlayers"><option value="2">2 factions</option><option value="4" selected>4 factions</option></select></label></div>
     <div class="cols"><label>Biome<select id="mapBiome"><option value="temperate" selected>Temperate</option><option value="drylands">Drylands</option><option value="alpine">Alpine</option></select></label><label>Tactical profile<select id="mapTacticalProfile"><option value="balanced" selected>Balanced Warfare</option><option value="mountainPasses">Mountain Passes</option><option value="valleyWar">Valley / Ravine War</option></select></label></div>
@@ -121,11 +121,12 @@
     <button id="mapGenerate" class="primary">GENERATE TACTICAL MAP</button>
     <div class="mapViewButtons"><button id="mapViewOverview">EDITOR 3/4</button><button id="mapViewTop">TOP MAP</button><button id="mapViewStart">START REGION</button><button id="mapViewTactical">RTS CAMERA</button></div>
     <div class="mapViewButtons"><button id="mapFogPreview">FOG PREVIEW: OFF</button><button id="mapShowZones">TACTICAL ZONES: ON</button></div>
+    <label>Traversal / movement preview<select id="mapMovementPreview"><option value="off" selected>Off</option><option value="tracked">Tracked armor</option><option value="wheeled">Wheeled vehicles</option><option value="infantry">Infantry / foot</option><option value="amphibious">Amphibious</option><option value="air">Air / helicopter</option></select></label>
     <div id="mapTacticalScore" class="mapScore">Generate a map to audit tactical structure.</div>
     <div class="sectionTitle">MAP EXPORT</div>
     <div class="mapViewButtons"><button id="mapExportRecipe">MAP RECIPE</button><button id="mapExportMeta">GAME META</button><button id="mapExportGLB">TERRAIN GLB</button><button id="mapExportPNG">SCREENSHOT</button></div>
     <p class="miniNote"><b>Terrain only:</b> start regions are reserved/buildable terrain metadata, not prebuilt faction bases. Buildings remain separate assets and must be purchased/placed by the future RTS economy and AI systems.</p>
-    <p class="miniNote">Generated tactical structure includes ridge barriers, deliberate passes, valleys/ravines, mountain pockets, hidden expansion bowls, high ground, roads, river crossings, resource zones, forests/rocks, and a compact navigation/buildability grid.</p>
+    <p class="miniNote">Generated tactical structure includes ridge barriers, deliberate passes, valleys/ravines, mountain pockets, hidden expansion bowls, high ground, roads, raised/graded river bridges, resource zones, forests/rocks, and class-specific traversal metadata. Tracked, wheeled, infantry, amphibious and air movement are audited separately.</p>
   </section>
   <section id="placementEditorPanel" hidden>
     <div class="sectionTitle fieldEditTitle">FIELD EDITOR</div>

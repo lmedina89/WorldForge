@@ -1,3 +1,20 @@
+# WorldForge v0.10.0 — RTS Map Forge 0.2
+
+RTS Map Forge 0.2 adds movement-class-aware tactical terrain while keeping faction structures separate from terrain generation. The map export now contains enough navigation metadata for the browser skirmish prototype — and later a Godot migration — to make different unit classes genuinely care about geography.
+
+## Traversal classes
+- **Tracked** — handles rough ground and steeper slopes; blocked by true cliffs/deep water unless a bridge exists.
+- **Wheeled** — lower slope tolerance and strong road preference.
+- **Infantry** — highest ground slope tolerance and low forest penalty.
+- **Amphibious** — traverses valid land plus river/water cells.
+- **Air** — ignores ground slope/water navigation and uses the air layer.
+
+`GAME META` exports a 64×64 navigation layer with per-cell slope, terrain flags, movement masks and compact per-class costs. Bridges export explicit endpoints, deck elevation, water clearance, approach length and allowed classes. Use the **Traversal / movement preview** selector to inspect each class directly on the generated terrain.
+
+Trees are now explicitly Z-up. Bridges sample their banks/water and are raised with graded approach geometry so the bridge itself is a valid traversal link rather than decorative geometry placed in the river depression.
+
+---
+
 # WorldForge v0.9.8
 
 ## RTS Map Forge 0.1 — v0.9.9

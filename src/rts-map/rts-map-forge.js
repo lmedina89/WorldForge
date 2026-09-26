@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export const RTS_MAP_FORGE_VERSION='0.1.0';
+export const RTS_MAP_FORGE_VERSION='0.2.0';
 export const RTS_MAP_SCHEMA='worldforge.rts-map.v1';
 
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -26,6 +26,18 @@ const BIOMES={
   drylands:{low:0x8b7c59,mid:0x9b895f,high:0xa29167,tree:0x5e6d3d,trunk:0x65513a,rock:0x81745f,road:0x6b6254,water:0x538697,resource:0xd4b04d},
   alpine:{low:0x667760,mid:0x6f7965,high:0x8b8d80,tree:0x2e4e39,trunk:0x534638,rock:0x777a77,road:0x555854,water:0x4f8192,resource:0xcbb04c}
 };
+
+
+export const RTS_MOVEMENT_CLASSES=Object.freeze({
+  tracked:{bit:1,label:'Tracked',maxSlopeDeg:32,roadCost:.78,groundCost:1.00,roughCost:1.28,forestPenalty:.07},
+  wheeled:{bit:2,label:'Wheeled',maxSlopeDeg:22,roadCost:.56,groundCost:1.22,roughCost:2.05,forestPenalty:.16},
+  infantry:{bit:4,label:'Infantry',maxSlopeDeg:42,roadCost:.86,groundCost:1.00,roughCost:1.14,forestPenalty:.025},
+  amphibious:{bit:8,label:'Amphibious',maxSlopeDeg:30,roadCost:.88,groundCost:1.08,roughCost:1.34,waterCost:1.18,forestPenalty:.06},
+  air:{bit:16,label:'Air',maxSlopeDeg:90,airCost:1.00}
+});
+const MOVEMENT_ORDER=Object.freeze(['tracked','wheeled','infantry','amphibious','air']);
+const NAV_FLAG=Object.freeze({buildable:1,water:2,cliff:4,road:8,bridge:16,forest:32,rough:64});
+const toCost10=v=>v===null||!Number.isFinite(v)?0:Math.max(1,Math.min(255,Math.round(v*10)));
 
 export function normalizeRTSMapRecipe(input={}){
   const size=[512,768,1024,1536].includes(Number(input.size))?Number(input.size):1024;
@@ -53,21 +65,25 @@ export class RTSMapForge{
     this.scene=scene;this.camera=camera;this.renderer=renderer;this.controls=controls;
     this.root=new THREE.Group();this.root.name='WorldForgeRTSMap';this.root.visible=false;scene.add(this.root);
     this.overlay=new THREE.Group();this.overlay.name='WorldForgeRTSMapOverlay';this.overlay.visible=false;scene.add(this.overlay);
+    this.movementOverlay=new THREE.Group();this.movementOverlay.name='WorldForgeRTSMovementOverlay';this.movementOverlay.visible=false;scene.add(this.movementOverlay);
     this.lightRig=new THREE.Group();this.lightRig.visible=false;
     const hemi=new THREE.HemisphereLight(0xf2f8ff,0x68735d,1.55);
     const key=new THREE.DirectionalLight(0xffefd2,1.35);key.position.set(-180,-230,330);key.castShadow=true;key.shadow.mapSize.set(1024,1024);key.shadow.camera.near=10;key.shadow.camera.far=2800;this.mapKey=key;
     this.lightRig.add(hemi,key);scene.add(this.lightRig);
     this.recipe=null;this.metadata=null;this.heightAt=()=>0;this.fogPreview=false;this.fogTexture=null;this.fogMesh=null;this.fogCanvas=null;this.fogCtx=null;
+    this.movementPreview='off';this.bridgeData=[];this.roadFns=[];this.treePoints=[];
   }
 
   setActive(active){
     this.root.visible=!!active;this.overlay.visible=!!active;this.lightRig.visible=!!active;
+    this.movementOverlay.visible=!!active&&this.movementPreview!=='off'&&!!this.metadata;
     if(this.fogMesh)this.fogMesh.visible=!!active&&this.fogPreview;
   }
 
   disposeGenerated(){
-    for(const group of [this.root,this.overlay]){while(group.children.length){const c=group.children[group.children.length-1];group.remove(c);disposeGroup(c);}}
+    for(const group of [this.root,this.overlay,this.movementOverlay]){while(group.children.length){const c=group.children[group.children.length-1];group.remove(c);disposeGroup(c);}}
     this.fogTexture?.dispose?.();this.fogTexture=null;this.fogMesh=null;this.fogCanvas=null;this.fogCtx=null;
+    this.bridgeData=[];this.roadFns=[];this.treePoints=[];
   }
 
   _layout(recipe){
@@ -156,12 +172,52 @@ export class RTSMapForge{
     const m=new THREE.Mesh(g,mat(color,.96));m.receiveShadow=true;return m;
   }
 
-  _addBridge(x,riverFn){
-    const size=this.recipe.size,y=riverFn(x),z=this.heightAt(x,y)+size*.0022,w=size*.042,d=size*.022;
-    const g=new THREE.Group();g.name=`Bridge_${Math.round(x)}`;g.position.set(x,y,z);g.rotation.z=Math.atan2(riverFn(x+2)-riverFn(x-2),4)+Math.PI/2;
-    box(g,0,0,0,w,d,size*.0012,0x77766d,.82);
-    for(const sy of [-d*.48,d*.48])box(g,0,sy,size*.001,w,d*.025,size*.0014,0x3e4542,.75);
+  _bridgeFrame(x,riverFn){
+    const size=this.recipe.size,riverWidth=size*.032,y=riverFn(x),e=Math.max(1,size/1024*2);
+    const tangent=new THREE.Vector2(2*e,riverFn(x+e)-riverFn(x-e)).normalize();
+    const axis=new THREE.Vector2(-tangent.y,tangent.x).normalize();
+    const angle=Math.atan2(axis.y,axis.x);
+    const bankOffset=riverWidth*.72,approachLength=clamp(size*.030,18,42),bridgeWidth=clamp(size*.0105,8.5,14),deckThickness=clamp(size*.00115,.65,1.65);
+    const ax=x+axis.x*bankOffset,ay=y+axis.y*bankOffset,bx=x-axis.x*bankOffset,by=y-axis.y*bankOffset;
+    const outerA={x:x+axis.x*(bankOffset+approachLength),y:y+axis.y*(bankOffset+approachLength)};
+    const outerB={x:x-axis.x*(bankOffset+approachLength),y:y-axis.y*(bankOffset+approachLength)};
+    const bankA=this.heightAt(ax,ay),bankB=this.heightAt(bx,by),outerAH=this.heightAt(outerA.x,outerA.y),outerBH=this.heightAt(outerB.x,outerB.y);
+    const waterZ=this.heightAt(x,y)-1.05;
+    const minClearance=clamp(size*.0018,1.4,2.8),deckLift=clamp(size*.0008,.55,1.15);
+    const deckZ=Math.max(bankA,bankB,waterZ+minClearance)+deckLift;
+    const deckLength=bankOffset*2*1.08;
+    return {x,y,angle,axis:[axis.x,axis.y],riverWidth,bankOffset,approachLength,bridgeWidth,deckThickness,deckLength,deckZ,waterZ,
+      bankA:{x:ax,y:ay,z:bankA},bankB:{x:bx,y:by,z:bankB},outerA:{...outerA,z:outerAH},outerB:{...outerB,z:outerBH}};
+  }
+
+  _bridgeRamp(group,side,frame,biome){
+    const deckHalf=frame.deckLength*.5,approach=frame.approachLength,outer=side>0?frame.outerA:frame.outerB;
+    const delta=frame.deckZ-outer.z,len=Math.hypot(approach,delta),thickness=Math.max(.45,frame.deckThickness*.72);
+    const ramp=new THREE.Mesh(new THREE.BoxGeometry(len,frame.bridgeWidth,thickness),mat(biome.road,.91));
+    ramp.name=side>0?'Approach_A':'Approach_B';
+    ramp.position.set(side*(deckHalf+approach*.5),0,(frame.deckZ+outer.z)*.5+thickness*.5);
+    ramp.rotation.y=side*Math.atan2(delta,approach);
+    ramp.castShadow=false;ramp.receiveShadow=true;group.add(ramp);
+  }
+
+  _addBridge(x,riverFn,index=0){
+    const frame=this._bridgeFrame(x,riverFn),biome=BIOMES[this.recipe.biome],g=new THREE.Group();
+    g.name=`Bridge_${String(index+1).padStart(2,'0')}`;g.position.set(frame.x,frame.y,0);g.rotation.z=frame.angle;
+    const deck=box(g,0,0,frame.deckZ,frame.deckLength,frame.bridgeWidth,frame.deckThickness,0x77766d,.82);deck.name='BridgeDeck';
+    const railH=Math.max(.8,frame.deckThickness*1.15);
+    for(const sy of [-frame.bridgeWidth*.48,frame.bridgeWidth*.48]){const rail=box(g,0,sy,frame.deckZ+frame.deckThickness,frame.deckLength,Math.max(.22,frame.bridgeWidth*.025),railH,0x3e4542,.75);rail.name='BridgeRail';}
+    this._bridgeRamp(g,1,frame,biome);this._bridgeRamp(g,-1,frame,biome);
     this.root.add(g);
+    const meta={id:g.name,type:'bridge',x:+frame.x.toFixed(2),y:+frame.y.toFixed(2),angle:+frame.angle.toFixed(5),deckZ:+frame.deckZ.toFixed(2),waterZ:+frame.waterZ.toFixed(2),clearance:+(frame.deckZ-frame.waterZ).toFixed(2),length:+frame.deckLength.toFixed(2),width:+frame.bridgeWidth.toFixed(2),approachLength:+frame.approachLength.toFixed(2),
+      endpoints:[{x:+frame.outerA.x.toFixed(2),y:+frame.outerA.y.toFixed(2),z:+frame.outerA.z.toFixed(2)},{x:+frame.outerB.x.toFixed(2),y:+frame.outerB.y.toFixed(2),z:+frame.outerB.z.toFixed(2)}],allowed:['tracked','wheeled','infantry','amphibious']};
+    this.bridgeData.push({...meta,_frame:frame});return meta;
+  }
+
+  _bridgeAt(x,y){
+    for(const b of this.bridgeData){const f=b._frame,dx=x-f.x,dy=y-f.y,c=Math.cos(f.angle),ss=Math.sin(f.angle),lx=dx*c+dy*ss,ly=-dx*ss+dy*c;
+      if(Math.abs(lx)<=f.deckLength*.5+f.approachLength&&Math.abs(ly)<=f.bridgeWidth*.62)return b;
+    }
+    return null;
   }
 
   _startMarker(start,index){
@@ -179,28 +235,62 @@ export class RTSMapForge{
     const line=new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),lineMaterial(color,.55));line.name=zone.id;this.overlay.add(line);
   }
 
-  _navigationMetadata(recipe,riverFn){
-    const N=64,size=recipe.size,H=size/2,cell=size/N,heights=[],flags=[];
-    let buildable=0,walkable=0;
+  _navigationMetadata(recipe,riverFn,layout){
+    const N=64,size=recipe.size,H=size/2,cell=size/N,heights=[],slopes=[],terrainFlags=[],movementMask=[];
+    const costs=Object.fromEntries(MOVEMENT_ORDER.map(k=>[k,[]]));
+    const forestCounts=new Uint8Array(N*N);
+    for(const pt of this.treePoints){const ix=clamp(Math.floor((pt[0]+H)/cell),0,N-1),iy=clamp(Math.floor((pt[1]+H)/cell),0,N-1),k=iy*N+ix;forestCounts[k]=Math.min(255,forestCounts[k]+1);}
+    const roadWidths=this.roadFns.map(r=>r.width||size*.012);
+    let buildable=0,waterCells=0,roadCells=0,bridgeCells=0;
+    const profiles=Object.fromEntries(MOVEMENT_ORDER.map(k=>[k,{...RTS_MOVEMENT_CLASSES[k]}]));
     for(let j=0;j<N;j++)for(let i=0;i<N;i++){
-      const x=-H+(i+.5)*cell,y=-H+(j+.5)*cell,h=this.heightAt(x,y),e=cell*.35;
-      const sx=Math.abs(this.heightAt(x+e,y)-this.heightAt(x-e,y))/(2*e),sy=Math.abs(this.heightAt(x,y+e)-this.heightAt(x,y-e))/(2*e),slope=Math.hypot(sx,sy);
-      const water=recipe.river&&Math.abs(y-riverFn(x))<size*.018;
-      const cliff=slope>.62,canWalk=!water&&!cliff,canBuild=!water&&slope<.14;
-      let f=0;if(canWalk)f|=1;if(canBuild)f|=2;if(water)f|=4;if(cliff)f|=8;
-      if(canWalk)walkable++;if(canBuild)buildable++;heights.push(+h.toFixed(2));flags.push(f);
+      const k=j*N+i,x=-H+(i+.5)*cell,y=-H+(j+.5)*cell,h=this.heightAt(x,y),e=cell*.34;
+      const gx=(this.heightAt(x+e,y)-this.heightAt(x-e,y))/(2*e),gy=(this.heightAt(x,y+e)-this.heightAt(x,y-e))/(2*e),gradient=Math.hypot(gx,gy),slopeDeg=Math.atan(gradient)*180/Math.PI;
+      const bridge=this._bridgeAt(x,y),riverWidth=size*.032,water=recipe.river&&!bridge&&Math.abs(y-riverFn(x))<riverWidth*.50;
+      let road=false;for(let ri=0;ri<this.roadFns.length;ri++){const fn=this.roadFns[ri],rw=roadWidths[ri];if(Math.abs(y-fn(x))<rw*.62){road=true;break;}}
+      const forest=forestCounts[k],rough=slopeDeg>12||forest>=2,cliff=slopeDeg>42&&!bridge;
+      const canBuild=!water&&!bridge&&!road&&!cliff&&slopeDeg<7.5&&forest<5;
+      let f=0;if(canBuild)f|=NAV_FLAG.buildable;if(water)f|=NAV_FLAG.water;if(cliff)f|=NAV_FLAG.cliff;if(road)f|=NAV_FLAG.road;if(bridge)f|=NAV_FLAG.bridge;if(forest)f|=NAV_FLAG.forest;if(rough)f|=NAV_FLAG.rough;
+      let mask=RTS_MOVEMENT_CLASSES.air.bit;
+      for(const key of MOVEMENT_ORDER){
+        const p=RTS_MOVEMENT_CLASSES[key];let ok=false,cost=null;
+        if(key==='air'){ok=true;cost=p.airCost;}
+        else if(key==='amphibious'&&water){ok=true;cost=p.waterCost;}
+        else if(bridge){ok=true;cost=key==='wheeled'?.62:key==='tracked'?.76:key==='infantry'?.88:.86;}
+        else if(!water&&!cliff&&slopeDeg<=p.maxSlopeDeg){
+          ok=true;const slopeRatio=slopeDeg/Math.max(1,p.maxSlopeDeg),base=road?p.roadCost:(rough?p.roughCost:p.groundCost);cost=base+slopeRatio*slopeRatio*(key==='wheeled'?1.15:key==='tracked'?.82:key==='infantry'?.50:.72)+forest*p.forestPenalty;
+        }
+        if(ok)mask|=p.bit;costs[key].push(toCost10(cost));
+      }
+      heights.push(+h.toFixed(2));slopes.push(+slopeDeg.toFixed(1));terrainFlags.push(f);movementMask.push(mask);
+      if(canBuild)buildable++;if(water)waterCells++;if(road)roadCells++;if(bridge)bridgeCells++;
     }
-    return {resolution:N,cellSize:+cell.toFixed(2),heights,flags,flagLegend:{walkable:1,buildable:2,water:4,cliff:8},stats:{walkablePercent:+(walkable/(N*N)*100).toFixed(1),buildablePercent:+(buildable/(N*N)*100).toFixed(1)}};
+    const pointIndex=(pt)=>{const ix=clamp(Math.floor((pt.x+H)/cell),0,N-1),iy=clamp(Math.floor((pt.y+H)/cell),0,N-1);return iy*N+ix;};
+    const connectivity={};
+    for(const key of MOVEMENT_ORDER){
+      const bit=RTS_MOVEMENT_CLASSES[key].bit,startIndex=pointIndex(layout.starts[0]),seen=new Uint8Array(N*N),queue=[];
+      if(movementMask[startIndex]&bit){seen[startIndex]=1;queue.push(startIndex);}
+      for(let qi=0;qi<queue.length;qi++){
+        const cur=queue[qi],cx=cur%N,cy=Math.floor(cur/N);
+        for(let oy=-1;oy<=1;oy++)for(let ox=-1;ox<=1;ox++){if(!ox&&!oy)continue;const nx=cx+ox,ny=cy+oy;if(nx<0||ny<0||nx>=N||ny>=N)continue;const nk=ny*N+nx;if(seen[nk]||!(movementMask[nk]&bit))continue;if(ox&&oy){const sideA=cy*N+nx,sideB=ny*N+cx;if(!(movementMask[sideA]&bit)||!(movementMask[sideB]&bit))continue;}seen[nk]=1;queue.push(nk);}
+      }
+      const enemy=layout.starts.slice(1),reachableStarts=enemy.filter(pt=>seen[pointIndex(pt)]).length,reachableExpansions=layout.expansions.filter(pt=>seen[pointIndex(pt)]).length,traversable=movementMask.reduce((n,m)=>n+((m&bit)?1:0),0);
+      connectivity[key]={traversablePercent:+(traversable/(N*N)*100).toFixed(1),reachableStarts,enemyStarts:enemy.length,reachableStartPercent:enemy.length?+(reachableStarts/enemy.length*100).toFixed(1):100,reachableExpansions,totalExpansions:layout.expansions.length,reachableExpansionPercent:layout.expansions.length?+(reachableExpansions/layout.expansions.length*100).toFixed(1):100};
+    }
+    return {resolution:N,cellSize:+cell.toFixed(2),heights,slopeDegrees:slopes,terrainFlags,terrainFlagLegend:NAV_FLAG,movementMask,movementBitLegend:Object.fromEntries(MOVEMENT_ORDER.map(k=>[k,RTS_MOVEMENT_CLASSES[k].bit])),costScale:10,costs,profiles,
+      stats:{buildablePercent:+(buildable/(N*N)*100).toFixed(1),waterPercent:+(waterCells/(N*N)*100).toFixed(1),roadPercent:+(roadCells/(N*N)*100).toFixed(1),bridgePercent:+(bridgeCells/(N*N)*100).toFixed(1),movement:connectivity}};
   }
 
   _score(recipe,layout,navigation){
-    const routes=recipe.roads?5:3,passes=recipe.tacticalProfile==='mountainPasses'?5:4,hidden=layout.expansions.filter(e=>e.kind==='hiddenPocket').length;
+    const routes=recipe.roads?5:3,passes=recipe.tacticalProfile==='mountainPasses'?5:4,hidden=layout.expansions.filter(e=>e.kind==='hiddenPocket').length,m=navigation.stats.movement;
+    const groundConnectivity=(m.tracked.reachableStartPercent+m.wheeled.reachableStartPercent+m.infantry.reachableStartPercent)/3;
     return {
       routeDiversity:clamp(72+routes*4+(recipe.relief>.55?5:0),0,100),
       defensibleRegions:clamp(70+hidden*3+(recipe.startProtection==='fortified'?8:0),0,100),
       expansionOptions:clamp(68+layout.expansions.length*3,0,100),
       spawnSeparation:recipe.players===4?94:96,
       buildableLand:Math.round(clamp(navigation.stats.buildablePercent*1.55,0,100)),
+      movementConnectivity:+groundConnectivity.toFixed(1),
       passes,hiddenPockets:hidden
     };
   }
@@ -220,31 +310,34 @@ export class RTSMapForge{
       const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(p,3));geo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));geo.setIndex(idx);geo.computeVertexNormals();
       const mesh=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({vertexColors:true,roughness:.98,metalness:0}));mesh.name=`TerrainChunk_${cx}_${cy}`;mesh.receiveShadow=true;this.root.add(mesh);
     }
-    const biome=BIOMES[recipe.biome];
-    if(recipe.river){const water=this._makeStrip(shape.river,size*.032,Math.max(80,Math.round(size/5)),biome.water,-1.05);water.material.transparent=true;water.material.opacity=.90;water.material.roughness=.28;water.name='River';this.root.add(water);for(const bx of [-size*.24,size*.015,size*.25])this._addBridge(bx,shape.river);}
-    const routes=[];
+    const biome=BIOMES[recipe.biome],routes=[];
+    if(recipe.river){
+      const water=this._makeStrip(shape.river,size*.032,Math.max(80,Math.round(size/5)),biome.water,-1.05);water.material.transparent=true;water.material.opacity=.90;water.material.roughness=.28;water.name='River';this.root.add(water);
+      [-size*.24,size*.015,size*.25].forEach((bx,i)=>this._addBridge(bx,shape.river,i));
+    }
     if(recipe.roads){
       const roadFns=[
         x=>-size*.13+.34*x+size*.028*Math.sin((x+size*.1)/(size*.17)),
         x=> size*.14-.30*x+size*.024*Math.sin((x-size*.06)/(size*.16)),
         x=> size*.015+size*.018*Math.sin(x/(size*.15))
       ];
-      roadFns.forEach((fn,i)=>{const r=this._makeStrip(fn,size*(i===2?.010:.012),Math.max(90,Math.round(size/5)),biome.road,.28);r.name=`Road_${i+1}`;this.root.add(r);routes.push({id:`ROAD_${i+1}`,role:i===0?'mainRoute':i===1?'flankRoute':'centralConnector'});});
+      roadFns.forEach((fn,i)=>{const width=size*(i===2?.010:.012),r=this._makeStrip(fn,width,Math.max(90,Math.round(size/5)),biome.road,.28);r.name=`Road_${i+1}`;this.root.add(r);this.roadFns.push(Object.assign(fn,{width}));routes.push({id:`ROAD_${i+1}`,role:i===0?'mainRoute':i===1?'flankRoute':'centralConnector',preferred:['wheeled','tracked','infantry']});});
     }
-    // Instanced trees / scrub.
+    // Instanced upright trees / scrub. Three.js cylinder/cone primitives are Y-up, so rotate geometry once into WorldForge Z-up.
     const areaScale=(size/1024)*(size/1024);
     const treeCount=Math.min(1700,Math.round(areaScale*(260+recipe.forest*360)));
     const trunkGeo=new THREE.CylinderGeometry(size*.00055,size*.00078,size*.0046,6),crownGeo=new THREE.ConeGeometry(size*.0032,size*.0090,7),trunkMat=mat(biome.trunk,1),crownMat=mat(biome.tree,1);
+    trunkGeo.rotateX(Math.PI/2);crownGeo.rotateX(Math.PI/2);
     const trunks=new THREE.InstancedMesh(trunkGeo,trunkMat,treeCount),crowns=new THREE.InstancedMesh(crownGeo,crownMat,treeCount);trunks.castShadow=crowns.castShadow=true;const dummy=new THREE.Object3D();let t=0,attempts=0;
     while(t<treeCount&&attempts++<treeCount*25){
       const x=(random()-.5)*size*.96,y=(random()-.5)*size*.96;if(recipe.river&&Math.abs(y-shape.river(x))<size*.035)continue;
       if(layout.starts.some(s=>Math.hypot(x-s.x,y-s.y)<size*.075))continue;
-      const z=this.heightAt(x,y),s=.70+random()*.75;dummy.position.set(x,y,z+size*.0023*s);dummy.scale.set(s,s,s);dummy.rotation.set(0,0,random()*Math.PI*2);dummy.updateMatrix();trunks.setMatrixAt(t,dummy.matrix);dummy.position.z=z+size*.0067*s;dummy.updateMatrix();crowns.setMatrixAt(t,dummy.matrix);t++;
+      const z=this.heightAt(x,y),scale=.70+random()*.75,yaw=random()*Math.PI*2;dummy.position.set(x,y,z+size*.0023*scale);dummy.scale.set(scale,scale,scale);dummy.rotation.set(0,0,yaw);dummy.updateMatrix();trunks.setMatrixAt(t,dummy.matrix);dummy.position.z=z+size*.0067*scale;dummy.updateMatrix();crowns.setMatrixAt(t,dummy.matrix);this.treePoints.push([x,y]);t++;
     }
     trunks.count=crowns.count=t;trunks.name='ForestTrunks';crowns.name='ForestCanopies';this.root.add(trunks,crowns);
     // Rocks / tactical cover clusters.
     const rockCount=Math.min(420,Math.round(areaScale*(65+recipe.relief*90))),rocks=new THREE.InstancedMesh(new THREE.DodecahedronGeometry(size*.0024,0),mat(biome.rock,1),rockCount);rocks.castShadow=true;
-    for(let i=0;i<rockCount;i++){const x=(random()-.5)*size*.94,y=(random()-.5)*size*.94,z=this.heightAt(x,y),s=.6+random()*1.6;dummy.position.set(x,y,z+size*.0012*s);dummy.scale.set(s,s,s*(.45+random()*.45));dummy.rotation.set(random(),random(),random()*6.28);dummy.updateMatrix();rocks.setMatrixAt(i,dummy.matrix);}rocks.name='RockCover';this.root.add(rocks);
+    for(let i=0;i<rockCount;i++){const x=(random()-.5)*size*.94,y=(random()-.5)*size*.94,z=this.heightAt(x,y),scale=.6+random()*1.6;dummy.position.set(x,y,z+size*.0012*scale);dummy.scale.set(scale,scale,scale*(.45+random()*.45));dummy.rotation.set(random(),random(),random()*6.28);dummy.updateMatrix();rocks.setMatrixAt(i,dummy.matrix);}rocks.name='RockCover';this.root.add(rocks);
     // Resource fields are gameplay markers/objects, not faction structures.
     const resourceCount=recipe.players===4?(size>=1536?13:size>=1024?9:7):(size>=1536?9:size>=1024?6:5),resourceZones=[];
     const resourceMat=mat(biome.resource,.58);for(let i=0;i<resourceCount;i++){
@@ -252,9 +345,30 @@ export class RTSMapForge{
       for(let k=0;k<10+Math.round(recipe.resources*8);k++){const qx=x+(random()-.5)*size*.036,qy=y+(random()-.5)*size*.036,qz=this.heightAt(qx,qy),q=new THREE.Mesh(new THREE.OctahedronGeometry(size*(.0016+random()*.0014),0),resourceMat);q.position.set(qx,qy,qz+size*.0019);q.rotation.set(random(),random(),random()*6.28);q.castShadow=true;this.root.add(q);}
     }
     layout.starts.forEach((s,i)=>this._startMarker(s,i));layout.expansions.forEach(e=>this._zoneMarker(e,e.kind==='hiddenPocket'?0x76a9d8:0x93d49a));
-    const navigation=this._navigationMetadata(recipe,shape.river),score=this._score(recipe,layout,navigation);
-    this.metadata={schema:'worldforge.rts-map-meta.v1',mapForgeVersion:RTS_MAP_FORGE_VERSION,recipe,terrain:{chunkSize:+actualChunk.toFixed(2),chunkCount:chunks*chunks,segmentsPerChunk:seg,approxTriangles:tris},startRegions:layout.starts.map((s,i)=>({...s,index:i,radius:+(size*.055).toFixed(2),reservedOnly:true})),expansionZones:layout.expansions.map(e=>({...e,x:+e.x.toFixed(2),y:+e.y.toFixed(2),radius:+(size*.035).toFixed(2)})),resourceZones,routes,crossings:recipe.river?[{x:-size*.24,type:'bridge'},{x:size*.015,type:'bridge'},{x:size*.25,type:'bridge'}]:[],navigation,tacticalScore:score,notes:['No faction buildings are generated. Start regions are reserved terrain metadata only.','Faction economy/construction systems place structures during gameplay.']};
-    this._buildFog();this.setFogPreview(false);this.root.visible=true;this.overlay.visible=true;return this.metadata;
+    const navigation=this._navigationMetadata(recipe,shape.river,layout),score=this._score(recipe,layout,navigation),crossings=this.bridgeData.map(({_frame,...b})=>b);
+    this.metadata={schema:'worldforge.rts-map-meta.v2',mapForgeVersion:RTS_MAP_FORGE_VERSION,recipe,terrain:{chunkSize:+actualChunk.toFixed(2),chunkCount:chunks*chunks,segmentsPerChunk:seg,approxTriangles:tris},startRegions:layout.starts.map((s,i)=>({...s,index:i,radius:+(size*.055).toFixed(2),reservedOnly:true})),expansionZones:layout.expansions.map(e=>({...e,x:+e.x.toFixed(2),y:+e.y.toFixed(2),radius:+(size*.035).toFixed(2)})),resourceZones,routes,crossings,navigation,tacticalScore:score,
+      routeAffinities:{mainRoad:['wheeled','tracked','infantry'],roughPass:['tracked','infantry'],steepTrail:['infantry'],deepWater:['amphibious','air'],mountain:['air'],bridge:['tracked','wheeled','infantry','amphibious']},
+      notes:['No faction buildings are generated. Start regions are reserved terrain metadata only.','Faction economy/construction systems place structures during gameplay.','Movement metadata is exported per class: tracked, wheeled, infantry, amphibious and air.','Bridges are explicit traversal links with raised decks and graded approach meshes.']};
+    this._buildFog();this.setFogPreview(false);this._buildMovementOverlay();this.root.visible=true;this.overlay.visible=true;this.movementOverlay.visible=this.movementPreview!=='off';return this.metadata;
+  }
+
+  _buildMovementOverlay(){
+    while(this.movementOverlay.children.length){const c=this.movementOverlay.children[this.movementOverlay.children.length-1];this.movementOverlay.remove(c);disposeGroup(c);}
+    if(!this.metadata||this.movementPreview==='off'){this.movementOverlay.visible=false;return;}
+    const nav=this.metadata.navigation,key=this.movementPreview,bit=nav.movementBitLegend[key];if(!bit){this.movementOverlay.visible=false;return;}
+    const N=nav.resolution,size=this.recipe.size,H=size/2,cell=size/N,p=[],colors=[],idx=[];
+    const costs=nav.costs[key];let v=0;
+    for(let j=0;j<N;j++)for(let i=0;i<N;i++){
+      const k=j*N+i,x0=-H+i*cell,y0=-H+j*cell,x1=x0+cell,y1=y0+cell,ok=!!(nav.movementMask[k]&bit),raw=costs[k]||0,cost=raw/nav.costScale;
+      const color=!ok?new THREE.Color(0xb3463f):key==='air'?new THREE.Color(0x5f9fcb):cost<=.9?new THREE.Color(0x4ca76b):cost<=1.5?new THREE.Color(0xc3a84c):new THREE.Color(0xd77942),lift=.72;
+      p.push(x0,y0,this.heightAt(x0,y0)+lift,x1,y0,this.heightAt(x1,y0)+lift,x1,y1,this.heightAt(x1,y1)+lift,x0,y1,this.heightAt(x0,y1)+lift);for(let q=0;q<4;q++)colors.push(color.r,color.g,color.b);idx.push(v,v+1,v+2,v,v+2,v+3);v+=4;
+    }
+    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));g.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));g.setIndex(idx);
+    const mesh=new THREE.Mesh(g,new THREE.MeshBasicMaterial({vertexColors:true,transparent:true,opacity:.34,depthWrite:false,polygonOffset:true,polygonOffsetFactor:-2,polygonOffsetUnits:-2}));mesh.name=`MovementPreview_${key}`;mesh.renderOrder=55;this.movementOverlay.add(mesh);this.movementOverlay.visible=this.root.visible;
+  }
+
+  setMovementPreview(kind='off'){
+    this.movementPreview=MOVEMENT_ORDER.includes(kind)?kind:'off';this._buildMovementOverlay();
   }
 
   _buildFog(){

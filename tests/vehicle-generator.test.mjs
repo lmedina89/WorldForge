@@ -24,6 +24,6 @@ assert.match(html,/VEHICLE FORGE 0\.3 · AEGIS REFERENCE FAMILIES/);
 assert.match(html,/Aegis HMMWV-50 · Reference Grade/);
 assert.match(html,/Aegis Talon AH-X · Reference Grade/);
 for(const id of ['vehicleSilhouette','vehicleDetail','vehicleRoadWheels'])assert.match(html,new RegExp(`id="${id}"`));
-assert.match(schema,/WORLDFORGE_VERSION = '0\.9\.9'/);
+assert.match(schema,/WORLDFORGE_VERSION = '0\.10\.0'/);
 assert.match(schema,/vehicleGenerator: '0\.3\.0'/);
 console.log(JSON.stringify({ok:true,vehicleGenerator:'0.3.0',families:13,mbtSilhouettes:3,styles:3,palettes:4,functionalHierarchy:true},null,2));

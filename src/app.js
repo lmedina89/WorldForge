@@ -449,8 +449,9 @@ function readRTSMapRecipe(){
 }
 function updateRTSMapScore(){
   const m=rtsMapForge.metadata;if(!m){$('mapTacticalScore').textContent='Generate a map to audit tactical structure.';return;}
-  const s=m.tacticalScore,n=m.navigation.stats;
-  $('mapTacticalScore').innerHTML=`<b>TACTICAL AUDIT</b><br>Route diversity ${s.routeDiversity}% · Defensible regions ${s.defensibleRegions}% · Expansion options ${s.expansionOptions}% · Spawn separation ${s.spawnSeparation}%<br>${s.passes} designed passes · ${s.hiddenPockets} hidden pockets · ${n.walkablePercent}% walkable · ${n.buildablePercent}% buildable`;
+  const s=m.tacticalScore,n=m.navigation.stats,mm=n.movement;
+  const reach=k=>`${mm[k].reachableStartPercent}%`;
+  $('mapTacticalScore').innerHTML=`<b>TACTICAL AUDIT</b><br>Route diversity ${s.routeDiversity}% · Defensible regions ${s.defensibleRegions}% · Expansion options ${s.expansionOptions}% · Spawn separation ${s.spawnSeparation}%<br>${s.passes} passes · ${s.hiddenPockets} hidden pockets · ${n.buildablePercent}% buildable · Ground connectivity ${s.movementConnectivity}%<br>Enemy-start reach: tracked ${reach('tracked')} · wheeled ${reach('wheeled')} · infantry ${reach('infantry')} · amphibious ${reach('amphibious')} · air ${reach('air')}`;
 }
 function drawRTSMapMinimap(){if(mode==='rtsmap')rtsMapForge.drawMinimap($('mapMinimap'));}
 function setRTSMapView(view){
@@ -464,18 +465,19 @@ function generateRTSMap({resetView=true}={}){
   try{
     const meta=rtsMapForge.generate(readRTSMapRecipe());
     rtsMapForge.overlay.visible=mapZonesVisible;
+    rtsMapForge.setMovementPreview($('mapMovementPreview').value);
     $('mapFogPreview').textContent=`FOG PREVIEW: ${rtsMapForge.fogPreview?'ON':'OFF'}`;
     $('mapShowZones').textContent=`TACTICAL ZONES: ${mapZonesVisible?'ON':'OFF'}`;
     $('modeLabel').textContent='RTS MAP FORGE';$('seedLabel').textContent=`${meta.recipe.size.toLocaleString()}M`;
     configureSceneForMode();updateRTSMapScore();
     if(resetView)setRTSMapView('overview');else setRTSMapView(mapLastView);
     drawRTSMapMinimap();
-    $('status').textContent=`RTS Map Forge ${RTS_MAP_FORGE_VERSION} · ${meta.recipe.size.toLocaleString()} × ${meta.recipe.size.toLocaleString()} m · ${meta.startRegions.length} reserved starts · ${meta.expansionZones.length} expansion zones · ${meta.resourceZones.length} resource fields · ${meta.terrain.chunkCount} terrain chunks · ~${meta.terrain.approxTriangles.toLocaleString()} terrain tris.`;
+    $('status').textContent=`RTS Map Forge ${RTS_MAP_FORGE_VERSION} · ${meta.recipe.size.toLocaleString()} × ${meta.recipe.size.toLocaleString()} m · ${meta.startRegions.length} reserved starts · ${meta.crossings.length} graded bridges · tracked/wheeled/infantry/amphibious/air nav · ${meta.terrain.chunkCount} terrain chunks.`;
   }catch(err){$('status').textContent='RTS map generation failed: '+err.message;}
 }
 function activateRTSMapMode(){
   showMode('rtsmap');
-  if(!rtsMapForge.recipe)generateRTSMap({resetView:true});else{configureSceneForMode();rtsMapForge.overlay.visible=mapZonesVisible;setRTSMapView(mapLastView);updateRTSMapScore();drawRTSMapMinimap();$('status').textContent=`RTS Map Forge ${RTS_MAP_FORGE_VERSION} ready · ${rtsMapForge.recipe.size.toLocaleString()} m battlefield.`;}
+  if(!rtsMapForge.recipe)generateRTSMap({resetView:true});else{configureSceneForMode();rtsMapForge.overlay.visible=mapZonesVisible;rtsMapForge.setMovementPreview($('mapMovementPreview').value);setRTSMapView(mapLastView);updateRTSMapScore();drawRTSMapMinimap();$('status').textContent=`RTS Map Forge ${RTS_MAP_FORGE_VERSION} ready · ${rtsMapForge.recipe.size.toLocaleString()} m battlefield.`;}
 }
 function rtsMapBaseName(){const r=rtsMapForge.recipe||readRTSMapRecipe();return `worldforge_rtsmap_${r.size}m_${r.seed}`;}
 
@@ -531,6 +533,7 @@ $('mapViewStart').onclick=()=>setRTSMapView('start');
 $('mapViewTactical').onclick=()=>setRTSMapView('tactical');
 $('mapFogPreview').onclick=()=>{rtsMapForge.setFogPreview(!rtsMapForge.fogPreview);$('mapFogPreview').textContent=`FOG PREVIEW: ${rtsMapForge.fogPreview?'ON':'OFF'}`;drawRTSMapMinimap();};
 $('mapShowZones').onclick=()=>{mapZonesVisible=!mapZonesVisible;rtsMapForge.overlay.visible=mode==='rtsmap'&&mapZonesVisible;$('mapShowZones').textContent=`TACTICAL ZONES: ${mapZonesVisible?'ON':'OFF'}`;};
+$('mapMovementPreview').onchange=()=>{rtsMapForge.setMovementPreview($('mapMovementPreview').value);$('status').textContent=$('mapMovementPreview').value==='off'?'Traversal preview off.':`Traversal preview: ${$('mapMovementPreview').selectedOptions[0].text}. Green = efficient, amber/orange = costly, red = blocked.`;};
 $('mapExportRecipe').onclick=()=>{if(!rtsMapForge.recipe)return;$('status').textContent='Exporting RTS map recipe…';download(new Blob([JSON.stringify(rtsMapForge.exportRecipe(),null,2)],{type:'application/json'}),rtsMapBaseName()+'.recipe.json');};
 $('mapExportMeta').onclick=()=>{if(!rtsMapForge.metadata)return;$('status').textContent='Exporting RTS gameplay metadata…';download(new Blob([JSON.stringify(rtsMapForge.exportMetadata(),null,2)],{type:'application/json'}),rtsMapBaseName()+'.map.json');};
 $('mapExportGLB').onclick=()=>{if(!rtsMapForge.recipe)return;const oldFog=rtsMapForge.fogMesh?.visible;if(rtsMapForge.fogMesh)rtsMapForge.fogMesh.visible=false;new GLTFExporter().parse(rtsMapForge.root,r=>{download(new Blob([r],{type:'model/gltf-binary'}),rtsMapBaseName()+'.glb');$('status').textContent='RTS terrain GLB exported. Gameplay regions remain in MAP META JSON.';if(rtsMapForge.fogMesh)rtsMapForge.fogMesh.visible=oldFog;},e=>{if(rtsMapForge.fogMesh)rtsMapForge.fogMesh.visible=oldFog;$('status').textContent='RTS terrain GLB export failed: '+e;},{binary:true,onlyVisible:true});};

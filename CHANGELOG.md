@@ -1,5 +1,18 @@
 # WorldForge Changelog
 
+## v0.10.0 — RTS Map Forge 0.2 / Class Traversal + Bridge/Foliage Fix
+- Fixed RTS Map Forge tree orientation. Three.js cone/cylinder foliage primitives are now rotated once into WorldForge Z-up; procedural trees randomize yaw/scale only and remain upright.
+- Rebuilt river bridges around sampled banks/water: decks are raised above both banks and water, carry explicit clearance metadata, and include graded approach meshes on both sides.
+- Added explicit bridge traversal links/endpoints and allowed ground movement classes to exported map metadata.
+- Replaced the single generic walkability model with class-specific traversal for **tracked**, **wheeled**, **infantry**, **amphibious**, and **air** movement.
+- Navigation grid now exports slope degrees, terrain flags, per-cell movement bitmasks, compact per-class movement costs, class profiles, and class-specific reachability audits.
+- Tracked armor tolerates rougher/steeper terrain than wheeled vehicles; wheeled units strongly prefer roads; infantry can use steeper/narrower ground; amphibious units can cross water; air ignores ground slope/water restrictions.
+- Added a selectable traversal preview overlay: efficient cells green, higher-cost cells amber/orange, blocked cells red, air blue.
+- Tactical audit now reports enemy-start reachability separately for tracked/wheeled/infantry/amphibious/air.
+- Forest density influences movement cost instead of randomly overturning or hard-blocking every ground unit.
+- Map Forge still generates terrain/metadata only — no faction buildings or prebuilt bases.
+- Existing 15 `src/generators/*.js` files remain protected and unchanged.
+
 ## v0.9.9 — RTS Map Forge 0.1 / Tactical Battlefield Foundation
 - Added RTS Map Forge as a separate protected module alongside the existing RPG/world and Vehicle Forge systems.
 - Added chunked 512 m, 768 m, 1,024 m, and 1,536 m battlefields designed for browser/mobile prototype testing.
