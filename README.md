@@ -1,3 +1,20 @@
+# WorldForge v0.13.11 — Multi-Cluster Mineral Fields
+
+WorldForge v0.13.11 advances RTS Map Forge to **0.2.6**. The approved Rich v0.3 and Dense v0.1 GLBs remain byte-for-byte unchanged, but Map Forge now uses them as believable **resource fields** instead of one isolated cluster per node.
+
+## Resource-field presentation
+- Rich fields render **3–5** copies of the approved Rich crystal cluster.
+- Dense fields render **5–8** copies of the approved Dense crystal cluster.
+- Cluster position, heading, and small uniform scale variation are deterministic from the map seed.
+- Every field remains **one logical economy deposit**: Rich keeps the provisional 1,250 capacity and Dense keeps 3,000. The repeated clusters are visual-only and do not multiply the economy value.
+- The first cluster's authored `WF_HARVEST_POINT` is transformed into a world-space field harvest point after resource loading, preparing the map metadata for the upcoming Harvester economy loop.
+
+## Mobile-performance path
+Rather than cloning every mesh for every visible crystal cluster, Map Forge batches repeated copies with `THREE.InstancedMesh`. That keeps the exact approved source geometry/materials while avoiding the draw-call explosion that would come from naively stamping dozens of full GLB scene trees across the battlefield.
+
+## Preserved systems
+Skirmish remains **0.6.3** for this visual/resource-field patch. Terrain, roads, navigation, buildings, vehicle collision, infantry spacing, and both approved crystal GLBs are unchanged.
+
 # WorldForge v0.13.10 — Rich + Dense Crystal Resource Masters
 
 WorldForge v0.13.10 replaces the RTS Map Forge mineral placeholder geometry with the two approved crystal-cluster GLBs. RTS Map Forge advances to **0.2.5** and RTS Asset Library to **0.5.1**. The Rich v0.3 and Dense v0.1 files are packaged byte-for-byte exactly as approved; neither GLB was rebuilt, recolored, simplified, or re-exported during integration.

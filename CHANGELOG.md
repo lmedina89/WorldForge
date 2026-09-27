@@ -1,3 +1,15 @@
+# v0.13.11 — Multi-Cluster Mineral Fields
+
+- WorldForge advanced to **0.13.11** and RTS Map Forge to **0.2.6**; RTS Asset Library remains **0.5.1**.
+- Rich resource zones now display **3–5** approved Rich v0.3 clusters.
+- Dense resource zones now display **5–8** approved Dense v0.1 clusters.
+- Preserved one logical deposit/capacity per field so visual richness does not silently multiply economy value.
+- Added deterministic cluster spread, rotation, and restrained scale variation.
+- Reworked resource rendering to use GPU instancing per source mesh so repeated fields do not multiply draw calls by every GLB copy.
+- Added per-instance resource-zone mapping metadata for future selection/harvest interaction.
+- Prepared world-space `harvestPoint` metadata from the authored `WF_HARVEST_POINT` helper.
+- Both approved crystal GLBs remain byte-identical; no resource asset was rebuilt or edited.
+
 # v0.13.10 — Rich + Dense Crystal Resource Integration
 
 - WorldForge advanced to **0.13.10**, RTS Map Forge to **0.2.5**, and RTS Asset Library to **0.5.1**.

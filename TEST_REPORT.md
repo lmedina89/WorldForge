@@ -1,3 +1,21 @@
+# WorldForge v0.13.11 Test Report
+
+## Multi-Cluster Mineral Fields
+
+Result: **PASS**
+
+### Validation
+- **16 / 16** focused `rts-*.test.mjs` tests pass.
+- JavaScript syntax checks pass for the updated RTS Map Forge, application wiring, and schema modules.
+- Rich and Dense resource hashes remain exactly the approved v0.13.10 hashes.
+- Resource-field tests verify one logical deposit per field, Rich **3–5** visual clusters, Dense **5–8**, GPU instancing, and prepared harvest-point metadata.
+
+### Runtime design
+- Repeated crystal clusters are `visualOnly`; field capacity stays at the zone/deposit level.
+- Resource instance metadata maps every visible cluster back to its logical resource-zone ID.
+- Instancing uses the exact GLB mesh geometry/materials with per-instance field transforms instead of cloning complete GLB trees.
+- Skirmish remains 0.6.3; no combat, economy, production, or AI rules were changed in this patch.
+
 # WorldForge v0.13.10 Test Report
 
 ## Rich + Dense Crystal Resource Masters

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { instantiateMasterResource, masterResourceForRichness } from '../rts/rts-asset-library.js';
 
-export const RTS_MAP_FORGE_VERSION='0.2.5';
+export const RTS_MAP_FORGE_VERSION='0.2.6';
 export const RTS_MAP_SCHEMA='worldforge.rts-map.v1';
 
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -94,20 +94,46 @@ export class RTSMapForge{
   }
 
   async _populateResourceAssets(resourceZones,generationId=this.generationSerial){
-    const loaded=[];
-    for(const zone of resourceZones)for(const deposit of zone.deposits||[]){
-      try{
-        const result=await instantiateMasterResource(deposit.assetId);
-        if(generationId!==this.generationSerial){disposeGroup(result.group);continue;}
-        const axis=new THREE.Group();axis.name=`${deposit.id}_YUp_to_ZUp`;axis.rotation.x=Math.PI/2;axis.add(result.group);
-        const root=new THREE.Group();root.name=deposit.id;root.position.set(deposit.x,deposit.y,deposit.z+.04);root.rotation.z=deposit.heading;root.add(axis);
-        root.userData={worldForgeResource:true,resourceZoneId:zone.id,resourceAsset:deposit.assetId,richness:zone.richness,capacity:deposit.capacity,collisionMode:result.definition.collisionMode};
-        this.root.add(root);this.resourceViews.push(root);loaded.push(root);
-      }catch(err){
-        console.error(`Resource asset load failed for ${deposit.assetId}`,err);
+    const loadedFields=[];
+    const byAsset=new Map();
+    for(const zone of resourceZones){
+      const anchor=new THREE.Group();anchor.name=`${zone.id}_FIELD_ANCHOR`;anchor.position.set(zone.x,zone.y,zone.z||this.heightAt(zone.x,zone.y));
+      anchor.userData={worldForgeResourceField:true,resourceZoneId:zone.id,richness:zone.richness,capacity:zone.capacity,remainingCapacity:zone.capacity,collisionMode:'nonblocking_resource'};
+      this.root.add(anchor);this.resourceViews.push(anchor);loadedFields.push(anchor);
+      for(const cluster of zone.visualClusters||[]){
+        if(!byAsset.has(cluster.assetId))byAsset.set(cluster.assetId,[]);
+        byAsset.get(cluster.assetId).push({zone,cluster});
       }
     }
-    return loaded;
+    const axisMatrix=new THREE.Matrix4().makeRotationX(Math.PI/2),tmpPos=new THREE.Vector3();
+    for(const [assetId,entries] of byAsset){
+      try{
+        const result=await instantiateMasterResource(assetId);
+        if(generationId!==this.generationSerial){disposeGroup(result.group);continue;}
+        result.group.updateMatrixWorld(true);
+        const sourceMeshes=[];result.group.traverse(o=>{if(o.isMesh)sourceMeshes.push(o);});
+        const helper=result.group.getObjectByName('WF_HARVEST_POINT');
+        const clusterMatrices=[];
+        for(const {cluster} of entries){
+          const t=new THREE.Matrix4().makeTranslation(cluster.x,cluster.y,cluster.z+.04),r=new THREE.Matrix4().makeRotationZ(cluster.heading),sc=new THREE.Matrix4().makeScale(cluster.scale,cluster.scale,cluster.scale);
+          clusterMatrices.push(new THREE.Matrix4().multiply(t).multiply(r).multiply(sc).multiply(axisMatrix));
+        }
+        sourceMeshes.forEach((sourceMesh,meshIndex)=>{
+          const inst=new THREE.InstancedMesh(sourceMesh.geometry,sourceMesh.material,entries.length);inst.name=`Resource_${assetId}_${meshIndex}_${sourceMesh.name||'Mesh'}`;inst.castShadow=sourceMesh.castShadow!==false;inst.receiveShadow=sourceMesh.receiveShadow!==false;inst.renderOrder=sourceMesh.renderOrder||0;
+          entries.forEach(({zone,cluster},i)=>{const m=new THREE.Matrix4().multiplyMatrices(clusterMatrices[i],sourceMesh.matrixWorld);inst.setMatrixAt(i,m);});
+          inst.instanceMatrix.needsUpdate=true;inst.userData={worldForgeResourceInstances:true,resourceAsset:assetId,instanceMap:entries.map(({zone,cluster})=>({resourceZoneId:zone.id,clusterId:cluster.id,richness:zone.richness,fieldCapacity:zone.capacity,visualOnly:true}))};
+          this.root.add(inst);
+        });
+        if(helper){
+          helper.getWorldPosition(tmpPos);
+          const firstByZone=new Set();
+          entries.forEach(({zone,cluster},i)=>{if(firstByZone.has(zone.id))return;firstByZone.add(zone.id);const hp=tmpPos.clone().applyMatrix4(clusterMatrices[i]);zone.harvestPoint={x:+hp.x.toFixed(2),y:+hp.y.toFixed(2),z:+hp.z.toFixed(2)};});
+        }
+      }catch(err){
+        console.error(`Resource field asset load failed for ${assetId}`,err);
+      }
+    }
+    return loadedFields;
   }
 
   awaitResourceAssets(){return this.resourceLoadPromise||Promise.resolve([]);}
@@ -404,18 +430,23 @@ export class RTSMapForge{
     // Rocks / tactical cover clusters.
     const rockCount=Math.min(420,Math.round(areaScale*(65+recipe.relief*90))),rocks=new THREE.InstancedMesh(new THREE.DodecahedronGeometry(size*.0024,0),mat(biome.rock,1),rockCount);rocks.castShadow=true;
     let rPlaced=0,rAttempts=0;while(rPlaced<rockCount&&rAttempts++<rockCount*22){const x=(random()-.5)*size*.94,y=(random()-.5)*size*.94;if(layout.starts.some(s=>Math.hypot(x-s.x,y-s.y)<size*.095))continue;if(layout.expansions.some(e=>Math.hypot(x-e.x,y-e.y)<size*(e.kind==='safeExpansion'?.042:.026)))continue;if(this.roadFns.some(fn=>Math.abs(y-fn(x))<(fn.width||size*.012)*1.08))continue;const z=this.heightAt(x,y),sample=Math.max(1.6,size*.0024),gx=(this.heightAt(x+sample,y)-this.heightAt(x-sample,y))/(sample*2),gy=(this.heightAt(x,y+sample)-this.heightAt(x,y-sample))/(sample*2),slopeDeg=Math.atan(Math.hypot(gx,gy))*180/Math.PI,riverProximity=recipe.river?clamp(1-Math.abs(y-shape.river(x))/(size*.085),0,1):0,zone=this._terrainContext(recipe,layout,x,y,z,slopeDeg,riverProximity),rockChance=clamp(.10+zone.rocky*.78+zone.upland*.18-riverProximity*.14-zone.baseClear*.26,.06,.96);if(random()>rockChance)continue;const scale=.52+random()*1.15+zone.rocky*.68;dummy.position.set(x,y,z+size*.0012*scale);dummy.scale.set(scale,scale,scale*(.45+random()*.45));dummy.rotation.set(random(),random(),random()*6.28);dummy.updateMatrix();rocks.setMatrixAt(rPlaced++,dummy.matrix);}rocks.count=rPlaced;rocks.name='RockCover';this.root.add(rocks);
-    // Exact mineral-resource masters replace the former procedural octahedron placeholders.
-    // Standard nodes use the approved Rich cluster; contested nodes use the larger Dense cluster.
+    // Exact approved Rich/Dense masters now form multi-cluster resource fields.
+    // Each field remains one logical economy deposit; the repeated crystals are visual instances only.
     const resourceCount=recipe.players===4?(size>=1536?13:size>=1024?9:7):(size>=1536?9:size>=1024?6:5),resourceZones=[];
     for(let i=0;i<resourceCount;i++){
-      const a=(i/resourceCount)*Math.PI*2+.35,radius=size*(i%3===0?.16:i%3===1?.26:.34),x=Math.cos(a)*radius,y=Math.sin(a)*radius,denseShare=clamp(.08+recipe.resources*.35,.15,.43),densityRank=((i*5)%resourceCount)/resourceCount,richness=densityRank<denseShare?'dense':'rich',tier=richness==='dense'?'contested':'standard',resourceDef=masterResourceForRichness(richness),id=`RESOURCE_${String(i+1).padStart(2,'0')}`,zoneRadius=size*.025,qz=this.heightAt(x,y),deposit={id:`${id}_DEPOSIT_01`,assetId:resourceDef.id,richness,x:+x.toFixed(2),y:+y.toFixed(2),z:+qz.toFixed(2),heading:+(random()*Math.PI*2).toFixed(4),capacity:resourceDef.defaultCapacity},deposits=[deposit],capacity=deposit.capacity;
-      resourceZones.push({id,x:+x.toFixed(2),y:+y.toFixed(2),radius:+zoneRadius.toFixed(2),tier,richness,assetId:resourceDef.id,capacity,depositCount:1,deposits});
+      const a=(i/resourceCount)*Math.PI*2+.35,radius=size*(i%3===0?.16:i%3===1?.26:.34),x=Math.cos(a)*radius,y=Math.sin(a)*radius,denseShare=clamp(.08+recipe.resources*.35,.15,.43),densityRank=((i*5)%resourceCount)/resourceCount,richness=densityRank<denseShare?'dense':'rich',tier=richness==='dense'?'contested':'standard',resourceDef=masterResourceForRichness(richness),id=`RESOURCE_${String(i+1).padStart(2,'0')}`,zoneRadius=size*.025,qz=this.heightAt(x,y),capacity=resourceDef.defaultCapacity,clusterCount=richness==='dense'?5+Math.floor(random()*4):3+Math.floor(random()*3),spread=richness==='dense'?size*.0115:size*.0085,visualClusters=[];
+      for(let j=0;j<clusterCount;j++){
+        const center=j===0,ang=center?0:(j*2.3999632297+random()*.72),rad=center?0:spread*(.32+Math.sqrt(random())*.68),px=x+Math.cos(ang)*rad,py=y+Math.sin(ang)*rad,pz=this.heightAt(px,py),scale=richness==='dense'?.88+random()*.23:.82+random()*.25;
+        visualClusters.push({id:`${id}_CLUSTER_${String(j+1).padStart(2,'0')}`,assetId:resourceDef.id,richness,x:+px.toFixed(2),y:+py.toFixed(2),z:+pz.toFixed(2),heading:+(random()*Math.PI*2).toFixed(4),scale:+scale.toFixed(3),visualOnly:true});
+      }
+      const deposit={id:`${id}_FIELD`,assetId:resourceDef.id,richness,x:+x.toFixed(2),y:+y.toFixed(2),z:+qz.toFixed(2),capacity};
+      resourceZones.push({id,x:+x.toFixed(2),y:+y.toFixed(2),z:+qz.toFixed(2),radius:+zoneRadius.toFixed(2),tier,richness,assetId:resourceDef.id,capacity,depositCount:1,visualClusterCount:visualClusters.length,deposits:[deposit],visualClusters});
     }
     layout.starts.forEach((s,i)=>this._startMarker(s,i));layout.expansions.forEach(e=>this._zoneMarker(e,e.kind==='hiddenPocket'?0x76a9d8:0x93d49a));
     const navigation=this._navigationMetadata(recipe,shape.river,layout),score=this._score(recipe,layout,navigation),crossings=this.bridgeData.map(({_frame,...b})=>b);
     this.metadata={schema:'worldforge.rts-map-meta.v2',mapForgeVersion:RTS_MAP_FORGE_VERSION,recipe,terrain:{chunkSize:+actualChunk.toFixed(2),chunkCount:chunks*chunks,segmentsPerChunk:seg,approxTriangles:tris},startRegions:layout.starts.map((s,i)=>({...s,index:i,radius:+(size*.085).toFixed(2),clearRadius:+(size*.105).toFixed(2),reservedOnly:true})),expansionZones:layout.expansions.map(e=>({...e,x:+e.x.toFixed(2),y:+e.y.toFixed(2),radius:+(size*.035).toFixed(2)})),resourceZones,routes,crossings,navigation,tacticalScore:score,
       routeAffinities:{mainRoad:['wheeled','tracked','infantry'],roughPass:['tracked','infantry'],steepTrail:['infantry'],deepWater:['amphibious','air'],mountain:['air'],bridge:['tracked','wheeled','infantry','amphibious']},
-      notes:['No faction buildings are generated. Start regions are reserved terrain metadata only.','Resource nodes now render the exact approved Rich and Dense crystal GLBs; the old procedural octahedron placeholders are removed.','1536 m is the intended main-world scale; enlarged start reserves provide roughly 260 m of usable base diameter before the mountain ring.','Terrain coloration now blends elevation, slope, river moisture, and reserved-base clearing influence for more believable battlefield zones.','Road corridors are terrain-carved and mesh-lifted slightly above the ground so road surfaces stay visually grounded on elevation changes.','Trees and rock cover are excluded from start-development zones, safe expansions, and road setbacks so construction and vehicle lanes stay readable.','Movement metadata is exported per class: tracked, wheeled, infantry, amphibious and air.','Bridges are explicit traversal links with raised decks and graded approach meshes.']};
+      notes:['No faction buildings are generated. Start regions are reserved terrain metadata only.','Resource fields now render 3–5 approved Rich clusters or 5–8 approved Dense clusters while remaining one logical economy deposit per field; repeated visuals are GPU-instanced and the source GLBs remain unchanged.','1536 m is the intended main-world scale; enlarged start reserves provide roughly 260 m of usable base diameter before the mountain ring.','Terrain coloration now blends elevation, slope, river moisture, and reserved-base clearing influence for more believable battlefield zones.','Road corridors are terrain-carved and mesh-lifted slightly above the ground so road surfaces stay visually grounded on elevation changes.','Trees and rock cover are excluded from start-development zones, safe expansions, and road setbacks so construction and vehicle lanes stay readable.','Movement metadata is exported per class: tracked, wheeled, infantry, amphibious and air.','Bridges are explicit traversal links with raised decks and graded approach meshes.']};
     const generationId=this.generationSerial;this.resourceLoadPromise=this._populateResourceAssets(resourceZones,generationId);
     this._buildFog();this.setFogPreview(false);this._buildMovementOverlay();this.root.visible=true;this.overlay.visible=true;this.movementOverlay.visible=this.movementPreview!=='off';return this.metadata;
   }

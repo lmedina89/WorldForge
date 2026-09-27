@@ -522,9 +522,9 @@ function generateRTSMap({resetView=true}={}){
     configureSceneForMode();updateRTSMapScore();
     if(resetView)setRTSMapView('overview');else setRTSMapView(mapLastView);
     drawRTSMapMinimap();
-    const depositCount=meta.resourceZones.reduce((n,z)=>n+(z.depositCount||z.deposits?.length||0),0);
-    $('status').textContent=`RTS Map Forge ${RTS_MAP_FORGE_VERSION} · ${meta.recipe.size.toLocaleString()} × ${meta.recipe.size.toLocaleString()} m · ${meta.startRegions.length} reserved starts · ${meta.crossings.length} graded bridges · ${depositCount} Rich/Dense crystal deposits loading · ${meta.terrain.chunkCount} terrain chunks.`;
-    void rtsMapForge.awaitResourceAssets().then(loaded=>{if(mode==='rtsmap'&&rtsMapForge.metadata===meta)$('status').textContent=`RTS Map Forge ${RTS_MAP_FORGE_VERSION} · ${loaded.length} exact Rich/Dense crystal clusters loaded · placeholders removed.`;});
+    const fieldCount=meta.resourceZones.reduce((n,z)=>n+(z.depositCount||z.deposits?.length||0),0),clusterCount=meta.resourceZones.reduce((n,z)=>n+(z.visualClusterCount||z.visualClusters?.length||0),0);
+    $('status').textContent=`RTS Map Forge ${RTS_MAP_FORGE_VERSION} · ${meta.recipe.size.toLocaleString()} × ${meta.recipe.size.toLocaleString()} m · ${meta.startRegions.length} reserved starts · ${meta.crossings.length} graded bridges · ${fieldCount} resource fields / ${clusterCount} Rich/Dense crystal clusters loading · ${meta.terrain.chunkCount} terrain chunks.`;
+    void rtsMapForge.awaitResourceAssets().then(loaded=>{if(mode==='rtsmap'&&rtsMapForge.metadata===meta)$('status').textContent=`RTS Map Forge ${RTS_MAP_FORGE_VERSION} · ${clusterCount} exact Rich/Dense crystal clusters loaded across ${loaded.length} logical fields · GPU-instanced.`;});
   }catch(err){$('status').textContent='RTS map generation failed: '+err.message;}
 }
 function activateRTSMapMode(){
@@ -567,7 +567,7 @@ async function activateSkirmishMode({reset=false}={}){
     catch(err){$('status').textContent='Skirmish main-world generation failed: '+err.message;return;}
   }
   showMode('skirmish');setSkirmishBuildDrawer(false);rtsMapForge.overlay.visible=false;rtsMapForge.movementOverlay.visible=false;rtsMapForge.setFogPreview(false);
-  try{await rtsMapForge.awaitResourceAssets();skirmish.setFactionPalettes($('skirmishPlayerPalette').value,$('skirmishEnemyPalette').value);await skirmish.start({reset});configureSceneForMode();syncSkirmishViewport();drawRTSMapMinimap();updateSkirmishUi();$('status').textContent=`Skirmish Lab ${SKIRMISH_VERSION} · exact Rich/Dense mineral deposits loaded with oriented vehicle collision + compact infantry spacing active.`;}
+  try{await rtsMapForge.awaitResourceAssets();skirmish.setFactionPalettes($('skirmishPlayerPalette').value,$('skirmishEnemyPalette').value);await skirmish.start({reset});configureSceneForMode();syncSkirmishViewport();drawRTSMapMinimap();updateSkirmishUi();$('status').textContent=`Skirmish Lab ${SKIRMISH_VERSION} · multi-cluster Rich/Dense mineral fields loaded with oriented vehicle collision + compact infantry spacing active.`;}
   catch(err){$('status').textContent='Skirmish start failed: '+err.message;}
 }
 
