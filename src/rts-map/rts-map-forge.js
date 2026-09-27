@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { instantiateMasterResource, masterResourceForRichness } from '../rts/rts-asset-library.js';
 
-export const RTS_MAP_FORGE_VERSION='0.2.7';
+export const RTS_MAP_FORGE_VERSION='0.2.8';
 export const RTS_MAP_SCHEMA='worldforge.rts-map.v1';
 
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -72,7 +72,7 @@ export class RTSMapForge{
     const key=new THREE.DirectionalLight(0xffefd2,1.35);key.position.set(-180,-230,330);key.castShadow=true;key.shadow.mapSize.set(1024,1024);key.shadow.camera.near=10;key.shadow.camera.far=2800;key.shadow.bias=-.00018;key.shadow.normalBias=.045;key.shadow.radius=2;this.mapKey=key;
     this.lightRig.add(hemi,key);scene.add(this.lightRig);
     this.recipe=null;this.metadata=null;this.heightAt=()=>0;this.fogPreview=false;this.fogTexture=null;this.fogMesh=null;this.fogCanvas=null;this.fogCtx=null;
-    this.movementPreview='off';this.bridgeData=[];this.roadFns=[];this.treePoints=[];this.resourceViews=[];this.resourceLoadPromise=Promise.resolve([]);this.generationSerial=0;
+    this.movementPreview='off';this.bridgeData=[];this.roadFns=[];this.treePoints=[];this.resourceViews=[];this.resourceInstanceSets=[];this.resourceLoadPromise=Promise.resolve([]);this.generationSerial=0;
   }
 
   setActive(active){
@@ -90,7 +90,7 @@ export class RTSMapForge{
     this.generationSerial++;
     for(const group of [this.root,this.overlay,this.movementOverlay]){while(group.children.length){const c=group.children[group.children.length-1];group.remove(c);disposeGroup(c);}}
     this.fogTexture?.dispose?.();this.fogTexture=null;this.fogMesh=null;this.fogCanvas=null;this.fogCtx=null;
-    this.bridgeData=[];this.roadFns=[];this.treePoints=[];this.resourceViews=[];this.resourceLoadPromise=Promise.resolve([]);
+    this.bridgeData=[];this.roadFns=[];this.treePoints=[];this.resourceViews=[];this.resourceInstanceSets=[];this.resourceLoadPromise=Promise.resolve([]);
   }
 
   async _populateResourceAssets(resourceZones,generationId=this.generationSerial){
@@ -120,9 +120,10 @@ export class RTSMapForge{
         }
         sourceMeshes.forEach((sourceMesh,meshIndex)=>{
           const inst=new THREE.InstancedMesh(sourceMesh.geometry,sourceMesh.material,entries.length);inst.name=`Resource_${assetId}_${meshIndex}_${sourceMesh.name||'Mesh'}`;inst.castShadow=sourceMesh.castShadow!==false;inst.receiveShadow=sourceMesh.receiveShadow!==false;inst.renderOrder=sourceMesh.renderOrder||0;
-          entries.forEach(({zone,cluster},i)=>{const m=new THREE.Matrix4().multiplyMatrices(clusterMatrices[i],sourceMesh.matrixWorld);inst.setMatrixAt(i,m);});
+          const baseMatrices=entries.map((entry,i)=>new THREE.Matrix4().multiplyMatrices(clusterMatrices[i],sourceMesh.matrixWorld));
+          baseMatrices.forEach((m,i)=>inst.setMatrixAt(i,m));
           inst.instanceMatrix.needsUpdate=true;inst.userData={worldForgeResourceInstances:true,resourceAsset:assetId,instanceMap:entries.map(({zone,cluster})=>({resourceZoneId:zone.id,clusterId:cluster.id,richness:zone.richness,fieldCapacity:zone.capacity,visualOnly:true}))};
-          this.root.add(inst);
+          this.resourceInstanceSets.push({mesh:inst,entries,baseMatrices});this.root.add(inst);
         });
         if(helper){
           helper.getWorldPosition(tmpPos);
@@ -137,6 +138,18 @@ export class RTSMapForge{
   }
 
   awaitResourceAssets(){return this.resourceLoadPromise||Promise.resolve([]);}
+
+  setResourceFieldFraction(zoneId,fraction=1){
+    const id=String(zoneId||''),f=clamp(Number(fraction)||0,0,1),zone=this.metadata?.resourceZones?.find(z=>z.id===id);if(!zone)return false;
+    zone.remainingCapacity=+(zone.capacity*f).toFixed(2);
+    const total=Math.max(1,zone.visualClusterCount||zone.visualClusters?.length||1),visible=f<=0?0:Math.max(1,Math.ceil(total*f)),tiny=new THREE.Matrix4().makeScale(.001,.001,.001);
+    for(const set of this.resourceInstanceSets){
+      let changed=false;
+      set.entries.forEach(({zone:entryZone,cluster},i)=>{if(entryZone.id!==id)return;const match=String(cluster.id).match(/(\d+)$/),ordinal=Math.max(1,Number(match?.[1])||1),base=set.baseMatrices[i];if(!base)return;const m=base.clone();if(ordinal>visible)m.multiply(tiny);set.mesh.setMatrixAt(i,m);changed=true;});
+      if(changed)set.mesh.instanceMatrix.needsUpdate=true;
+    }
+    const anchor=this.resourceViews.find(v=>v.userData?.resourceZoneId===id);if(anchor)anchor.userData.remainingCapacity=zone.remainingCapacity;return true;
+  }
 
   _layout(recipe){
     const size=recipe.size,H=size/2;
@@ -519,6 +532,22 @@ export class RTSMapForge{
     return {allowed:!!(nav.movementMask[index]&bit),cost:raw?raw/nav.costScale:Infinity,index,ix,iy,flags:nav.terrainFlags[index],slopeDeg:nav.slopeDegrees[index],height:nav.heights[index]};
   }
 
+  findPath(fromX,fromY,toX,toY,kind='tracked'){
+    const nav=this.metadata?.navigation;if(!nav||!this.recipe)return [];const N=nav.resolution,size=this.recipe.size,H=size/2,cell=size/N,bit=nav.movementBitLegend?.[kind]||0;if(!bit)return [];
+    const clampCell=v=>clamp(v,0,N-1),toCell=(x,y)=>[clampCell(Math.floor((x+H)/cell)),clampCell(Math.floor((y+H)/cell))],idx=(x,y)=>y*N+x,allowed=(x,y)=>x>=0&&y>=0&&x<N&&y<N&&!!(nav.movementMask[idx(x,y)]&bit);
+    const nearest=(x,y)=>{if(allowed(x,y))return [x,y];for(let r=1;r<=6;r++){let best=null,bestD=Infinity;for(let oy=-r;oy<=r;oy++)for(let ox=-r;ox<=r;ox++){if(Math.max(Math.abs(ox),Math.abs(oy))!==r)continue;const nx=x+ox,ny=y+oy;if(!allowed(nx,ny))continue;const d=ox*ox+oy*oy;if(d<bestD){bestD=d;best=[nx,ny];}}if(best)return best;}return null;};
+    const rawStart=toCell(fromX,fromY),rawGoal=toCell(toX,toY),start=nearest(rawStart[0],rawStart[1]),goal=nearest(rawGoal[0],rawGoal[1]);if(!start||!goal)return [];const startI=idx(...start),goalI=idx(...goal);if(startI===goalI){if(this.movementAt(toX,toY,kind).allowed)return [{x:toX,y:toY,z:this.surfaceHeightAt(toX,toY)}];const wx=-H+(goal[0]+.5)*cell,wy=-H+(goal[1]+.5)*cell;return [{x:wx,y:wy,z:this.surfaceHeightAt(wx,wy)}];}
+    const count=N*N,g=new Float64Array(count),f=new Float64Array(count),came=new Int32Array(count),openFlag=new Uint8Array(count),closed=new Uint8Array(count);g.fill(Infinity);f.fill(Infinity);came.fill(-1);
+    const heuristic=i=>{const x=i%N,y=Math.floor(i/N);return Math.hypot(x-goal[0],y-goal[1]);};g[startI]=0;f[startI]=heuristic(startI);const open=[startI];openFlag[startI]=1,dirs=[[-1,0],[1,0],[0,-1],[0,1],[-1,-1],[1,-1],[-1,1],[1,1]];let found=false,guard=0;
+    while(open.length&&guard++<count*4){let oi=0;for(let i=1;i<open.length;i++)if(f[open[i]]<f[open[oi]])oi=i;const cur=open.splice(oi,1)[0];openFlag[cur]=0;if(cur===goalI){found=true;break;}if(closed[cur])continue;closed[cur]=1;const cx=cur%N,cy=Math.floor(cur/N);
+      for(const [dx,dy] of dirs){const nx=cx+dx,ny=cy+dy;if(!allowed(nx,ny))continue;if(dx&&dy&&(!allowed(cx+dx,cy)||!allowed(cx,cy+dy)))continue;const ni=idx(nx,ny);if(closed[ni])continue;const raw=nav.costs?.[kind]?.[ni]||nav.costScale,terrain=Math.max(.1,raw/nav.costScale),step=(dx&&dy?1.41421356237:1)*terrain,tent=g[cur]+step;if(tent>=g[ni])continue;came[ni]=cur;g[ni]=tent;f[ni]=tent+heuristic(ni);if(!openFlag[ni]){open.push(ni);openFlag[ni]=1;}}
+    }
+    if(!found)return [];const cells=[];let cur=goalI;while(cur>=0){cells.push(cur);if(cur===startI)break;cur=came[cur];}cells.reverse();if(cells[0]!==startI)return [];
+    const rawPoints=cells.slice(1).map(i=>{const x=i%N,y=Math.floor(i/N),wx=-H+(x+.5)*cell,wy=-H+(y+.5)*cell;return {x:wx,y:wy,z:this.surfaceHeightAt(wx,wy)};});
+    const points=[];for(let i=0;i<rawPoints.length;i++){const prev=i?rawPoints[i-1]:{x:fromX,y:fromY},curP=rawPoints[i],next=rawPoints[i+1];if(!next){points.push(curP);continue;}const ax=Math.sign(curP.x-prev.x),ay=Math.sign(curP.y-prev.y),bx=Math.sign(next.x-curP.x),by=Math.sign(next.y-curP.y);if(ax!==bx||ay!==by)points.push(curP);}
+    if(this.movementAt(toX,toY,kind).allowed)points.push({x:toX,y:toY,z:this.surfaceHeightAt(toX,toY)});return points;
+  }
+
   buildableAt(x,y){
     const nav=this.metadata?.navigation;if(!nav)return false;const cell=this.movementAt(x,y,'tracked');if(cell.index<0)return false;
     return !!(cell.flags&(nav.terrainFlagLegend?.buildable||1));
@@ -565,7 +594,7 @@ export class RTSMapForge{
   drawMinimap(canvas){
     if(!canvas||!this.recipe||!this.metadata)return;const rect=canvas.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2),w=Math.max(110,Math.round((rect.width||150)*dpr));if(canvas.width!==w){canvas.width=w;canvas.height=w;}const ctx=canvas.getContext('2d'),size=this.recipe.size,H=size/2,s=w/size,b=BIOMES[this.recipe.biome];ctx.clearRect(0,0,w,w);ctx.fillStyle='#62755d';ctx.fillRect(0,0,w,w);
     if(this.recipe.river){ctx.strokeStyle='#4f8fa2';ctx.lineWidth=Math.max(2,dpr);ctx.beginPath();for(let i=0;i<100;i++){const x=-H+size*i/99,y=this.riverFn(x),px=(x+H)*s,py=w-(y+H)*s;i?ctx.lineTo(px,py):ctx.moveTo(px,py);}ctx.stroke();}
-    for(const z of this.metadata.resourceZones){const dense=z.richness==='dense';ctx.fillStyle=dense?'#f1c85a':'#b9983f';ctx.beginPath();ctx.arc((z.x+H)*s,w-(z.y+H)*s,(dense?4.5:3.5)*dpr,0,Math.PI*2);ctx.fill();}
+    for(const z of this.metadata.resourceZones){const dense=z.richness==='dense',remaining=Number.isFinite(z.remainingCapacity)?z.remainingCapacity:z.capacity,fraction=z.capacity>0?clamp(remaining/z.capacity,0,1):0;if(fraction<=0)continue;ctx.globalAlpha=.35+.65*fraction;ctx.fillStyle=dense?'#f1c85a':'#b9983f';ctx.beginPath();ctx.arc((z.x+H)*s,w-(z.y+H)*s,(dense?4.5:3.5)*dpr,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;}
     for(const st of this.metadata.startRegions){ctx.fillStyle=st.index===0?'#63dd89':'#a9b7ab';ctx.beginPath();ctx.arc((st.x+H)*s,w-(st.y+H)*s,5*dpr,0,Math.PI*2);ctx.fill();}
     if(this.fogPreview){const start=this.metadata.startRegions[0],vision=size*.115;ctx.fillStyle='rgba(0,0,0,.78)';ctx.fillRect(0,0,w,w);ctx.save();ctx.globalCompositeOperation='destination-out';ctx.beginPath();ctx.arc((start.x+H)*s,w-(start.y+H)*s,vision*s,0,Math.PI*2);ctx.fill();ctx.restore();}
     const cx=this.controls.target.x,cy=this.controls.target.y,viewW=(this.camera.right-this.camera.left)*s,viewH=(this.camera.top-this.camera.bottom)*s;ctx.strokeStyle='rgba(255,255,255,.92)';ctx.lineWidth=Math.max(1.2,dpr);ctx.strokeRect((cx+H)*s-viewW/2,w-(cy+H)*s-viewH/2,viewW,viewH);

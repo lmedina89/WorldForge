@@ -1,3 +1,18 @@
+# v0.13.13 — Skirmish Economy & RTS Command Foundation
+
+- WorldForge advanced to **0.13.13**, Skirmish to **0.7.0**, RTS Map Forge to **0.2.8**, and RTS Definitions to **0.6.0**.
+- Added contextual friendly-unit selection and a selected-unit HUD state.
+- Added routed `MOVE` and `STOP` handling; ground units use lightweight A* navigation over the existing tactical nav grid while retaining local collision/sliding.
+- Added `HARVEST` and `RETURN_CARGO` simulation commands.
+- Added a complete first Harvester economy loop: select Harvester → tap resource field → route and harvest → fill cargo → return to completed Refinery → unload → player credits increase → repeat.
+- Field Harvester prototype economy data now includes a 1,200-unit cargo capacity, harvest rate, unload rate, and credit conversion.
+- Registered Rich/Dense Map Forge deposits as finite simulation resource entities without multiplying capacity for their visual cluster instances.
+- Added stepwise visual crystal-field depletion and minimap depletion using the existing instanced resource presentation; approved Rich/Dense GLBs remain unchanged.
+- Cached the Refinery's authored Harvester dock and added resolved traversable approach points for resource and refinery routing.
+- Manual Aegis-X driving remains available and cancels its RTS move order; battlefield taps with no selection preserve the legacy turret-aim behavior.
+- Enemy AI, combat/turret behavior, and full vehicle-production economy are deliberately outside this milestone.
+- No approved vehicle, building, infantry, or crystal GLBs were rebuilt.
+
 # v0.13.12 — Road Surface + River Continuity Fix
 
 - WorldForge advanced to **0.13.12** and RTS Map Forge to **0.2.7**.

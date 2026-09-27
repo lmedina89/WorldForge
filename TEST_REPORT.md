@@ -1,3 +1,21 @@
+# WorldForge v0.13.13 Test Report
+
+## Skirmish Economy & RTS Command Foundation
+
+Result: **PASS — focused source/regression validation**
+
+- Focused `rts-*.test.mjs` suite: **18 / 18 PASS**.
+- JavaScript syntax checks pass for the modified Map Forge, Skirmish, app, command, definition, and schema modules.
+- New v0.13.13 economy/order regression coverage verifies version wiring, `MOVE`/`HARVEST`/`RETURN_CARGO`, Harvester cargo/rates, selection, routed movement, resource depletion, Refinery unloading, credit delivery, and UI/help integration.
+- Existing resource-field, visual-readability, collision/spacing, road/river, structure-master, and simulation-foundation regressions remain passing.
+- Production GLB hash comparison against the v0.13.12 release: **16 / 16 byte-identical**. Rich v0.3 and Dense v0.1 retain their approved SHA-256 hashes.
+
+### Runtime scope
+The automated checks validate source wiring and deterministic regression behavior. They do **not** substitute for an actual Safari/GitHub Pages play test, so mobile route feel, tap targeting, Harvester approach behavior, and visual depletion should be checked on-device after deployment.
+
+### Deliberately not included
+Enemy AI, Guardian Turret combat, broad health/destruction combat, and the complete vehicle-production economy are not part of v0.13.13.
+
 # WorldForge v0.13.12 Test Report
 
 Focused regression scope: road rendering continuity, river rendering continuity, bridge/water height agreement, existing RTS systems.

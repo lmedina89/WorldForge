@@ -1,3 +1,28 @@
+# WorldForge v0.13.13 — Skirmish Economy & RTS Command Foundation
+
+WorldForge v0.13.13 advances Skirmish to **0.7.0**, RTS Map Forge to **0.2.8**, and RTS Definitions to **0.6.0**. This milestone begins turning the battlefield from an asset test harness into a playable RTS loop while preserving the approved map, structures, vehicles, infantry, and Rich/Dense crystal GLBs.
+
+## RTS command foundation
+- Tap a friendly unit to select it; tap the selected unit again to clear selection.
+- With a unit selected, tap terrain to issue a routed `MOVE` order. The player Aegis-X still supports the existing manual drive controls, and manual driving cancels its queued RTS move order.
+- Ground units use a lightweight A* route over the existing 64×64 tactical navigation grid, then reuse the existing oriented vehicle collision and local sliding behavior while following waypoints.
+- `STOP`, `HARVEST`, and `RETURN_CARGO` are now first-class simulation commands alongside `MOVE`.
+- The selection marker is contextual only; no permanent arcade selection ring was added.
+
+## Harvester economy loop
+- Every Rich/Dense Map Forge deposit is registered as one logical resource-field entity with finite remaining capacity.
+- Select a Field Harvester and tap a crystal field to route it to the field's authored harvest area.
+- The Harvester gathers minerals into a **1,200-unit cargo hold** at the current prototype rate, returns to a completed Field Refinery, unloads, and converts delivered minerals into player credits.
+- Auto-harvest repeats against the same deposit while material remains and searches for another available field after depletion.
+- Resource fields now deplete visibly in cluster steps without modifying or rebuilding the approved source GLBs; exhausted fields disappear from the battlefield and minimap.
+- The Refinery's authored Harvester dock remains the return target, with routed approach points used when the exact authored point falls on a blocked navigation cell.
+
+## Scope boundary
+This is the shared **economy + command foundation**, not the enemy-AI/combat milestone. Enemy economy/production logic, attack behavior, Guardian Turret combat, and the broader production economy remain future steps so they can use the same commands and resource rules rather than separate scripted systems.
+
+## Asset preservation
+No approved production GLB was rebuilt for v0.13.13. Rich v0.3 and Dense v0.1 remain the exact approved crystal masters, and the existing vehicle/building/infantry assets are preserved.
+
 # WorldForge v0.13.12 — Road Surface + River Continuity Fix
 
 WorldForge v0.13.12 advances RTS Map Forge to **0.2.7** with a focused terrain-surface repair based on the mobile battlefield screenshots. Approved Rich/Dense crystal assets and the v0.13.11 multi-cluster resource-field system are unchanged.

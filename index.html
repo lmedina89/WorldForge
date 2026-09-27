@@ -172,7 +172,7 @@
     <p class="miniNote">These deploy the exact approved HMMWV, attack-helicopter, and Field Harvester GLBs as simulation-owned test units. Each completed Field Refinery also includes one starter Harvester already docked inside. Aegis-X remains the direct-drive combat unit in this pass; vehicle-specific driving/flight/weapon behavior comes next rather than using blocky stand-ins.</p>
     <div class="sectionTitle">COMBAT TEST</div>
     <div class="skirmishButtons"><button id="skirmishFollow">FOLLOW TANK: ON</button><button id="skirmishFirePanel">FIRE MAIN GUN</button></div>
-    <p class="miniNote">Hold the drive pad or WASD to drive the articulated Aegis-X across tracked-vehicle terrain. Tap the battlefield to aim the independent turret. FIRE now enters the fixed-tick command stream; projectile gameplay state is simulation-owned while Three.js renders the shell and effects.</p>
+    <p class="miniNote">Tap a friendly unit to select it, then tap terrain to issue a routed move order. Select a Field Harvester and tap a Rich/Dense crystal field to mine it, return to a completed Refinery, unload, and add credits. With no unit selected, battlefield taps still aim the Aegis-X turret; the drive pad/WASD remains available for manual tank control.</p>
     <div class="sectionTitle">SIMULATION DEBUG</div>
     <div id="skirmishSimStatus" class="skirmishSimStatus">SIM 30 HZ · TICK 0 · 0 ENTITIES</div>
     <div class="skirmishButtons"><button id="skirmishSimPause">PAUSE SIM</button><button id="skirmishSimStep">STEP 1 TICK</button></div>
@@ -228,7 +228,7 @@
     <div class="skirmishBuildDrawerGrid">
       <button id="skirmishDrawerSpawnHmmwv"><b>HMMWV-50</b><span>approved vehicle asset</span></button>
       <button id="skirmishDrawerSpawnTalon"><b>TALON AH-X</b><span>attack helicopter</span></button>
-      <button id="skirmishDrawerSpawnHarvester"><b>HARVESTER</b><span>field support vehicle</span></button>
+      <button id="skirmishDrawerSpawnHarvester"><b>HARVESTER</b><span>mines crystal fields</span></button>
     </div>
     <div class="skirmishBuildDrawerHead skirmishDrawerSubhead"><b>DEV / COLLISION</b></div>
     <div class="skirmishBuildDrawerGrid"><button id="skirmishCollisionDebug"><b>COLLISION DEBUG</b><span>OFF · show physical footprints</span></button></div>

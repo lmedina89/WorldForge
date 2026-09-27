@@ -538,7 +538,7 @@ function updateSkirmishUi(state=skirmish.state()){
   $('skirmishEconomy').textContent=`$${state.credits.toLocaleString()} · ${powerText}`;
   $('skirmishTankStatus').textContent=`AEGIS-X · ${Math.round(state.tankHp)} / ${Math.round(state.tankMaxHp)} HP`;
   if($('skirmishHudEconomy'))$('skirmishHudEconomy').textContent=`$${state.credits.toLocaleString()} · PWR ${netText}`;
-  if($('skirmishHudSelected'))$('skirmishHudSelected').textContent=`AEGIS-X · HP ${Math.round(state.tankHp)} / ${Math.round(state.tankMaxHp)}`;
+  if($('skirmishHudSelected')){let selected=`AEGIS-X MANUAL · HP ${Math.round(state.tankHp)} / ${Math.round(state.tankMaxHp)}`;if(state.selectedUnitLabel){const short=state.selectedUnitLabel.replace(/^Aegis\s+/i,'').toUpperCase(),order=String(state.selectedOrder||'idle').replace(/([A-Z])/g,' $1').trim().toUpperCase();selected=state.selectedUnitType==='aegisHarvester'?`${short} · CARGO ${Math.round(state.selectedCargo)} / ${Math.round(state.selectedCapacity)} · ${order}`:`${short} · HP ${Math.round(state.selectedHp)} / ${Math.round(state.selectedMaxHp)} · ${order}`;}$('skirmishHudSelected').textContent=selected;}
   $('skirmishMessage').textContent=state.message||`Skirmish Lab ${SKIRMISH_VERSION} ready.`;
   $('skirmishFollow').textContent=`FOLLOW TANK: ${skirmish.follow?'ON':'OFF'}`;
   if($('skirmishHudFollow')){$('skirmishHudFollow').textContent=skirmish.follow?'FOLLOW ON':'FOLLOW OFF';$('skirmishHudFollow').classList.toggle('active',skirmish.follow);}
@@ -567,7 +567,7 @@ async function activateSkirmishMode({reset=false}={}){
     catch(err){$('status').textContent='Skirmish main-world generation failed: '+err.message;return;}
   }
   showMode('skirmish');setSkirmishBuildDrawer(false);rtsMapForge.overlay.visible=false;rtsMapForge.movementOverlay.visible=false;rtsMapForge.setFogPreview(false);
-  try{await rtsMapForge.awaitResourceAssets();skirmish.setFactionPalettes($('skirmishPlayerPalette').value,$('skirmishEnemyPalette').value);await skirmish.start({reset});configureSceneForMode();syncSkirmishViewport();drawRTSMapMinimap();updateSkirmishUi();$('status').textContent=`Skirmish Lab ${SKIRMISH_VERSION} · multi-cluster Rich/Dense mineral fields loaded with oriented vehicle collision + compact infantry spacing active.`;}
+  try{await rtsMapForge.awaitResourceAssets();skirmish.setFactionPalettes($('skirmishPlayerPalette').value,$('skirmishEnemyPalette').value);await skirmish.start({reset});configureSceneForMode();syncSkirmishViewport();drawRTSMapMinimap();updateSkirmishUi();$('status').textContent=`Skirmish Lab ${SKIRMISH_VERSION} · economy + command foundation active · tap friendly units to select, terrain to move, and crystal fields with a Harvester to mine.`;}
   catch(err){$('status').textContent='Skirmish start failed: '+err.message;}
 }
 
