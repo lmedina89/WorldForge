@@ -51,8 +51,8 @@ const sk=read('src/rts/skirmish-test.js');
 const html=read('index.html');
 const app=read('src/app.js');
 
-assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.9'/);
-assert.match(schema,/rtsAssetLibrary: '0\.5\.0'/);
+assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.10'/);
+assert.match(schema,/rtsAssetLibrary: '0\.5\.1'/);
 assert.match(schema,/skirmish: '0\.6\.3'/);
 assert.match(defs,/vehicleFactory:.*masterAsset:'fieldVehicleFactory'/s);
 assert.match(defs,/gunTurret:.*masterAsset:'guardianTurret'/s);
@@ -89,7 +89,7 @@ assert.match(sk,/ENEMY_GuardianTurret/);
 
 console.log(JSON.stringify({
   ok:true,
-  worldforge:'0.13.9',
+  worldforge:'0.13.10',
   skirmish:'0.6.3',
   factoryMaster:true,
   guardianTurretMaster:true,

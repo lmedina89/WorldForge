@@ -22,7 +22,7 @@ const sk=read('src/rts/skirmish-test.js');
 const forge=read('src/building/building-forge.js');
 const defs=read('src/rts/data/rts-definitions.js');
 
-assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.9'/);
+assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.10'/);
 assert.match(schema,/buildingForge: '0\.3\.1'/);
 assert.match(schema,/skirmish: '0\.6\.3'/);
 assert.match(sk,/SKIRMISH_VERSION='0\.6\.3'/);
@@ -68,7 +68,7 @@ for(const id of ['constructionYard','powerPlant','refinery','barracks','vehicleF
 
 console.log(JSON.stringify({
   ok:true,
-  worldforge:'0.13.9',
+  worldforge:'0.13.10',
   skirmish:'0.6.3',
   tailRotorAxis:'z',
   coolingFanAxis:'z',

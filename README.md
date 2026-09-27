@@ -1,3 +1,21 @@
+# WorldForge v0.13.10 — Rich + Dense Crystal Resource Masters
+
+WorldForge v0.13.10 replaces the RTS Map Forge mineral placeholder geometry with the two approved crystal-cluster GLBs. RTS Map Forge advances to **0.2.5** and RTS Asset Library to **0.5.1**. The Rich v0.3 and Dense v0.1 files are packaged byte-for-byte exactly as approved; neither GLB was rebuilt, recolored, simplified, or re-exported during integration.
+
+## Resource master integration
+- Added `richCrystalCluster` → `assets/resources/worldforge_mineral_rich_crystal_cluster_v0.3_flatfacets.glb`
+- Added `denseCrystalCluster` → `assets/resources/worldforge_mineral_dense_crystal_cluster_v0.1.glb`
+- Registered both as neutral `mineralResource` masters with their authored helper nodes: `WF_RESOURCE_ROOT`, `WF_RESOURCE_CENTER`, `WF_HARVEST_POINT`, and `WF_DEPLETION_CENTER`.
+- Rich defaults to 1,250 capacity and Dense to 3,000 capacity as provisional gameplay metadata; actual economy tuning can change later without modifying the GLBs.
+
+## Map Forge replacement
+- Removed the procedural octahedron mineral placeholders.
+- Every generated resource zone now receives one exact Rich or Dense master cluster with deterministic heading and terrain grounding.
+- The resource-density control changes the proportion of Dense versus Rich nodes while keeping the strategic resource-zone count stable.
+- Dense nodes are marked `contested`; Rich nodes are marked `standard` in exported gameplay metadata.
+- Map GLB export now waits for the resource masters to finish loading so exported maps include the real crystal assets.
+- Skirmish waits for the same resource load promise before starting, so the Main World and Skirmish share the same neutral mineral deposits.
+
 # WorldForge v0.13.9 — Believable Terrain & Road Grounding
 
 WorldForge v0.13.9 advances RTS Map Forge to **0.2.4** with a focused battlefield-believability pass. Terrain coloration now responds more coherently to elevation, slope, river moisture, and reserved base clearings, while road corridors are carved and lifted so they stay visually grounded across elevation changes. No RTS structure GLBs were rebuilt for this milestone.

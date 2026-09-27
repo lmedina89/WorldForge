@@ -17,7 +17,9 @@ for(const rel of [
   'assets/buildings/aegis_vehicle_factory_v021.glb',
   'assets/buildings/aegis_guardian_turret_v031.glb',
   'assets/buildings/aegis_command_nexus_hq_v13.glb',
-  'assets/buildings/aegis_grid_bastion_power_plant_v1.glb'
+  'assets/buildings/aegis_grid_bastion_power_plant_v1.glb',
+  'assets/resources/worldforge_mineral_rich_crystal_cluster_v0.3_flatfacets.glb',
+  'assets/resources/worldforge_mineral_dense_crystal_cluster_v0.1.glb'
 ]) assert.ok(fs.statSync(path.join(root,rel)).size>10000,`${rel} missing/too small`);
 
 for(const id of ['tacticalCommandPost','fieldPowerNode','fieldRefinery','fieldBarracks','fieldVehicleFactory','guardianTurret','commandNexus','gridBastion'])assert.match(lib,new RegExp(id));

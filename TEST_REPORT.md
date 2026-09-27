@@ -1,3 +1,24 @@
+# WorldForge v0.13.10 Test Report
+
+## Rich + Dense Crystal Resource Masters
+
+Result: **PASS**
+
+### Validation
+- All `rts-*.test.mjs` focused RTS tests pass after the resource integration.
+- New resource-master test verifies both packaged crystal GLBs are byte-identical to the approved source files by SHA-256.
+- Rich SHA-256: `3fe4ead89946b35403d28dab0c9549f3049a984681f286c0783de0e1959b8951`.
+- Dense SHA-256: `6f3a3a33049a764cc7bb1fbe3ce481b49f053c8e4c0785d142124fa7594bbcc0`.
+- Both GLBs contain all four required resource helper nodes.
+- All 14 GLBs already present in the v0.13.9 package were SHA-256 compared and remain unchanged.
+- JavaScript syntax checks pass for the changed RTS Asset Library, RTS Map Forge, application wiring, and schema modules.
+
+### Map integration
+- Legacy mineral `OctahedronGeometry` placeholder rendering is removed.
+- Rich and Dense masters are selected deterministically from resource density and embedded in exported resource metadata.
+- Map export waits for the crystal assets to load before serializing the map GLB.
+- Skirmish waits for the same neutral resource assets before starting.
+
 # WorldForge v0.13.9 Test Report
 
 ## Believable Terrain & Road Grounding

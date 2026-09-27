@@ -522,7 +522,9 @@ function generateRTSMap({resetView=true}={}){
     configureSceneForMode();updateRTSMapScore();
     if(resetView)setRTSMapView('overview');else setRTSMapView(mapLastView);
     drawRTSMapMinimap();
-    $('status').textContent=`RTS Map Forge ${RTS_MAP_FORGE_VERSION} · ${meta.recipe.size.toLocaleString()} × ${meta.recipe.size.toLocaleString()} m · ${meta.startRegions.length} reserved starts · ${meta.crossings.length} graded bridges · tracked/wheeled/infantry/amphibious/air nav · ${meta.terrain.chunkCount} terrain chunks.`;
+    const depositCount=meta.resourceZones.reduce((n,z)=>n+(z.depositCount||z.deposits?.length||0),0);
+    $('status').textContent=`RTS Map Forge ${RTS_MAP_FORGE_VERSION} · ${meta.recipe.size.toLocaleString()} × ${meta.recipe.size.toLocaleString()} m · ${meta.startRegions.length} reserved starts · ${meta.crossings.length} graded bridges · ${depositCount} Rich/Dense crystal deposits loading · ${meta.terrain.chunkCount} terrain chunks.`;
+    void rtsMapForge.awaitResourceAssets().then(loaded=>{if(mode==='rtsmap'&&rtsMapForge.metadata===meta)$('status').textContent=`RTS Map Forge ${RTS_MAP_FORGE_VERSION} · ${loaded.length} exact Rich/Dense crystal clusters loaded · placeholders removed.`;});
   }catch(err){$('status').textContent='RTS map generation failed: '+err.message;}
 }
 function activateRTSMapMode(){
@@ -565,7 +567,7 @@ async function activateSkirmishMode({reset=false}={}){
     catch(err){$('status').textContent='Skirmish main-world generation failed: '+err.message;return;}
   }
   showMode('skirmish');setSkirmishBuildDrawer(false);rtsMapForge.overlay.visible=false;rtsMapForge.movementOverlay.visible=false;rtsMapForge.setFogPreview(false);
-  try{skirmish.setFactionPalettes($('skirmishPlayerPalette').value,$('skirmishEnemyPalette').value);await skirmish.start({reset});configureSceneForMode();syncSkirmishViewport();drawRTSMapMinimap();updateSkirmishUi();$('status').textContent=`Skirmish Lab ${SKIRMISH_VERSION} · oriented vehicle hull collision + corner sliding + compact infantry spacing active.`;}
+  try{await rtsMapForge.awaitResourceAssets();skirmish.setFactionPalettes($('skirmishPlayerPalette').value,$('skirmishEnemyPalette').value);await skirmish.start({reset});configureSceneForMode();syncSkirmishViewport();drawRTSMapMinimap();updateSkirmishUi();$('status').textContent=`Skirmish Lab ${SKIRMISH_VERSION} · exact Rich/Dense mineral deposits loaded with oriented vehicle collision + compact infantry spacing active.`;}
   catch(err){$('status').textContent='Skirmish start failed: '+err.message;}
 }
 
@@ -632,7 +634,7 @@ $('mapShowZones').onclick=()=>{mapZonesVisible=!mapZonesVisible;rtsMapForge.over
 $('mapMovementPreview').onchange=()=>{rtsMapForge.setMovementPreview($('mapMovementPreview').value);$('status').textContent=$('mapMovementPreview').value==='off'?'Traversal preview off.':`Traversal preview: ${$('mapMovementPreview').selectedOptions[0].text}. Green = efficient, amber/orange = costly, red = blocked.`;};
 $('mapExportRecipe').onclick=()=>{if(!rtsMapForge.recipe)return;$('status').textContent='Exporting RTS map recipe…';download(new Blob([JSON.stringify(rtsMapForge.exportRecipe(),null,2)],{type:'application/json'}),rtsMapBaseName()+'.recipe.json');};
 $('mapExportMeta').onclick=()=>{if(!rtsMapForge.metadata)return;$('status').textContent='Exporting RTS gameplay metadata…';download(new Blob([JSON.stringify(rtsMapForge.exportMetadata(),null,2)],{type:'application/json'}),rtsMapBaseName()+'.map.json');};
-$('mapExportGLB').onclick=()=>{if(!rtsMapForge.recipe)return;const oldFog=rtsMapForge.fogMesh?.visible;if(rtsMapForge.fogMesh)rtsMapForge.fogMesh.visible=false;new GLTFExporter().parse(rtsMapForge.root,r=>{download(new Blob([r],{type:'model/gltf-binary'}),rtsMapBaseName()+'.glb');$('status').textContent='RTS terrain GLB exported. Gameplay regions remain in MAP META JSON.';if(rtsMapForge.fogMesh)rtsMapForge.fogMesh.visible=oldFog;},e=>{if(rtsMapForge.fogMesh)rtsMapForge.fogMesh.visible=oldFog;$('status').textContent='RTS terrain GLB export failed: '+e;},{binary:true,onlyVisible:true});};
+$('mapExportGLB').onclick=async()=>{if(!rtsMapForge.recipe)return;$('status').textContent='Waiting for exact crystal resource masters before GLB export…';await rtsMapForge.awaitResourceAssets();const oldFog=rtsMapForge.fogMesh?.visible;if(rtsMapForge.fogMesh)rtsMapForge.fogMesh.visible=false;new GLTFExporter().parse(rtsMapForge.root,r=>{download(new Blob([r],{type:'model/gltf-binary'}),rtsMapBaseName()+'.glb');$('status').textContent='RTS terrain + Rich/Dense crystal resource GLB exported. Gameplay regions remain in MAP META JSON.';if(rtsMapForge.fogMesh)rtsMapForge.fogMesh.visible=oldFog;},e=>{if(rtsMapForge.fogMesh)rtsMapForge.fogMesh.visible=oldFog;$('status').textContent='RTS map GLB export failed: '+e;},{binary:true,onlyVisible:true});};
 $('mapExportPNG').onclick=()=>renderer.domElement.toBlob(b=>download(b,rtsMapBaseName()+'.png'));
 $('mapMinimap').addEventListener('pointerdown',e=>{if(mode==='rtsmap'){const r=$('mapMinimap').getBoundingClientRect();rtsMapForge.jumpFromMinimap((e.clientX-r.left)/r.width,(e.clientY-r.top)/r.height);drawRTSMapMinimap();}else if(mode==='skirmish'&&!skirmish.follow){const r=$('mapMinimap').getBoundingClientRect(),u=(e.clientX-r.left)/r.width,v=(e.clientY-r.top)/r.height,size=rtsMapForge.recipe?.size||1024,H=size/2,x=-H+u*size,y=H-v*size,z=rtsMapForge.surfaceHeightAt(x,y);controls.target.set(x,y,z+3);camera.position.set(x+65,y-82,z+68);camera.lookAt(controls.target);drawRTSMapMinimap();}});
 for(const id of ['mapRelief','mapForest','mapResources'])$(id).oninput=()=>syncOutputs();

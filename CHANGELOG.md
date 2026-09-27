@@ -1,3 +1,15 @@
+# v0.13.10 — Rich + Dense Crystal Resource Integration
+
+- WorldForge advanced to **0.13.10**, RTS Map Forge to **0.2.5**, and RTS Asset Library to **0.5.1**.
+- Added the approved Rich v0.3 and Dense v0.1 mineral-cluster GLBs under `assets/resources/` without modifying their bytes.
+- Added `MASTER_RESOURCES`, `instantiateMasterResource`, and richness-based resource lookup to the RTS master-asset registry.
+- Removed the old procedural `OctahedronGeometry` resource placeholders from Map Forge.
+- Resource zones now instantiate the exact Rich or Dense GLB at deterministic map positions and rotations.
+- Resource-density settings now influence Rich/Dense prevalence rather than generating more placeholder shards.
+- Added per-zone/deposit metadata for resource asset ID, richness, capacity, terrain position, and heading.
+- Map GLB export and Skirmish startup now wait for exact resource-master loading.
+- Preserved all existing terrain, road, navigation, structure, vehicle, infantry, and collision systems.
+
 # v0.13.9 — Believable Terrain & Road Grounding
 
 - WorldForge advanced to **0.13.9** and RTS Map Forge to **0.2.4**.

@@ -1,6 +1,7 @@
 import * as THREE from 'three';
+import { instantiateMasterResource, masterResourceForRichness } from '../rts/rts-asset-library.js';
 
-export const RTS_MAP_FORGE_VERSION='0.2.4';
+export const RTS_MAP_FORGE_VERSION='0.2.5';
 export const RTS_MAP_SCHEMA='worldforge.rts-map.v1';
 
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -71,7 +72,7 @@ export class RTSMapForge{
     const key=new THREE.DirectionalLight(0xffefd2,1.35);key.position.set(-180,-230,330);key.castShadow=true;key.shadow.mapSize.set(1024,1024);key.shadow.camera.near=10;key.shadow.camera.far=2800;key.shadow.bias=-.00018;key.shadow.normalBias=.045;key.shadow.radius=2;this.mapKey=key;
     this.lightRig.add(hemi,key);scene.add(this.lightRig);
     this.recipe=null;this.metadata=null;this.heightAt=()=>0;this.fogPreview=false;this.fogTexture=null;this.fogMesh=null;this.fogCanvas=null;this.fogCtx=null;
-    this.movementPreview='off';this.bridgeData=[];this.roadFns=[];this.treePoints=[];
+    this.movementPreview='off';this.bridgeData=[];this.roadFns=[];this.treePoints=[];this.resourceViews=[];this.resourceLoadPromise=Promise.resolve([]);this.generationSerial=0;
   }
 
   setActive(active){
@@ -86,10 +87,30 @@ export class RTSMapForge{
   }
 
   disposeGenerated(){
+    this.generationSerial++;
     for(const group of [this.root,this.overlay,this.movementOverlay]){while(group.children.length){const c=group.children[group.children.length-1];group.remove(c);disposeGroup(c);}}
     this.fogTexture?.dispose?.();this.fogTexture=null;this.fogMesh=null;this.fogCanvas=null;this.fogCtx=null;
-    this.bridgeData=[];this.roadFns=[];this.treePoints=[];
+    this.bridgeData=[];this.roadFns=[];this.treePoints=[];this.resourceViews=[];this.resourceLoadPromise=Promise.resolve([]);
   }
+
+  async _populateResourceAssets(resourceZones,generationId=this.generationSerial){
+    const loaded=[];
+    for(const zone of resourceZones)for(const deposit of zone.deposits||[]){
+      try{
+        const result=await instantiateMasterResource(deposit.assetId);
+        if(generationId!==this.generationSerial){disposeGroup(result.group);continue;}
+        const axis=new THREE.Group();axis.name=`${deposit.id}_YUp_to_ZUp`;axis.rotation.x=Math.PI/2;axis.add(result.group);
+        const root=new THREE.Group();root.name=deposit.id;root.position.set(deposit.x,deposit.y,deposit.z+.04);root.rotation.z=deposit.heading;root.add(axis);
+        root.userData={worldForgeResource:true,resourceZoneId:zone.id,resourceAsset:deposit.assetId,richness:zone.richness,capacity:deposit.capacity,collisionMode:result.definition.collisionMode};
+        this.root.add(root);this.resourceViews.push(root);loaded.push(root);
+      }catch(err){
+        console.error(`Resource asset load failed for ${deposit.assetId}`,err);
+      }
+    }
+    return loaded;
+  }
+
+  awaitResourceAssets(){return this.resourceLoadPromise||Promise.resolve([]);}
 
   _layout(recipe){
     const size=recipe.size,H=size/2;
@@ -383,17 +404,19 @@ export class RTSMapForge{
     // Rocks / tactical cover clusters.
     const rockCount=Math.min(420,Math.round(areaScale*(65+recipe.relief*90))),rocks=new THREE.InstancedMesh(new THREE.DodecahedronGeometry(size*.0024,0),mat(biome.rock,1),rockCount);rocks.castShadow=true;
     let rPlaced=0,rAttempts=0;while(rPlaced<rockCount&&rAttempts++<rockCount*22){const x=(random()-.5)*size*.94,y=(random()-.5)*size*.94;if(layout.starts.some(s=>Math.hypot(x-s.x,y-s.y)<size*.095))continue;if(layout.expansions.some(e=>Math.hypot(x-e.x,y-e.y)<size*(e.kind==='safeExpansion'?.042:.026)))continue;if(this.roadFns.some(fn=>Math.abs(y-fn(x))<(fn.width||size*.012)*1.08))continue;const z=this.heightAt(x,y),sample=Math.max(1.6,size*.0024),gx=(this.heightAt(x+sample,y)-this.heightAt(x-sample,y))/(sample*2),gy=(this.heightAt(x,y+sample)-this.heightAt(x,y-sample))/(sample*2),slopeDeg=Math.atan(Math.hypot(gx,gy))*180/Math.PI,riverProximity=recipe.river?clamp(1-Math.abs(y-shape.river(x))/(size*.085),0,1):0,zone=this._terrainContext(recipe,layout,x,y,z,slopeDeg,riverProximity),rockChance=clamp(.10+zone.rocky*.78+zone.upland*.18-riverProximity*.14-zone.baseClear*.26,.06,.96);if(random()>rockChance)continue;const scale=.52+random()*1.15+zone.rocky*.68;dummy.position.set(x,y,z+size*.0012*scale);dummy.scale.set(scale,scale,scale*(.45+random()*.45));dummy.rotation.set(random(),random(),random()*6.28);dummy.updateMatrix();rocks.setMatrixAt(rPlaced++,dummy.matrix);}rocks.count=rPlaced;rocks.name='RockCover';this.root.add(rocks);
-    // Resource fields are gameplay markers/objects, not faction structures.
+    // Exact mineral-resource masters replace the former procedural octahedron placeholders.
+    // Standard nodes use the approved Rich cluster; contested nodes use the larger Dense cluster.
     const resourceCount=recipe.players===4?(size>=1536?13:size>=1024?9:7):(size>=1536?9:size>=1024?6:5),resourceZones=[];
-    const resourceMat=mat(biome.resource,.58);for(let i=0;i<resourceCount;i++){
-      const a=(i/resourceCount)*Math.PI*2+.35,radius=size*(i%3===0?.16:i%3===1?.26:.34),x=Math.cos(a)*radius,y=Math.sin(a)*radius,z=this.heightAt(x,y);const id=`RESOURCE_${String(i+1).padStart(2,'0')}`;resourceZones.push({id,x:+x.toFixed(2),y:+y.toFixed(2),radius:+(size*.025).toFixed(2),tier:i%3===0?'contested':'standard'});
-      for(let k=0;k<10+Math.round(recipe.resources*8);k++){const qx=x+(random()-.5)*size*.036,qy=y+(random()-.5)*size*.036,qz=this.heightAt(qx,qy),q=new THREE.Mesh(new THREE.OctahedronGeometry(size*(.0016+random()*.0014),0),resourceMat);q.position.set(qx,qy,qz+size*.0019);q.rotation.set(random(),random(),random()*6.28);q.castShadow=true;this.root.add(q);}
+    for(let i=0;i<resourceCount;i++){
+      const a=(i/resourceCount)*Math.PI*2+.35,radius=size*(i%3===0?.16:i%3===1?.26:.34),x=Math.cos(a)*radius,y=Math.sin(a)*radius,denseShare=clamp(.08+recipe.resources*.35,.15,.43),densityRank=((i*5)%resourceCount)/resourceCount,richness=densityRank<denseShare?'dense':'rich',tier=richness==='dense'?'contested':'standard',resourceDef=masterResourceForRichness(richness),id=`RESOURCE_${String(i+1).padStart(2,'0')}`,zoneRadius=size*.025,qz=this.heightAt(x,y),deposit={id:`${id}_DEPOSIT_01`,assetId:resourceDef.id,richness,x:+x.toFixed(2),y:+y.toFixed(2),z:+qz.toFixed(2),heading:+(random()*Math.PI*2).toFixed(4),capacity:resourceDef.defaultCapacity},deposits=[deposit],capacity=deposit.capacity;
+      resourceZones.push({id,x:+x.toFixed(2),y:+y.toFixed(2),radius:+zoneRadius.toFixed(2),tier,richness,assetId:resourceDef.id,capacity,depositCount:1,deposits});
     }
     layout.starts.forEach((s,i)=>this._startMarker(s,i));layout.expansions.forEach(e=>this._zoneMarker(e,e.kind==='hiddenPocket'?0x76a9d8:0x93d49a));
     const navigation=this._navigationMetadata(recipe,shape.river,layout),score=this._score(recipe,layout,navigation),crossings=this.bridgeData.map(({_frame,...b})=>b);
     this.metadata={schema:'worldforge.rts-map-meta.v2',mapForgeVersion:RTS_MAP_FORGE_VERSION,recipe,terrain:{chunkSize:+actualChunk.toFixed(2),chunkCount:chunks*chunks,segmentsPerChunk:seg,approxTriangles:tris},startRegions:layout.starts.map((s,i)=>({...s,index:i,radius:+(size*.085).toFixed(2),clearRadius:+(size*.105).toFixed(2),reservedOnly:true})),expansionZones:layout.expansions.map(e=>({...e,x:+e.x.toFixed(2),y:+e.y.toFixed(2),radius:+(size*.035).toFixed(2)})),resourceZones,routes,crossings,navigation,tacticalScore:score,
       routeAffinities:{mainRoad:['wheeled','tracked','infantry'],roughPass:['tracked','infantry'],steepTrail:['infantry'],deepWater:['amphibious','air'],mountain:['air'],bridge:['tracked','wheeled','infantry','amphibious']},
-      notes:['No faction buildings are generated. Start regions are reserved terrain metadata only.','1536 m is the intended main-world scale; enlarged start reserves provide roughly 260 m of usable base diameter before the mountain ring.','Terrain coloration now blends elevation, slope, river moisture, and reserved-base clearing influence for more believable battlefield zones.','Road corridors are terrain-carved and mesh-lifted slightly above the ground so road surfaces stay visually grounded on elevation changes.','Trees and rock cover are excluded from start-development zones, safe expansions, and road setbacks so construction and vehicle lanes stay readable.','Movement metadata is exported per class: tracked, wheeled, infantry, amphibious and air.','Bridges are explicit traversal links with raised decks and graded approach meshes.']};
+      notes:['No faction buildings are generated. Start regions are reserved terrain metadata only.','Resource nodes now render the exact approved Rich and Dense crystal GLBs; the old procedural octahedron placeholders are removed.','1536 m is the intended main-world scale; enlarged start reserves provide roughly 260 m of usable base diameter before the mountain ring.','Terrain coloration now blends elevation, slope, river moisture, and reserved-base clearing influence for more believable battlefield zones.','Road corridors are terrain-carved and mesh-lifted slightly above the ground so road surfaces stay visually grounded on elevation changes.','Trees and rock cover are excluded from start-development zones, safe expansions, and road setbacks so construction and vehicle lanes stay readable.','Movement metadata is exported per class: tracked, wheeled, infantry, amphibious and air.','Bridges are explicit traversal links with raised decks and graded approach meshes.']};
+    const generationId=this.generationSerial;this.resourceLoadPromise=this._populateResourceAssets(resourceZones,generationId);
     this._buildFog();this.setFogPreview(false);this._buildMovementOverlay();this.root.visible=true;this.overlay.visible=true;this.movementOverlay.visible=this.movementPreview!=='off';return this.metadata;
   }
 
@@ -471,7 +494,7 @@ export class RTSMapForge{
   drawMinimap(canvas){
     if(!canvas||!this.recipe||!this.metadata)return;const rect=canvas.getBoundingClientRect(),dpr=Math.min(window.devicePixelRatio||1,2),w=Math.max(110,Math.round((rect.width||150)*dpr));if(canvas.width!==w){canvas.width=w;canvas.height=w;}const ctx=canvas.getContext('2d'),size=this.recipe.size,H=size/2,s=w/size,b=BIOMES[this.recipe.biome];ctx.clearRect(0,0,w,w);ctx.fillStyle='#62755d';ctx.fillRect(0,0,w,w);
     if(this.recipe.river){ctx.strokeStyle='#4f8fa2';ctx.lineWidth=Math.max(2,dpr);ctx.beginPath();for(let i=0;i<100;i++){const x=-H+size*i/99,y=this.riverFn(x),px=(x+H)*s,py=w-(y+H)*s;i?ctx.lineTo(px,py):ctx.moveTo(px,py);}ctx.stroke();}
-    for(const z of this.metadata.resourceZones){ctx.fillStyle='#d0b44a';ctx.beginPath();ctx.arc((z.x+H)*s,w-(z.y+H)*s,3.5*dpr,0,Math.PI*2);ctx.fill();}
+    for(const z of this.metadata.resourceZones){const dense=z.richness==='dense';ctx.fillStyle=dense?'#f1c85a':'#b9983f';ctx.beginPath();ctx.arc((z.x+H)*s,w-(z.y+H)*s,(dense?4.5:3.5)*dpr,0,Math.PI*2);ctx.fill();}
     for(const st of this.metadata.startRegions){ctx.fillStyle=st.index===0?'#63dd89':'#a9b7ab';ctx.beginPath();ctx.arc((st.x+H)*s,w-(st.y+H)*s,5*dpr,0,Math.PI*2);ctx.fill();}
     if(this.fogPreview){const start=this.metadata.startRegions[0],vision=size*.115;ctx.fillStyle='rgba(0,0,0,.78)';ctx.fillRect(0,0,w,w);ctx.save();ctx.globalCompositeOperation='destination-out';ctx.beginPath();ctx.arc((start.x+H)*s,w-(start.y+H)*s,vision*s,0,Math.PI*2);ctx.fill();ctx.restore();}
     const cx=this.controls.target.x,cy=this.controls.target.y,viewW=(this.camera.right-this.camera.left)*s,viewH=(this.camera.top-this.camera.bottom)*s;ctx.strokeStyle='rgba(255,255,255,.92)';ctx.lineWidth=Math.max(1.2,dpr);ctx.strokeRect((cx+H)*s-viewW/2,w-(cy+H)*s-viewH/2,viewW,viewH);

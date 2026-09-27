@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-export const RTS_ASSET_LIBRARY_VERSION='0.5.0';
+export const RTS_ASSET_LIBRARY_VERSION='0.5.1';
 
 export const FACTION_PALETTES=Object.freeze({
   aegis:Object.freeze({id:'aegis',label:'Aegis Olive',base:'#777b70',primary:'#60704f',secondary:'#39483c',accent:'#c9a54b'}),
@@ -102,7 +102,22 @@ export const MASTER_BUILDINGS=Object.freeze({
   })
 });
 
+
+export const MASTER_RESOURCES=Object.freeze({
+  richCrystalCluster:Object.freeze({
+    id:'richCrystalCluster',label:'Rich Crystal Cluster',role:'mineralResource',classification:'resource',richness:'rich',version:'0.3',asset:'assets/resources/worldforge_mineral_rich_crystal_cluster_v0.3_flatfacets.glb',
+    footprint:[5.87,6.16],height:3.15,defaultCapacity:1250,collisionMode:'nonblocking_resource',
+    requiredNodes:['WF_RESOURCE_ROOT','WF_RESOURCE_CENTER','WF_HARVEST_POINT','WF_DEPLETION_CENTER']
+  }),
+  denseCrystalCluster:Object.freeze({
+    id:'denseCrystalCluster',label:'Dense Crystal Cluster',role:'mineralResource',classification:'resource',richness:'dense',version:'0.1',asset:'assets/resources/worldforge_mineral_dense_crystal_cluster_v0.1.glb',
+    footprint:[8.19,7.80],height:4.11,defaultCapacity:3000,collisionMode:'nonblocking_resource',
+    requiredNodes:['WF_RESOURCE_ROOT','WF_RESOURCE_CENTER','WF_HARVEST_POINT','WF_DEPLETION_CENTER']
+  })
+});
+
 const cache=new Map();
+const resourceCache=new Map();
 const defaultLoader=new GLTFLoader();
 
 function colorValue(v,fallback){try{return new THREE.Color(v||fallback);}catch{return new THREE.Color(fallback);}}
@@ -181,3 +196,23 @@ export function masterBuildingForRole(role){
   const matches=Object.values(MASTER_BUILDINGS).filter(x=>x.role===role);
   return matches.find(x=>x.skirmishDefault)||matches[0]||null;
 }
+
+async function resourceSourceFor(assetId,loader=defaultLoader){
+  const def=MASTER_RESOURCES[assetId];if(!def)throw new Error(`Unknown master resource: ${assetId}`);
+  if(!resourceCache.has(assetId))resourceCache.set(assetId,loader.loadAsync(def.asset));
+  return {def,gltf:await resourceCache.get(assetId)};
+}
+
+export async function instantiateMasterResource(assetId,{loader=defaultLoader}={}){
+  const {def,gltf}=await resourceSourceFor(assetId,loader);
+  const source=cloneSceneMaterials(gltf.scene.clone(true));
+  source.traverse(o=>{if(o.isMesh){if(o.geometry)o.geometry=o.geometry.clone();o.castShadow=true;o.receiveShadow=true;}});
+  const info=inspectRTSAsset(source),missing=def.requiredNodes.filter(n=>!source.getObjectByName(n));
+  source.userData={...(source.userData||{}),worldForgeMasterAsset:def.id,worldForgeRole:def.role,worldForgeMasterVersion:def.version,worldForgeResourceRichness:def.richness,worldForgeResourceCapacity:def.defaultCapacity,worldForgeCollisionMode:def.collisionMode};
+  return {group:source,definition:def,info:{...info,assetId:def.id,label:def.label,role:def.role,version:def.version,richness:def.richness,defaultCapacity:def.defaultCapacity,missingRequiredNodes:missing}};
+}
+
+export function masterResourceForRichness(richness='rich'){
+  return Object.values(MASTER_RESOURCES).find(x=>x.richness===richness)||MASTER_RESOURCES.richCrystalCluster;
+}
+
