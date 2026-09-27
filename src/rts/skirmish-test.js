@@ -8,7 +8,7 @@ import { LOCOMOTORS, WEAPONS, UNIT_DEFINITIONS } from './data/rts-definitions.js
 import { instantiateMasterBuilding, masterBuildingForRole, MASTER_BUILDINGS } from './rts-asset-library.js';
 import { loadAegisReferenceVehicle } from '../vehicle/vehicle-generator.js';
 
-export const SKIRMISH_VERSION='0.6.1';
+export const SKIRMISH_VERSION='0.6.2';
 
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const angleDelta=(a,b)=>Math.atan2(Math.sin(a-b),Math.cos(a-b));
@@ -131,7 +131,7 @@ export class SkirmishTest{
   }
 
   _buildingComponents(type,x,y,{owner='player',complete=false}={}){
-    const def=RTS_BUILDINGS[type],components={buildingType:type,owner,transform:{x,y,z:this.mapForge.surfaceHeightAt(x,y),heading:0},health:{current:def.hp,max:def.hp,destroyed:false},building:{footprint:[...def.footprint],buildRadius:def.buildRadius||0,powerUse:def.powerUse||0,powerSupply:def.powerSupply||0,starterUnit:def.starterUnit||null,starterUnitSpawned:false},construction:{progress:complete?1:0,duration:1.8,complete:!!complete}};
+    const def=RTS_BUILDINGS[type],components={buildingType:type,owner,transform:{x,y,z:this.mapForge.surfaceHeightAt(x,y),heading:0},health:{current:def.hp,max:def.hp,destroyed:false},building:{footprint:[...def.footprint],collisionFootprint:[...(def.collisionFootprint||def.footprint)],buildRadius:def.buildRadius||0,powerUse:def.powerUse||0,powerSupply:def.powerSupply||0,starterUnit:def.starterUnit||null,starterUnitSpawned:false},construction:{progress:complete?1:0,duration:1.8,complete:!!complete}};
     if(type==='barracks')components.production={queue:[],active:null};
     return components;
   }
@@ -268,7 +268,12 @@ export class SkirmishTest{
   cancelBuild(){this.pendingBuild=null;this._emit('Build placement cancelled.');}
   _isBuildableFootprint(x,y,def){const [w,d]=def.footprint,samples=[[0,0],[w*.42,d*.42],[w*.42,-d*.42],[-w*.42,d*.42],[-w*.42,-d*.42]];return samples.every(([ox,oy])=>this.mapForge.buildableAt(x+ox,y+oy));}
   _withinBuildRadius(x,y){return this.buildings.some(v=>{const e=this.sim.entities.get(v.entityId);return e&&e.components.owner==='player'&&e.components.construction?.complete&&Math.hypot(x-e.components.transform.x,y-e.components.transform.y)<=Math.max(85,v.def.buildRadius||105);});}
-  _collidesBuilding(x,y,def){const r=Math.hypot(def.footprint[0],def.footprint[1])*.48;return this.buildings.some(v=>{const e=this.sim.entities.get(v.entityId);if(!e||e.components.health?.destroyed)return false;const br=Math.hypot(v.def.footprint[0],v.def.footprint[1])*.48;return Math.hypot(x-e.components.transform.x,y-e.components.transform.y)<r+br+2;});}
+  _rectAxes(heading=0){const c=Math.cos(heading),s=Math.sin(heading);return [[c,s],[-s,c]];}
+  _rectsOverlap(a,b,gap=1.25){
+    const aa=this._rectAxes(a.heading||0),ba=this._rectAxes(b.heading||0),delta=[b.x-a.x,b.y-a.y],axes=[aa[0],aa[1],ba[0],ba[1]],ah=[a.footprint[0]*.5,a.footprint[1]*.5],bh=[b.footprint[0]*.5,b.footprint[1]*.5],dot=(u,v)=>u[0]*v[0]+u[1]*v[1];
+    for(const axis of axes){const ra=ah[0]*Math.abs(dot(aa[0],axis))+ah[1]*Math.abs(dot(aa[1],axis)),rb=bh[0]*Math.abs(dot(ba[0],axis))+bh[1]*Math.abs(dot(ba[1],axis));if(Math.abs(dot(delta,axis))>=ra+rb+gap)return false;}return true;
+  }
+  _collidesBuilding(x,y,def){const candidate={x,y,heading:0,footprint:def.footprint};return this.buildings.some(v=>{const e=this.sim.entities.get(v.entityId);if(!e||e.components.health?.destroyed)return false;const t=e.components.transform,fp=e.components.building?.footprint||v.def.footprint;return this._rectsOverlap(candidate,{x:t.x,y:t.y,heading:t.heading||0,footprint:fp},1.25);});}
   _canPlace(type,x,y){const def=RTS_BUILDINGS[type];if(!def)return {ok:false,message:'Unknown structure.'};if(!this.playerFaction?.canAfford(def.cost))return {ok:false,message:`Not enough credits for ${def.label}.`};if(!this._isBuildableFootprint(x,y,def))return {ok:false,message:'Cannot build there: terrain is too steep, blocked, road/water, or otherwise non-buildable.'};if(!this._withinBuildRadius(x,y))return {ok:false,message:'Cannot build there: outside current construction radius.'};if(this._collidesBuilding(x,y,def))return {ok:false,message:'Cannot build there: another structure is too close.'};return {ok:true};}
   _nearestValidPlacement(type,x,y,{maxRadius=66,step=6}={}){
     const direct=this._canPlace(type,x,y);if(direct.ok)return {x,y,distance:0};
@@ -316,15 +321,21 @@ export class SkirmishTest{
   }
 
   _systemWeapons(dt){for(const e of this.sim.entities.values()){if(e.components.weapon)e.components.weapon.cooldown=Math.max(0,e.components.weapon.cooldown-dt);}}
-  _blockedByStructureSim(x,y,ignoreEntityId=null,ignoreBuildingId=null){
+  _pointHitsBuildingFootprint(x,y,e,clearance=0){
+    const t=e.components.transform||{},fp=e.components.building?.collisionFootprint||e.components.building?.footprint||[8,8],h=t.heading||0,c=Math.cos(h),s=Math.sin(h),dx=x-t.x,dy=y-t.y,lx=dx*c+dy*s,ly=-dx*s+dy*c,hx=fp[0]*.5,hy=fp[1]*.5;
+    if(Math.abs(lx)<=hx&&Math.abs(ly)<=hy)return true;
+    const qx=Math.max(Math.abs(lx)-hx,0),qy=Math.max(Math.abs(ly)-hy,0);return Math.hypot(qx,qy)<clearance;
+  }
+  _blockedByStructureSim(x,y,ignoreEntityId=null,ignoreBuildingId=null,unitRadius=0){
+    const clearance=Math.max(0,unitRadius)+.30;
     for(const e of this.sim.entities.values()){
-      if(e.id===ignoreEntityId||e.id===ignoreBuildingId||e.components.health?.destroyed||!['building','target'].includes(e.kind))continue;const fp=e.components.building?.footprint||[8,8],r=Math.hypot(fp[0],fp[1])*.46+3,t=e.components.transform;if(Math.hypot(x-t.x,y-t.y)<r)return true;
+      if(e.id===ignoreEntityId||e.id===ignoreBuildingId||e.components.health?.destroyed||!['building','target'].includes(e.kind))continue;if(this._pointHitsBuildingFootprint(x,y,e,clearance))return true;
     }return false;
   }
   _systemLocomotion(dt){
     if(!this.tank)return;const e=this.sim.entities.get(this.tank.entityId);if(!e)return;const c=e.components,t=c.transform,input=c.input,loc=c.locomotor,throttle=(input.forward?1:0)-(input.back?1:0),turn=(input.left?1:0)-(input.right?1:0);
     if(turn)t.heading+=turn*loc.turnRate*dt*(Math.abs(throttle)>.01?.72:1);
-    if(throttle){const speed=throttle>0?loc.maxSpeed:loc.reverseSpeed,nx=t.x+Math.cos(t.heading)*speed*dt*throttle,ny=t.y+Math.sin(t.heading)*speed*dt*throttle,nav=this.mapForge.movementAt(nx,ny,loc.movementClass);if(nav.allowed&&!this._blockedByStructureSim(nx,ny,e.id)){t.x=nx;t.y=ny;t.z=this.mapForge.surfaceHeightAt(nx,ny)-.1;}}
+    if(throttle){const speed=throttle>0?loc.maxSpeed:loc.reverseSpeed,nx=t.x+Math.cos(t.heading)*speed*dt*throttle,ny=t.y+Math.sin(t.heading)*speed*dt*throttle,nav=this.mapForge.movementAt(nx,ny,loc.movementClass),unitRadius=UNIT_DEFINITIONS[e.components.unitType]?.collisionRadius||0;if(nav.allowed&&!this._blockedByStructureSim(nx,ny,e.id,null,unitRadius)){t.x=nx;t.y=ny;t.z=this.mapForge.surfaceHeightAt(nx,ny)-.1;}}
   }
   _systemInfantryLocomotion(dt){
     for(const e of this.sim.entities.values()){
@@ -338,7 +349,7 @@ export class SkirmishTest{
       }
       const desired=Math.atan2(dy,dx),err=angleDelta(desired,t.heading);t.heading+=clamp(err,-loc.turnRate*dt,loc.turnRate*dt);
       const step=Math.min(dist,loc.maxSpeed*dt),nx=t.x+Math.cos(desired)*step,ny=t.y+Math.sin(desired)*step,nav=this.mapForge.movementAt(nx,ny,'infantry');
-      if(nav.allowed&&!this._blockedByStructureSim(nx,ny,e.id,move.exitBuildingId)){
+      if(nav.allowed&&!this._blockedByStructureSim(nx,ny,e.id,move.exitBuildingId,UNIT_DEFINITIONS[e.components.unitType]?.collisionRadius||.55)){
         t.x=nx;t.y=ny;
         const u=dist>0?Math.min(1,step/dist):1,targetZ=Number.isFinite(wp.z)?wp.z:this.mapForge.surfaceHeightAt(nx,ny)+.04;
         t.z=t.z+(targetZ-t.z)*Math.max(.35,u);
@@ -424,9 +435,9 @@ export class SkirmishTest{
   }
   _syncViews(dt=0){
     if(this.tank){const e=this.sim.entities.get(this.tank.entityId);if(e){const t=e.components.transform,tur=e.components.turret;this.tank.root.position.set(t.x,t.y,t.z);this.tank.root.rotation.z=t.heading;this.tank.turret.rotation.y=tur.yaw;this.tank.gun.rotation.z=tur.pitch;this._updatePresentationShadow(this.tank,t);}}
-    for(const v of this.supportUnits){const e=this.sim.entities.get(v.entityId);if(!e)continue;const t=e.components.transform;v.root.position.set(t.x,t.y,t.z);v.root.rotation.z=t.heading;if(v.rotorMain)v.rotorMain.rotation.y+=.18;if(v.rotorTail)v.rotorTail.rotation.x+=.24;this._updatePresentationShadow(v,t);}
+    for(const v of this.supportUnits){const e=this.sim.entities.get(v.entityId);if(!e)continue;const t=e.components.transform;v.root.position.set(t.x,t.y,t.z);v.root.rotation.z=t.heading;if(v.rotorMain)v.rotorMain.rotation.y+=dt*10.8;if(v.rotorTail)v.rotorTail.rotation.z+=dt*14.4;this._updatePresentationShadow(v,t);}
     for(const v of this.infantryUnits){const e=this.sim.entities.get(v.entityId);if(!e||e.components.health?.destroyed){v.root.visible=false;continue;}const t=e.components.transform,moving=!!e.components.move?.moving;v.root.position.set(t.x,t.y,t.z);v.root.rotation.z=t.heading;if(v.fireTimer>0){v.fireTimer=Math.max(0,v.fireTimer-dt);}else if(v.walkAction){if(moving){v.walkAction.paused=false;v.walkAction.enabled=true;v.walkAction.play();}else{v.walkAction.paused=true;v.walkAction.time=.25;}}v.mixer?.update?.(dt);this._updatePresentationShadow(v,t);}
-    for(const v of this.buildings){const e=this.sim.entities.get(v.entityId);if(!e)continue;const t=e.components.transform,c=e.components.construction;v.group.position.set(t.x,t.y,t.z);v.group.rotation.z=t.heading||0;if(c&&!c.complete)v.group.scale.z=Math.max(.03,c.progress);else v.group.scale.z=1;if(v.functional?.radar)v.functional.radar.rotation.y+=.006;if(v.functional?.fans)for(const f of v.functional.fans)f.rotation.y+=.08;if(v.functional?.dustFan)v.functional.dustFan.rotation.y+=.12;}
+    for(const v of this.buildings){const e=this.sim.entities.get(v.entityId);if(!e)continue;const t=e.components.transform,c=e.components.construction;v.group.position.set(t.x,t.y,t.z);v.group.rotation.z=t.heading||0;if(c&&!c.complete)v.group.scale.z=Math.max(.03,c.progress);else v.group.scale.z=1;if(v.functional?.radar)v.functional.radar.rotation.y+=dt*.32;if(v.functional?.fans)for(const f of v.functional.fans)f.rotation.z+=dt*4.2;if(v.functional?.dustFan)v.functional.dustFan.rotation.z+=dt*9.6;}
     for(const [id,mesh] of [...this.projectileViews.entries()]){const e=this.sim.entities.get(id);if(!e){this.effects.remove(mesh);disposeObject(mesh);this.projectileViews.delete(id);}else{const t=e.components.transform;mesh.position.set(t.x,t.y,t.z);}}
   }
 

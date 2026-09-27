@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { instantiateMasterBuilding, MASTER_BUILDINGS, RTS_ASSET_LIBRARY_VERSION } from '../rts/rts-asset-library.js';
 
-export const BUILDING_FORGE_VERSION='0.3.0';
+export const BUILDING_FORGE_VERSION='0.3.1';
 
 function disposeObject(root){if(!root)return;const mats=new Set();root.traverse(o=>{o.geometry?.dispose?.();const a=Array.isArray(o.material)?o.material:(o.material?[o.material]:[]);a.forEach(m=>mats.add(m));});mats.forEach(m=>m?.dispose?.());}
 
@@ -25,7 +25,7 @@ export class BuildingForge{
   }
   async applyVariant({palette=this.palette,colors=this.colors}={}){return this.load(this.assetId,{palette,colors});}
   fitPreview(aspect=1.5){if(!this.modelRoot)return;const box=new THREE.Box3().setFromObject(this.modelRoot),size=new THREE.Vector3();box.getSize(size);const span=Math.max(12,size.x*.57,size.y*.57,size.z*.95);this.camera.left=-span*aspect;this.camera.right=span*aspect;this.camera.top=span;this.camera.bottom=-span;this.camera.near=.1;this.camera.far=1000;this.camera.up.set(0,0,1);const target=new THREE.Vector3(0,0,size.z*.32);this.controls.target.copy(target);this.camera.position.set(span*.95,-span*1.25,span*.9);this.camera.lookAt(target);this.camera.updateProjectionMatrix();this.controls.update();}
-  update(dt){if(!this.container.visible||!this.source||!this.animateFunctional)return;this.elapsed+=dt;const radar=this.source.getObjectByName('RadarYawRoot');if(radar)radar.rotation.y+=dt*.32;for(let i=1;i<=4;i++){const fan=this.source.getObjectByName(`CoolingFanRoot_${i}`);if(fan)fan.rotation.y+=dt*4.2;}const dustFan=this.source.getObjectByName('DustCollectorFanRoot');if(dustFan)dustFan.rotation.y+=dt*9.6;const beacon=this.source.getObjectByName('WarningBeaconRoot');if(beacon)beacon.rotation.y+=dt*.8;}
+  update(dt){if(!this.container.visible||!this.source||!this.animateFunctional)return;this.elapsed+=dt;const radar=this.source.getObjectByName('RadarYawRoot');if(radar)radar.rotation.y+=dt*.32;for(let i=1;i<=4;i++){const fan=this.source.getObjectByName(`CoolingFanRoot_${i}`);if(fan)fan.rotation.z+=dt*4.2;}const dustFan=this.source.getObjectByName('DustCollectorFanRoot');if(dustFan)dustFan.rotation.z+=dt*9.6;const beacon=this.source.getObjectByName('WarningBeaconRoot');if(beacon)beacon.rotation.y+=dt*.8;}
   canonicalObject(){if(!this.source)return null;return this.source.clone(true);}
   definition(){const master=MASTER_BUILDINGS[this.assetId];return {schema:'worldforge.rts-building-master.v1',buildingForgeVersion:BUILDING_FORGE_VERSION,assetLibraryVersion:RTS_ASSET_LIBRARY_VERSION,masterAsset:{id:master.id,label:master.label,role:master.role,classification:master.classification||'military',version:master.version,asset:master.asset,footprint:master.footprint,height:master.height,skirmishDefault:!!master.skirmishDefault},faction:{preset:this.palette,colors:{...this.colors}},inspection:this.info};}
 }

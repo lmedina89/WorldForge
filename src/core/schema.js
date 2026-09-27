@@ -1,4 +1,4 @@
-export const WORLDFORGE_VERSION = '0.13.6';
+export const WORLDFORGE_VERSION = '0.13.7';
 export const RECIPE_SCHEMA = 'worldforge.recipe.v1';
 export const SCENE_SCHEMA = 'worldforge.scene.v1';
 export const ASSET_SCHEMA = 'worldforge.asset.v1';
@@ -21,9 +21,9 @@ export const ENGINE_VERSIONS = Object.freeze({
   vehicleGenerator: '0.4.0',
   rtsMapForge: '0.2.3',
   rtsBuilding: '0.1.0',
-  buildingForge: '0.3.0',
+  buildingForge: '0.3.1',
   rtsAssetLibrary: '0.5.0',
-  skirmish: '0.6.1',
+  skirmish: '0.6.2',
   rtsSimulation: '0.1.0'
 });
 

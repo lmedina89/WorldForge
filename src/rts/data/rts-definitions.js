@@ -1,13 +1,13 @@
-export const RTS_DEFINITIONS_VERSION='0.5.1';
+export const RTS_DEFINITIONS_VERSION='0.5.2';
 
 
 export const BUILDING_DEFINITIONS=Object.freeze({
-  constructionYard:Object.freeze({id:'constructionYard',label:'Tactical Command Post',cost:0,hp:3200,footprint:[32,24],powerUse:0,powerSupply:0,buildRadius:165,category:'core',masterAsset:'tacticalCommandPost'}),
-  powerPlant:Object.freeze({id:'powerPlant',label:'Field Power Node',cost:500,hp:1200,footprint:[24,21],powerUse:0,powerSupply:100,category:'power',masterAsset:'fieldPowerNode'}),
-  refinery:Object.freeze({id:'refinery',label:'Field Refinery',cost:900,hp:1400,footprint:[34,26],powerUse:24,powerSupply:0,category:'economy',masterAsset:'fieldRefinery',starterUnit:'aegisHarvester'}),
-  barracks:Object.freeze({id:'barracks',label:'Field Barracks',cost:650,hp:1100,footprint:[19,13],powerUse:10,powerSupply:0,category:'production',masterAsset:'fieldBarracks'}),
-  vehicleFactory:Object.freeze({id:'vehicleFactory',label:'Aegis Vehicle Factory',cost:1200,hp:1700,footprint:[30,23],powerUse:30,powerSupply:0,category:'production',masterAsset:'fieldVehicleFactory'}),
-  gunTurret:Object.freeze({id:'gunTurret',label:'Guardian Turret',cost:600,hp:700,footprint:[9,9],powerUse:12,powerSupply:0,category:'defense',masterAsset:'guardianTurret'})
+  constructionYard:Object.freeze({id:'constructionYard',label:'Tactical Command Post',cost:0,hp:3200,footprint:[32,24],collisionFootprint:[29.5,21.5],powerUse:0,powerSupply:0,buildRadius:165,category:'core',masterAsset:'tacticalCommandPost'}),
+  powerPlant:Object.freeze({id:'powerPlant',label:'Field Power Node',cost:500,hp:1200,footprint:[24,21],collisionFootprint:[21.5,18.5],powerUse:0,powerSupply:100,category:'power',masterAsset:'fieldPowerNode'}),
+  refinery:Object.freeze({id:'refinery',label:'Field Refinery',cost:900,hp:1400,footprint:[34,26],collisionFootprint:[30.5,22.5],powerUse:24,powerSupply:0,category:'economy',masterAsset:'fieldRefinery',starterUnit:'aegisHarvester'}),
+  barracks:Object.freeze({id:'barracks',label:'Field Barracks',cost:650,hp:1100,footprint:[19,13],collisionFootprint:[16.8,11.4],powerUse:10,powerSupply:0,category:'production',masterAsset:'fieldBarracks'}),
+  vehicleFactory:Object.freeze({id:'vehicleFactory',label:'Aegis Vehicle Factory',cost:1200,hp:1700,footprint:[30,23],collisionFootprint:[27.0,20.0],powerUse:30,powerSupply:0,category:'production',masterAsset:'fieldVehicleFactory'}),
+  gunTurret:Object.freeze({id:'gunTurret',label:'Guardian Turret',cost:600,hp:700,footprint:[9,9],collisionFootprint:[8.2,8.2],powerUse:12,powerSupply:0,category:'defense',masterAsset:'guardianTurret'})
 });
 
 export const LOCOMOTORS=Object.freeze({

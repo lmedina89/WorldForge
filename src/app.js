@@ -564,7 +564,7 @@ async function activateSkirmishMode({reset=false}={}){
     catch(err){$('status').textContent='Skirmish main-world generation failed: '+err.message;return;}
   }
   showMode('skirmish');setSkirmishBuildDrawer(false);rtsMapForge.overlay.visible=false;rtsMapForge.movementOverlay.visible=false;rtsMapForge.setFogPreview(false);
-  try{skirmish.setFactionPalettes($('skirmishPlayerPalette').value,$('skirmishEnemyPalette').value);await skirmish.start({reset});configureSceneForMode();syncSkirmishViewport();drawRTSMapMinimap();updateSkirmishUi();$('status').textContent=`Skirmish Lab ${SKIRMISH_VERSION} · Vehicle Factory + Guardian Turret masters active · fullscreen vehicle deploy controls restored.`;}
+  try{skirmish.setFactionPalettes($('skirmishPlayerPalette').value,$('skirmishEnemyPalette').value);await skirmish.start({reset});configureSceneForMode();syncSkirmishViewport();drawRTSMapMinimap();updateSkirmishUi();$('status').textContent=`Skirmish Lab ${SKIRMISH_VERSION} · corrected rotor/fan axes + tighter building collision footprints active.`;}
   catch(err){$('status').textContent='Skirmish start failed: '+err.message;}
 }
 
