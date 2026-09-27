@@ -1,4 +1,21 @@
-# WorldForge v0.13.2 — Refinery + Harvester Master Pair
+# WorldForge v0.13.3 — Skirmish Immersive Combat UI
+
+WorldForge v0.13.3 is a focused visual/UI pass for Skirmish Lab. The simulation, building rules, exact approved GLBs and refinery/harvester pairing remain unchanged.
+
+## Skirmish Lab 0.5 — immersive battlefield presentation
+- Entering Skirmish hides the WorldForge editor and expands the battlefield to the full available browser viewport.
+- Landscape is the primary mobile layout; portrait remains playable and shows a small rotate-for-best-view hint.
+- The old permanent CONSTRUCTION panel is replaced by a compact **BUILD** button and slide-in battlefield drawer.
+- Selecting POWER PLANT / REFINERY / BARRACKS / VEHICLE FACTORY / GUN TURRET immediately closes the drawer and enters placement mode.
+- Placement mode shows only a small in-game banner with the selected structure, cost and CANCEL action.
+- Top HUD now carries credits/power, Aegis-X health, follow toggle and EXIT.
+- Drive pad, FIRE button and minimap are positioned inside the game viewport with iPhone safe-area padding.
+- Browser page scrolling, text selection, callouts and accidental touch gestures are suppressed only while Skirmish is active.
+- Orientation/visual-viewport changes trigger renderer and Skirmish-camera resizing.
+- Landscape camera uses a wider orthographic span and lower camera angle to expose more base/battlefield without changing simulation coordinates.
+
+> On iPhone Safari this fills the web page's usable viewport. Safari's own browser chrome can still remain visible unless the site is launched as an installed/home-screen web app.
+
 
 WorldForge now includes the exact approved **Aegis Field Refinery v2.0** and **Aegis Field Harvester v2.0** as first-class master assets in Forge and Skirmish Lab.
 

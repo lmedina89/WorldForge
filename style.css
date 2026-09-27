@@ -78,3 +78,232 @@ body.skirmish-mode .viewport{background:radial-gradient(circle at 50% 40%,#9aada
 .buildingColorGrid label{border:1px solid #273a30;background:#0c120f;padding:7px;margin:0;color:#91a69a}
 .buildingColorGrid input[type=color]{display:block;width:100%;height:36px;border:1px solid #40594a;background:#0b100d;padding:2px;margin-top:5px}
 @media(max-width:780px){.buildingColorGrid{grid-template-columns:1fr 1fr}}
+
+/* WorldForge v0.13.3 · Skirmish Lab 0.5 · immersive landscape combat UI */
+body.skirmish-mode{
+  overflow:hidden;
+  overscroll-behavior:none;
+  width:100%;
+  height:100dvh;
+  background:#0a0e0c;
+  -webkit-user-select:none;
+  user-select:none;
+  -webkit-touch-callout:none;
+}
+body.skirmish-mode #app{
+  display:block;
+  width:100vw;
+  height:100dvh;
+  min-height:0;
+  overflow:hidden;
+}
+body.skirmish-mode .panel{display:none!important}
+body.skirmish-mode .viewport{
+  width:100vw;
+  height:100dvh;
+  min-height:100dvh;
+  overflow:hidden;
+  touch-action:none;
+  background:radial-gradient(circle at 50% 38%,#9aada4,#65776e 76%);
+}
+body.skirmish-mode .viewport>.hud{display:none}
+body.skirmish-mode #canvasHost{position:absolute;inset:0;width:100%;height:100%}
+body.skirmish-mode #canvasHost canvas{touch-action:none;-webkit-user-select:none;user-select:none}
+body.skirmish-mode #viewportHint{display:none}
+body.skirmish-mode button{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+
+#skirmishHud{
+  position:absolute;
+  inset:0;
+  z-index:8;
+  pointer-events:none;
+  display:block;
+  padding:
+    calc(7px + env(safe-area-inset-top))
+    calc(8px + env(safe-area-inset-right))
+    calc(8px + env(safe-area-inset-bottom))
+    calc(8px + env(safe-area-inset-left));
+}
+.skirmishHudTop{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);
+  align-items:start;
+  gap:8px;
+  pointer-events:none;
+}
+.skirmishHudCluster{display:flex;gap:6px;align-items:center;min-width:0}
+.skirmishHudRight{justify-content:flex-end}
+#skirmishHud button{
+  pointer-events:auto;
+  background:rgba(8,14,11,.88);
+  border:1px solid rgba(115,151,130,.70);
+  color:#e4eee8;
+  min-width:44px;
+  min-height:44px;
+  padding:8px 11px;
+  font-weight:700;
+  letter-spacing:.04em;
+  backdrop-filter:blur(5px);
+}
+#skirmishHud button:active{transform:scale(.97)}
+#skirmishBuildToggle{background:rgba(36,66,49,.94)!important;border-color:#73a184!important}
+#skirmishBuildToggle.active,#skirmishBuildToggle.placing{background:rgba(54,92,68,.97)!important;color:white}
+#skirmishExit{border-color:rgba(159,103,81,.76)!important}
+#skirmishHudFollow.active{background:rgba(39,71,53,.94)!important;border-color:#73a184!important}
+#skirmishHudEconomy,#skirmishHudSelected{
+  display:inline-flex;
+  align-items:center;
+  min-height:44px;
+  padding:7px 10px;
+  background:rgba(6,11,9,.74);
+  border:1px solid rgba(190,220,200,.22);
+  color:#dbe7df;
+  font-size:10px;
+  line-height:1.2;
+  white-space:nowrap;
+  backdrop-filter:blur(5px);
+}
+#skirmishHudSelected{justify-self:center}
+
+.skirmishBuildDrawer{
+  position:absolute;
+  left:calc(8px + env(safe-area-inset-left));
+  top:calc(60px + env(safe-area-inset-top));
+  width:min(320px,42vw);
+  max-height:calc(100dvh - 138px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  overflow:auto;
+  pointer-events:auto;
+  background:rgba(7,13,10,.94);
+  border:1px solid rgba(111,153,126,.76);
+  padding:9px;
+  backdrop-filter:blur(8px);
+  box-shadow:0 8px 24px rgba(0,0,0,.28);
+}
+.skirmishBuildDrawerHead{display:flex;align-items:center;justify-content:space-between;gap:8px;color:#dfeae3;font-size:11px;letter-spacing:.08em;margin-bottom:7px}
+.skirmishBuildDrawerHead button{min-width:42px!important;min-height:40px!important;padding:3px 10px!important;font-size:19px!important}
+.skirmishBuildDrawerGrid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.skirmishBuildDrawerGrid button{
+  min-height:60px!important;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:flex-start;
+  text-align:left;
+  padding:8px!important;
+}
+.skirmishBuildDrawerGrid button b{font-size:10px}
+.skirmishBuildDrawerGrid button span{font-size:9px;color:#8fa397;margin-top:3px}
+.skirmishBuildDrawerGrid button.active{background:#294636!important;border-color:#7aaa8c!important;color:#fff!important}
+
+.skirmishPlacementBanner{
+  position:absolute;
+  top:calc(61px + env(safe-area-inset-top));
+  left:50%;
+  transform:translateX(-50%);
+  display:flex;
+  align-items:center;
+  gap:7px;
+  max-width:min(520px,72vw);
+  pointer-events:auto;
+  background:rgba(7,13,10,.90);
+  border:1px solid rgba(196,173,91,.72);
+  padding:5px 6px 5px 10px;
+  color:#e8e3c7;
+  font-size:10px;
+  line-height:1.2;
+  backdrop-filter:blur(6px);
+}
+.skirmishPlacementBanner span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.skirmishPlacementBanner button{min-height:36px!important;padding:5px 8px!important;border-color:rgba(196,173,91,.72)!important}
+
+.skirmishHudBottom{
+  position:absolute;
+  left:calc(10px + env(safe-area-inset-left));
+  right:calc(10px + env(safe-area-inset-right));
+  bottom:calc(10px + env(safe-area-inset-bottom));
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  pointer-events:none;
+}
+.skirmishDrive{
+  display:grid;
+  grid-template-columns:repeat(3,50px);
+  grid-template-rows:repeat(2,46px);
+  gap:4px;
+  pointer-events:none;
+}
+.skirmishDrive button{min-width:50px!important;min-height:46px!important;padding:5px!important;font-size:18px!important;pointer-events:auto}
+.skirmishFire{
+  width:78px!important;
+  height:78px!important;
+  min-width:78px!important;
+  min-height:78px!important;
+  border-radius:50%;
+  font-weight:900!important;
+  font-size:14px!important;
+  background:rgba(91,38,26,.93)!important;
+  border-color:#d07a55!important;
+  color:#fff!important;
+  pointer-events:auto;
+}
+
+body.skirmish-mode #mapMinimapWrap{
+  right:calc(9px + env(safe-area-inset-right));
+  bottom:calc(96px + env(safe-area-inset-bottom));
+  width:clamp(112px,17vw,168px);
+  max-width:none;
+  min-width:0;
+  z-index:7;
+  background:rgba(7,11,9,.78);
+  border-color:rgba(220,235,225,.48);
+  backdrop-filter:blur(4px);
+}
+.skirmishRotateHint{
+  display:none;
+  position:absolute;
+  left:50%;
+  bottom:calc(106px + env(safe-area-inset-bottom));
+  transform:translateX(-50%);
+  pointer-events:none;
+  background:rgba(7,12,9,.78);
+  border:1px solid rgba(190,220,200,.24);
+  color:#c6d6cc;
+  padding:6px 9px;
+  font-size:9px;
+  letter-spacing:.05em;
+  text-align:center;
+  white-space:nowrap;
+}
+
+@media (orientation:landscape){
+  body.skirmish-mode #mapMinimapWrap{width:clamp(112px,16vw,160px)}
+  .skirmishBuildDrawer{width:min(310px,38vw)}
+}
+
+@media (orientation:portrait){
+  .skirmishRotateHint{display:block}
+  .skirmishHudTop{grid-template-columns:1fr auto;gap:5px}
+  #skirmishHudSelected{grid-column:1 / -1;grid-row:2;justify-self:center;min-height:34px;padding:5px 8px;font-size:9px}
+  #skirmishHudEconomy{font-size:9px;padding:6px 7px}
+  #skirmishHud button{min-height:42px;padding:7px 9px;font-size:10px}
+  #skirmishHudFollow{display:none}
+  .skirmishBuildDrawer{top:calc(100px + env(safe-area-inset-top));width:min(360px,88vw);max-height:52dvh}
+  .skirmishPlacementBanner{top:calc(100px + env(safe-area-inset-top));max-width:90vw}
+  body.skirmish-mode #mapMinimapWrap{width:27vw;max-width:142px;bottom:calc(96px + env(safe-area-inset-bottom))}
+  .skirmishDrive{grid-template-columns:repeat(3,48px);grid-template-rows:repeat(2,44px)}
+  .skirmishDrive button{min-width:48px!important;min-height:44px!important}
+  .skirmishFire{width:72px!important;height:72px!important;min-width:72px!important;min-height:72px!important}
+}
+
+@media (max-height:500px) and (orientation:landscape){
+  #skirmishHud{padding-top:calc(4px + env(safe-area-inset-top));padding-bottom:calc(5px + env(safe-area-inset-bottom))}
+  #skirmishHud button{min-height:38px;padding:5px 8px;font-size:9px}
+  #skirmishHudEconomy,#skirmishHudSelected{min-height:38px;padding:5px 8px;font-size:9px}
+  .skirmishBuildDrawer{top:calc(50px + env(safe-area-inset-top));max-height:calc(100dvh - 112px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}
+  .skirmishPlacementBanner{top:calc(50px + env(safe-area-inset-top))}
+  .skirmishDrive{grid-template-columns:repeat(3,44px);grid-template-rows:repeat(2,40px)}
+  .skirmishDrive button{min-width:44px!important;min-height:40px!important}
+  .skirmishFire{width:66px!important;height:66px!important;min-width:66px!important;min-height:66px!important;font-size:12px!important}
+  body.skirmish-mode #mapMinimapWrap{width:128px;bottom:calc(78px + env(safe-area-inset-bottom))}
+}

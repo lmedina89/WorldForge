@@ -1,3 +1,16 @@
+# v0.13.3 — Skirmish Immersive Combat UI
+
+- Skirmish Lab advanced to 0.5.0.
+- Entering Skirmish now hides the entire WorldForge editor panel and gives the battlefield the full available browser viewport.
+- Added iPhone safe-area handling, page-scroll/overscroll suppression, touch-callout/text-selection suppression, and viewport resync on resize/orientation changes.
+- Added a compact in-game top HUD for credits/power, Aegis-X health, follow state, BUILD, and EXIT.
+- Moved construction selection into an in-battlefield BUILD drawer; selecting a building closes the drawer and shows a compact placement banner with CANCEL.
+- Added a portrait rotate hint while keeping portrait functional.
+- Landscape camera is slightly wider and lower-angle for better base/battlefield readability.
+- Minimap, drive pad and FIRE control were resized/repositioned for landscape mobile play.
+- Refinery placement hotfix remains intact.
+- No master GLB, protected generator, Map Forge, Vehicle Baker, simulation/economy rules, refinery/harvester docking logic, or construction legality rules were changed.
+
 # v0.13.2.1 — Refinery Placement Hotfix
 
 - Fixed large-building placement on mobile, especially the 34 × 26 m Field Refinery.

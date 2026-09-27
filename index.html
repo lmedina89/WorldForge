@@ -151,7 +151,7 @@
     <p class="miniNote">Generated tactical structure includes ridge barriers, deliberate passes, valleys/ravines, mountain pockets, hidden expansion bowls, high ground, roads, raised/graded river bridges, resource zones, forests/rocks, and class-specific traversal metadata. Tracked, wheeled, infantry, amphibious and air movement are audited separately.</p>
   </section>
   <section id="skirmishPanel" hidden>
-    <div class="sectionTitle">SKIRMISH LAB 0.4.1 · MOBILE BUILD PLACEMENT HOTFIX</div>
+    <div class="sectionTitle">SKIRMISH LAB 0.5.0 · IMMERSIVE COMBAT UI</div>
     <div class="skirmishStatusCard"><b id="skirmishEconomy">$5,000 · POWER 0 / 0</b><span id="skirmishTankStatus">AEGIS-X · 1200 / 1200 HP</span></div>
     <div class="cols"><label>Player faction skin<select id="skirmishPlayerPalette"><option value="aegis" selected>Aegis Olive</option><option value="desert">Desert Tan</option><option value="crimson">Crimson</option><option value="slate">Slate Blue</option><option value="blackops">Black Ops</option></select></label><label>Enemy skin<select id="skirmishEnemyPalette"><option value="crimson" selected>Crimson</option><option value="aegis">Aegis Olive</option><option value="desert">Desert Tan</option><option value="slate">Slate Blue</option><option value="blackops">Black Ops</option></select></label></div><div class="skirmishButtons"><button id="skirmishStart" class="skirmishPrimary">START / RESUME SKIRMISH</button><button id="skirmishReset">RESET SKIRMISH</button></div>
     <p class="miniNote"><b>Scenario start:</b> the exact Tactical Command Post v2.1 master GLB and real Aegis-X v2 test tank spawn in your reserved start region. Building the Power Plant uses the exact compact Field Power Node v1.0 master GLB. Building the Refinery uses the exact Field Refinery v2 master, and when construction completes one exact Field Harvester v2 is bundled with it and parked over the real unload grate using the GLB dock sockets. The older large HQ and power station remain civilian/neutral Building Forge assets. Map Forge still creates terrain only.</p>
@@ -205,9 +205,26 @@
   <div class="validationRow proceduralUi"><span>VALIDATION</span><b id="validation" data-state="good">VALID</b></div><div id="status">Ready.</div>
 </aside>
 <main class="viewport"><div class="hud"><span id="modeLabel">BUILDING</span><span id="seedLabel">SEED 48127</span></div><div id="skirmishHud" hidden>
-  <div class="skirmishHudTop"><button id="skirmishExit">EXIT SKIRMISH</button><span id="skirmishHudStats">$5,000 · HP 1200</span></div>
+  <div class="skirmishHudTop">
+    <div class="skirmishHudCluster skirmishHudLeft"><button id="skirmishBuildToggle" aria-expanded="false" aria-controls="skirmishBuildDrawer">BUILD</button><span id="skirmishHudEconomy">$5,000 · PWR +0</span></div>
+    <span id="skirmishHudSelected">AEGIS-X · HP 1200 / 1200</span>
+    <div class="skirmishHudCluster skirmishHudRight"><button id="skirmishHudFollow">FOLLOW ON</button><button id="skirmishExit">EXIT</button></div>
+  </div>
+  <div id="skirmishBuildDrawer" class="skirmishBuildDrawer" hidden>
+    <div class="skirmishBuildDrawerHead"><b>BUILD STRUCTURES</b><button id="skirmishBuildClose" aria-label="Close build menu">×</button></div>
+    <div class="skirmishBuildDrawerGrid">
+      <button data-skirmish-build="powerPlant"><b>POWER PLANT</b><span>$500</span></button>
+      <button data-skirmish-build="refinery"><b>REFINERY</b><span>$900</span></button>
+      <button data-skirmish-build="barracks"><b>BARRACKS</b><span>$650</span></button>
+      <button data-skirmish-build="vehicleFactory"><b>VEHICLE FACTORY</b><span>$1,200</span></button>
+      <button data-skirmish-build="gunTurret"><b>GUN TURRET</b><span>$600</span></button>
+      <button id="skirmishDrawerCancelBuild"><b>CANCEL</b><span>placement</span></button>
+    </div>
+  </div>
+  <div id="skirmishPlacementBanner" class="skirmishPlacementBanner" hidden><span id="skirmishPlacementText">PLACE STRUCTURE · TAP TERRAIN</span><button id="skirmishPlacementCancel">CANCEL</button></div>
+  <div id="skirmishRotateHint" class="skirmishRotateHint">ROTATE TO LANDSCAPE FOR THE BEST SKIRMISH VIEW</div>
   <div class="skirmishHudBottom">
-    <div class="skirmishDrive"><span></span><button data-skirmish-drive="forward">▲</button><span></span><button data-skirmish-drive="left">◀</button><button data-skirmish-drive="back">▼</button><button data-skirmish-drive="right">▶</button></div>
+    <div class="skirmishDrive" aria-label="Tank drive controls"><span></span><button data-skirmish-drive="forward" aria-label="Drive forward">▲</button><span></span><button data-skirmish-drive="left" aria-label="Turn left">◀</button><button data-skirmish-drive="back" aria-label="Reverse">▼</button><button data-skirmish-drive="right" aria-label="Turn right">▶</button></div>
     <button id="skirmishFire" class="skirmishFire">FIRE</button>
   </div>
 </div><div id="playtestHud" hidden><div class="playtestTop"><button id="playtestExit">EXIT PLAYTEST</button><button id="playtestHudReset">RESET</button><button id="playtestHudSpawn">SET SPAWN</button><button id="playtestHudDebug">WALK DEBUG: OFF</button><button id="playtestHudFollow">FOLLOW CAMERA: ON</button></div><div class="playtestPad"><button data-play-move="-1,1">↖</button><button data-play-move="0,1">↑</button><button data-play-move="1,1">↗</button><button data-play-move="-1,0">←</button><button data-play-reset>●</button><button data-play-move="1,0">→</button><button data-play-move="-1,-1">↙</button><button data-play-move="0,-1">↓</button><button data-play-move="1,-1">↘</button></div></div><div id="canvasHost"></div><div id="mapMinimapWrap" hidden><canvas id="mapMinimap" aria-label="RTS map minimap"></canvas><span>MAP</span></div><div class="hint" id="viewportHint">Drag to orbit · wheel/pinch to zoom · same recipe = same asset</div></main>

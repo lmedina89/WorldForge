@@ -31,7 +31,7 @@ const vehicleBaker=new VehicleBaker({scene,camera,renderer,controls});
 const buildingForge=new BuildingForge({scene,camera,renderer,controls});
 const rtsMapForge=new RTSMapForge({scene,camera,renderer,controls});
 const skirmish=new SkirmishTest({scene,camera,renderer,controls,mapForge:rtsMapForge,onStateChange:updateSkirmishUi});
-let mapLastView='overview',mapZonesVisible=true,mapMiniLast=0;
+let mapLastView='overview',mapZonesVisible=true,mapMiniLast=0,skirmishBuildDrawerOpen=false;
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
 $('version').textContent='v'+WORLDFORGE_VERSION;
 
@@ -46,6 +46,18 @@ function configureControlsForMode(){
   controls.touches.ONE=mapMode?THREE.TOUCH.PAN:THREE.TOUCH.ROTATE;
   controls.touches.TWO=THREE.TOUCH.DOLLY_PAN;
 }
+function setSkirmishBuildDrawer(open){
+  skirmishBuildDrawerOpen=!!open&&mode==='skirmish';
+  const drawer=$('skirmishBuildDrawer'),toggle=$('skirmishBuildToggle');
+  if(drawer)drawer.hidden=!skirmishBuildDrawerOpen;
+  if(toggle){toggle.classList.toggle('active',skirmishBuildDrawerOpen);toggle.setAttribute('aria-expanded',String(skirmishBuildDrawerOpen));}
+}
+function syncSkirmishViewport(){
+  if(mode!=='skirmish')return;
+  window.scrollTo?.(0,0);
+  requestAnimationFrame(()=>{resize();requestAnimationFrame(()=>{resize();skirmish.resizeCamera();drawRTSMapMinimap();});});
+}
+
 function configureSceneForMode(){
   const mapMode=mode==='rtsmap',skirmishMode=mode==='skirmish',mapLike=mapMode||skirmishMode;
   document.body.classList.toggle('rts-map-mode',mapMode);
@@ -54,8 +66,10 @@ function configureSceneForMode(){
   else{camera.up.set(0,0,1);scene.background.set(0x0d1310);scene.fog.color.set(0x0d1310);scene.fog.near=55;scene.fog.far=150;}
   $('mapMinimapWrap').hidden=!mapLike;
   $('skirmishHud').hidden=!skirmishMode;
-  $('viewportHint').textContent=skirmishMode?'Hold drive controls · tap battlefield to aim turret · FIRE · select a building then tap valid terrain':mapMode?'Drag to pan · wheel/pinch to zoom · tap minimap to jump · editor overview is not gameplay camera':'Drag to orbit · wheel/pinch to zoom · same recipe = same asset';
+  if(!skirmishMode)setSkirmishBuildDrawer(false);
+  $('viewportHint').textContent=skirmishMode?'':mapMode?'Drag to pan · wheel/pinch to zoom · tap minimap to jump · editor overview is not gameplay camera':'Drag to orbit · wheel/pinch to zoom · same recipe = same asset';
   configureControlsForMode();
+  requestAnimationFrame(()=>resize());
 }
 function showMode(next){
   mode=next;selectedPlacementId=null;clearSelectionHelper();
@@ -507,16 +521,24 @@ function activateRTSMapMode(){
 function rtsMapBaseName(){const r=rtsMapForge.recipe||readRTSMapRecipe();return `worldforge_rtsmap_${r.size}m_${r.seed}`;}
 
 function updateSkirmishUi(state=skirmish.state()){
-  const powerText=`POWER ${state.powerUse} / ${state.powerSupply}`;
+  const powerText=`POWER ${state.powerUse} / ${state.powerSupply}`,netText=`${state.powerNet>=0?'+':''}${state.powerNet}`;
   $('skirmishEconomy').textContent=`$${state.credits.toLocaleString()} · ${powerText}`;
   $('skirmishTankStatus').textContent=`AEGIS-X · ${Math.round(state.tankHp)} / ${Math.round(state.tankMaxHp)} HP`;
-  $('skirmishHudStats').textContent=`$${state.credits.toLocaleString()} · HP ${Math.round(state.tankHp)} · ${state.powerNet>=0?'+':''}${state.powerNet} PWR`;
+  if($('skirmishHudEconomy'))$('skirmishHudEconomy').textContent=`$${state.credits.toLocaleString()} · PWR ${netText}`;
+  if($('skirmishHudSelected'))$('skirmishHudSelected').textContent=`AEGIS-X · HP ${Math.round(state.tankHp)} / ${Math.round(state.tankMaxHp)}`;
   $('skirmishMessage').textContent=state.message||`Skirmish Lab ${SKIRMISH_VERSION} ready.`;
   $('skirmishFollow').textContent=`FOLLOW TANK: ${skirmish.follow?'ON':'OFF'}`;
+  if($('skirmishHudFollow')){$('skirmishHudFollow').textContent=skirmish.follow?'FOLLOW ON':'FOLLOW OFF';$('skirmishHudFollow').classList.toggle('active',skirmish.follow);}
   $('skirmishSimStatus').textContent=`SIM ${state.simHz} HZ · TICK ${state.simTick} · ${state.entityCount} ENTITIES · HASH ${state.stateHash}`;
   $('skirmishSimPause').textContent=state.simPaused?'RESUME SIM':'PAUSE SIM';
   $('skirmishCommandLog').textContent=state.commandLog?.length?state.commandLog.map(c=>`#${c.executedTick} ${c.source.toUpperCase()} ${c.type}`).join('\n'):'No commands executed yet.';
   document.querySelectorAll('[data-skirmish-build]').forEach(b=>b.classList.toggle('active',b.dataset.skirmishBuild===state.pendingBuild));
+  const buildNames={powerPlant:'POWER PLANT',refinery:'REFINERY',barracks:'BARRACKS',vehicleFactory:'VEHICLE FACTORY',gunTurret:'GUN TURRET'};
+  const buildCosts={powerPlant:500,refinery:900,barracks:650,vehicleFactory:1200,gunTurret:600};
+  const placing=!!state.pendingBuild;
+  if($('skirmishPlacementBanner'))$('skirmishPlacementBanner').hidden=!placing;
+  if(placing&&$('skirmishPlacementText'))$('skirmishPlacementText').textContent=`PLACE ${buildNames[state.pendingBuild]||'STRUCTURE'} · $${(buildCosts[state.pendingBuild]||0).toLocaleString()} · TAP TERRAIN`;
+  if($('skirmishBuildToggle'))$('skirmishBuildToggle').classList.toggle('placing',placing);
   if(mode==='skirmish')$('seedLabel').textContent=`$${state.credits.toLocaleString()}`;
 }
 async function activateSkirmishMode({reset=false}={}){
@@ -525,8 +547,8 @@ async function activateSkirmishMode({reset=false}={}){
     try{rtsMapForge.generate(readRTSMapRecipe());updateRTSMapScore();}
     catch(err){$('status').textContent='Skirmish map generation failed: '+err.message;return;}
   }
-  showMode('skirmish');rtsMapForge.overlay.visible=false;rtsMapForge.movementOverlay.visible=false;rtsMapForge.setFogPreview(false);
-  try{skirmish.setFactionPalettes($('skirmishPlayerPalette').value,$('skirmishEnemyPalette').value);await skirmish.start({reset});configureSceneForMode();skirmish.resizeCamera();drawRTSMapMinimap();updateSkirmishUi();$('status').textContent=`Skirmish Lab ${SKIRMISH_VERSION} · Tactical Command Post / Field Power Node masters active · real Aegis-X v2 combat test ready.`;}
+  showMode('skirmish');setSkirmishBuildDrawer(false);rtsMapForge.overlay.visible=false;rtsMapForge.movementOverlay.visible=false;rtsMapForge.setFogPreview(false);
+  try{skirmish.setFactionPalettes($('skirmishPlayerPalette').value,$('skirmishEnemyPalette').value);await skirmish.start({reset});configureSceneForMode();syncSkirmishViewport();drawRTSMapMinimap();updateSkirmishUi();$('status').textContent=`Skirmish Lab ${SKIRMISH_VERSION} · immersive landscape HUD active · exact military masters preserved.`;}
   catch(err){$('status').textContent='Skirmish start failed: '+err.message;}
 }
 
@@ -600,13 +622,18 @@ for(const id of ['mapRelief','mapForest','mapResources'])$(id).oninput=()=>syncO
 
 $('skirmishStart').onclick=()=>activateSkirmishMode({reset:false});
 $('skirmishReset').onclick=()=>activateSkirmishMode({reset:true});
-$('skirmishExit').onclick=()=>activateRTSMapMode();
-$('skirmishCancelBuild').onclick=()=>{skirmish.cancelBuild();updateSkirmishUi();};
+$('skirmishExit').onclick=()=>{setSkirmishBuildDrawer(false);activateRTSMapMode();};
+$('skirmishBuildToggle').onclick=()=>setSkirmishBuildDrawer(!skirmishBuildDrawerOpen);
+$('skirmishBuildClose').onclick=()=>setSkirmishBuildDrawer(false);
+$('skirmishCancelBuild').onclick=()=>{skirmish.cancelBuild();setSkirmishBuildDrawer(false);updateSkirmishUi();};
+$('skirmishDrawerCancelBuild').onclick=()=>{skirmish.cancelBuild();setSkirmishBuildDrawer(false);updateSkirmishUi();};
+$('skirmishPlacementCancel').onclick=()=>{skirmish.cancelBuild();updateSkirmishUi();};
 $('skirmishSpawnHmmwv').onclick=async()=>{try{await skirmish.spawnSupportUnit('hmmwv50');updateSkirmishUi();drawRTSMapMinimap();}catch(err){$('status').textContent='HMMWV deploy failed: '+err.message;}};
 $('skirmishSpawnTalon').onclick=async()=>{try{await skirmish.spawnSupportUnit('attackHeli');updateSkirmishUi();drawRTSMapMinimap();}catch(err){$('status').textContent='Talon deploy failed: '+err.message;}};
 $('skirmishSpawnHarvester').onclick=async()=>{try{await skirmish.spawnSupportUnit('fieldHarvester');updateSkirmishUi();drawRTSMapMinimap();}catch(err){$('status').textContent='Harvester deploy failed: '+err.message;}};
-document.querySelectorAll('[data-skirmish-build]').forEach(b=>b.onclick=()=>{skirmish.selectBuild(b.dataset.skirmishBuild);updateSkirmishUi();});
+document.querySelectorAll('[data-skirmish-build]').forEach(b=>b.onclick=()=>{skirmish.selectBuild(b.dataset.skirmishBuild);setSkirmishBuildDrawer(false);updateSkirmishUi();});
 $('skirmishFollow').onclick=()=>{skirmish.setFollow(!skirmish.follow);updateSkirmishUi();};
+$('skirmishHudFollow').onclick=()=>{skirmish.setFollow(!skirmish.follow);updateSkirmishUi();};
 $('skirmishFirePanel').onclick=()=>{skirmish.fire();updateSkirmishUi();};
 $('skirmishFire').onclick=()=>{skirmish.fire();updateSkirmishUi();};
 $('skirmishSimPause').onclick=()=>{skirmish.setSimulationPaused(!skirmish.sim.paused);updateSkirmishUi();};
@@ -664,6 +691,6 @@ const outputMap={traversalWidth:'traversalWidthOut',traversalLength:'traversalLe
 function syncOutputs(){for(const [id,outId] of Object.entries(outputMap)){const el=$(id),out=$(outId);if(el&&out)out.value=el.value;}}
 for(const id of Object.keys(outputMap)){const el=$(id);if(el)el.oninput=()=>syncOutputs();}syncOutputs();
 syncBuildingPaletteInputs();
-function resize(){const host=$('canvasHost'),w=Math.max(320,Math.floor(host.clientWidth)),h=Math.max(220,Math.floor(host.clientHeight));renderer.setSize(w,h,false);if(mode==='vehicle')vehicleBaker.fitPreview(w/Math.max(1,h));else if(mode==='rtsbuilding')buildingForge.fitPreview(w/Math.max(1,h));else if(mode==='rtsmap'){rtsMapForge.setView(mapLastView,w/Math.max(1,h));drawRTSMapMinimap();}else if(mode==='skirmish'){skirmish.resizeCamera();drawRTSMapMinimap();}else fitCamera(currentSpec?spanFor(currentSpec.recipe):10);}window.addEventListener('resize',resize);
+function resize(){const host=$('canvasHost'),w=Math.max(320,Math.floor(host.clientWidth)),h=Math.max(220,Math.floor(host.clientHeight));renderer.setSize(w,h,false);if(mode==='vehicle')vehicleBaker.fitPreview(w/Math.max(1,h));else if(mode==='rtsbuilding')buildingForge.fitPreview(w/Math.max(1,h));else if(mode==='rtsmap'){rtsMapForge.setView(mapLastView,w/Math.max(1,h));drawRTSMapMinimap();}else if(mode==='skirmish'){skirmish.resizeCamera();drawRTSMapMinimap();}else fitCamera(currentSpec?spanFor(currentSpec.recipe):10);}window.addEventListener('resize',resize);window.visualViewport?.addEventListener('resize',resize);window.addEventListener('orientationchange',()=>setTimeout(()=>{resize();if(mode==='skirmish')syncSkirmishViewport();},120));
 syncBuildingEngineUI();resize();refreshProjects();regenerate();syncPlaytestButtons();updateSkirmishUi();
 let lastAnimTime=0;(function animate(t=0){requestAnimationFrame(animate);const dt=Math.min(.05,Math.max(0,(t-lastAnimTime)/1000||0));lastAnimTime=t;if(playtestActive&&followCameraEnabled&&characterSprite?.visible){const target=new THREE.Vector3(characterPos[0],characterPos[1],characterPos[2]+1);controls.target.lerp(target,.16);const desired=target.clone().add(playtestCameraOffset);camera.position.lerp(desired,.14);camera.lookAt(controls.target);}if(mode==='rtsbuilding')buildingForge.update(dt);if(mode==='skirmish')skirmish.update(dt);controls.update();if((mode==='rtsmap'||mode==='skirmish')&&t-mapMiniLast>140){drawRTSMapMinimap();mapMiniLast=t;}renderer.render(scene,camera);})();
