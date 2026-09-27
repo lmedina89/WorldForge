@@ -8,7 +8,7 @@ import { LOCOMOTORS, WEAPONS, UNIT_DEFINITIONS } from './data/rts-definitions.js
 import { instantiateMasterBuilding, masterBuildingForRole, MASTER_BUILDINGS } from './rts-asset-library.js';
 import { loadAegisReferenceVehicle } from '../vehicle/vehicle-generator.js';
 
-export const SKIRMISH_VERSION='0.6.0';
+export const SKIRMISH_VERSION='0.6.1';
 
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const angleDelta=(a,b)=>Math.atan2(Math.sin(a-b),Math.cos(a-b));
@@ -96,7 +96,7 @@ export class SkirmishTest{
     if(this.started&&!reset){this.setActive(true);this._setCamera();this._emit();return;}
     this.mapSignature=sig;this._clearSession();
     this.sim.reset({seed:this.mapForge.recipe?.seed||1});this.lastUiTick=-999;this.viewMode='overview';this.camera.zoom=1;this.playerFaction=this.sim.createFaction('player',{credits:5000});this.enemyFaction=this.sim.createFaction('enemy',{credits:0});this.pendingBuild=null;this.buildSerial=1;
-    await this._spawnPlayerTank();await this._spawnStartingConstructionYard();this._spawnTrainingTarget();this.started=true;this.setActive(true);this._setCamera();this._emit('Skirmish ready · 1536 m main-world layout active · Field Barracks trains animated Riflemen through the real deployment exit.');
+    await this._spawnPlayerTank();await this._spawnStartingConstructionYard();await this._spawnTrainingTarget();this.started=true;this.setActive(true);this._setCamera();this._emit('Skirmish ready · Aegis Vehicle Factory and Guardian Turret masters active · fullscreen vehicle depot restored.');
   }
 
   _clearSession(){
@@ -215,7 +215,21 @@ export class SkirmishTest{
     }
     if(!g){const fallbackPalette=factionPalette==='crimson'?'red':factionPalette==='desert'?'desert':factionPalette==='slate'?'slate':'olive';g=createRTSBuilding(type,{palette:fallbackPalette}).group;}
     g.position.set(t.x,t.y,t.z);g.rotation.z=t.heading||0;g.name=name||`${entity.components.owner.toUpperCase()}_${type}_${entity.id}`;g.scale.z=c.complete?1:Math.max(.03,c.progress);this.root.add(g);
-    const view={entityId:entity.id,id:g.name,type,group:g,def,owner:entity.components.owner,masterAsset,functional:{radar:g.getObjectByName('RadarYawRoot'),fans:[1,2,3,4].map(i=>g.getObjectByName(`CoolingFanRoot_${i}`)).filter(Boolean),dustFan:g.getObjectByName('DustCollectorFanRoot'),apronFeeder:g.getObjectByName('ApronFeederRoot'),dockSignal:g.getObjectByName('DockSignalRoot')}};this.buildings.push(view);return view;
+    const view={entityId:entity.id,id:g.name,type,group:g,def,owner:entity.components.owner,masterAsset,functional:{
+      radar:g.getObjectByName('RadarYawRoot'),
+      fans:[1,2,3,4].map(i=>g.getObjectByName(`CoolingFanRoot_${i}`)).filter(Boolean),
+      dustFan:g.getObjectByName('DustCollectorFanRoot'),
+      apronFeeder:g.getObjectByName('ApronFeederRoot'),
+      dockSignal:g.getObjectByName('DockSignalRoot'),
+      turret:g.getObjectByName('TurretRoot'),
+      gun:g.getObjectByName('GunPitchRoot'),
+      muzzle:g.getObjectByName('MuzzleSocket'),
+      vehicleSpawn:g.getObjectByName('WF_SPAWN_VEHICLE'),
+      vehicleEntry:g.getObjectByName('WF_ENTRY'),
+      vehicleRally:g.getObjectByName('WF_RALLY'),
+      serviceBay:g.getObjectByName('WF_SERVICE_BAY'),
+      doorCenter:g.getObjectByName('WF_DOOR_CENTER')
+    }};this.buildings.push(view);return view;
   }
   async _spawnStarterHarvesterForRefinery(refineryEntityId){
     const refinery=this.sim.entities.get(refineryEntityId);if(!refinery||refinery.components.buildingType!=='refinery'||refinery.components.health?.destroyed)return false;
@@ -241,11 +255,13 @@ export class SkirmishTest{
   async _spawnStartingConstructionYard(){
     const start=this.mapForge.metadata.startRegions[0],e=this.sim.createEntity('building',this._buildingComponents('constructionYard',start.x,start.y,{owner:'player',complete:true}),'player');await this._createBuildingView(e,{name:'PLAYER_TacticalCommandPost'});
   }
-  _spawnTrainingTarget(){
+  async _spawnTrainingTarget(){
     const start=this.mapForge.metadata.startRegions[0],toward=new THREE.Vector2(-start.x,-start.y).normalize(),side=new THREE.Vector2(-toward.y,toward.x),x=start.x+toward.x*145+side.x*24,y=start.y+toward.y*145+side.y*24;
     const e=this.sim.createEntity('target',this._buildingComponents('gunTurret',x,y,{owner:'enemy',complete:true}),'enemy');e.components.collisionRadius=7;
-    const asset=createRTSBuilding('gunTurret',{palette:'red'});asset.group.position.set(x,y,e.components.transform.z);asset.group.name='ENEMY_TestTurret';this.root.add(asset.group);this.enemyTargets.push({entityId:e.id,id:'ENEMY_TEST_TURRET',type:'gunTurret',group:asset.group,radius:7});this.aimPoint.set(x,y,e.components.transform.z+4);
-    if(this.tank)this.sim.issueCommand(RTS_COMMANDS.AIM,{entityId:this.tank.entityId,point:{x,y,z:e.components.transform.z+4}},{source:COMMAND_SOURCES.SYSTEM,delayTicks:0});
+    const view=await this._createBuildingView(e,{palette:this.enemyPalette,name:'ENEMY_GuardianTurret'});
+    this.enemyTargets.push({entityId:e.id,id:'ENEMY_TEST_TURRET',type:'gunTurret',group:view.group,radius:7});
+    this.aimPoint.set(x,y,e.components.transform.z+3.2);
+    if(this.tank)this.sim.issueCommand(RTS_COMMANDS.AIM,{entityId:this.tank.entityId,point:{x,y,z:e.components.transform.z+3.2}},{source:COMMAND_SOURCES.SYSTEM,delayTicks:0});
   }
 
   selectBuild(type){if(!RTS_BUILDINGS[type]||type==='constructionYard'){this.pendingBuild=null;this._emit('Build selection cleared.');return;}this.pendingBuild=type;this._emit(`${RTS_BUILDINGS[type].label} selected · $${RTS_BUILDINGS[type].cost}. Tap buildable terrain near your structures.`);}

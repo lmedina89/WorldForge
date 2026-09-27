@@ -14,11 +14,13 @@ for(const rel of [
   'assets/buildings/aegis_field_power_node_v1.glb',
   'assets/buildings/aegis_field_refinery_v2.glb',
   'assets/buildings/aegis_field_barracks_v023.glb',
+  'assets/buildings/aegis_vehicle_factory_v021.glb',
+  'assets/buildings/aegis_guardian_turret_v031.glb',
   'assets/buildings/aegis_command_nexus_hq_v13.glb',
   'assets/buildings/aegis_grid_bastion_power_plant_v1.glb'
 ]) assert.ok(fs.statSync(path.join(root,rel)).size>10000,`${rel} missing/too small`);
 
-for(const id of ['tacticalCommandPost','fieldPowerNode','fieldRefinery','fieldBarracks','commandNexus','gridBastion'])assert.match(lib,new RegExp(id));
+for(const id of ['tacticalCommandPost','fieldPowerNode','fieldRefinery','fieldBarracks','fieldVehicleFactory','guardianTurret','commandNexus','gridBastion'])assert.match(lib,new RegExp(id));
 assert.match(lib,/skirmishDefault:true/);
 assert.match(lib,/classification:'civilian'/);
 assert.match(lib,/WF_TEAM_PRIMARY/);
@@ -30,16 +32,23 @@ assert.match(defs,/masterAsset:'fieldPowerNode'/);
 assert.match(defs,/masterAsset:'fieldRefinery'/);
 assert.match(defs,/starterUnit:'aegisHarvester'/);
 assert.match(defs,/masterAsset:'fieldBarracks'/);
+assert.match(defs,/masterAsset:'fieldVehicleFactory'/);
+assert.match(defs,/masterAsset:'guardianTurret'/);
 assert.match(skirmish,/configuredMasterId=def\?\.masterAsset/);
-assert.match(skirmish,/SKIRMISH_VERSION='0\.6\.0'/);
+assert.match(skirmish,/SKIRMISH_VERSION='0\.6\.1'/);
 assert.match(app,/skirmishSpawnHarvester/);
 assert.match(html,/BUILDING FORGE 0\.3/);
 assert.match(html,/Tactical Command Post · v2\.1/);
 assert.match(html,/Field Power Node · v1\.0/);
 assert.match(html,/Field Refinery · v2\.0/);
 assert.match(html,/Field Barracks · v0\.2\.3/);
+assert.match(html,/VEHICLE FACTORY/);
+assert.match(html,/GUARDIAN TURRET/);
 assert.match(html,/Civilian \/ neutral masters/);
 assert.match(html,/id="skirmishSpawnHmmwv"/);
 assert.match(html,/id="skirmishSpawnTalon"/);
 assert.match(html,/id="skirmishSpawnHarvester"/);
-console.log(JSON.stringify({ok:true,masterBuildings:6,militaryDefaults:4,civilianMasters:2,palettes:5,skirmishMasterReplacement:true}));
+assert.match(html,/id="skirmishDrawerSpawnHmmwv"/);
+assert.match(html,/id="skirmishDrawerSpawnTalon"/);
+assert.match(html,/id="skirmishDrawerSpawnHarvester"/);
+console.log(JSON.stringify({ok:true,masterBuildings:8,militaryDefaults:6,civilianMasters:2,palettes:5,skirmishMasterReplacement:true,fullscreenVehicleDepot:true}));

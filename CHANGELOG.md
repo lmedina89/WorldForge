@@ -1,3 +1,14 @@
+# v0.13.6 — Vehicle Factory + Guardian Turret Integration
+
+- WorldForge advanced to **0.13.6**, Skirmish Lab to **0.6.1**, RTS Asset Library to **0.5.0**, and RTS Definitions to **0.5.1**.
+- Added game-ready Y-up **Aegis Vehicle Factory v0.2.1** master and connected `vehicleFactory` to it.
+- Added game-ready Y-up **Aegis Guardian Turret v0.3.1** master and connected `gunTurret` to it.
+- Replaced the procedural enemy training turret with the Guardian Turret master using the enemy faction palette.
+- Corrected Guardian turret hierarchy so `MuzzleSocket` follows `GunPitchRoot`.
+- Exposed factory/turret functional sockets in Skirmish building views for later production/defense systems.
+- Restored HMMWV-50, Talon AH-X and Field Harvester deploy buttons inside the fullscreen Skirmish BUILD drawer.
+- Preserved the existing 1,536 m Main World, Barracks/Rifleman loop, Refinery/Harvester docking, tank controls and immersive mobile HUD.
+
 # v0.13.5 — Main World + Field Barracks Infantry
 
 - WorldForge advanced to **0.13.5**; Skirmish Lab to **0.6.0**; RTS Map Forge to **0.2.3**; RTS Asset Library to **0.4.0**.

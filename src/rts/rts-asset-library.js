@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-export const RTS_ASSET_LIBRARY_VERSION='0.4.0';
+export const RTS_ASSET_LIBRARY_VERSION='0.5.0';
 
 export const FACTION_PALETTES=Object.freeze({
   aegis:Object.freeze({id:'aegis',label:'Aegis Olive',base:'#777b70',primary:'#60704f',secondary:'#39483c',accent:'#c9a54b'}),
@@ -55,6 +55,28 @@ export const MASTER_BUILDINGS=Object.freeze({
       accent:['WF_TEAM_ACCENT']
     }),
     requiredNodes:['FieldBarracksRoot','WF_SPAWN_INFANTRY','WF_ENTRY','WF_EXIT_PATH_0','WF_EXIT_PATH_1','WF_EXIT_PATH_2','WF_RALLY','WF_CONSTRUCTION','WF_DAMAGE_CENTER']
+  }),
+  fieldVehicleFactory:Object.freeze({
+    id:'fieldVehicleFactory',label:'Aegis Vehicle Factory',role:'vehicleFactory',classification:'military',version:'0.2.1',asset:'assets/buildings/aegis_vehicle_factory_v021.glb',
+    footprint:[29.4,22.97],height:7.92,skirmishDefault:true,
+    slots:Object.freeze({
+      base:['WF_BASE_ARMOR'],
+      primary:['WF_TEAM_PRIMARY'],
+      secondary:['WF_TEAM_SECONDARY'],
+      accent:['WF_TEAM_ACCENT']
+    }),
+    requiredNodes:['AegisVehicleFactoryRoot','WF_SPAWN_VEHICLE','WF_ENTRY','WF_EXIT_PATH_0','WF_EXIT_PATH_1','WF_EXIT_PATH_2','WF_RALLY','WF_CONSTRUCTION','WF_DAMAGE_CENTER','WF_SERVICE_BAY','WF_DOOR_CENTER']
+  }),
+  guardianTurret:Object.freeze({
+    id:'guardianTurret',label:'Aegis Guardian Turret',role:'gunTurret',classification:'military',version:'0.3.1',asset:'assets/buildings/aegis_guardian_turret_v031.glb',
+    footprint:[8.95,8.95],height:4.86,skirmishDefault:true,
+    slots:Object.freeze({
+      base:['WF_BASE_ARMOR'],
+      primary:['WF_TEAM_PRIMARY'],
+      secondary:['WF_TEAM_SECONDARY'],
+      accent:['WF_TEAM_ACCENT']
+    }),
+    requiredNodes:['GuardianTurretRoot','TurretRoot','GunPitchRoot','MuzzleSocket','SensorSocket','WF_CONSTRUCTION','WF_DAMAGE_CENTER','WF_RALLY']
   }),
   commandNexus:Object.freeze({
     id:'commandNexus',label:'Civilian Helicopter Operations Station',role:'neutralHeliStation',classification:'civilian',version:'1.3',asset:'assets/buildings/aegis_command_nexus_hq_v13.glb',

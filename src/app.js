@@ -549,7 +549,7 @@ function updateSkirmishUi(state=skirmish.state()){
     const b=$(id);if(!b)continue;b.disabled=!state.canTrainRifleman;b.classList.toggle('active',state.riflemanQueue>0);
     const span=b.querySelector('span');if(span)span.textContent=state.barracksReady?`$${state.riflemanCost} · queue ${state.riflemanQueue}/5`:`$${state.riflemanCost} · build Barracks`;
   }
-  const buildNames={powerPlant:'POWER PLANT',refinery:'REFINERY',barracks:'BARRACKS',vehicleFactory:'VEHICLE FACTORY',gunTurret:'GUN TURRET'};
+  const buildNames={powerPlant:'POWER PLANT',refinery:'REFINERY',barracks:'BARRACKS',vehicleFactory:'VEHICLE FACTORY',gunTurret:'GUARDIAN TURRET'};
   const buildCosts={powerPlant:500,refinery:900,barracks:650,vehicleFactory:1200,gunTurret:600};
   const placing=!!state.pendingBuild;
   if($('skirmishPlacementBanner'))$('skirmishPlacementBanner').hidden=!placing;
@@ -564,7 +564,7 @@ async function activateSkirmishMode({reset=false}={}){
     catch(err){$('status').textContent='Skirmish main-world generation failed: '+err.message;return;}
   }
   showMode('skirmish');setSkirmishBuildDrawer(false);rtsMapForge.overlay.visible=false;rtsMapForge.movementOverlay.visible=false;rtsMapForge.setFogPreview(false);
-  try{skirmish.setFactionPalettes($('skirmishPlayerPalette').value,$('skirmishEnemyPalette').value);await skirmish.start({reset});configureSceneForMode();syncSkirmishViewport();drawRTSMapMinimap();updateSkirmishUi();$('status').textContent=`Skirmish Lab ${SKIRMISH_VERSION} · 1536 m main world · Field Barracks + animated Rifleman production active.`;}
+  try{skirmish.setFactionPalettes($('skirmishPlayerPalette').value,$('skirmishEnemyPalette').value);await skirmish.start({reset});configureSceneForMode();syncSkirmishViewport();drawRTSMapMinimap();updateSkirmishUi();$('status').textContent=`Skirmish Lab ${SKIRMISH_VERSION} · Vehicle Factory + Guardian Turret masters active · fullscreen vehicle deploy controls restored.`;}
   catch(err){$('status').textContent='Skirmish start failed: '+err.message;}
 }
 
@@ -644,9 +644,10 @@ $('skirmishBuildClose').onclick=()=>setSkirmishBuildDrawer(false);
 $('skirmishCancelBuild').onclick=()=>{skirmish.cancelBuild();setSkirmishBuildDrawer(false);updateSkirmishUi();};
 $('skirmishDrawerCancelBuild').onclick=()=>{skirmish.cancelBuild();setSkirmishBuildDrawer(false);updateSkirmishUi();};
 $('skirmishPlacementCancel').onclick=()=>{skirmish.cancelBuild();updateSkirmishUi();};
-$('skirmishSpawnHmmwv').onclick=async()=>{try{await skirmish.spawnSupportUnit('hmmwv50');updateSkirmishUi();drawRTSMapMinimap();}catch(err){$('status').textContent='HMMWV deploy failed: '+err.message;}};
-$('skirmishSpawnTalon').onclick=async()=>{try{await skirmish.spawnSupportUnit('attackHeli');updateSkirmishUi();drawRTSMapMinimap();}catch(err){$('status').textContent='Talon deploy failed: '+err.message;}};
-$('skirmishSpawnHarvester').onclick=async()=>{try{await skirmish.spawnSupportUnit('fieldHarvester');updateSkirmishUi();drawRTSMapMinimap();}catch(err){$('status').textContent='Harvester deploy failed: '+err.message;}};
+const deploySkirmishSupport=async(kind,label)=>{try{await skirmish.spawnSupportUnit(kind);updateSkirmishUi();drawRTSMapMinimap();}catch(err){$('status').textContent=`${label} deploy failed: ${err.message}`;}};
+for(const id of ['skirmishSpawnHmmwv','skirmishDrawerSpawnHmmwv'])$(id).onclick=()=>deploySkirmishSupport('hmmwv50','HMMWV');
+for(const id of ['skirmishSpawnTalon','skirmishDrawerSpawnTalon'])$(id).onclick=()=>deploySkirmishSupport('attackHeli','Talon');
+for(const id of ['skirmishSpawnHarvester','skirmishDrawerSpawnHarvester'])$(id).onclick=()=>deploySkirmishSupport('fieldHarvester','Harvester');
 for(const id of ['skirmishTrainRifleman','skirmishTrainRiflemanPanel'])$(id).onclick=()=>{skirmish.trainRifleman();updateSkirmishUi();};
 document.querySelectorAll('[data-skirmish-build]').forEach(b=>b.onclick=()=>{skirmish.selectBuild(b.dataset.skirmishBuild);setSkirmishBuildDrawer(false);updateSkirmishUi();});
 $('skirmishFollow').onclick=()=>{skirmish.setFollow(!skirmish.follow);updateSkirmishUi();};

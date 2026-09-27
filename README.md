@@ -1,3 +1,39 @@
+# WorldForge v0.13.6 — Vehicle Factory + Guardian Turret Integration
+
+WorldForge v0.13.6 keeps the v0.13.5 Main World / Barracks / Rifleman foundation and replaces the remaining Vehicle Factory and Gun Turret placeholders with the approved detailed Aegis master assets.
+
+## Aegis Vehicle Factory v0.2
+- Buildable `vehicleFactory` now resolves to the exact Aegis Vehicle Factory master rather than the procedural placeholder.
+- Production footprint stays in the existing ~30 × 23 m class.
+- The master includes the recessed vehicle bay, deployment pad, operations wing, service wing, Aegis faction material slots, and rollout helper nodes.
+- Game-ready GLB is normalized to the same Y-up import convention used by the existing master-building pipeline.
+- Helper nodes retained for later real factory production: `WF_SPAWN_VEHICLE`, `WF_ENTRY`, `WF_EXIT_PATH_0/1/2`, `WF_RALLY`, `WF_SERVICE_BAY`, and `WF_DOOR_CENTER`.
+- This pass replaces the visual placeholder only; vehicle-factory economy/production queues are intentionally not added yet.
+
+## Aegis Guardian Turret v0.3
+- Buildable `gunTurret` now resolves to the exact Guardian Turret master.
+- The enemy Skirmish training target also uses the Guardian master with the enemy faction palette instead of the old procedural turret.
+- The GLB is normalized to the game Y-up import convention.
+- `MuzzleSocket` is parented beneath `GunPitchRoot` so future elevation/fire logic carries the muzzle with the barrel assembly.
+- `TurretRoot`, `GunPitchRoot`, `MuzzleSocket`, and `SensorSocket` are exposed on the runtime building view for the future functional-defense pass.
+- This milestone preserves the previous turret gameplay behavior; autonomous defensive targeting/firing remains a later feature.
+
+## Fullscreen vehicle depot restored
+The old side-panel test depot became inaccessible when Skirmish moved to the immersive fullscreen interface. The fullscreen BUILD drawer now contains a **DEPLOY TEST VEHICLES** section with:
+- HMMWV-50
+- Talon AH-X
+- Field Harvester
+
+These use the same approved support-unit spawn path as before, so fullscreen presentation no longer removes vehicle testing access.
+
+## Preservation
+- Main World remains the approved 1,536 m seed-731904 Skirmish world.
+- Barracks → Rifleman production remains unchanged.
+- Refinery → starter Harvester docking remains unchanged.
+- Existing Aegis-X, HMMWV, Talon, Harvester, Command Post, Power Node, Refinery and Barracks masters remain unchanged.
+
+---
+
 # WorldForge v0.13.5 — Main World + Field Barracks Infantry
 
 WorldForge v0.13.5 builds directly on the verified v0.13.4 Skirmish Visual Readability baseline. The existing Aegis-X, HMMWV-50, Talon AH-X, Field Harvester, Tactical Command Post, Field Power Node and Field Refinery masters remain preserved while Skirmish gains its first true infantry-production loop and a larger permanent battlefield.

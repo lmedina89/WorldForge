@@ -319,3 +319,14 @@ body.skirmish-mode #mapMinimapWrap{
   border-color:#7aaa8c;
   background:#203b2c;
 }
+
+
+/* v0.13.6 fullscreen unit-depot restore */
+.skirmishDrawerSubhead{
+  margin-top:11px;
+  padding-top:8px;
+  border-top:1px solid rgba(143,163,151,.24);
+}
+#skirmishDrawerSpawnHmmwv,#skirmishDrawerSpawnTalon,#skirmishDrawerSpawnHarvester{
+  border-color:rgba(115,151,130,.58)!important;
+}
