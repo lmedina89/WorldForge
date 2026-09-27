@@ -1,3 +1,25 @@
+# WorldForge v0.13.17 — Ground Deployment + Enemy Sandbox
+
+WorldForge v0.13.17 advances Skirmish to **0.7.4** while keeping RTS Map Forge at **0.2.9** and RTS Definitions at **0.6.1**. This milestone combines the ground-vehicle deployment repair with a premade hostile sandbox base so the same build can validate base egress and begin real combat exploration.
+
+## Controlled ground deployment
+- Vehicle Factory products no longer switch immediately into ordinary A* movement while still overlapping the production structure. They enter a **controlled egress corridor** through the factory's authored entry/exit helpers and remain in that rollout mode until the complete vehicle footprint is outside the source building.
+- The source building alone is ignored during its controlled corridor. Other structures and map traversal rules remain active. If an authored point does not clear the footprint cleanly, the egress system resolves a safe exterior continuation before normal routed movement resumes.
+- Field Harvesters use the same controlled-departure concept when leaving the Refinery dock/exit path. Normal building-aware routing begins only after the Harvester is clear.
+- Route-planning building inflation is based on the unit's narrower footprint dimension rather than its full vehicle length, preventing visually open base lanes from becoming mathematically sealed.
+- The existing stuck watchdog/re-pathing and optional collision-debug presentation remain available after controlled egress ends.
+
+## Premade Crimson enemy sandbox
+- A complete hostile forward base is placed deterministically at the opposing reserved start region: Command Post, Power Node, Refinery, Barracks, Vehicle Factory, and two Guardian Turrets.
+- The base also begins with a hostile Aegis-X, HMMWV-50, Field Harvester, Talon AH-X, and four Riflemen so the player can immediately scout a recognizable opposing force.
+- Enemy presentation uses **runtime material palette variants** of the same approved production GLBs. No duplicate enemy models were authored and no approved GLB was modified.
+- Guardian Turrets actively acquire and fire on opposing units in range. Enemy Riflemen use the existing rifle combat system defensively when an opposing target enters range.
+- Hostile units and buildings participate in projectile hit/damage/destruction handling. With the Aegis-X selected, tapping a hostile unit/building aims the tank; the existing FIRE control launches the shot.
+- This is deliberately a **sandbox enemy base**, not full strategic enemy AI yet: there is no enemy harvesting/production decision loop or attack-wave planner in this milestone.
+
+## Asset preservation
+All approved vehicle, infantry, structure, and Rich/Dense crystal GLBs remain unchanged. Enemy faction color is applied at runtime to cloned materials.
+
 # WorldForge v0.13.16 — Mobile Command UX + Free Camera
 
 WorldForge v0.13.16 advances Skirmish to **0.7.3** while keeping RTS Map Forge at **0.2.9** and RTS Definitions at **0.6.1**. This milestone is a focused mobile-control pass before combat/AI: commands should register reliably with a finger, and the camera no longer needs a separate wide/close toggle because pinch zoom already owns scale.

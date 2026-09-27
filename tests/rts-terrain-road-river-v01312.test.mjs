@@ -6,7 +6,7 @@ const root=path.resolve(import.meta.dirname,'..');
 const map=fs.readFileSync(path.join(root,'src/rts-map/rts-map-forge.js'),'utf8');
 const schema=fs.readFileSync(path.join(root,'src/core/schema.js'),'utf8');
 
-assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.16'/);
+assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.17'/);
 assert.match(schema,/rtsMapForge: '0\.2\.9'/);
 assert.match(map,/RTS_MAP_FORGE_VERSION='0\.2\.9'/);
 assert.match(map,/_stripFrame\(/,'shared strip frame helper missing');
@@ -21,4 +21,4 @@ assert.match(map,/const waterZ=this\._riverSurfaceAt\(x,riverFn\)/,'bridge water
 assert.doesNotMatch(map,/this\._makeStrip\(shape\.river/,'legacy edge-sampled river strip still active');
 assert.doesNotMatch(map,/this\._makeStrip\(road\.fn/,'legacy edge-sampled road strip still active');
 
-console.log(JSON.stringify({ok:true,worldforge:'0.13.16',mapForge:'0.2.9',roadCoreContinuity:true,sharedRoadProfile:true,continuousRiverSurface:true,bridgeWaterAgreement:true},null,2));
+console.log(JSON.stringify({ok:true,worldforge:'0.13.17',mapForge:'0.2.9',roadCoreContinuity:true,sharedRoadProfile:true,continuousRiverSurface:true,bridgeWaterAgreement:true},null,2));

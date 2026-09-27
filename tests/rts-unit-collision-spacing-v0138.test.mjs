@@ -11,8 +11,8 @@ const sk=read('src/rts/skirmish-test.js');
 const html=read('index.html');
 const app=read('src/app.js');
 
-assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.16'/);
-assert.match(schema,/skirmish: '0\.7\.3'/);
+assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.17'/);
+assert.match(schema,/skirmish: '0\.7\.4'/);
 assert.match(defs,/RTS_DEFINITIONS_VERSION='0\.6\.1'/);
 
 assert.match(defs,/aegisMbt:.*collisionFootprint:\[7\.55,3\.10\]/s);
@@ -49,8 +49,8 @@ assert.match(app,/state\.collisionDebug/);
 
 console.log(JSON.stringify({
   ok:true,
-  worldforge:'0.13.16',
-  skirmish:'0.7.3',
+  worldforge:'0.13.17',
+  skirmish:'0.7.4',
   orientedGroundVehicleCollision:true,
   cornerSliding:true,
   turnValidation:true,

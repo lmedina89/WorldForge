@@ -10,8 +10,8 @@ const sk=fs.readFileSync(path.join(root,'src/rts/skirmish-test.js'),'utf8');
 const map=fs.readFileSync(path.join(root,'src/rts-map/rts-map-forge.js'),'utf8');
 const schema=fs.readFileSync(path.join(root,'src/core/schema.js'),'utf8');
 
-assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.16'/);
-assert.match(sk,/SKIRMISH_VERSION='0\.7\.3'/);
+assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.17'/);
+assert.match(sk,/SKIRMISH_VERSION='0\.7\.4'/);
 assert.match(map,/RTS_MAP_FORGE_VERSION='0\.2\.9'/);
 assert.match(html,/id="skirmishHudView"/);
 assert.match(app,/skirmishHudView.*toggleFreeCamera/s);
@@ -34,4 +34,4 @@ assert.match(map,/riverProximity/);
 assert.match(map,/RoadShoulder_/);
 assert.match(css,/#skirmishHudFollow\.active,#skirmishHudView\.active/);
 
-console.log(JSON.stringify({ok:true,worldforge:'0.13.16',skirmish:'0.7.3',rtsMapForge:'0.2.9',groundVehicleShadows:true,airShadowProfile:true,freeCamera:true,pinchZoom:true,terrainReadability:true,permanentSelectionRing:false}));
+console.log(JSON.stringify({ok:true,worldforge:'0.13.17',skirmish:'0.7.4',rtsMapForge:'0.2.9',groundVehicleShadows:true,airShadowProfile:true,freeCamera:true,pinchZoom:true,terrainReadability:true,permanentSelectionRing:false}));

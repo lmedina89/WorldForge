@@ -1,3 +1,22 @@
+# WorldForge v0.13.17 Test Report
+
+## Ground Deployment + Enemy Sandbox
+
+Result: **PASS — focused source/regression validation**
+
+- Focused `tests/rts-*.test.mjs` suite: **22 / 22 PASS**.
+- `node --check` passes for the modified Skirmish, app, and schema modules.
+- New v0.13.17 regression coverage verifies controlled Vehicle Factory egress, Refinery/Harvester departure, reduced route inflation, runtime enemy faction variants, premade hostile base composition, active Guardian Turrets, and hostile building/unit projectile targets.
+- Existing mobile command/free-camera, Harvester economy, Vehicle Factory production, resource fields, collision/spacing, road/river, master-asset, and simulation-foundation suites remain green.
+- Enemy variants use cloned runtime materials; approved GLB bytes are not rewritten.
+- Production asset hash comparison against the v0.13.16 release: **16 / 16 GLBs byte-identical**.
+
+### On-device validation still required
+The regression suite validates source wiring and deterministic rules, but it does not reproduce iPhone Safari touch/camera/render behavior. On-device, first verify that a newly produced HMMWV/Aegis-X/Harvester visibly clears the Vehicle Factory before normal routing begins, and that the starter/returning Harvester clears the Refinery before heading to a resource field. Then scout the opposing Crimson base, approach a Guardian Turret, and use the Aegis-X tap-hostile + FIRE flow to confirm combat presentation and damage feel.
+
+### Scope boundary
+The enemy base is deliberately premade and defensive in this milestone. Full enemy harvesting, production decisions, moving attack groups, strategic AI, and win/defeat flow are future work after ground deployment and combat interaction are proven on-device.
+
 # WorldForge v0.13.16 Test Report
 
 ## Mobile Command UX + Free Camera

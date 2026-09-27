@@ -51,9 +51,9 @@ const sk=read('src/rts/skirmish-test.js');
 const html=read('index.html');
 const app=read('src/app.js');
 
-assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.16'/);
+assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.17'/);
 assert.match(schema,/rtsAssetLibrary: '0\.5\.1'/);
-assert.match(schema,/skirmish: '0\.7\.3'/);
+assert.match(schema,/skirmish: '0\.7\.4'/);
 assert.match(defs,/vehicleFactory:.*masterAsset:'fieldVehicleFactory'/s);
 assert.match(defs,/gunTurret:.*masterAsset:'guardianTurret'/s);
 assert.match(lib,/fieldVehicleFactory/);
@@ -84,13 +84,14 @@ assert.match(app,/skirmishDrawerSpawnHmmwv/);
 assert.match(app,/skirmishDrawerSpawnTalon/);
 assert.match(app,/skirmishDrawerSpawnHarvester/);
 assert.match(app,/deploySkirmishSupport/);
-assert.match(sk,/await this\._spawnTrainingTarget\(\)/);
-assert.match(sk,/ENEMY_GuardianTurret/);
+assert.match(sk,/await this\._spawnEnemySandboxBase\(\)/);
+assert.match(sk,/ENEMY_Guardian_Left/);
+assert.match(sk,/ENEMY_Guardian_Right/);
 
 console.log(JSON.stringify({
   ok:true,
-  worldforge:'0.13.16',
-  skirmish:'0.7.3',
+  worldforge:'0.13.17',
+  skirmish:'0.7.4',
   factoryMaster:true,
   guardianTurretMaster:true,
   gameReadyYUp:true,

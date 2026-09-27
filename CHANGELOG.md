@@ -1,3 +1,18 @@
+# v0.13.17 — Ground Deployment + Enemy Sandbox
+
+- WorldForge advanced to **0.13.17** and Skirmish to **0.7.4**. RTS Map Forge remains **0.2.9** and RTS Definitions remain **0.6.1**.
+- Replaced fragile factory/refinery departure with a controlled source-building egress phase that follows authored exit corridors before handing units back to ordinary A* movement and OBB collision.
+- Added full-footprint exterior validation before a vehicle leaves controlled egress, with safe exterior continuation when an authored helper is not sufficient.
+- Reduced building inflation used by ground route planning so narrow-but-valid base lanes are not sealed by a vehicle's full longitudinal footprint.
+- Added magenta controlled-egress corridor visualization to collision debug.
+- Added runtime player/enemy material palette handling for existing unit masters; no duplicate enemy GLBs are required.
+- Added a deterministic premade **Crimson** hostile forward base at the opposing start with Command Post, Power Node, Refinery, Barracks, Vehicle Factory, two Guardian Turrets, Aegis-X, HMMWV-50, Harvester, Talon, and four Riflemen.
+- Guardian Turrets now acquire and fire on opposing units in range; rifle combat is owner-relative so hostile Riflemen can defend their base.
+- Projectile collision now supports hostile units and buildings, allowing the Aegis-X main gun to damage/destroy the premade enemy base.
+- Added hostile minimap coloring and contextual Aegis-X tap-hostile aiming guidance.
+- Full enemy economy/production/attack-wave AI remains intentionally outside this milestone.
+- No approved production GLB was rebuilt or modified.
+
 # v0.13.16 — Mobile Command UX + Free Camera
 
 - WorldForge advanced to **0.13.16** and Skirmish to **0.7.3**. RTS Map Forge remains **0.2.9** and RTS Definitions remain **0.6.1**.
