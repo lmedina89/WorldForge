@@ -1,3 +1,15 @@
+# v0.13.19 — Ground Mobility Reliability 2
+
+- WorldForge advanced to **0.13.19** and Skirmish to **0.7.6**. RTS Map Forge remains **0.2.9** and RTS Definitions remain **0.6.1**.
+- Vehicle Factory products now remain in controlled egress through the authored rally point and require a full-hull exterior clearance margin before ordinary collision/pathfinding resumes.
+- Added an automatic farther exterior staging fallback when an authored rollout point is not far enough for the complete unit OBB.
+- MOVE orders issued during factory/refinery egress preserve the remaining safe corridor and retarget only the route after the unit clears the source structure.
+- Reduced global building-route inflation slightly while retaining exact local OBB collision for close movement.
+- Touch input now allows **28 px** of finger drift before FREE CAM panning; building placement allows 32 px.
+- Selected-unit switching now favors direct mesh hits and uses a smaller 18/20 px mobile assist so terrain MOVE taps are not stolen.
+- Infantry destination snapping ignores other Riflemen as hard blockers, and local movement adds a radial escape fan plus a 0.55 s stuck recovery.
+- No approved production GLB was rebuilt or modified.
+
 # v0.13.18 — Ground Command Reliability
 
 - WorldForge advanced to **0.13.18** and Skirmish to **0.7.5**. RTS Map Forge remains **0.2.9** and RTS Definitions remain **0.6.1**.

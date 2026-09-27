@@ -11,9 +11,9 @@ const map=fs.readFileSync(path.join(root,'src/rts-map/rts-map-forge.js'),'utf8')
 const app=fs.readFileSync(path.join(root,'src/app.js'),'utf8');
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 
-assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.18'/);
+assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.19'/);
 assert.match(schema,/rtsMapForge: '0\.2\.9'/);
-assert.match(schema,/skirmish: '0\.7\.5'/);
+assert.match(schema,/skirmish: '0\.7\.6'/);
 assert.equal(RTS_DEFINITIONS_VERSION,'0.6.1');
 assert.equal(RTS_COMMANDS.HARVEST,'HARVEST');
 assert.equal(RTS_COMMANDS.RETURN_CARGO,'RETURN_CARGO');
@@ -22,7 +22,7 @@ assert.equal(UNIT_DEFINITIONS.aegisHarvester.harvestRate,120);
 assert.equal(UNIT_DEFINITIONS.aegisHarvester.unloadRate,600);
 assert.equal(UNIT_DEFINITIONS.aegisHarvester.creditPerUnit,1);
 
-assert.match(sk,/SKIRMISH_VERSION='0\.7\.5'/);
+assert.match(sk,/SKIRMISH_VERSION='0\.7\.6'/);
 for(const phrase of [
   '_registerResourceFields()',
   '_handleMoveCommand(cmd)',
@@ -47,4 +47,4 @@ assert.match(map,/remainingCapacity/);
 assert.match(app,/selectedUnitType==='aegisHarvester'/);
 assert.match(html,/Tap a friendly unit to select it/);
 
-console.log(JSON.stringify({ok:true,worldforge:'0.13.18',skirmish:'0.7.5',mapForge:'0.2.9',definitions:'0.6.1',selection:true,routedMovement:true,harvesterEconomy:true,depletion:true,refineryUnload:true}));
+console.log(JSON.stringify({ok:true,worldforge:'0.13.19',skirmish:'0.7.6',mapForge:'0.2.9',definitions:'0.6.1',selection:true,routedMovement:true,harvesterEconomy:true,depletion:true,refineryUnload:true}));

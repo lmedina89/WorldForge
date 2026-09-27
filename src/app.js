@@ -328,10 +328,10 @@ function applyLevelFilter(){
 }
 
 let pointerDown=null,canvasMultiTouch=false;const activeCanvasPointers=new Set();
-renderer.domElement.addEventListener('pointerdown',e=>{activeCanvasPointers.add(e.pointerId);if(activeCanvasPointers.size>1){canvasMultiTouch=true;pointerDown=null;}else pointerDown={id:e.pointerId,x:e.clientX,y:e.clientY,lastX:e.clientX,lastY:e.clientY,dragging:false};});
+renderer.domElement.addEventListener('pointerdown',e=>{activeCanvasPointers.add(e.pointerId);if(activeCanvasPointers.size>1){canvasMultiTouch=true;pointerDown=null;}else pointerDown={id:e.pointerId,pointerType:e.pointerType||'mouse',x:e.clientX,y:e.clientY,lastX:e.clientX,lastY:e.clientY,dragging:false};});
 renderer.domElement.addEventListener('pointermove',e=>{
   if(mode!=='skirmish'||skirmish.follow||canvasMultiTouch||activeCanvasPointers.size!==1||!pointerDown||pointerDown.id!==e.pointerId)return;
-  const moved=Math.hypot(e.clientX-pointerDown.x,e.clientY-pointerDown.y),dragThreshold=14;if(!pointerDown.dragging&&moved<=dragThreshold)return;
+  const moved=Math.hypot(e.clientX-pointerDown.x,e.clientY-pointerDown.y),touchLike=pointerDown.pointerType==='touch',dragThreshold=touchLike?28:8;if(!pointerDown.dragging&&moved<=dragThreshold)return;
   if(!pointerDown.dragging){pointerDown.dragging=true;pointerDown.lastX=pointerDown.x;pointerDown.lastY=pointerDown.y;}
   const dx=e.clientX-pointerDown.lastX,dy=e.clientY-pointerDown.lastY;pointerDown.lastX=e.clientX;pointerDown.lastY=e.clientY;const rect=renderer.domElement.getBoundingClientRect();if(skirmish.panFreeCamera(dx,dy,rect)){e.preventDefault();drawRTSMapMinimap();}
 });
@@ -340,9 +340,9 @@ renderer.domElement.addEventListener('pointerup',e=>{
   if(wasMulti){pointerDown=null;if(activeCanvasPointers.size===0)canvasMultiTouch=false;return;}
   if(!pointerDown||pointerDown.id!==e.pointerId){if(activeCanvasPointers.size===0)canvasMultiTouch=false;return;}const moved=Math.hypot(e.clientX-pointerDown.x,e.clientY-pointerDown.y),wasDrag=pointerDown.dragging;pointerDown=null;if(activeCanvasPointers.size===0)canvasMultiTouch=false;
   if(wasDrag)return;
-  // Touch commands get deliberate slop: normal Skirmish taps tolerate 14 CSS px of finger drift,
-  // while large building footprints retain the wider placement allowance.
-  const tapTolerance=(mode==='skirmish'&&skirmish.state().pendingBuild)?22:(mode==='skirmish'?14:8);if(moved>tapTolerance)return;
+  // Touch commands get generous slop: on phones a quick touch can drift substantially
+  // without being misclassified as FREE CAM panning. Deliberate drags cross the same 28 px threshold.
+  const touchLike=(e.pointerType||'mouse')==='touch',tapTolerance=(mode==='skirmish'&&touchLike)?(skirmish.state().pendingBuild?32:28):(mode==='skirmish'?8:8);if(moved>tapTolerance)return;
   if(mode==='skirmish'){const rect=renderer.domElement.getBoundingClientRect();skirmish.pointerAction(e.clientX,e.clientY,rect);updateSkirmishUi();drawRTSMapMinimap();return;}
   if(!isCompositeMode()||!currentGroup)return;
   const rect=renderer.domElement.getBoundingClientRect();pointer.x=((e.clientX-rect.left)/rect.width)*2-1;pointer.y=-((e.clientY-rect.top)/rect.height)*2+1;raycaster.setFromCamera(pointer,camera);
@@ -581,7 +581,7 @@ async function activateSkirmishMode({reset=false}={}){
     catch(err){$('status').textContent='Skirmish main-world generation failed: '+err.message;return;}
   }
   showMode('skirmish');setSkirmishBuildDrawer(false);rtsMapForge.overlay.visible=false;rtsMapForge.movementOverlay.visible=false;rtsMapForge.setFogPreview(false);
-  try{await rtsMapForge.awaitResourceAssets();skirmish.setFactionPalettes($('skirmishPlayerPalette').value,$('skirmishEnemyPalette').value);await skirmish.start({reset});configureSceneForMode();syncSkirmishViewport();drawRTSMapMinimap();updateSkirmishUi();$('status').textContent=`Skirmish Lab ${SKIRMISH_VERSION} · ground egress, economy, and Crimson enemy sandbox active · tap friendlies to command, hostile targets to aim the Aegis-X, and crystals with a Harvester to mine.`;}
+  try{await rtsMapForge.awaitResourceAssets();skirmish.setFactionPalettes($('skirmishPlayerPalette').value,$('skirmishEnemyPalette').value);await skirmish.start({reset});configureSceneForMode();syncSkirmishViewport();drawRTSMapMinimap();updateSkirmishUi();$('status').textContent=`Skirmish Lab ${SKIRMISH_VERSION} · ground mobility reliability, economy, and Crimson enemy sandbox active · tap friendlies to command, hostile targets to aim the Aegis-X, and crystals with a Harvester to mine.`;}
   catch(err){$('status').textContent='Skirmish start failed: '+err.message;}
 }
 

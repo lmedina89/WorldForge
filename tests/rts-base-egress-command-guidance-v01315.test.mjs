@@ -9,10 +9,10 @@ const app=fs.readFileSync(path.join(root,'src/app.js'),'utf8');
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 const css=fs.readFileSync(path.join(root,'style.css'),'utf8');
 
-assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.18'/);
-assert.match(schema,/skirmish: '0\.7\.5'/);
+assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.19'/);
+assert.match(schema,/skirmish: '0\.7\.6'/);
 assert.match(schema,/rtsMapForge: '0\.2\.9'/);
-assert.match(sk,/SKIRMISH_VERSION='0\.7\.5'/);
+assert.match(sk,/SKIRMISH_VERSION='0\.7\.6'/);
 
 for(const phrase of [
   'harvesterDockProfile',
@@ -40,4 +40,4 @@ assert.match(css,/\.skirmishCommandHint/);
 assert.match(sk,/HARVESTER: TAP CRYSTALS = HARVEST · TAP TERRAIN = MOVE/);
 assert.match(sk,/nearest traversable ground|No traversable destination|_nearestOpenUnitDestination/);
 
-console.log(JSON.stringify({ok:true,worldforge:'0.13.18',skirmish:'0.7.5',mapForge:'0.2.9',buildingAwareOrders:true,refineryEgress:true,factoryEgressRecovery:true,stuckRepath:true,mobileCommandHint:true},null,2));
+console.log(JSON.stringify({ok:true,worldforge:'0.13.19',skirmish:'0.7.6',mapForge:'0.2.9',buildingAwareOrders:true,refineryEgress:true,factoryEgressRecovery:true,stuckRepath:true,mobileCommandHint:true},null,2));

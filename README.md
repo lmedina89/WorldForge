@@ -1,3 +1,25 @@
+# WorldForge v0.13.19 — Ground Mobility Reliability 2
+
+WorldForge v0.13.19 advances Skirmish to **0.7.6** while keeping RTS Map Forge at **0.2.9** and RTS Definitions at **0.6.1**. This milestone targets the two remaining on-device mobility failures: produced ground vehicles could still lose their safe egress state before fully clearing the Vehicle Factory, and Rifleman move taps could still feel too exact on iPhone.
+
+## Guaranteed vehicle staging
+- Vehicle Factory products now remain in controlled egress through the authored **WF_RALLY** point, not merely until the first barely-clear waypoint. A full vehicle OBB plus a **1.0 m clearance margin** must be outside the source building before normal collision/pathfinding can take control.
+- If the authored rally is still too close for a large hull such as the Aegis-X, Skirmish computes an additional exterior staging point and stays in controlled egress until the hull is genuinely clear.
+- Issuing a new MOVE order while a vehicle is still rolling out no longer cancels deployment. The safe corridor is preserved and only the post-egress destination is retargeted.
+- Base route inflation is slightly less conservative; the local OBB collision/slide system remains authoritative at close range so visually open lanes are less likely to be rejected globally.
+
+## Easier infantry commands
+- Touch taps on iPhone now tolerate **28 CSS px** of finger drift before they become FREE CAM panning. Building placement uses 32 px. Mouse input retains the tighter desktop threshold.
+- Once a unit is selected, switching to another friendly requires either a direct mesh hit or a deliberately small assist radius (**18 px infantry / 20 px vehicles** on mobile), leaving ordinary battlefield taps available for MOVE.
+- Infantry destination resolution ignores other Riflemen as hard blockers; local personal-space separation handles the final spacing instead.
+- Riflemen gained a wider local sidestep search plus a radial escape fan and a faster **0.55 s** stuck recovery before re-planning.
+
+## Scope boundary
+This remains a mobility/control stabilization release. Health/armor rebalance, full ATTACK orders, strategic enemy harvesting/production AI, and victory/defeat remain the next gameplay milestone after this build is proven reliable on-device.
+
+## Asset preservation
+All approved production GLBs remain unchanged from v0.13.18.
+
 # WorldForge v0.13.18 — Ground Command Reliability
 
 WorldForge v0.13.18 advances Skirmish to **0.7.5** while keeping RTS Map Forge at **0.2.9** and RTS Definitions at **0.6.1**. This milestone focuses on the on-device ground-command failures seen after selection: repeated MOVE taps could be stolen by oversized friendly touch assist, ground vehicles could repeatedly press into another hull, and Riflemen had no stuck recovery once a valid route became locally blocked.

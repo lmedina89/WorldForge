@@ -1,3 +1,21 @@
+# WorldForge v0.13.19 Test Report
+
+## Ground Mobility Reliability 2
+
+Result: **PASS — focused source/regression validation**
+
+- Focused `tests/rts-*.test.mjs` suite: **24 / 24 PASS**.
+- `node --check` passes for the modified Skirmish, app, and schema modules.
+- New v0.13.19 regression coverage verifies guaranteed Vehicle Factory exterior staging, preservation of the safe egress corridor when MOVE is retargeted during rollout, reduced route inflation, 28 px mobile command slop, tighter selected-unit switching, infantry destination tolerance, and radial local recovery.
+- Existing enemy sandbox, Harvester economy, production, FREE CAM, road/river, resource fields, collision/spacing, master-asset, and simulation-foundation suites remain green.
+- Production asset hash comparison against the packaged v0.13.18 baseline: **16 / 16 GLBs byte-identical**.
+
+### On-device validation focus
+On iPhone, produce an HMMWV, Aegis-X, and Harvester from the Vehicle Factory. Issue a MOVE order even while the unit is still rolling out; the unit should preserve its factory exit corridor, clear the structure completely, then continue to the new destination. Repeat several MOVE orders afterward without re-selecting. For Riflemen, select once and issue several quick taps with normal finger drift; taps under the new 28 px threshold should remain MOVE commands, while a deliberate drag should pan FREE CAM. Soldiers should sidestep/recover around parked vehicles and building corners rather than staying indefinitely in `MOVING`.
+
+### Scope boundary
+This release intentionally stays focused on mobility/control reliability. Health/armor rebalance, full ATTACK/STOP/GUARD command UI, strategic enemy harvesting/production AI, and victory/defeat remain the next larger gameplay milestone after on-device movement is confirmed.
+
 # WorldForge v0.13.18 Test Report
 
 ## Ground Command Reliability
