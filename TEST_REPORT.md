@@ -1,3 +1,21 @@
+# WorldForge v0.13.18 Test Report
+
+## Ground Command Reliability
+
+Result: **PASS — focused source/regression validation**
+
+- Focused `tests/rts-*.test.mjs` suite: **23 / 23 PASS**.
+- `node --check` passes for the modified Skirmish, app, and schema modules.
+- New v0.13.18 regression coverage verifies sticky selection, deliberate selection switching, dynamic vehicle route obstacles, head-on vehicle sidestepping, Rifleman stuck recovery, Barracks deployment recovery metadata, and explicit blocked-command feedback.
+- Existing controlled factory/refinery egress, enemy sandbox, mobile FREE CAM, Harvester economy, production, resource fields, road/river, collision, visual, master-asset, and simulation-foundation suites remain green.
+- Production asset hash comparison against the v0.13.17 working baseline: **16 / 16 GLBs byte-identical**.
+
+### On-device validation focus
+On iPhone, select one ground vehicle and issue **several consecutive MOVE orders** without re-selecting it. The selection should stay locked and every accepted tap should flash the yellow destination marker. Repeat with an HMMWV/Aegis-X near other friendly vehicles to confirm it routes or sidesteps around them instead of freezing after its first order. Then select a Rifleman, move it repeatedly around buildings/vehicles, and verify it re-routes if locally blocked rather than sitting forever in `MOVING`.
+
+### Scope boundary
+This pass intentionally does not rebalance health/damage or add strategic enemy AI. Those remain the next milestone after ground orders are proven reliable on-device.
+
 # WorldForge v0.13.17 Test Report
 
 ## Ground Deployment + Enemy Sandbox

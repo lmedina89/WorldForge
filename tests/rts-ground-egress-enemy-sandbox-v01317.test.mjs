@@ -7,10 +7,10 @@ const schema=fs.readFileSync(path.join(root,'src/core/schema.js'),'utf8');
 const sk=fs.readFileSync(path.join(root,'src/rts/skirmish-test.js'),'utf8');
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 
-assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.17'/);
-assert.match(schema,/skirmish: '0\.7\.4'/);
+assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.18'/);
+assert.match(schema,/skirmish: '0\.7\.5'/);
 assert.match(schema,/rtsMapForge: '0\.2\.9'/);
-assert.match(sk,/SKIRMISH_VERSION='0\.7\.4'/);
+assert.match(sk,/SKIRMISH_VERSION='0\.7\.5'/);
 
 for(const phrase of [
   '_startControlledEgress',
@@ -33,20 +33,20 @@ for(const phrase of [
   "owner:'enemy'",
   "Hostile ${RTS_BUILDINGS",
   "['target','unit','building'].includes(target.kind)"
-]) assert.ok(sk.includes(phrase),`missing v0.13.17 feature: ${phrase}`);
+]) assert.ok(sk.includes(phrase),`missing v0.13.18 feature: ${phrase}`);
 
 assert.match(sk,/_startControlledEgress\(e,factory,corridor,rally/);
 assert.match(sk,/move\.controlledEgress\?this\._tryControlledEgressMove/);
 assert.match(sk,/target\.components\.owner===e\.components\.owner/);
 assert.match(sk,/hostile Guardian Turrets are active/);
-assert.match(html,/SKIRMISH LAB 0\.7\.4 · GROUND EGRESS \+ ENEMY SANDBOX/);
+assert.match(html,/SKIRMISH LAB 0\.7\.5/);
 assert.match(html,/premade opposing-start enemy forward base/);
 assert.match(html,/controlled spawn → exit → exterior-clear deployment corridor/);
 
 console.log(JSON.stringify({
   ok:true,
-  worldforge:'0.13.17',
-  skirmish:'0.7.4',
+  worldforge:'0.13.18',
+  skirmish:'0.7.5',
   mapForge:'0.2.9',
   controlledFactoryEgress:true,
   refineryEgress:true,

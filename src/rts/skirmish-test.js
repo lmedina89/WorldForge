@@ -8,7 +8,7 @@ import { LOCOMOTORS, WEAPONS, UNIT_DEFINITIONS } from './data/rts-definitions.js
 import { instantiateMasterBuilding, masterBuildingForRole, MASTER_BUILDINGS } from './rts-asset-library.js';
 import { loadAegisReferenceVehicle } from '../vehicle/vehicle-generator.js';
 
-export const SKIRMISH_VERSION='0.7.4';
+export const SKIRMISH_VERSION='0.7.5';
 
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const angleDelta=(a,b)=>Math.atan2(Math.sin(a-b),Math.cos(a-b));
@@ -173,7 +173,9 @@ export class SkirmishTest{
   clearSelection(message='Selection cleared.'){this.selectedEntityIds=[];if(this.selectedUnitMarker)this.selectedUnitMarker.visible=false;this._emit(message);}
   _selectEntity(entityId){
     const e=this.sim.entities.get(entityId);if(!e||e.kind!=='unit'||e.components.owner!=='player'||e.components.health?.destroyed)return false;
-    if(this.selectedEntityIds.length===1&&this.selectedEntityIds[0]===e.id){this.clearSelection('Selection cleared · battlefield taps return to manual tank aim.');return true;}
+    // Re-tapping the already-selected unit keeps selection locked. On touch screens an
+    // accidental second hit must not silently turn the next terrain tap back into tank aim.
+    if(this.selectedEntityIds.length===1&&this.selectedEntityIds[0]===e.id){this._updateSelectedUnitMarker();return true;}
     this.selectedEntityIds=[e.id];this._updateSelectedUnitMarker();const def=UNIT_DEFINITIONS[e.components.unitType];this._emit(`${def?.label||'Friendly unit'} selected · tap terrain to move${e.components.unitType==='aegisHarvester'?' or tap a crystal field to harvest':''}.`);return true;
   }
   _updateSelectedUnitMarker(){
@@ -313,7 +315,7 @@ export class SkirmishTest{
       transform:{x:profile.spawn.x,y:profile.spawn.y,z:profile.spawn.z,heading},
       health:{current:def.maxHp,max:def.maxHp,destroyed:false},
       locomotor:{...loc},
-      move:{waypoints,index:0,moving:true,state:'deploy',exitBuildingId:barracks.id},
+      move:{waypoints,index:0,moving:true,state:'deploy',order:'barracksDeploy',destination:{x:rally.x,y:rally.y},stuckSeconds:0,exitBuildingId:barracks.id},
       weapon:{id:weapon.id,cooldown:0},
       combat:{targetId:null,state:'deploying'}
     },'player');
@@ -481,13 +483,33 @@ export class SkirmishTest{
   _pointInsideRect(x,y,rect,margin=0){
     const axes=this._rectAxes(rect.heading||0),dx=x-rect.x,dy=y-rect.y,lx=dx*axes[0][0]+dy*axes[0][1],ly=dx*axes[1][0]+dy*axes[1][1],hx=rect.footprint[0]*.5+margin,hy=rect.footprint[1]*.5+margin;return Math.abs(lx)<hx&&Math.abs(ly)<hy;
   }
-  _routeBlockRects(e,{ignoreBuildingIds=[]}={}){
+  _routeBlockRects(e,{ignoreBuildingIds=[],includeDynamicUnits=false}={}){
     const ignore=new Set(ignoreBuildingIds.filter(Boolean)),def=UNIT_DEFINITIONS[e.components.unitType]||{},fp=def.collisionFootprint||[(def.collisionRadius||1)*2,(def.collisionRadius||1)*2],clearance=Math.min(fp[0],fp[1])*.5+.42,rects=[];
-    for(const other of this.sim.entities.values()){if(other.components.health?.destroyed||!['building','target'].includes(other.kind)||ignore.has(other.id))continue;const r=this._buildingCollisionRect(other);rects.push({entityId:other.id,x:r.x,y:r.y,heading:r.heading,footprint:[r.footprint[0]+clearance*2,r.footprint[1]+clearance*2]});}return rects;
+    for(const other of this.sim.entities.values()){
+      if(other.components.health?.destroyed||ignore.has(other.id))continue;
+      if(['building','target'].includes(other.kind)){
+        const r=this._buildingCollisionRect(other);rects.push({entityId:other.id,kind:'building',dynamic:false,x:r.x,y:r.y,heading:r.heading,footprint:[r.footprint[0]+clearance*2,r.footprint[1]+clearance*2]});continue;
+      }
+      if(!includeDynamicUnits||other.id===e.id||!this._isGroundUnit(other)||this._isInfantry(other))continue;
+      // Ground vehicles are temporary route obstacles. Infantry does not hard-block the
+      // route graph; its soft separation system handles soldier-to-soldier spacing.
+      const r=this._unitCollisionRect(other),unitClearance=Math.max(.35,Math.min(fp[0],fp[1])*.28);
+      rects.push({entityId:other.id,kind:'unit',dynamic:true,x:r.x,y:r.y,heading:r.heading,footprint:[r.footprint[0]+unitClearance*2,r.footprint[1]+unitClearance*2]});
+    }
+    return rects;
   }
-  _segmentClearForUnit(e,a,b,{ignoreBuildingIds=[]}={}){
-    const loc=e.components.locomotor,kind=loc?.movementClass||'tracked',rects=this._routeBlockRects(e,{ignoreBuildingIds}),dist=Math.hypot(b.x-a.x,b.y-a.y),steps=Math.max(1,Math.ceil(dist/3.0));
-    for(let i=0;i<=steps;i++){const u=i/steps,x=a.x+(b.x-a.x)*u,y=a.y+(b.y-a.y)*u;if(!this.mapForge.movementAt(x,y,kind).allowed)return false;for(const r of rects)if(this._pointInsideRect(x,y,r,.05))return false;}return true;
+  _segmentClearForUnit(e,a,b,{ignoreBuildingIds=[],includeDynamicUnits=false}={}){
+    const loc=e.components.locomotor,kind=loc?.movementClass||'tracked',rects=this._routeBlockRects(e,{ignoreBuildingIds,includeDynamicUnits}),dist=Math.hypot(b.x-a.x,b.y-a.y),steps=Math.max(1,Math.ceil(dist/2.5));
+    for(let i=0;i<=steps;i++){
+      const u=i/steps,x=a.x+(b.x-a.x)*u,y=a.y+(b.y-a.y)*u;if(!this.mapForge.movementAt(x,y,kind).allowed)return false;
+      for(const r of rects){
+        // If two friendly vehicles begin close together, allow the first few metres of a
+        // segment to escape that crowd instead of declaring every route impossible.
+        if(r.dynamic&&Math.hypot(x-a.x,y-a.y)<2.25)continue;
+        if(this._pointInsideRect(x,y,r,.05))return false;
+      }
+    }
+    return true;
   }
   _nearestOpenUnitDestination(e,x,y){
     const loc=e.components.locomotor,kind=loc?.movementClass||'tracked',heading=e.components.transform.heading||0;if(this.mapForge.movementAt(x,y,kind).allowed&&this._unitPoseAllowed(e,x,y,heading,{gap:.18}))return {x,y,z:this.mapForge.surfaceHeightAt(x,y)-.1};
@@ -495,10 +517,10 @@ export class SkirmishTest{
   }
   _planGroundRoute(e,toX,toY,{fromX=null,fromY=null,ignoreBuildingIds=[]}={}){
     const t=e.components.transform,sx=fromX??t.x,sy=fromY??t.y,loc=e.components.locomotor,kind=loc?.movementClass||'tracked',goal=this._nearestOpenUnitDestination(e,toX,toY);if(!goal)return [];
-    const base=this.mapForge.findPath(sx,sy,goal.x,goal.y,kind);if(!base.length)return [];const start={x:sx,y:sy,z:this.mapForge.surfaceHeightAt(sx,sy)-.1},nodes=[start,...base.map(p=>({x:p.x,y:p.y,z:p.z}))],goalIndex=nodes.length-1,rects=this._routeBlockRects(e,{ignoreBuildingIds});
-    for(const r of rects){const axes=this._rectAxes(r.heading||0),hx=r.footprint[0]*.5+.45,hy=r.footprint[1]*.5+.45;for(const [lx,ly] of [[-hx,-hy],[hx,-hy],[hx,hy],[-hx,hy]]){const x=r.x+axes[0][0]*lx+axes[1][0]*ly,y=r.y+axes[0][1]*lx+axes[1][1]*ly;if(this.mapForge.movementAt(x,y,kind).allowed)nodes.push({x,y,z:this.mapForge.surfaceHeightAt(x,y)-.1});}}
+    const base=this.mapForge.findPath(sx,sy,goal.x,goal.y,kind);if(!base.length)return [];const start={x:sx,y:sy,z:this.mapForge.surfaceHeightAt(sx,sy)-.1},nodes=[start,...base.map(p=>({x:p.x,y:p.y,z:p.z}))],goalIndex=nodes.length-1,rects=this._routeBlockRects(e,{ignoreBuildingIds,includeDynamicUnits:true});
+    for(const r of rects){const axes=this._rectAxes(r.heading||0),pad=r.dynamic?.30:.45,hx=r.footprint[0]*.5+pad,hy=r.footprint[1]*.5+pad;for(const [lx,ly] of [[-hx,-hy],[hx,-hy],[hx,hy],[-hx,hy]]){const x=r.x+axes[0][0]*lx+axes[1][0]*ly,y=r.y+axes[0][1]*lx+axes[1][1]*ly;if(this.mapForge.movementAt(x,y,kind).allowed)nodes.push({x,y,z:this.mapForge.surfaceHeightAt(x,y)-.1});}}
     const n=nodes.length,dist=new Float64Array(n),prev=new Int32Array(n),used=new Uint8Array(n);dist.fill(Infinity);prev.fill(-1);dist[0]=0;
-    for(let iter=0;iter<n;iter++){let u=-1,best=Infinity;for(let i=0;i<n;i++)if(!used[i]&&dist[i]<best){best=dist[i];u=i;}if(u<0)break;if(u===goalIndex)break;used[u]=1;for(let v=1;v<n;v++){if(v===u||used[v])continue;const a=nodes[u],b=nodes[v];if(!this._segmentClearForUnit(e,a,b,{ignoreBuildingIds}))continue;const nd=dist[u]+Math.hypot(b.x-a.x,b.y-a.y);if(nd<dist[v]){dist[v]=nd;prev[v]=u;}}}
+    for(let iter=0;iter<n;iter++){let u=-1,best=Infinity;for(let i=0;i<n;i++)if(!used[i]&&dist[i]<best){best=dist[i];u=i;}if(u<0)break;if(u===goalIndex)break;used[u]=1;for(let v=1;v<n;v++){if(v===u||used[v])continue;const a=nodes[u],b=nodes[v];if(!this._segmentClearForUnit(e,a,b,{ignoreBuildingIds,includeDynamicUnits:true}))continue;const nd=dist[u]+Math.hypot(b.x-a.x,b.y-a.y);if(nd<dist[v]){dist[v]=nd;prev[v]=u;}}}
     if(!Number.isFinite(dist[goalIndex]))return [];const out=[];let cur=goalIndex;while(cur>0){out.push(nodes[cur]);cur=prev[cur];if(cur<0)return [];}out.reverse();return out;
   }
   _containingBuilding(e){
@@ -575,9 +597,14 @@ export class SkirmishTest{
   _screenDistanceToWorld(clientX,clientY,rect,x,y,z){
     const p=new THREE.Vector3(x,y,z).project(this.camera);if(p.z<-1||p.z>1)return Infinity;const sx=rect.left+(p.x*.5+.5)*rect.width,sy=rect.top+(-p.y*.5+.5)*rect.height;return Math.hypot(clientX-sx,clientY-sy);
   }
-  _assistedFriendlyPick(clientX,clientY,rect,{excludeId=null}={}){
+  _assistedFriendlyPick(clientX,clientY,rect,{excludeId=null,deliberate=false}={}){
     let best=null,bestD=Infinity;const mobile=rect.width<900;
-    for(const e of this.sim.entities.values()){if(e.kind!=='unit'||e.components.owner!=='player'||e.components.health?.destroyed||e.id===excludeId)continue;const t=e.components.transform,def=UNIT_DEFINITIONS[e.components.unitType]||{},infantry=e.components.unitType==='aegisRifleman',radius=mobile?(infantry?54:46):(infantry?34:30),z=(t.z??this.mapForge.surfaceHeightAt(t.x,t.y))+(infantry?1.0:1.5),d=this._screenDistanceToWorld(clientX,clientY,rect,t.x,t.y,z);if(d<=radius&&d<bestD){bestD=d;best=e;}}return best;
+    for(const e of this.sim.entities.values()){
+      if(e.kind!=='unit'||e.components.owner!=='player'||e.components.health?.destroyed||e.id===excludeId)continue;
+      const t=e.components.transform,infantry=e.components.unitType==='aegisRifleman',radius=deliberate?(mobile?(infantry?30:28):(infantry?24:22)):(mobile?(infantry?54:46):(infantry?34:30)),z=(t.z??this.mapForge.surfaceHeightAt(t.x,t.y))+(infantry?1.0:1.5),d=this._screenDistanceToWorld(clientX,clientY,rect,t.x,t.y,z);
+      if(d<=radius&&d<bestD){bestD=d;best=e;}
+    }
+    return best;
   }
   _assistedResourcePick(clientX,clientY,rect){
     let best=null,bestD=Infinity;const radius=rect.width<900?62:40;for(const e of this.sim.entities.values()){const f=e.components.resourceField;if(e.kind!=='resource'||!f||f.remaining<=0)continue;const p=f.harvestPoint||e.components.transform,z=this.mapForge.surfaceHeightAt(p.x,p.y)+1.2,d=this._screenDistanceToWorld(clientX,clientY,rect,p.x,p.y,z);if(d<=radius&&d<bestD){bestD=d;best=e;}}return best;
@@ -592,18 +619,31 @@ export class SkirmishTest{
     const unitHits=this.raycaster.intersectObjects(this.root.children,true),mapHits=this.raycaster.intersectObjects(this.mapForge.root.children,true),terrainPoint=this._terrainPointFromPointer();
     if(this.pendingBuild){if(!terrainPoint)return false;return this.placeSelectedBuilding(terrainPoint.x,terrainPoint.y);}
     const selected=this._selectedEntity();
-    for(const hit of unitHits){const id=this._entityIdFromObject(hit.object);if(!id)continue;const e=this.sim.entities.get(id);if(e?.kind==='unit'&&e.components.owner==='player'&&!e.components.health?.destroyed)return this._selectEntity(id);}
-    const assistedUnit=this._assistedFriendlyPick(clientX,clientY,rect,{excludeId:selected?.id||null});if(assistedUnit)return this._selectEntity(assistedUnit.id);
     let hostileHit=null;for(const hit of unitHits){const id=this._entityIdFromObject(hit.object),e=id?this.sim.entities.get(id):null;if(e?.components?.owner==='enemy'&&!e.components.health?.destroyed){hostileHit={entity:e,point:hit.point};break;}}
-    if(hostileHit&&(!selected||selected.id===this.tank?.entityId)){const ht=hostileHit.entity.components.transform,p=hostileHit.point||new THREE.Vector3(ht.x,ht.y,ht.z+2.5),aim={x:p.x,y:p.y,z:p.z};this.aimPoint.set(aim.x,aim.y,aim.z);this._showCommandMarker({x:aim.x,y:aim.y});if(this.tank)this.sim.issueCommand(RTS_COMMANDS.AIM,{entityId:this.tank.entityId,point:aim},{source:COMMAND_SOURCES.PLAYER});this._emit(`Hostile ${RTS_BUILDINGS[hostileHit.entity.components.buildingType]?.label||UNIT_DEFINITIONS[hostileHit.entity.components.unitType]?.label||'target'} acquired · FIRE MAIN GUN.`);return true;}
     if(selected){
-      if(selected.components.unitType==='aegisHarvester'){let resourceTarget=null;for(const hit of mapHits){const zoneId=this._resourceZoneIdFromHit(hit);if(!zoneId)continue;resourceTarget=this._resourceFieldByZone(zoneId)||null;if(resourceTarget)break;}if(!resourceTarget)resourceTarget=this._assistedResourcePick(clientX,clientY,rect);if(resourceTarget){this.sim.issueCommand(RTS_COMMANDS.HARVEST,{entityId:selected.id,zoneId:resourceTarget.components.resourceField.zoneId},{source:COMMAND_SOURCES.PLAYER});this._showCommandMarker(resourceTarget.components.resourceField.harvestPoint||resourceTarget.components.transform);this._emit('Harvest order queued.');return true;}}
-      if(!terrainPoint)return false;const loc=selected.components.locomotor,ground=(loc?.movementClass||'tracked')!=='air',resolved=ground?this._nearestOpenUnitDestination(selected,terrainPoint.x,terrainPoint.y):terrainPoint;if(!resolved){this._emit('No traversable destination near that tap. Try a nearby clear patch.');return true;}const z=this.mapForge.surfaceHeightAt(resolved.x,resolved.y)+.5;this.aimPoint.set(resolved.x,resolved.y,z);this._showCommandMarker(resolved);this.sim.issueCommand(RTS_COMMANDS.MOVE,{entityIds:[selected.id],point:{x:resolved.x,y:resolved.y}},{source:COMMAND_SOURCES.PLAYER});if(selected.id===this.tank?.entityId)this.sim.issueCommand(RTS_COMMANDS.AIM,{entityId:selected.id,point:{x:resolved.x,y:resolved.y,z}},{source:COMMAND_SOURCES.PLAYER});const snapped=Math.hypot(resolved.x-terrainPoint.x,resolved.y-terrainPoint.y)>1.0?' · snapped to nearby traversable ground':'';this._emit(`${UNIT_DEFINITIONS[selected.components.unitType]?.label||'Unit'} move order queued${snapped}.`);return true;
+      // Once a unit is selected, commands own the battlefield. The large first-selection
+      // touch halo no longer steals terrain taps; switching units requires a deliberate
+      // tap close to the other unit's screen-space center.
+      if(selected.components.unitType==='aegisHarvester'){
+        let resourceTarget=null;for(const hit of mapHits){const zoneId=this._resourceZoneIdFromHit(hit);if(!zoneId)continue;resourceTarget=this._resourceFieldByZone(zoneId)||null;if(resourceTarget)break;}
+        if(!resourceTarget)resourceTarget=this._assistedResourcePick(clientX,clientY,rect);
+        if(resourceTarget){this.sim.issueCommand(RTS_COMMANDS.HARVEST,{entityId:selected.id,zoneId:resourceTarget.components.resourceField.zoneId},{source:COMMAND_SOURCES.PLAYER});this._showCommandMarker(resourceTarget.components.resourceField.harvestPoint||resourceTarget.components.transform);this._emit('Harvest order queued.');return true;}
+      }
+      if(hostileHit&&selected.id===this.tank?.entityId){const ht=hostileHit.entity.components.transform,p=hostileHit.point||new THREE.Vector3(ht.x,ht.y,ht.z+2.5),aim={x:p.x,y:p.y,z:p.z};this.aimPoint.set(aim.x,aim.y,aim.z);this._showCommandMarker({x:aim.x,y:aim.y});this.sim.issueCommand(RTS_COMMANDS.AIM,{entityId:selected.id,point:aim},{source:COMMAND_SOURCES.PLAYER});this._emit(`Hostile ${RTS_BUILDINGS[hostileHit.entity.components.buildingType]?.label||UNIT_DEFINITIONS[hostileHit.entity.components.unitType]?.label||'target'} acquired · FIRE MAIN GUN.`);return true;}
+      const switchTarget=this._assistedFriendlyPick(clientX,clientY,rect,{excludeId:selected.id,deliberate:true});if(switchTarget)return this._selectEntity(switchTarget.id);
+      if(!terrainPoint)return false;const loc=selected.components.locomotor,ground=(loc?.movementClass||'tracked')!=='air',resolved=ground?this._nearestOpenUnitDestination(selected,terrainPoint.x,terrainPoint.y):terrainPoint;
+      if(!resolved){this._emit('BLOCKED · no traversable destination near that tap.');return true;}
+      const z=this.mapForge.surfaceHeightAt(resolved.x,resolved.y)+.5;this.aimPoint.set(resolved.x,resolved.y,z);this._showCommandMarker(resolved);this.sim.issueCommand(RTS_COMMANDS.MOVE,{entityIds:[selected.id],point:{x:resolved.x,y:resolved.y}},{source:COMMAND_SOURCES.PLAYER});if(selected.id===this.tank?.entityId)this.sim.issueCommand(RTS_COMMANDS.AIM,{entityId:selected.id,point:{x:resolved.x,y:resolved.y,z}},{source:COMMAND_SOURCES.PLAYER});const snapped=Math.hypot(resolved.x-terrainPoint.x,resolved.y-terrainPoint.y)>1.0?' · snapped to nearby traversable ground':'';this._emit(`${UNIT_DEFINITIONS[selected.components.unitType]?.label||'Unit'} move order queued${snapped}.`);return true;
     }
-    if(!terrainPoint)return false;const z=this.mapForge.surfaceHeightAt(terrainPoint.x,terrainPoint.y)+.5;this.aimPoint.set(terrainPoint.x,terrainPoint.y,z);this._showCommandMarker(terrainPoint);if(this.tank)this.sim.issueCommand(RTS_COMMANDS.AIM,{entityId:this.tank.entityId,point:{x:terrainPoint.x,y:terrainPoint.y,z}},{source:COMMAND_SOURCES.PLAYER});this._emit('Turret aim command queued · tap a friendly unit first to issue RTS movement orders.');return true;
+    // With nothing selected, keep the generous touch assist that made tiny infantry easy
+    // to acquire on iPhone.
+    for(const hit of unitHits){const id=this._entityIdFromObject(hit.object);if(!id)continue;const e=this.sim.entities.get(id);if(e?.kind==='unit'&&e.components.owner==='player'&&!e.components.health?.destroyed)return this._selectEntity(id);}
+    const assistedUnit=this._assistedFriendlyPick(clientX,clientY,rect);if(assistedUnit)return this._selectEntity(assistedUnit.id);
+    if(hostileHit){const ht=hostileHit.entity.components.transform,p=hostileHit.point||new THREE.Vector3(ht.x,ht.y,ht.z+2.5),aim={x:p.x,y:p.y,z:p.z};this.aimPoint.set(aim.x,aim.y,aim.z);this._showCommandMarker({x:aim.x,y:aim.y});if(this.tank&&!this.sim.entities.get(this.tank.entityId)?.components.health?.destroyed)this.sim.issueCommand(RTS_COMMANDS.AIM,{entityId:this.tank.entityId,point:aim},{source:COMMAND_SOURCES.PLAYER});this._emit(`Hostile ${RTS_BUILDINGS[hostileHit.entity.components.buildingType]?.label||UNIT_DEFINITIONS[hostileHit.entity.components.unitType]?.label||'target'} acquired.`);return true;}
+    if(!terrainPoint)return false;const z=this.mapForge.surfaceHeightAt(terrainPoint.x,terrainPoint.y)+.5;this.aimPoint.set(terrainPoint.x,terrainPoint.y,z);this._showCommandMarker(terrainPoint);if(this.tank&&!this.sim.entities.get(this.tank.entityId)?.components.health?.destroyed)this.sim.issueCommand(RTS_COMMANDS.AIM,{entityId:this.tank.entityId,point:{x:terrainPoint.x,y:terrainPoint.y,z}},{source:COMMAND_SOURCES.PLAYER});this._emit('Tap a friendly unit to select it, then tap terrain to move.');return true;
   }
 
-  fire(){const e=this.tank&&this.sim.entities.get(this.tank.entityId);if(!e||e.components.weapon.cooldown>0)return false;this.sim.issueCommand(RTS_COMMANDS.FIRE,{entityId:e.id},{source:COMMAND_SOURCES.PLAYER});this._emit('Fire command queued.');return true;}
+  fire(){const e=this.tank&&this.sim.entities.get(this.tank.entityId);if(!e||e.components.health?.destroyed||e.components.weapon.cooldown>0)return false;this.sim.issueCommand(RTS_COMMANDS.FIRE,{entityId:e.id},{source:COMMAND_SOURCES.PLAYER});this._emit('Fire command queued.');return true;}
   _handleFireCommand(cmd){
     const e=this.sim.entities.get(cmd.payload.entityId);if(!e||e.components.health?.destroyed)return;const weapon=WEAPONS[e.components.weapon?.id];if(!weapon||e.components.weapon.cooldown>0)return;
     const t=e.components.transform,tur=e.components.turret,worldYaw=t.heading+tur.yaw,pitch=tur.pitch,cp=Math.cos(pitch),dir={x:Math.cos(worldYaw)*cp,y:Math.sin(worldYaw)*cp,z:Math.sin(pitch)};
@@ -680,7 +720,7 @@ export class SkirmishTest{
     for(const b of blockers){
       const axes=this._rectAxes(b.rect.heading||0);
       for(const axis of axes){const proj=dx*axis[0]+dy*axis[1];if(Math.abs(proj)>.01)candidates.push([axis[0]*proj,axis[1]*proj]);}
-      if(b.kind==='unit'){const ox=t.x-b.rect.x,oy=t.y-b.rect.y,d=Math.hypot(ox,oy)||1,tx=-oy/d,ty=ox/d,proj=dx*tx+dy*ty;if(Math.abs(proj)>.01)candidates.push([tx*proj,ty*proj]);}
+      if(b.kind==='unit'){const ox=t.x-b.rect.x,oy=t.y-b.rect.y,d=Math.hypot(ox,oy)||1,tx=-oy/d,ty=ox/d,proj=dx*tx+dy*ty,mag=Math.max(.06,Math.hypot(dx,dy));if(Math.abs(proj)>.01)candidates.push([tx*proj,ty*proj]);candidates.push([tx*mag*.88,ty*mag*.88],[-tx*mag*.88,-ty*mag*.88]);}
     }
     candidates.push([dx,0],[0,dy]);
     candidates.sort((a,b)=>(b[0]*b[0]+b[1]*b[1])-(a[0]*a[0]+a[1]*a[1]));
@@ -714,12 +754,13 @@ export class SkirmishTest{
   }
 
   _tryInfantryMove(e,dx,dy,ignoreBuildingId=null){
-    const t=e.components.transform,loc=e.components.locomotor,nx=t.x+dx,ny=t.y+dy;
-    if(!this.mapForge.movementAt(nx,ny,'infantry').allowed)return false;
-    if(this._unitPoseAllowed(e,nx,ny,t.heading,{ignoreBuildingId,ignoreInfantry:true,gap:.04})){t.x=nx;t.y=ny;return true;}
-    const d=Math.hypot(dx,dy)||1,tx=-dy/d,ty=dx/d,side=Math.min(.26,d*.75);
-    for(const sign of [1,-1]){
-      const px=t.x+dx*.55+tx*side*sign,py=t.y+dy*.55+ty*side*sign;
+    const t=e.components.transform,nx=t.x+dx,ny=t.y+dy;
+    if(this.mapForge.movementAt(nx,ny,'infantry').allowed&&this._unitPoseAllowed(e,nx,ny,t.heading,{ignoreBuildingId,ignoreInfantry:true,gap:.04})){t.x=nx;t.y=ny;return true;}
+    const d=Math.hypot(dx,dy)||1,tx=-dy/d,ty=dx/d;
+    // Try progressively stronger sidesteps. This prevents a rifleman whose route brushes
+    // a tank/building corner from failing the same microscopic forward step forever.
+    for(const scale of [.75,1.25,1.8])for(const sign of [1,-1]){
+      const side=Math.max(.10,d*scale),px=t.x+dx*.42+tx*side*sign,py=t.y+dy*.42+ty*side*sign;
       if(this.mapForge.movementAt(px,py,'infantry').allowed&&this._unitPoseAllowed(e,px,py,t.heading,{ignoreBuildingId,ignoreInfantry:true,gap:.04})){t.x=px;t.y=py;return true;}
     }
     return false;
@@ -735,10 +776,16 @@ export class SkirmishTest{
         continue;
       }
       const desired=Math.atan2(dy,dx),err=angleDelta(desired,t.heading);t.heading+=clamp(err,-loc.turnRate*dt,loc.turnRate*dt);
-      const step=Math.min(dist,loc.maxSpeed*dt),mx=Math.cos(desired)*step,my=Math.sin(desired)*step,oldX=t.x,oldY=t.y;
-      if(this._tryInfantryMove(e,mx,my,move.exitBuildingId)){
-        const moved=Math.hypot(t.x-oldX,t.y-oldY),u=dist>0?Math.min(1,moved/dist):1,targetZ=Number.isFinite(wp.z)?wp.z:this.mapForge.surfaceHeightAt(t.x,t.y)+.04;
-        t.z=t.z+(targetZ-t.z)*Math.max(.35,u);
+      const step=Math.min(dist,loc.maxSpeed*dt),mx=Math.cos(desired)*step,my=Math.sin(desired)*step,oldX=t.x,oldY=t.y,movedOk=this._tryInfantryMove(e,mx,my,move.exitBuildingId);
+      if(movedOk){
+        const moved=Math.hypot(t.x-oldX,t.y-oldY),u=dist>0?Math.min(1,moved/dist):1,targetZ=Number.isFinite(wp.z)?wp.z:this.mapForge.surfaceHeightAt(t.x,t.y)+.04;t.z=t.z+(targetZ-t.z)*Math.max(.35,u);
+        if(moved>.006){move.stuckSeconds=0;move.lastProgressX=t.x;move.lastProgressY=t.y;continue;}
+      }
+      move.stuckSeconds=(move.stuckSeconds||0)+dt;
+      if(move.stuckSeconds>.60&&move.destination){
+        const oldState=move.state,oldOrder=move.order,dest={...move.destination},oldCount=move.repathCount||0;
+        if(this._commandMoveEntity(e,dest.x,dest.y,{state:oldState,order:oldOrder})){const nm=e.components.move;nm.repathCount=oldCount+1;if(e.components.owner==='player'&&nm.repathCount===1)this.renderEvents.push({type:'message',message:'Rifleman re-routing around obstruction.'});}
+        else{move.moving=false;move.state='blocked';move.stuckSeconds=0;if(e.components.owner==='player')this.renderEvents.push({type:'message',message:'Rifleman route blocked · choose another destination.'});}
       }
     }
   }

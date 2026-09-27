@@ -1,3 +1,16 @@
+# v0.13.18 — Ground Command Reliability
+
+- WorldForge advanced to **0.13.18** and Skirmish to **0.7.5**. RTS Map Forge remains **0.2.9** and RTS Definitions remain **0.6.1**.
+- Selection is now sticky: tapping the already-selected friendly no longer clears it, preventing accidental loss of command context on touch screens.
+- Split friendly touch assistance into generous first-selection radii and smaller deliberate switch radii while a unit is already selected, so repeated terrain taps are no longer stolen by nearby friendlies.
+- Preserved contextual Harvester resource targeting and Aegis-X hostile aiming ahead of terrain MOVE fallback.
+- Added explicit `BLOCKED` feedback when no traversable destination can be resolved.
+- Added nearby ground vehicles as temporary dynamic route obstacles, including detour corner nodes and a short start-of-route escape allowance for already-crowded units.
+- Added true tangential local sidestep candidates for vehicles blocked head-on by another hull.
+- Improved Rifleman local avoidance with multi-strength sidesteps plus a 0.60-second stuck watchdog and automatic re-pathing to the original command destination.
+- Barracks deployment now records order/destination/stuck metadata so deploying Riflemen can recover if their exit lane becomes obstructed.
+- No approved GLB was rebuilt or modified.
+
 # v0.13.17 — Ground Deployment + Enemy Sandbox
 
 - WorldForge advanced to **0.13.17** and Skirmish to **0.7.4**. RTS Map Forge remains **0.2.9** and RTS Definitions remain **0.6.1**.

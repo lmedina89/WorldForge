@@ -7,16 +7,16 @@ const sk=fs.readFileSync(path.join(root,'src/rts/skirmish-test.js'),'utf8');
 const app=fs.readFileSync(path.join(root,'src/app.js'),'utf8');
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 
-assert.match(sk,/SKIRMISH_VERSION='0\.7\.4'/);
+assert.match(sk,/SKIRMISH_VERSION='0\.7\.5'/);
 assert.match(sk,/_nearestValidPlacement\(type,x,y/);
 assert.match(sk,/maxRadius=66/);
 assert.match(sk,/snapped \$\{Math\.round\(placement\.distance\)\} m to nearest legal footprint/);
 assert.match(sk,/Try a clearer patch of terrain/);
 assert.match(app,/pendingBuild\)\?22:\(mode==='skirmish'\?14:8\)/);
-assert.match(html,/GROUND EGRESS \+ ENEMY SANDBOX/);
+assert.match(html,/GROUND COMMAND RELIABILITY/);
 
 // The hotfix must not loosen core placement validation itself.
 for(const phrase of ['_isBuildableFootprint','_withinBuildRadius','_collidesBuilding','canAfford'])
   assert.ok(sk.includes(phrase),`placement rule missing: ${phrase}`);
 
-console.log(JSON.stringify({ok:true,skirmish:'0.7.4',nearestLegalSnap:true,mobileTapTolerance:22,maxSnapMeters:66}));
+console.log(JSON.stringify({ok:true,skirmish:'0.7.5',nearestLegalSnap:true,mobileTapTolerance:22,maxSnapMeters:66}));

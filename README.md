@@ -1,3 +1,26 @@
+# WorldForge v0.13.18 — Ground Command Reliability
+
+WorldForge v0.13.18 advances Skirmish to **0.7.5** while keeping RTS Map Forge at **0.2.9** and RTS Definitions at **0.6.1**. This milestone focuses on the on-device ground-command failures seen after selection: repeated MOVE taps could be stolen by oversized friendly touch assist, ground vehicles could repeatedly press into another hull, and Riflemen had no stuck recovery once a valid route became locally blocked.
+
+## Stable repeated mobile commands
+- Re-tapping the currently selected unit no longer clears selection. Selection remains locked until the player deliberately chooses another friendly or the selected unit is destroyed.
+- The generous first-selection touch halo is preserved for tiny mobile units, but while a unit is already selected, switching to another friendly uses a much smaller **deliberate-selection radius**. Ordinary battlefield taps therefore remain MOVE commands instead of silently changing selection.
+- Harvester resource taps and Aegis-X hostile-aim taps retain their contextual priority. Every other selected-unit battlefield tap falls through to the terrain destination resolver.
+- Failed destination resolution now reports **BLOCKED** instead of silently appearing to ignore the tap.
+
+## Ground traffic avoidance and recovery
+- Ground route planning now includes nearby non-infantry ground units as **temporary dynamic obstacles** in addition to building footprints. Route edges are generated around those hulls so a newly issued command can steer around parked/slow friendly vehicles instead of planning directly through them.
+- Dynamic obstacles receive a short start-of-segment escape allowance so two vehicles already parked close together can separate rather than making every route invalid.
+- Local vehicle collision now adds explicit left/right tangential sidestep candidates even when the desired movement vector points directly at the blocking vehicle.
+- Riflemen now try progressively stronger side-steps around vehicle/building corners and track lack of progress just like vehicles. After **0.60 s** without progress they re-plan toward the original destination; a failed re-plan reports a blocked route rather than remaining forever in `MOVING`.
+- Barracks deployment orders now retain their rally destination/order metadata, so a Rifleman blocked during initial deployment can use the same recovery path instead of becoming permanently wedged.
+
+## Scope boundary
+This is intentionally the final command-reliability pass before deeper combat/AI. It does not change approved unit/building/resource models or rebalance health/damage yet.
+
+## Asset preservation
+All 16 approved production GLBs remain unchanged from v0.13.17.
+
 # WorldForge v0.13.17 — Ground Deployment + Enemy Sandbox
 
 WorldForge v0.13.17 advances Skirmish to **0.7.4** while keeping RTS Map Forge at **0.2.9** and RTS Definitions at **0.6.1**. This milestone combines the ground-vehicle deployment repair with a premade hostile sandbox base so the same build can validate base egress and begin real combat exploration.
