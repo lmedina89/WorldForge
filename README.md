@@ -1,3 +1,78 @@
+# WorldForge v0.13.8 — Unit Collision & Infantry Spacing
+
+WorldForge v0.13.8 builds on the v0.13.7 rotor/fan-axis and building-footprint cleanup with a full local unit-collision pass. No GLB was rebuilt for this milestone.
+
+## Ground vehicle collision
+Ground vehicles no longer rely on oversized circular collision radii for local movement. They now use oriented hull footprints:
+- Aegis-X MBT: **7.55 × 3.10 m**
+- HMMWV-50: **4.70 × 2.22 m**
+- Field Harvester: **8.30 × 3.90 m** with its authored +90° footprint orientation accounted for
+- Talon AH-X remains an air-volume unit while airborne
+
+The player tank now validates its hull while translating and while rotating. Vehicle/building and vehicle/vehicle contact uses SAT oriented-rectangle collision.
+
+## Building-corner sliding
+When the Aegis-X meets a building or another ground vehicle, Skirmish now attempts movement projected along the contacted obstacle axes instead of simply rejecting the entire movement step. This allows the hull to slide along walls/corners rather than getting stuck on the old invisible diagonal bubble.
+
+## Infantry spacing / local avoidance
+- Rifleman physical radius reduced to **0.40 m**
+- Desired personal spacing is **0.82 m center-to-center**
+- Barracks production assigns compact deterministic rally slots instead of sending every Rifleman to the exact same coordinate
+- A local-separation simulation pass gently resolves Infantry/Infantry overlap
+- Infantry treat buildings and ground vehicles as hard local obstacles while other infantry remain a soft crowd
+- Infantry already inside a vehicle footprint are pushed out locally rather than being left standing through the vehicle mesh
+
+## Ground-unit spawn safety
+Manual HMMWV/Harvester test spawns now search for a nearby open ground pose before creating the unit. This prevents freshly deployed test vehicles from starting overlapped with buildings or other ground units.
+
+## Dock / deployment exceptions preserved
+- Barracks Riflemen can still pass through their own authored deployment corridor while exiting
+- The Refinery starter Harvester keeps its special dock relationship
+- Air units remain excluded from ground OBB blocking while airborne
+
+## Collision debug
+The fullscreen Skirmish BUILD drawer now includes **DEV / COLLISION → COLLISION DEBUG**. It is off by default. When enabled it draws:
+- yellow/red building physical footprints
+- cyan ground-vehicle hull footprints
+- green infantry physical radii
+
+This is intended only for diagnosing invisible-wall or spacing issues.
+
+## Preservation
+- All 13 packaged GLB master assets are byte-identical to v0.13.7
+- RTS Map Forge, RTS Asset Library, Vehicle Baker and Vehicle Generator remain unchanged
+- Main World, Vehicle Factory / Guardian Turret integration, Barracks/Rifleman production, Refinery/Harvester docking, tank combat, fullscreen vehicle depot and camera systems remain intact
+
+---
+
+# WorldForge v0.13.7 — Rotor Axis + Building Collision Cleanup
+
+WorldForge v0.13.7 is a focused runtime cleanup on top of the v0.13.6 Factory/Turret integration. No approved GLB was rebuilt or replaced.
+
+## Correct functional spin axes
+- Aegis Talon main rotor remains on local **Y**, matching the authored horizontal rotor plane.
+- Aegis Talon tail rotor now spins around local **Z** instead of X, matching the authored tail-rotor axle.
+- Field Power Node `CoolingFanRoot_*` nodes now spin around local **Z**.
+- Field Refinery `DustCollectorFanRoot` now spins around local **Z**.
+- Building Forge preview uses the same corrected fan axes as Skirmish.
+- Functional animation rates are now delta-time based in Skirmish rather than frame-count based.
+
+## Building collision / placement cleanup
+- Removed the old diagonal-radius collision bubbles used for buildings.
+- Mobile unit collision now tests against oriented rectangular building footprints with rounded unit-radius clearance.
+- Tank collision includes the Aegis-X's actual collision radius.
+- Rifleman collision includes the infantry collision radius while still ignoring its source Barracks during the authored deployment walk-out.
+- Each buildable structure now has a tuned `collisionFootprint` smaller than its construction/placement footprint where decorative foundations, canopies or apron geometry should not behave like invisible walls.
+- Building-vs-building placement now uses oriented-rectangle SAT overlap with a small physical gap instead of diagonal circle overlap, so corners no longer reserve huge empty bubbles.
+- The construction footprint itself remains unchanged, preventing visual structure overlap.
+
+## Preservation
+- No vehicle, building, infantry or map GLB changed.
+- Vehicle Factory, Guardian Turret, Barracks, Refinery, Power Node, Command Post and all vehicle masters are preserved byte-for-byte from v0.13.6.
+- Main World, Rifleman production, Refinery/Harvester docking, fullscreen vehicle depot, tank combat and camera systems remain intact.
+
+---
+
 # WorldForge v0.13.6 — Vehicle Factory + Guardian Turret Integration
 
 WorldForge v0.13.6 keeps the v0.13.5 Main World / Barracks / Rifleman foundation and replaces the remaining Vehicle Factory and Gun Turret placeholders with the approved detailed Aegis master assets.

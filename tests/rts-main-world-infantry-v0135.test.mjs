@@ -26,10 +26,10 @@ const sk=read('src/rts/skirmish-test.js');
 const html=read('index.html');
 const app=read('src/app.js');
 
-assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.7'/);
+assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.8'/);
 assert.match(schema,/rtsMapForge: '0\.2\.3'/);
 assert.match(schema,/rtsAssetLibrary: '0\.5\.0'/);
-assert.match(schema,/skirmish: '0\.6\.2'/);
+assert.match(schema,/skirmish: '0\.6\.3'/);
 
 assert.match(map,/RTS_MAP_FORGE_VERSION='0\.2\.3'/);
 assert.match(map,/Number\(input\.size\)\)\?Number\(input\.size\):1536/);
@@ -69,7 +69,7 @@ assert.match(defs,/aegisRifleman/);
 assert.match(lib,/fieldBarracks/);
 assert.match(lib,/aegis_field_barracks_v023\.glb/);
 
-assert.match(sk,/SKIRMISH_VERSION='0\.6\.2'/);
+assert.match(sk,/SKIRMISH_VERSION='0\.6\.3'/);
 assert.match(sk,/RTS_COMMANDS\.PRODUCE/);
 assert.match(sk,/trainRifleman\(\)/);
 assert.match(sk,/_systemProduction\(dt\)/);
@@ -85,9 +85,9 @@ assert.match(app,/skirmish\.trainRifleman/);
 
 console.log(JSON.stringify({
   ok:true,
-  worldforge:'0.13.7',
+  worldforge:'0.13.8',
   mapForge:'0.2.3',
-  skirmish:'0.6.2',
+  skirmish:'0.6.3',
   mainWorldMeters:1536,
   barracksMaster:true,
   animatedRifleman:true,

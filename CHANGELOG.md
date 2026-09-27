@@ -1,3 +1,30 @@
+# v0.13.8 — Unit Collision & Infantry Spacing
+
+- WorldForge advanced to **0.13.8**, Skirmish Lab to **0.6.3**, and RTS Definitions to **0.5.3**.
+- Added oriented collision footprints for the Aegis-X, HMMWV-50 and Field Harvester.
+- Kept Talon AH-X on air-volume collision while airborne.
+- Added oriented-rectangle vehicle/building and vehicle/vehicle collision.
+- Added tank rotation validation so the rear hull cannot freely swing through structures.
+- Added wall/corner sliding when vehicle movement is partially blocked.
+- Added safe open-pose search for manually deployed ground support vehicles.
+- Added compact Barracks rally-slot assignment.
+- Added 0.82 m Rifleman personal spacing and a local infantry-separation pass.
+- Added Infantry/Vehicle separation so soldiers do not remain inside ground vehicles.
+- Added fullscreen Collision Debug footprint visualization.
+- Preserved Barracks deployment and Refinery docking exemptions.
+- No GLB assets were rebuilt or modified.
+
+# v0.13.7 — Rotor Axis + Collision Cleanup
+
+- WorldForge advanced to **0.13.7**, Skirmish Lab to **0.6.2**, Building Forge to **0.3.1**, and RTS Definitions to **0.5.2**.
+- Corrected Talon tail-rotor runtime spin from local X to local Z; main rotor remains local Y.
+- Corrected Power Node cooling fans and Refinery dust fan to local Z in both Skirmish and Building Forge preview.
+- Converted rotor/fan animation rates to delta-time updates in Skirmish.
+- Replaced building diagonal-circle movement collision with oriented rectangular footprints plus per-unit clearance.
+- Added tuned collision footprints for all six buildable RTS structures.
+- Replaced building placement circle overlap with oriented-rectangle SAT overlap while preserving the original construction footprints.
+- No GLB assets were rebuilt or modified.
+
 # v0.13.6 — Vehicle Factory + Guardian Turret Integration
 
 - WorldForge advanced to **0.13.6**, Skirmish Lab to **0.6.1**, RTS Asset Library to **0.5.0**, and RTS Definitions to **0.5.1**.

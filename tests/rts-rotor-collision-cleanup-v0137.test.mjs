@@ -22,10 +22,10 @@ const sk=read('src/rts/skirmish-test.js');
 const forge=read('src/building/building-forge.js');
 const defs=read('src/rts/data/rts-definitions.js');
 
-assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.7'/);
+assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.8'/);
 assert.match(schema,/buildingForge: '0\.3\.1'/);
-assert.match(schema,/skirmish: '0\.6\.2'/);
-assert.match(sk,/SKIRMISH_VERSION='0\.6\.2'/);
+assert.match(schema,/skirmish: '0\.6\.3'/);
+assert.match(sk,/SKIRMISH_VERSION='0\.6\.3'/);
 assert.match(forge,/BUILDING_FORGE_VERSION='0\.3\.1'/);
 
 // Functional-axis cleanup: main rotor remains Y; Talon tail rotor and flat rooftop fans use local Z.
@@ -54,12 +54,13 @@ assert.ok(refinery.nodes.some(n=>n.name==='DustCollectorFanRoot'),'Refinery dust
 
 // Building placement now uses rectangle SAT instead of diagonal collision circles.
 assert.match(sk,/_rectsOverlap\(a,b,gap=1\.25\)/);
-assert.match(sk,/_pointHitsBuildingFootprint\(x,y,e,clearance=0\)/);
+assert.match(sk,/_buildingCollisionRect\(e\)/);
+assert.match(sk,/_rectOverlapDepth\(a,b,gap=0\)/);
 assert.match(sk,/collisionFootprint/);
 assert.doesNotMatch(sk,/Math\.hypot\(def\.footprint\[0\],def\.footprint\[1\]\)\*\.48/);
 assert.doesNotMatch(sk,/Math\.hypot\(fp\[0\],fp\[1\]\)\*\.46\+3/);
-assert.match(sk,/unitRadius=UNIT_DEFINITIONS\[e\.components\.unitType\]\?\.collisionRadius\|\|0/);
-assert.match(sk,/move\.exitBuildingId,UNIT_DEFINITIONS\[e\.components\.unitType\]\?\.collisionRadius\|\|\.55/);
+assert.match(sk,/_unitCollisionRect\(e,x=null,y=null,heading=null\)/);
+assert.match(sk,/ignoreBuildingId:move\.exitBuildingId|move\.exitBuildingId/);
 
 for(const id of ['constructionYard','powerPlant','refinery','barracks','vehicleFactory','gunTurret']){
   assert.match(defs,new RegExp(`${id}:Object\\.freeze\\(\\{[^}]*collisionFootprint:`,'s'),`${id} missing tuned collisionFootprint`);
@@ -67,8 +68,8 @@ for(const id of ['constructionYard','powerPlant','refinery','barracks','vehicleF
 
 console.log(JSON.stringify({
   ok:true,
-  worldforge:'0.13.7',
-  skirmish:'0.6.2',
+  worldforge:'0.13.8',
+  skirmish:'0.6.3',
   tailRotorAxis:'z',
   coolingFanAxis:'z',
   dustFanAxis:'z',

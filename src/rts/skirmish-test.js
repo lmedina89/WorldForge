@@ -8,7 +8,7 @@ import { LOCOMOTORS, WEAPONS, UNIT_DEFINITIONS } from './data/rts-definitions.js
 import { instantiateMasterBuilding, masterBuildingForRole, MASTER_BUILDINGS } from './rts-asset-library.js';
 import { loadAegisReferenceVehicle } from '../vehicle/vehicle-generator.js';
 
-export const SKIRMISH_VERSION='0.6.2';
+export const SKIRMISH_VERSION='0.6.3';
 
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const angleDelta=(a,b)=>Math.atan2(Math.sin(a-b),Math.cos(a-b));
@@ -23,6 +23,7 @@ export class SkirmishTest{
     this.active=false;this.started=false;this.mapSignature='';this.tank=null;this.supportUnits=[];this.supportSerial=0;this.infantryUnits=[];this.infantryViewPromises=new Map();this.riflemanAssetPromise=null;this.enemyTargets=[];this.buildings=[];this.buildingViewPromises=new Map();this.fx=[];this.projectileViews=new Map();this.renderEvents=[];
     this.drive={forward:false,back:false,left:false,right:false};this.aimPoint=new THREE.Vector3();this.pendingBuild=null;this.follow=true;this.viewMode='overview';this.lastMessage='';this.buildSerial=1;this.playerPalette='aegis';this.enemyPalette='crimson';
     this.raycaster=new THREE.Raycaster();this.pointer=new THREE.Vector2();this.softShadowTexture=this._makeSoftShadowTexture();this.aimMarker=this._makeAimMarker();this.root.add(this.aimMarker);this.aimMarker.visible=false;
+    this.collisionDebug=false;this.collisionDebugRoot=new THREE.Group();this.collisionDebugRoot.name='CollisionDebug';this.collisionDebugRoot.visible=false;this.root.add(this.collisionDebugRoot);
     this.sim=new RTSSimulation({hz:30,seed:1});this.playerFaction=null;this.enemyFaction=null;this.lastUiTick=-999;this._configureSimulation();
   }
 
@@ -45,6 +46,7 @@ export class SkirmishTest{
     this.sim.onCommand(RTS_COMMANDS.PRODUCE,(cmd)=>this._handleProduceCommand(cmd));
     this.sim.addSystem('locomotion',(dt)=>this._systemLocomotion(dt),{priority:10});
     this.sim.addSystem('infantry-locomotion',(dt)=>this._systemInfantryLocomotion(dt),{priority:12});
+    this.sim.addSystem('local-separation',(dt)=>this._systemLocalSeparation(dt),{priority:14});
     this.sim.addSystem('turret-aim',(dt)=>this._systemTurretAim(dt),{priority:20});
     this.sim.addSystem('weapons',(dt)=>this._systemWeapons(dt),{priority:30});
     this.sim.addSystem('infantry-combat',(dt)=>this._systemInfantryCombat(dt),{priority:35});
@@ -89,6 +91,13 @@ export class SkirmishTest{
   setSimulationPaused(paused){this.sim.setPaused(paused);this._emit(paused?'Simulation paused.':'Simulation resumed.');}
   stepSimulation(){if(!this.started)return;this.sim.stepOnce();this._consumeRenderEvents();this._syncViews(this.sim.clock.fixedDelta);this._emit(`Advanced one simulation tick to ${this.sim.clock.tick}.`);}
   exportSnapshot(){return this.sim.snapshot();}
+  toggleCollisionDebug(force=null){
+    this.collisionDebug=force==null?!this.collisionDebug:!!force;
+    if(this.collisionDebugRoot)this.collisionDebugRoot.visible=this.collisionDebug;
+    if(!this.collisionDebug)this._clearCollisionDebugGeometry();
+    this._emit(this.collisionDebug?'Collision debug enabled · building/unit footprints visible.':'Collision debug hidden.');
+    return this.collisionDebug;
+  }
 
   async start({reset=false}={}){
     if(!this.mapForge?.metadata)throw new Error('Generate an RTS map before starting skirmish mode.');
@@ -96,13 +105,14 @@ export class SkirmishTest{
     if(this.started&&!reset){this.setActive(true);this._setCamera();this._emit();return;}
     this.mapSignature=sig;this._clearSession();
     this.sim.reset({seed:this.mapForge.recipe?.seed||1});this.lastUiTick=-999;this.viewMode='overview';this.camera.zoom=1;this.playerFaction=this.sim.createFaction('player',{credits:5000});this.enemyFaction=this.sim.createFaction('enemy',{credits:0});this.pendingBuild=null;this.buildSerial=1;
-    await this._spawnPlayerTank();await this._spawnStartingConstructionYard();await this._spawnTrainingTarget();this.started=true;this.setActive(true);this._setCamera();this._emit('Skirmish ready · Aegis Vehicle Factory and Guardian Turret masters active · fullscreen vehicle depot restored.');
+    await this._spawnPlayerTank();await this._spawnStartingConstructionYard();await this._spawnTrainingTarget();this.started=true;this.setActive(true);this._setCamera();this._emit('Skirmish ready · oriented vehicle hull collision, corner sliding and compact infantry spacing active.');
   }
 
   _clearSession(){
     this.clearDrive();this.tank=null;this.supportUnits=[];this.supportSerial=0;this.infantryUnits=[];this.infantryViewPromises.clear();this.enemyTargets=[];this.buildings=[];this.buildingViewPromises.clear();this.fx=[];this.projectileViews.clear();this.renderEvents=[];this.aimMarker.visible=false;this.started=false;
     while(this.root.children.length){const c=this.root.children[this.root.children.length-1];this.root.remove(c);if(c!==this.aimMarker)disposeObject(c);}
     this.effects=new THREE.Group();this.effects.name='SkirmishEffects';this.root.add(this.effects);this.aimMarker=this._makeAimMarker();this.root.add(this.aimMarker);this.aimMarker.visible=false;
+    this.collisionDebugRoot=new THREE.Group();this.collisionDebugRoot.name='CollisionDebug';this.collisionDebugRoot.visible=this.collisionDebug;this.root.add(this.collisionDebugRoot);
   }
 
   async _spawnPlayerTank(){
@@ -124,7 +134,7 @@ export class SkirmishTest{
     const source=result.group;source.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
     const axis=new THREE.Group();axis.name='SupportUnit_YUp_to_ZUp';axis.rotation.x=Math.PI/2;axis.add(source);const root=new THREE.Group();root.name=`Support_${def.id}_${++this.supportSerial}`;root.add(axis);this.root.add(root);
     const base=this.tank?this.sim.entities.get(this.tank.entityId)?.components.transform:null,start=this.mapForge.metadata.startRegions[0],bx=base?.x??start.x,by=base?.y??start.y,heading=base?.heading??0,side=new THREE.Vector2(-Math.sin(heading),Math.cos(heading));
-    const offset=14+this.supportSerial*7,x=bx+side.x*offset-Math.cos(heading)*8,y=by+side.y*offset-Math.sin(heading)*8,loc=LOCOMOTORS[def.locomotor],ground=this.mapForge.surfaceHeightAt(x,y),z=loc.movementClass==='air'?ground+(loc.preferredAltitude||22):ground-.1;
+    const offset=14+this.supportSerial*7,rawX=bx+side.x*offset-Math.cos(heading)*8,rawY=by+side.y*offset-Math.sin(heading)*8,loc=LOCOMOTORS[def.locomotor],spawn=loc.movementClass==='air'?{x:rawX,y:rawY}:this._findOpenGroundSpawn(def,rawX,rawY,heading),x=spawn.x,y=spawn.y,ground=this.mapForge.surfaceHeightAt(x,y),z=loc.movementClass==='air'?ground+(loc.preferredAltitude||22):ground-.1;
     const e=this.sim.createEntity('unit',{unitType:def.id,owner:'player',transform:{x,y,z,heading},health:{current:def.maxHp,max:def.maxHp,destroyed:false},locomotor:{...loc}},'player');root.position.set(x,y,z);root.rotation.z=heading;
     const wheelNames=archetype==='fieldHarvester'?['FrontLeftWheelSpinRoot','FrontRightWheelSpinRoot','MidLeftWheelSpinRoot','MidRightWheelSpinRoot','RearLeftWheelSpinRoot','RearRightWheelSpinRoot']:['FL','FR','RL','RR'].map(k=>`WheelSpinRoot_${k}`);
     const view={entityId:e.id,root,source,axis,definition:def,archetype,rotorMain:source.getObjectByName('MainRotorRoot'),rotorTail:source.getObjectByName('TailRotorRoot'),wheels:wheelNames.map(n=>source.getObjectByName(n)).filter(Boolean),collector:source.getObjectByName('CollectorDrumRoot'),dumpDoors:[source.getObjectByName('HopperDoorLeftRoot'),source.getObjectByName('HopperDoorRightRoot')].filter(Boolean)};this._attachPresentationShadow(view,{air:loc.movementClass==='air'});this.supportUnits.push(view);this._emit(`${def.label} master asset deployed for skirmish testing.`);return true;
@@ -132,7 +142,7 @@ export class SkirmishTest{
 
   _buildingComponents(type,x,y,{owner='player',complete=false}={}){
     const def=RTS_BUILDINGS[type],components={buildingType:type,owner,transform:{x,y,z:this.mapForge.surfaceHeightAt(x,y),heading:0},health:{current:def.hp,max:def.hp,destroyed:false},building:{footprint:[...def.footprint],collisionFootprint:[...(def.collisionFootprint||def.footprint)],buildRadius:def.buildRadius||0,powerUse:def.powerUse||0,powerSupply:def.powerSupply||0,starterUnit:def.starterUnit||null,starterUnitSpawned:false},construction:{progress:complete?1:0,duration:1.8,complete:!!complete}};
-    if(type==='barracks')components.production={queue:[],active:null};
+    if(type==='barracks')components.production={queue:[],active:null,rallySerial:0};
     return components;
   }
 
@@ -149,6 +159,10 @@ export class SkirmishTest{
       path2:this._buildingLocalPoint(entity,[10.55,0,.50]),
       rally:this._buildingLocalPoint(entity,[12.0,0,.58])
     };
+  }
+  _barracksRallySlot(entity,index){
+    const spacing=UNIT_DEFINITIONS.aegisRifleman.personalSpace||.82,row=Math.floor(index/5),col=index%5,columns=[0,1,-1,2,-2],forward=row*spacing,lateral=columns[col]*spacing;
+    return this._buildingLocalPoint(entity,[12.0+forward,lateral,.58]);
   }
 
   trainRifleman(){
@@ -172,8 +186,8 @@ export class SkirmishTest{
   }
 
   _spawnRiflemanEntity(barracks){
-    const def=UNIT_DEFINITIONS.aegisRifleman,loc=LOCOMOTORS[def.locomotor],weapon=WEAPONS[def.primaryWeapon],profile=this._barracksExitProfile(barracks),heading=barracks.components.transform.heading||0;
-    const waypoints=[profile.entry,profile.path0,profile.path1,profile.path2,profile.rally].map(p=>({...p}));
+    const def=UNIT_DEFINITIONS.aegisRifleman,loc=LOCOMOTORS[def.locomotor],weapon=WEAPONS[def.primaryWeapon],profile=this._barracksExitProfile(barracks),heading=barracks.components.transform.heading||0,prod=barracks.components.production||(barracks.components.production={queue:[],active:null,rallySerial:0}),rally=this._barracksRallySlot(barracks,prod.rallySerial++);
+    const waypoints=[profile.entry,profile.path0,profile.path1,profile.path2,rally].map(p=>({...p}));
     const e=this.sim.createEntity('unit',{
       unitType:def.id,owner:'player',
       transform:{x:profile.spawn.x,y:profile.spawn.y,z:profile.spawn.z,heading},
@@ -321,38 +335,146 @@ export class SkirmishTest{
   }
 
   _systemWeapons(dt){for(const e of this.sim.entities.values()){if(e.components.weapon)e.components.weapon.cooldown=Math.max(0,e.components.weapon.cooldown-dt);}}
-  _pointHitsBuildingFootprint(x,y,e,clearance=0){
-    const t=e.components.transform||{},fp=e.components.building?.collisionFootprint||e.components.building?.footprint||[8,8],h=t.heading||0,c=Math.cos(h),s=Math.sin(h),dx=x-t.x,dy=y-t.y,lx=dx*c+dy*s,ly=-dx*s+dy*c,hx=fp[0]*.5,hy=fp[1]*.5;
-    if(Math.abs(lx)<=hx&&Math.abs(ly)<=hy)return true;
-    const qx=Math.max(Math.abs(lx)-hx,0),qy=Math.max(Math.abs(ly)-hy,0);return Math.hypot(qx,qy)<clearance;
+  _definitionCollisionRect(def,x,y,heading=0){
+    const diameter=(def?.personalSpace||((def?.collisionRadius||.4)*2)),fp=def?.collisionFootprint||[diameter,diameter];
+    return {x,y,heading:(heading||0)+(def?.collisionHeadingOffset||0),footprint:[fp[0],fp[1]]};
   }
-  _blockedByStructureSim(x,y,ignoreEntityId=null,ignoreBuildingId=null,unitRadius=0){
-    const clearance=Math.max(0,unitRadius)+.30;
-    for(const e of this.sim.entities.values()){
-      if(e.id===ignoreEntityId||e.id===ignoreBuildingId||e.components.health?.destroyed||!['building','target'].includes(e.kind))continue;if(this._pointHitsBuildingFootprint(x,y,e,clearance))return true;
-    }return false;
+  _unitCollisionRect(e,x=null,y=null,heading=null){
+    const t=e.components.transform||{},def=UNIT_DEFINITIONS[e.components.unitType]||{},px=x??t.x,py=y??t.y,ph=heading??t.heading??0;
+    return this._definitionCollisionRect(def,px,py,ph);
+  }
+  _buildingCollisionRect(e){
+    const t=e.components.transform||{},fp=e.components.building?.collisionFootprint||e.components.building?.footprint||[8,8];
+    return {x:t.x,y:t.y,heading:t.heading||0,footprint:[fp[0],fp[1]]};
+  }
+  _isGroundUnit(e){return e?.kind==='unit'&&!e.components.health?.destroyed&&e.components.locomotor?.movementClass!=='air';}
+  _isInfantry(e){return e?.components?.unitType==='aegisRifleman';}
+  _rectOverlapDepth(a,b,gap=0){
+    const aa=this._rectAxes(a.heading||0),ba=this._rectAxes(b.heading||0),delta=[b.x-a.x,b.y-a.y],axes=[aa[0],aa[1],ba[0],ba[1]],ah=[a.footprint[0]*.5,a.footprint[1]*.5],bh=[b.footprint[0]*.5,b.footprint[1]*.5],dot=(u,v)=>u[0]*v[0]+u[1]*v[1];let minPen=Infinity;
+    for(const axis of axes){const ra=ah[0]*Math.abs(dot(aa[0],axis))+ah[1]*Math.abs(dot(aa[1],axis)),rb=bh[0]*Math.abs(dot(ba[0],axis))+bh[1]*Math.abs(dot(ba[1],axis)),pen=ra+rb+gap-Math.abs(dot(delta,axis));if(pen<=0)return 0;minPen=Math.min(minPen,pen);}return minPen;
+  }
+  _collisionBlockersForRect(rect,{ignoreEntityId=null,ignoreBuildingId=null,ignoreInfantry=false,gap=.08}={}){
+    const blockers=[];
+    for(const other of this.sim.entities.values()){
+      if(other.id===ignoreEntityId||other.components.health?.destroyed)continue;
+      if(['building','target'].includes(other.kind)){
+        if(other.id===ignoreBuildingId)continue;
+        const depth=this._rectOverlapDepth(rect,this._buildingCollisionRect(other),gap);if(depth>0)blockers.push({entity:other,kind:'building',rect:this._buildingCollisionRect(other),depth});
+      }else if(this._isGroundUnit(other)){
+        if(ignoreInfantry&&this._isInfantry(other))continue;
+        const orect=this._unitCollisionRect(other),depth=this._rectOverlapDepth(rect,orect,gap);if(depth>0)blockers.push({entity:other,kind:'unit',rect:orect,depth});
+      }
+    }
+    return blockers;
+  }
+  _unitPoseBlockers(e,x,y,heading,{ignoreBuildingId=null,ignoreInfantry=false,gap=.08}={}){
+    if(e.components.locomotor?.movementClass==='air')return [];
+    const dockIgnore=e.components.docked?.refineryEntityId||ignoreBuildingId;
+    return this._collisionBlockersForRect(this._unitCollisionRect(e,x,y,heading),{ignoreEntityId:e.id,ignoreBuildingId:dockIgnore,ignoreInfantry,gap});
+  }
+  _unitPoseCollisionDepth(e,x,y,heading,opts={}){
+    return this._unitPoseBlockers(e,x,y,heading,opts).reduce((sum,b)=>sum+b.depth,0);
+  }
+  _unitPoseAllowed(e,x,y,heading,opts={}){
+    return this._unitPoseBlockers(e,x,y,heading,opts).length===0;
+  }
+  _definitionPoseAllowed(def,x,y,heading,{gap=.08}={}){
+    return this._collisionBlockersForRect(this._definitionCollisionRect(def,x,y,heading),{gap}).length===0;
+  }
+  _findOpenGroundSpawn(def,x,y,heading){
+    if(this._definitionPoseAllowed(def,x,y,heading))return {x,y};
+    for(let r=3;r<=24;r+=3){
+      const points=Math.max(12,Math.ceil(Math.PI*2*r/3));
+      for(let i=0;i<points;i++){const a=(i/points)*Math.PI*2,px=x+Math.cos(a)*r,py=y+Math.sin(a)*r;if(this.mapForge.movementAt(px,py,LOCOMOTORS[def.locomotor]?.movementClass||'wheeled').allowed&&this._definitionPoseAllowed(def,px,py,heading))return {x:px,y:py};}
+    }
+    return {x,y};
+  }
+  _moveGroundUnitTo(e,x,y){
+    const t=e.components.transform;t.x=x;t.y=y;t.z=this.mapForge.surfaceHeightAt(x,y)-.1;
+  }
+  _tryGroundUnitMove(e,dx,dy){
+    const t=e.components.transform,loc=e.components.locomotor,nx=t.x+dx,ny=t.y+dy;
+    if(!this.mapForge.movementAt(nx,ny,loc.movementClass).allowed)return false;
+    const blockers=this._unitPoseBlockers(e,nx,ny,t.heading);
+    if(!blockers.length){this._moveGroundUnitTo(e,nx,ny);return true;}
+    const candidates=[];
+    for(const b of blockers){
+      const axes=this._rectAxes(b.rect.heading||0);
+      for(const axis of axes){const proj=dx*axis[0]+dy*axis[1];if(Math.abs(proj)>.01)candidates.push([axis[0]*proj,axis[1]*proj]);}
+      if(b.kind==='unit'){const ox=t.x-b.rect.x,oy=t.y-b.rect.y,d=Math.hypot(ox,oy)||1,tx=-oy/d,ty=ox/d,proj=dx*tx+dy*ty;if(Math.abs(proj)>.01)candidates.push([tx*proj,ty*proj]);}
+    }
+    candidates.push([dx,0],[0,dy]);
+    candidates.sort((a,b)=>(b[0]*b[0]+b[1]*b[1])-(a[0]*a[0]+a[1]*a[1]));
+    const seen=new Set();
+    for(const [sx,sy] of candidates){
+      const key=`${sx.toFixed(3)}:${sy.toFixed(3)}`;if(seen.has(key)||Math.hypot(sx,sy)<.01)continue;seen.add(key);
+      const px=t.x+sx,py=t.y+sy;if(!this.mapForge.movementAt(px,py,loc.movementClass).allowed)continue;
+      if(this._unitPoseAllowed(e,px,py,t.heading)){this._moveGroundUnitTo(e,px,py);return true;}
+    }
+    return false;
   }
   _systemLocomotion(dt){
     if(!this.tank)return;const e=this.sim.entities.get(this.tank.entityId);if(!e)return;const c=e.components,t=c.transform,input=c.input,loc=c.locomotor,throttle=(input.forward?1:0)-(input.back?1:0),turn=(input.left?1:0)-(input.right?1:0);
-    if(turn)t.heading+=turn*loc.turnRate*dt*(Math.abs(throttle)>.01?.72:1);
-    if(throttle){const speed=throttle>0?loc.maxSpeed:loc.reverseSpeed,nx=t.x+Math.cos(t.heading)*speed*dt*throttle,ny=t.y+Math.sin(t.heading)*speed*dt*throttle,nav=this.mapForge.movementAt(nx,ny,loc.movementClass),unitRadius=UNIT_DEFINITIONS[e.components.unitType]?.collisionRadius||0;if(nav.allowed&&!this._blockedByStructureSim(nx,ny,e.id,null,unitRadius)){t.x=nx;t.y=ny;t.z=this.mapForge.surfaceHeightAt(nx,ny)-.1;}}
+    if(turn){
+      const next=t.heading+turn*loc.turnRate*dt*(Math.abs(throttle)>.01?.72:1),currentDepth=this._unitPoseCollisionDepth(e,t.x,t.y,t.heading),nextDepth=this._unitPoseCollisionDepth(e,t.x,t.y,next);
+      if(nextDepth<=.001||nextDepth<=currentDepth+.002)t.heading=next;
+    }
+    if(throttle){const speed=throttle>0?loc.maxSpeed:loc.reverseSpeed,step=speed*dt*throttle;this._tryGroundUnitMove(e,Math.cos(t.heading)*step,Math.sin(t.heading)*step);}
+  }
+  _tryInfantryMove(e,dx,dy,ignoreBuildingId=null){
+    const t=e.components.transform,loc=e.components.locomotor,nx=t.x+dx,ny=t.y+dy;
+    if(!this.mapForge.movementAt(nx,ny,'infantry').allowed)return false;
+    if(this._unitPoseAllowed(e,nx,ny,t.heading,{ignoreBuildingId,ignoreInfantry:true,gap:.04})){t.x=nx;t.y=ny;return true;}
+    const d=Math.hypot(dx,dy)||1,tx=-dy/d,ty=dx/d,side=Math.min(.26,d*.75);
+    for(const sign of [1,-1]){
+      const px=t.x+dx*.55+tx*side*sign,py=t.y+dy*.55+ty*side*sign;
+      if(this.mapForge.movementAt(px,py,'infantry').allowed&&this._unitPoseAllowed(e,px,py,t.heading,{ignoreBuildingId,ignoreInfantry:true,gap:.04})){t.x=px;t.y=py;return true;}
+    }
+    return false;
   }
   _systemInfantryLocomotion(dt){
     for(const e of this.sim.entities.values()){
       if(e.components.unitType!=='aegisRifleman'||e.components.health?.destroyed)continue;
       const t=e.components.transform,move=e.components.move,loc=e.components.locomotor;if(!move?.moving||!move.waypoints?.length)continue;
       const wp=move.waypoints[Math.min(move.index,move.waypoints.length-1)],dx=wp.x-t.x,dy=wp.y-t.y,dist=Math.hypot(dx,dy);
-      if(dist<.34){
+      if(dist<.30){
         move.index++;
         if(move.index>=move.waypoints.length){move.moving=false;move.state='rallied';move.exitBuildingId=null;e.components.combat.state='ready';t.z=this.mapForge.surfaceHeightAt(t.x,t.y)+.04;}
         continue;
       }
       const desired=Math.atan2(dy,dx),err=angleDelta(desired,t.heading);t.heading+=clamp(err,-loc.turnRate*dt,loc.turnRate*dt);
-      const step=Math.min(dist,loc.maxSpeed*dt),nx=t.x+Math.cos(desired)*step,ny=t.y+Math.sin(desired)*step,nav=this.mapForge.movementAt(nx,ny,'infantry');
-      if(nav.allowed&&!this._blockedByStructureSim(nx,ny,e.id,move.exitBuildingId,UNIT_DEFINITIONS[e.components.unitType]?.collisionRadius||.55)){
-        t.x=nx;t.y=ny;
-        const u=dist>0?Math.min(1,step/dist):1,targetZ=Number.isFinite(wp.z)?wp.z:this.mapForge.surfaceHeightAt(nx,ny)+.04;
+      const step=Math.min(dist,loc.maxSpeed*dt),mx=Math.cos(desired)*step,my=Math.sin(desired)*step,oldX=t.x,oldY=t.y;
+      if(this._tryInfantryMove(e,mx,my,move.exitBuildingId)){
+        const moved=Math.hypot(t.x-oldX,t.y-oldY),u=dist>0?Math.min(1,moved/dist):1,targetZ=Number.isFinite(wp.z)?wp.z:this.mapForge.surfaceHeightAt(t.x,t.y)+.04;
         t.z=t.z+(targetZ-t.z)*Math.max(.35,u);
+      }
+    }
+  }
+  _circleRectPush(px,py,radius,rect,gap=.05){
+    const axes=this._rectAxes(rect.heading||0),dx=px-rect.x,dy=py-rect.y,lx=dx*axes[0][0]+dy*axes[0][1],ly=dx*axes[1][0]+dy*axes[1][1],hx=rect.footprint[0]*.5+radius+gap,hy=rect.footprint[1]*.5+radius+gap;
+    if(Math.abs(lx)>=hx||Math.abs(ly)>=hy)return null;
+    const penX=hx-Math.abs(lx),penY=hy-Math.abs(ly);
+    if(penX<penY){const sign=lx>=0?1:-1,amt=penX+.01;return {x:axes[0][0]*sign*amt,y:axes[0][1]*sign*amt};}
+    const sign=ly>=0?1:-1,amt=penY+.01;return {x:axes[1][0]*sign*amt,y:axes[1][1]*sign*amt};
+  }
+  _systemLocalSeparation(dt){
+    const infantry=this.sim.entities.values().filter(e=>this._isInfantry(e)&&!e.components.health?.destroyed),maxPush=Math.max(.025,1.6*dt);
+    // Soft infantry-to-infantry separation: close formations are allowed, overlapping bodies are not.
+    for(let i=0;i<infantry.length;i++)for(let j=i+1;j<infantry.length;j++){
+      const a=infantry[i],b=infantry[j],ta=a.components.transform,tb=b.components.transform,da=UNIT_DEFINITIONS[a.components.unitType],db=UNIT_DEFINITIONS[b.components.unitType],space=Math.max(da.personalSpace||.82,db.personalSpace||.82),dx=tb.x-ta.x,dy=tb.y-ta.y;let dist=Math.hypot(dx,dy);
+      let nx,ny;if(dist<1e-5){const ang=((a.id*12.9898+b.id*78.233)%6.283185307179586);nx=Math.cos(ang);ny=Math.sin(ang);dist=0;}else{nx=dx/dist;ny=dy/dist;}
+      if(dist>=space)continue;const push=Math.min((space-dist)*.5,maxPush);
+      const aIgnore=a.components.move?.exitBuildingId||null,bIgnore=b.components.move?.exitBuildingId||null;
+      const ax=ta.x-nx*push,ay=ta.y-ny*push;if(this.mapForge.movementAt(ax,ay,'infantry').allowed&&this._unitPoseAllowed(a,ax,ay,ta.heading,{ignoreBuildingId:aIgnore,ignoreInfantry:true,gap:.02})){ta.x=ax;ta.y=ay;ta.z=this.mapForge.surfaceHeightAt(ax,ay)+.04;}
+      const bx=tb.x+nx*push,by=tb.y+ny*push;if(this.mapForge.movementAt(bx,by,'infantry').allowed&&this._unitPoseAllowed(b,bx,by,tb.heading,{ignoreBuildingId:bIgnore,ignoreInfantry:true,gap:.02})){tb.x=bx;tb.y=by;tb.z=this.mapForge.surfaceHeightAt(bx,by)+.04;}
+    }
+    // Keep infantry out of ground-vehicle hulls while still allowing them to stand close beside vehicles.
+    const vehicles=this.sim.entities.values().filter(e=>this._isGroundUnit(e)&&!this._isInfantry(e));
+    for(const soldier of infantry){
+      const t=soldier.components.transform,def=UNIT_DEFINITIONS[soldier.components.unitType],radius=def.collisionRadius||.40,ignoreBuildingId=soldier.components.move?.exitBuildingId||null;
+      for(const vehicle of vehicles){
+        const push=this._circleRectPush(t.x,t.y,radius,this._unitCollisionRect(vehicle),.06);if(!push)continue;const len=Math.hypot(push.x,push.y)||1,amt=Math.min(len,maxPush*1.4),px=t.x+push.x/len*amt,py=t.y+push.y/len*amt;
+        if(this.mapForge.movementAt(px,py,'infantry').allowed&&this._unitPoseAllowed(soldier,px,py,t.heading,{ignoreBuildingId,ignoreInfantry:true,gap:.02})){t.x=px;t.y=py;t.z=this.mapForge.surfaceHeightAt(px,py)+.04;}
       }
     }
   }
@@ -433,12 +555,35 @@ export class SkirmishTest{
       else if(ev.type==='targetHit'){const v=this.enemyTargets.find(t=>t.entityId===ev.entityId);if(ev.destroyed){if(v)v.group.visible=false;this.lastMessage='Training target destroyed.';}else this.lastMessage=`Hit training target · ${Math.round(ev.current)}/${Math.round(ev.max)} HP.`;}
     }
   }
+  _clearCollisionDebugGeometry(){
+    if(!this.collisionDebugRoot)return;
+    while(this.collisionDebugRoot.children.length){const c=this.collisionDebugRoot.children[this.collisionDebugRoot.children.length-1];this.collisionDebugRoot.remove(c);disposeObject(c);}
+  }
+  _collisionDebugRect(rect,z,color){
+    const axes=this._rectAxes(rect.heading||0),hx=rect.footprint[0]*.5,hy=rect.footprint[1]*.5,corners=[[-hx,-hy],[hx,-hy],[hx,hy],[-hx,hy]],pts=corners.map(([lx,ly])=>new THREE.Vector3(rect.x+axes[0][0]*lx+axes[1][0]*ly,rect.y+axes[0][1]*lx+axes[1][1]*ly,z));
+    const geom=new THREE.BufferGeometry().setFromPoints(pts),mat=new THREE.LineBasicMaterial({color,transparent:true,opacity:.92,depthTest:false,toneMapped:false}),line=new THREE.LineLoop(geom,mat);line.renderOrder=99;this.collisionDebugRoot.add(line);
+  }
+  _collisionDebugCircle(x,y,z,r,color){
+    const pts=[];for(let i=0;i<24;i++){const a=i/24*Math.PI*2;pts.push(new THREE.Vector3(x+Math.cos(a)*r,y+Math.sin(a)*r,z));}
+    const geom=new THREE.BufferGeometry().setFromPoints(pts),mat=new THREE.LineBasicMaterial({color,transparent:true,opacity:.92,depthTest:false,toneMapped:false}),line=new THREE.LineLoop(geom,mat);line.renderOrder=99;this.collisionDebugRoot.add(line);
+  }
+  _updateCollisionDebug(){
+    if(!this.collisionDebug||!this.collisionDebugRoot)return;this._clearCollisionDebugGeometry();
+    for(const e of this.sim.entities.values()){
+      if(e.components.health?.destroyed)continue;
+      const t=e.components.transform;if(!t)continue;const z=this.mapForge.surfaceHeightAt(t.x,t.y)+.35;
+      if(['building','target'].includes(e.kind))this._collisionDebugRect(this._buildingCollisionRect(e),z,e.components.owner==='enemy'?0xff725f:0xffcf57);
+      else if(this._isGroundUnit(e)){if(this._isInfantry(e))this._collisionDebugCircle(t.x,t.y,z,UNIT_DEFINITIONS[e.components.unitType]?.collisionRadius||.4,0x7fffa0);else this._collisionDebugRect(this._unitCollisionRect(e),z,0x5de6ff);}
+    }
+  }
+
   _syncViews(dt=0){
     if(this.tank){const e=this.sim.entities.get(this.tank.entityId);if(e){const t=e.components.transform,tur=e.components.turret;this.tank.root.position.set(t.x,t.y,t.z);this.tank.root.rotation.z=t.heading;this.tank.turret.rotation.y=tur.yaw;this.tank.gun.rotation.z=tur.pitch;this._updatePresentationShadow(this.tank,t);}}
     for(const v of this.supportUnits){const e=this.sim.entities.get(v.entityId);if(!e)continue;const t=e.components.transform;v.root.position.set(t.x,t.y,t.z);v.root.rotation.z=t.heading;if(v.rotorMain)v.rotorMain.rotation.y+=dt*10.8;if(v.rotorTail)v.rotorTail.rotation.z+=dt*14.4;this._updatePresentationShadow(v,t);}
     for(const v of this.infantryUnits){const e=this.sim.entities.get(v.entityId);if(!e||e.components.health?.destroyed){v.root.visible=false;continue;}const t=e.components.transform,moving=!!e.components.move?.moving;v.root.position.set(t.x,t.y,t.z);v.root.rotation.z=t.heading;if(v.fireTimer>0){v.fireTimer=Math.max(0,v.fireTimer-dt);}else if(v.walkAction){if(moving){v.walkAction.paused=false;v.walkAction.enabled=true;v.walkAction.play();}else{v.walkAction.paused=true;v.walkAction.time=.25;}}v.mixer?.update?.(dt);this._updatePresentationShadow(v,t);}
     for(const v of this.buildings){const e=this.sim.entities.get(v.entityId);if(!e)continue;const t=e.components.transform,c=e.components.construction;v.group.position.set(t.x,t.y,t.z);v.group.rotation.z=t.heading||0;if(c&&!c.complete)v.group.scale.z=Math.max(.03,c.progress);else v.group.scale.z=1;if(v.functional?.radar)v.functional.radar.rotation.y+=dt*.32;if(v.functional?.fans)for(const f of v.functional.fans)f.rotation.z+=dt*4.2;if(v.functional?.dustFan)v.functional.dustFan.rotation.z+=dt*9.6;}
     for(const [id,mesh] of [...this.projectileViews.entries()]){const e=this.sim.entities.get(id);if(!e){this.effects.remove(mesh);disposeObject(mesh);this.projectileViews.delete(id);}else{const t=e.components.transform;mesh.position.set(t.x,t.y,t.z);}}
+    this._updateCollisionDebug();
   }
 
   _setCamera(){if(!this.tank)return;const hostAspect=Math.max(.5,this.renderer.domElement.clientWidth/Math.max(1,this.renderer.domElement.clientHeight)),landscape=hostAspect>=1.2,tactical=this.viewMode==='tactical',span=tactical?(landscape?40:46):(landscape?62:58);this.camera.left=-span*hostAspect;this.camera.right=span*hostAspect;this.camera.top=span;this.camera.bottom=-span;this.camera.near=.1;this.camera.far=2200;this.camera.up.set(0,0,1);this.camera.userData.skirmishLandscape=landscape;this.camera.userData.skirmishViewMode=this.viewMode;this.camera.updateProjectionMatrix();this._followCamera(true);}
@@ -459,7 +604,7 @@ export class SkirmishTest{
     const tank=this.tank&&this.sim.entities.get(this.tank.entityId),hp=tank?.components.health;
     const barracks=this.sim.entities.values().find(e=>e.kind==='building'&&e.components.owner==='player'&&e.components.buildingType==='barracks'&&e.components.construction?.complete&&!e.components.health?.destroyed);
     const prod=barracks?.components.production,riflemanQueue=(prod?.queue?.length||0)+(prod?.active?1:0),riflemanDef=UNIT_DEFINITIONS.aegisRifleman;
-    return {credits:this.credits,powerSupply:this.powerSupply,powerUse:this.powerUse,powerNet:(this.playerFaction?.powerNet??0),tankHp:hp?.current||0,tankMaxHp:hp?.max||0,pendingBuild:this.pendingBuild,buildingCount:this.buildings.length,supportUnitCount:this.supportUnits.length,infantryCount:this.infantryUnits.length,barracksReady:!!barracks,riflemanQueue,riflemanCost:riflemanDef.cost,canTrainRifleman:!!barracks&&this.credits>=riflemanDef.cost&&riflemanQueue<5,fireReady:(tank?.components.weapon?.cooldown||0)<=0,message:this.lastMessage,simTick:this.sim.clock.tick,simHz:this.sim.clock.hz,simPaused:this.sim.paused,entityCount:this.sim.entities.count(),stateHash:this.sim.stateHash(),commandLog:this.sim.commands.recent(6),simulationVersion:RTS_SIMULATION_VERSION,viewMode:this.viewMode};
+    return {credits:this.credits,powerSupply:this.powerSupply,powerUse:this.powerUse,powerNet:(this.playerFaction?.powerNet??0),tankHp:hp?.current||0,tankMaxHp:hp?.max||0,pendingBuild:this.pendingBuild,buildingCount:this.buildings.length,supportUnitCount:this.supportUnits.length,infantryCount:this.infantryUnits.length,barracksReady:!!barracks,riflemanQueue,riflemanCost:riflemanDef.cost,canTrainRifleman:!!barracks&&this.credits>=riflemanDef.cost&&riflemanQueue<5,fireReady:(tank?.components.weapon?.cooldown||0)<=0,message:this.lastMessage,simTick:this.sim.clock.tick,simHz:this.sim.clock.hz,simPaused:this.sim.paused,entityCount:this.sim.entities.count(),stateHash:this.sim.stateHash(),commandLog:this.sim.commands.recent(6),simulationVersion:RTS_SIMULATION_VERSION,viewMode:this.viewMode,collisionDebug:this.collisionDebug};
   }
   _emit(message=null){if(message)this.lastMessage=message;this.onStateChange?.(this.state());}
 }

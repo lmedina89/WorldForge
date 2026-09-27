@@ -549,6 +549,7 @@ function updateSkirmishUi(state=skirmish.state()){
     const b=$(id);if(!b)continue;b.disabled=!state.canTrainRifleman;b.classList.toggle('active',state.riflemanQueue>0);
     const span=b.querySelector('span');if(span)span.textContent=state.barracksReady?`$${state.riflemanCost} · queue ${state.riflemanQueue}/5`:`$${state.riflemanCost} · build Barracks`;
   }
+  if($('skirmishCollisionDebug')){const b=$('skirmishCollisionDebug'),span=b.querySelector('span');b.classList.toggle('active',!!state.collisionDebug);if(span)span.textContent=`${state.collisionDebug?'ON':'OFF'} · show physical footprints`;}
   const buildNames={powerPlant:'POWER PLANT',refinery:'REFINERY',barracks:'BARRACKS',vehicleFactory:'VEHICLE FACTORY',gunTurret:'GUARDIAN TURRET'};
   const buildCosts={powerPlant:500,refinery:900,barracks:650,vehicleFactory:1200,gunTurret:600};
   const placing=!!state.pendingBuild;
@@ -564,7 +565,7 @@ async function activateSkirmishMode({reset=false}={}){
     catch(err){$('status').textContent='Skirmish main-world generation failed: '+err.message;return;}
   }
   showMode('skirmish');setSkirmishBuildDrawer(false);rtsMapForge.overlay.visible=false;rtsMapForge.movementOverlay.visible=false;rtsMapForge.setFogPreview(false);
-  try{skirmish.setFactionPalettes($('skirmishPlayerPalette').value,$('skirmishEnemyPalette').value);await skirmish.start({reset});configureSceneForMode();syncSkirmishViewport();drawRTSMapMinimap();updateSkirmishUi();$('status').textContent=`Skirmish Lab ${SKIRMISH_VERSION} · corrected rotor/fan axes + tighter building collision footprints active.`;}
+  try{skirmish.setFactionPalettes($('skirmishPlayerPalette').value,$('skirmishEnemyPalette').value);await skirmish.start({reset});configureSceneForMode();syncSkirmishViewport();drawRTSMapMinimap();updateSkirmishUi();$('status').textContent=`Skirmish Lab ${SKIRMISH_VERSION} · oriented vehicle hull collision + corner sliding + compact infantry spacing active.`;}
   catch(err){$('status').textContent='Skirmish start failed: '+err.message;}
 }
 
@@ -649,6 +650,7 @@ for(const id of ['skirmishSpawnHmmwv','skirmishDrawerSpawnHmmwv'])$(id).onclick=
 for(const id of ['skirmishSpawnTalon','skirmishDrawerSpawnTalon'])$(id).onclick=()=>deploySkirmishSupport('attackHeli','Talon');
 for(const id of ['skirmishSpawnHarvester','skirmishDrawerSpawnHarvester'])$(id).onclick=()=>deploySkirmishSupport('fieldHarvester','Harvester');
 for(const id of ['skirmishTrainRifleman','skirmishTrainRiflemanPanel'])$(id).onclick=()=>{skirmish.trainRifleman();updateSkirmishUi();};
+$('skirmishCollisionDebug').onclick=()=>{skirmish.toggleCollisionDebug();updateSkirmishUi();};
 document.querySelectorAll('[data-skirmish-build]').forEach(b=>b.onclick=()=>{skirmish.selectBuild(b.dataset.skirmishBuild);setSkirmishBuildDrawer(false);updateSkirmishUi();});
 $('skirmishFollow').onclick=()=>{skirmish.setFollow(!skirmish.follow);updateSkirmishUi();};
 $('skirmishHudFollow').onclick=()=>{skirmish.setFollow(!skirmish.follow);updateSkirmishUi();};

@@ -35,7 +35,7 @@ assert.match(defs,/masterAsset:'fieldBarracks'/);
 assert.match(defs,/masterAsset:'fieldVehicleFactory'/);
 assert.match(defs,/masterAsset:'guardianTurret'/);
 assert.match(skirmish,/configuredMasterId=def\?\.masterAsset/);
-assert.match(skirmish,/SKIRMISH_VERSION='0\.6\.2'/);
+assert.match(skirmish,/SKIRMISH_VERSION='0\.6\.3'/);
 assert.match(app,/skirmishSpawnHarvester/);
 assert.match(html,/BUILDING FORGE 0\.3/);
 assert.match(html,/Tactical Command Post · v2\.1/);

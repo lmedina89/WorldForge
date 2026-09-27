@@ -330,3 +330,13 @@ body.skirmish-mode #mapMinimapWrap{
 #skirmishDrawerSpawnHmmwv,#skirmishDrawerSpawnTalon,#skirmishDrawerSpawnHarvester{
   border-color:rgba(115,151,130,.58)!important;
 }
+
+
+/* v0.13.8 collision-debug footprint toggle */
+#skirmishCollisionDebug{
+  border-color:rgba(105,164,191,.55)!important;
+}
+#skirmishCollisionDebug.active{
+  border-color:#6fd8ff!important;
+  background:#17313b!important;
+}
