@@ -8,7 +8,7 @@ import { LOCOMOTORS, WEAPONS, UNIT_DEFINITIONS } from './data/rts-definitions.js
 import { instantiateMasterBuilding, masterBuildingForRole, MASTER_BUILDINGS } from './rts-asset-library.js';
 import { loadAegisReferenceVehicle } from '../vehicle/vehicle-generator.js';
 
-export const SKIRMISH_VERSION='0.7.0';
+export const SKIRMISH_VERSION='0.7.1';
 
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const angleDelta=(a,b)=>Math.atan2(Math.sin(a-b),Math.cos(a-b));
@@ -159,22 +159,41 @@ export class SkirmishTest{
   }
 
 
+  _supportDefinitionForArchetype(archetype){
+    return {mbt:UNIT_DEFINITIONS.aegisMbt,hmmwv50:UNIT_DEFINITIONS.aegisHmmwv,attackHeli:UNIT_DEFINITIONS.aegisTalon,fieldHarvester:UNIT_DEFINITIONS.aegisHarvester}[archetype]||null;
+  }
+  _supportArchetypeForUnit(unitType){
+    return {aegisMbt:'mbt',aegisHmmwv:'hmmwv50',aegisTalon:'attackHeli',aegisHarvester:'fieldHarvester'}[unitType]||null;
+  }
+  async _createSupportUnitView(entity,archetype,{name=null}={}){
+    const def=this._supportDefinitionForArchetype(archetype);if(!def||!entity)return null;
+    let source;
+    if(archetype==='mbt'){
+      const gltf=await this.loader.loadAsync(def.asset);source=cloneMaterials(gltf.scene.clone(true));
+    }else{
+      const paletteMap={aegis:'olive',desert:'desert',crimson:'red',slate:'slate',blackops:'slate'},result=await loadAegisReferenceVehicle({type:archetype,palette:paletteMap[this.playerPalette]||'olive',seed:(this.mapForge.recipe?.seed||1)+this.supportSerial});source=result.group;
+    }
+    source.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
+    const axis=new THREE.Group();axis.name='SupportUnit_YUp_to_ZUp';axis.rotation.x=Math.PI/2;axis.add(source);const root=new THREE.Group();root.name=name||`Support_${def.id}_${++this.supportSerial}`;root.add(axis);root.userData.skirmishEntityId=entity.id;this.root.add(root);
+    const t=entity.components.transform;root.position.set(t.x,t.y,t.z);root.rotation.z=t.heading||0;
+    const wheelNames=archetype==='fieldHarvester'?['FrontLeftWheelSpinRoot','FrontRightWheelSpinRoot','MidLeftWheelSpinRoot','MidRightWheelSpinRoot','RearLeftWheelSpinRoot','RearRightWheelSpinRoot']:(archetype==='hmmwv50'?['FL','FR','RL','RR'].map(k=>`WheelSpinRoot_${k}`):[]);
+    const view={entityId:entity.id,root,source,axis,definition:def,archetype,rotorMain:source.getObjectByName('MainRotorRoot'),rotorTail:source.getObjectByName('TailRotorRoot'),wheels:wheelNames.map(n=>source.getObjectByName(n)).filter(Boolean),collector:source.getObjectByName('CollectorDrumRoot'),dumpDoors:[source.getObjectByName('HopperDoorLeftRoot'),source.getObjectByName('HopperDoorRightRoot')].filter(Boolean)};
+    this._attachPresentationShadow(view,{air:entity.components.locomotor?.movementClass==='air'});this.supportUnits.push(view);return view;
+  }
+
   async spawnSupportUnit(archetype){
     if(!this.started)return false;
-    const map={hmmwv50:UNIT_DEFINITIONS.aegisHmmwv,attackHeli:UNIT_DEFINITIONS.aegisTalon,fieldHarvester:UNIT_DEFINITIONS.aegisHarvester},def=map[archetype];if(!def)return false;
-    const paletteMap={aegis:'olive',desert:'desert',crimson:'red',slate:'slate',blackops:'slate'},result=await loadAegisReferenceVehicle({type:archetype,palette:paletteMap[this.playerPalette]||'olive',seed:(this.mapForge.recipe?.seed||1)+this.supportSerial});
-    const source=result.group;source.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
-    const axis=new THREE.Group();axis.name='SupportUnit_YUp_to_ZUp';axis.rotation.x=Math.PI/2;axis.add(source);const root=new THREE.Group();root.name=`Support_${def.id}_${++this.supportSerial}`;root.add(axis);this.root.add(root);
+    const def=this._supportDefinitionForArchetype(archetype);if(!def)return false;
     const base=this.tank?this.sim.entities.get(this.tank.entityId)?.components.transform:null,start=this.mapForge.metadata.startRegions[0],bx=base?.x??start.x,by=base?.y??start.y,heading=base?.heading??0,side=new THREE.Vector2(-Math.sin(heading),Math.cos(heading));
-    const offset=14+this.supportSerial*7,rawX=bx+side.x*offset-Math.cos(heading)*8,rawY=by+side.y*offset-Math.sin(heading)*8,loc=LOCOMOTORS[def.locomotor],spawn=loc.movementClass==='air'?{x:rawX,y:rawY}:this._findOpenGroundSpawn(def,rawX,rawY,heading),x=spawn.x,y=spawn.y,ground=this.mapForge.surfaceHeightAt(x,y),z=loc.movementClass==='air'?ground+(loc.preferredAltitude||22):ground-.1;
-    const components={unitType:def.id,owner:'player',transform:{x,y,z,heading},health:{current:def.maxHp,max:def.maxHp,destroyed:false},locomotor:{...loc},move:{waypoints:[],index:0,moving:false,state:'idle',order:null,destination:null,stuckSeconds:0}};if(def.id==='aegisHarvester')components.resource={capacity:def.resourceCapacity||1200,cargo:0,state:'idle',targetResourceEntityId:null,refineryEntityId:null,autoHarvest:false,harvestRate:def.harvestRate||120,unloadRate:def.unloadRate||600,creditPerUnit:def.creditPerUnit||1,unloadedThisTrip:0};const e=this.sim.createEntity('unit',components,'player');root.userData.skirmishEntityId=e.id;root.position.set(x,y,z);root.rotation.z=heading;
-    const wheelNames=archetype==='fieldHarvester'?['FrontLeftWheelSpinRoot','FrontRightWheelSpinRoot','MidLeftWheelSpinRoot','MidRightWheelSpinRoot','RearLeftWheelSpinRoot','RearRightWheelSpinRoot']:['FL','FR','RL','RR'].map(k=>`WheelSpinRoot_${k}`);
-    const view={entityId:e.id,root,source,axis,definition:def,archetype,rotorMain:source.getObjectByName('MainRotorRoot'),rotorTail:source.getObjectByName('TailRotorRoot'),wheels:wheelNames.map(n=>source.getObjectByName(n)).filter(Boolean),collector:source.getObjectByName('CollectorDrumRoot'),dumpDoors:[source.getObjectByName('HopperDoorLeftRoot'),source.getObjectByName('HopperDoorRightRoot')].filter(Boolean)};this._attachPresentationShadow(view,{air:loc.movementClass==='air'});this.supportUnits.push(view);this._emit(`${def.label} master asset deployed for skirmish testing.`);return true;
+    const offset=14+(this.supportSerial+1)*7,rawX=bx+side.x*offset-Math.cos(heading)*8,rawY=by+side.y*offset-Math.sin(heading)*8,loc=LOCOMOTORS[def.locomotor],spawn=loc.movementClass==='air'?{x:rawX,y:rawY}:this._findOpenGroundSpawn(def,rawX,rawY,heading),x=spawn.x,y=spawn.y,ground=this.mapForge.surfaceHeightAt(x,y),z=loc.movementClass==='air'?ground+(loc.preferredAltitude||22):ground-.1;
+    const components={unitType:def.id,owner:'player',transform:{x,y,z,heading},health:{current:def.maxHp,max:def.maxHp,destroyed:false},locomotor:{...loc},move:{waypoints:[],index:0,moving:false,state:'idle',order:null,destination:null,stuckSeconds:0}};
+    if(def.id==='aegisHarvester')components.resource={capacity:def.resourceCapacity||1200,cargo:0,state:'idle',targetResourceEntityId:null,refineryEntityId:null,autoHarvest:false,harvestRate:def.harvestRate||120,unloadRate:def.unloadRate||600,creditPerUnit:def.creditPerUnit||1,unloadedThisTrip:0};
+    const e=this.sim.createEntity('unit',components,'player');await this._createSupportUnitView(e,archetype);this._emit(`${def.label} master asset deployed for skirmish testing.`);return true;
   }
 
   _buildingComponents(type,x,y,{owner='player',complete=false}={}){
     const def=RTS_BUILDINGS[type],components={buildingType:type,owner,transform:{x,y,z:this.mapForge.surfaceHeightAt(x,y),heading:0},health:{current:def.hp,max:def.hp,destroyed:false},building:{footprint:[...def.footprint],collisionFootprint:[...(def.collisionFootprint||def.footprint)],buildRadius:def.buildRadius||0,powerUse:def.powerUse||0,powerSupply:def.powerSupply||0,starterUnit:def.starterUnit||null,starterUnitSpawned:false},construction:{progress:complete?1:0,duration:1.8,complete:!!complete}};
-    if(type==='barracks')components.production={queue:[],active:null,rallySerial:0};
+    if(type==='barracks'||type==='vehicleFactory')components.production={queue:[],active:null,rallySerial:0};
     return components;
   }
 
@@ -204,17 +223,49 @@ export class SkirmishTest{
     return true;
   }
 
+  produceVehicle(unitType){
+    if(!this.started)return false;
+    if(!['aegisMbt','aegisHmmwv','aegisHarvester'].includes(unitType))return false;
+    this.sim.issueCommand(RTS_COMMANDS.PRODUCE,{unitType},{source:COMMAND_SOURCES.PLAYER});
+    const def=UNIT_DEFINITIONS[unitType];this._emit(`${def?.label||'Vehicle'} production command queued.`);return true;
+  }
+
+  _factoryExitProfile(factory){
+    const b=factory?.components?.building,p=b?.vehicleExitProfile;if(p?.spawn&&p?.entry&&p?.rally)return p;
+    return {spawn:this._buildingLocalPoint(factory,[0,-7,.35]),entry:this._buildingLocalPoint(factory,[0,-9,.25]),path0:this._buildingLocalPoint(factory,[0,-11,.20]),path1:this._buildingLocalPoint(factory,[0,-13,.15]),path2:this._buildingLocalPoint(factory,[0,-15,.12]),rally:this._buildingLocalPoint(factory,[0,-19,.10])};
+  }
+  _factoryRallySlot(factory,index){
+    const p=this._factoryExitProfile(factory),base=p.rally,prev=p.path2||p.entry||p.spawn,dx=base.x-prev.x,dy=base.y-prev.y,len=Math.hypot(dx,dy)||1,fx=dx/len,fy=dy/len,sx=-fy,sy=fx,cols=[0,1,-1,2,-2],col=cols[index%cols.length],row=Math.floor(index/cols.length),spacing=6.0;
+    return {x:base.x+sx*col*spacing+fx*row*spacing*.85,y:base.y+sy*col*spacing+fy*row*spacing*.85,z:this.mapForge.surfaceHeightAt(base.x+sx*col*spacing+fx*row*spacing*.85,base.y+sy*col*spacing+fy*row*spacing*.85)-.1};
+  }
+  _spawnFactoryVehicleEntity(factory,unitType){
+    const def=UNIT_DEFINITIONS[unitType],archetype=this._supportArchetypeForUnit(unitType);if(!def||!archetype)return null;
+    const loc=LOCOMOTORS[def.locomotor],profile=this._factoryExitProfile(factory),prod=factory.components.production||(factory.components.production={queue:[],active:null,rallySerial:0}),rally=this._factoryRallySlot(factory,prod.rallySerial++),spawn=profile.spawn,entry=profile.entry||spawn,heading=Math.atan2(entry.y-spawn.y,entry.x-spawn.x),waypoints=[profile.entry,profile.path0,profile.path1,profile.path2,rally].filter(Boolean).map(p=>({x:p.x,y:p.y,z:this.mapForge.surfaceHeightAt(p.x,p.y)-.1}));
+    const components={unitType:def.id,owner:'player',transform:{x:spawn.x,y:spawn.y,z:spawn.z,heading},health:{current:def.maxHp,max:def.maxHp,destroyed:false},locomotor:{...loc},move:{waypoints,index:0,moving:true,state:'deploy',order:'factoryDeploy',destination:{x:rally.x,y:rally.y},stuckSeconds:0,exitBuildingId:factory.id},factoryProduced:true};
+    if(def.id==='aegisHarvester')components.resource={capacity:def.resourceCapacity||1200,cargo:0,state:'idle',targetResourceEntityId:null,refineryEntityId:null,autoHarvest:false,harvestRate:def.harvestRate||120,unloadRate:def.unloadRate||600,creditPerUnit:def.creditPerUnit||1,unloadedThisTrip:0};
+    const e=this.sim.createEntity('unit',components,'player');this.renderEvents.push({type:'spawnSupportUnit',entityId:e.id,archetype});this.renderEvents.push({type:'message',message:`${def.label} rolled out of the Vehicle Factory.`});return e;
+  }
+
   _handleProduceCommand(cmd){
     const def=UNIT_DEFINITIONS[cmd.payload.unitType];
-    if(!def||def.id!=='aegisRifleman'){this.renderEvents.push({type:'message',message:'Unknown infantry production request.'});return;}
-    const barracks=this.sim.entities.values().find(e=>e.kind==='building'&&e.components.owner==='player'&&e.components.buildingType==='barracks'&&e.components.construction?.complete&&!e.components.health?.destroyed);
-    if(!barracks){this.renderEvents.push({type:'message',message:'Build and complete a Field Barracks before training Riflemen.'});return;}
-    const prod=barracks.components.production||(barracks.components.production={queue:[],active:null});
-    const queued=(prod.queue?.length||0)+(prod.active?1:0);
-    if(queued>=5){this.renderEvents.push({type:'message',message:'Field Barracks queue is full.'});return;}
-    if(!this.playerFaction?.spend(def.cost)){this.renderEvents.push({type:'message',message:`Not enough credits for ${def.label}.`});return;}
-    prod.queue.push({unitType:def.id,remaining:def.buildSeconds,total:def.buildSeconds});
-    this.renderEvents.push({type:'message',message:`${def.label} training · $${def.cost}.`});
+    if(!def){this.renderEvents.push({type:'message',message:'Unknown unit production request.'});return;}
+    if(def.id==='aegisRifleman'){
+      const barracks=this.sim.entities.values().find(e=>e.kind==='building'&&e.components.owner==='player'&&e.components.buildingType==='barracks'&&e.components.construction?.complete&&!e.components.health?.destroyed);
+      if(!barracks){this.renderEvents.push({type:'message',message:'Build and complete a Field Barracks before training Riflemen.'});return;}
+      const prod=barracks.components.production||(barracks.components.production={queue:[],active:null,rallySerial:0}),queued=(prod.queue?.length||0)+(prod.active?1:0);
+      if(queued>=5){this.renderEvents.push({type:'message',message:'Field Barracks queue is full.'});return;}
+      if(!this.playerFaction?.spend(def.cost)){this.renderEvents.push({type:'message',message:`Not enough credits for ${def.label}.`});return;}
+      prod.queue.push({unitType:def.id,remaining:def.buildSeconds,total:def.buildSeconds});this.renderEvents.push({type:'message',message:`${def.label} training · $${def.cost}.`});return;
+    }
+    if(['aegisMbt','aegisHmmwv','aegisHarvester'].includes(def.id)){
+      const factory=this.sim.entities.values().find(e=>e.kind==='building'&&e.components.owner==='player'&&e.components.buildingType==='vehicleFactory'&&e.components.construction?.complete&&!e.components.health?.destroyed);
+      if(!factory){this.renderEvents.push({type:'message',message:`Build and complete an Aegis Vehicle Factory before producing ${def.label}.`});return;}
+      const prod=factory.components.production||(factory.components.production={queue:[],active:null,rallySerial:0}),queued=(prod.queue?.length||0)+(prod.active?1:0);
+      if(queued>=4){this.renderEvents.push({type:'message',message:'Vehicle Factory queue is full.'});return;}
+      if(!this.playerFaction?.spend(def.cost)){this.renderEvents.push({type:'message',message:`Not enough credits for ${def.label}.`});return;}
+      prod.queue.push({unitType:def.id,remaining:def.buildSeconds,total:def.buildSeconds});this.renderEvents.push({type:'message',message:`${def.label} production started · $${def.cost}.`});return;
+    }
+    this.renderEvents.push({type:'message',message:`${def.label||'Unit'} is not assigned to a production structure yet.`});
   }
 
   _spawnRiflemanEntity(barracks){
@@ -272,11 +323,18 @@ export class SkirmishTest{
       muzzle:g.getObjectByName('MuzzleSocket'),
       vehicleSpawn:g.getObjectByName('WF_SPAWN_VEHICLE'),
       vehicleEntry:g.getObjectByName('WF_ENTRY'),
+      vehicleExit0:g.getObjectByName('WF_EXIT_PATH_0'),
+      vehicleExit1:g.getObjectByName('WF_EXIT_PATH_1'),
+      vehicleExit2:g.getObjectByName('WF_EXIT_PATH_2'),
       vehicleRally:g.getObjectByName('WF_RALLY'),
       serviceBay:g.getObjectByName('WF_SERVICE_BAY'),
       doorCenter:g.getObjectByName('WF_DOOR_CENTER')
     }};
     if(type==='refinery'){g.updateMatrixWorld(true);const dock=g.getObjectByName('HarvesterDockSocket');if(dock){const wp=new THREE.Vector3();dock.getWorldPosition(wp);entity.components.building.harvesterDockPoint={x:wp.x,y:wp.y,z:wp.z};}}
+    if(type==='vehicleFactory'){
+      g.updateMatrixWorld(true);const point=(node)=>{if(!node)return null;const wp=new THREE.Vector3();node.getWorldPosition(wp);return {x:wp.x,y:wp.y,z:wp.z};};
+      entity.components.building.vehicleExitProfile={spawn:point(view.functional.vehicleSpawn),entry:point(view.functional.vehicleEntry),path0:point(view.functional.vehicleExit0),path1:point(view.functional.vehicleExit1),path2:point(view.functional.vehicleExit2),rally:point(view.functional.vehicleRally)};
+    }
     this.buildings.push(view);return view;
   }
   async _spawnStarterHarvesterForRefinery(refineryEntityId){
@@ -486,7 +544,8 @@ export class SkirmishTest{
   _tryGroundUnitMove(e,dx,dy){
     const t=e.components.transform,loc=e.components.locomotor,nx=t.x+dx,ny=t.y+dy;
     if(!this.mapForge.movementAt(nx,ny,loc.movementClass).allowed)return false;
-    const blockers=this._unitPoseBlockers(e,nx,ny,t.heading);
+    const moveOpts={ignoreBuildingId:e.components.move?.exitBuildingId||null};
+    const blockers=this._unitPoseBlockers(e,nx,ny,t.heading,moveOpts);
     if(!blockers.length){this._moveGroundUnitTo(e,nx,ny);return true;}
     const candidates=[];
     for(const b of blockers){
@@ -500,7 +559,7 @@ export class SkirmishTest{
     for(const [sx,sy] of candidates){
       const key=`${sx.toFixed(3)}:${sy.toFixed(3)}`;if(seen.has(key)||Math.hypot(sx,sy)<.01)continue;seen.add(key);
       const px=t.x+sx,py=t.y+sy;if(!this.mapForge.movementAt(px,py,loc.movementClass).allowed)continue;
-      if(this._unitPoseAllowed(e,px,py,t.heading)){this._moveGroundUnitTo(e,px,py);return true;}
+      if(this._unitPoseAllowed(e,px,py,t.heading,moveOpts)){this._moveGroundUnitTo(e,px,py);return true;}
     }
     return false;
   }
@@ -514,7 +573,7 @@ export class SkirmishTest{
         if(throttle){const speed=throttle>0?loc.maxSpeed:loc.reverseSpeed,step=speed*dt*throttle;this._tryGroundUnitMove(e,Math.cos(t.heading)*step,Math.sin(t.heading)*step);}continue;
       }
       const move=c.move;if(!move?.moving||!move.waypoints?.length)continue;const wp=move.waypoints[Math.min(move.index||0,move.waypoints.length-1)],dx=wp.x-t.x,dy=wp.y-t.y,dist=Math.hypot(dx,dy),def=UNIT_DEFINITIONS[c.unitType]||{},fp=def.collisionFootprint||[(def.collisionRadius||1)*2,(def.collisionRadius||1)*2],arrival=Math.max(.8,Math.min(2.6,Math.max(fp[0],fp[1])*.14));
-      if(dist<=arrival){move.index=(move.index||0)+1;if(move.index>=move.waypoints.length){move.moving=false;move.state='arrived';move.stuckSeconds=0;}continue;}
+      if(dist<=arrival){move.index=(move.index||0)+1;if(move.index>=move.waypoints.length){move.moving=false;move.state=move.state==='deploy'?'rallied':'arrived';move.exitBuildingId=null;move.stuckSeconds=0;}continue;}
       const desired=Math.atan2(dy,dx),err=angleDelta(desired,t.heading),turnStep=(loc.turnRate||1)*dt;t.heading+=clamp(err,-turnStep,turnStep);
       if(loc.movementClass==='air'){
         const step=Math.min(dist,(loc.maxSpeed||30)*dt),nx=t.x+Math.cos(desired)*step,ny=t.y+Math.sin(desired)*step,ground=this.mapForge.surfaceHeightAt(nx,ny),targetZ=ground+(loc.preferredAltitude||28),dz=targetZ-t.z,maxDz=(dz>=0?(loc.climbRate||10):(loc.descentRate||10))*dt;t.x=nx;t.y=ny;t.z+=clamp(dz,-maxDz,maxDz);move.stuckSeconds=0;continue;
@@ -594,12 +653,12 @@ export class SkirmishTest{
 
   _systemProduction(dt){
     for(const e of this.sim.entities.values()){
-      if(e.kind!=='building'||e.components.buildingType!=='barracks'||!e.components.construction?.complete||e.components.health?.destroyed)continue;
-      const p=e.components.production||(e.components.production={queue:[],active:null});
+      if(e.kind!=='building'||!['barracks','vehicleFactory'].includes(e.components.buildingType)||!e.components.construction?.complete||e.components.health?.destroyed)continue;
+      const p=e.components.production||(e.components.production={queue:[],active:null,rallySerial:0});
       if(!p.active&&p.queue.length)p.active=p.queue.shift();
       if(!p.active)continue;
       p.active.remaining=Math.max(0,p.active.remaining-dt);
-      if(p.active.remaining<=0){const unitType=p.active.unitType;p.active=null;if(unitType==='aegisRifleman')this._spawnRiflemanEntity(e);}
+      if(p.active.remaining<=0){const unitType=p.active.unitType;p.active=null;if(unitType==='aegisRifleman')this._spawnRiflemanEntity(e);else this._spawnFactoryVehicleEntity(e,unitType);}
     }
   }
 
@@ -653,6 +712,7 @@ export class SkirmishTest{
       else if(ev.type==='constructionComplete'){const v=this.buildings.find(b=>b.entityId===ev.entityId);if(v)v.group.scale.z=1;this.lastMessage=`${ev.label} complete.`;if(ev.buildingType==='refinery'){void this._spawnStarterHarvesterForRefinery(ev.entityId).catch(err=>{const e=this.sim.entities.get(ev.entityId);if(e?.components?.building)e.components.building.starterUnitSpawned=false;console.error('Starter harvester spawn failed',err);this.renderEvents.push({type:'message',message:`Refinery completed, but starter Harvester failed to dock: ${err.message}`});});}}
       else if(ev.type==='spawnProjectile'){const e=this.sim.entities.get(ev.entityId);if(e){const mesh=new THREE.Mesh(new THREE.SphereGeometry(.28,8,6),new THREE.MeshStandardMaterial({color:0xffd37a,emissive:0xff7a18,emissiveIntensity:3,roughness:.25}));const t=e.components.transform;mesh.position.set(t.x,t.y,t.z);this.effects.add(mesh);this.projectileViews.set(e.id,mesh);}}
       else if(ev.type==='spawnRifleman'){const e=this.sim.entities.get(ev.entityId);if(e){const promise=this._createRiflemanView(e);this.infantryViewPromises.set(e.id,promise);promise.catch(err=>{console.error('Rifleman visual load failed',err);this.renderEvents.push({type:'message',message:`Rifleman visual load failed: ${err.message}`});});}}
+      else if(ev.type==='spawnSupportUnit'){const e=this.sim.entities.get(ev.entityId);if(e){void this._createSupportUnitView(e,ev.archetype,{name:`PLAYER_${e.components.unitType}_${e.id}`}).catch(err=>{console.error('Produced vehicle visual load failed',err);this.renderEvents.push({type:'message',message:`Produced vehicle visual load failed: ${err.message}`});});}}
       else if(ev.type==='infantryFire'){const v=this.infantryUnits.find(x=>x.entityId===ev.entityId);if(v?.fireAction){v.fireTimer=.70;if(v.walkAction)v.walkAction.paused=true;v.fireAction.reset();v.fireAction.setLoop(THREE.LoopOnce,1);v.fireAction.clampWhenFinished=true;v.fireAction.play();}this._rifleTracer(ev.from,ev.to);}
       else if(ev.type==='muzzleFlash')this._muzzleFlash(ev.position);
       else if(ev.type==='impact')this._impact(ev.position,ev.big);
@@ -706,10 +766,10 @@ export class SkirmishTest{
 
   state(){
     const tank=this.tank&&this.sim.entities.get(this.tank.entityId),hp=tank?.components.health;
-    const barracks=this.sim.entities.values().find(e=>e.kind==='building'&&e.components.owner==='player'&&e.components.buildingType==='barracks'&&e.components.construction?.complete&&!e.components.health?.destroyed);
-    const prod=barracks?.components.production,riflemanQueue=(prod?.queue?.length||0)+(prod?.active?1:0),riflemanDef=UNIT_DEFINITIONS.aegisRifleman,selected=this._selectedEntity(),selectedDef=selected?UNIT_DEFINITIONS[selected.components.unitType]:null,selectedHp=selected?.components.health,selectedResource=selected?.components.resource,selectedMove=selected?.components.move;
+    const barracks=this.sim.entities.values().find(e=>e.kind==='building'&&e.components.owner==='player'&&e.components.buildingType==='barracks'&&e.components.construction?.complete&&!e.components.health?.destroyed),factory=this.sim.entities.values().find(e=>e.kind==='building'&&e.components.owner==='player'&&e.components.buildingType==='vehicleFactory'&&e.components.construction?.complete&&!e.components.health?.destroyed);
+    const prod=barracks?.components.production,riflemanQueue=(prod?.queue?.length||0)+(prod?.active?1:0),factoryProd=factory?.components.production,vehicleQueue=(factoryProd?.queue?.length||0)+(factoryProd?.active?1:0),riflemanDef=UNIT_DEFINITIONS.aegisRifleman,mbtDef=UNIT_DEFINITIONS.aegisMbt,hmmwvDef=UNIT_DEFINITIONS.aegisHmmwv,harvesterDef=UNIT_DEFINITIONS.aegisHarvester,selected=this._selectedEntity(),selectedDef=selected?UNIT_DEFINITIONS[selected.components.unitType]:null,selectedHp=selected?.components.health,selectedResource=selected?.components.resource,selectedMove=selected?.components.move;
     let resourceRemaining=0,resourceCapacity=0,resourceFields=0;for(const e of this.sim.entities.values()){const f=e.components.resourceField;if(e.kind!=='resource'||!f)continue;resourceFields++;resourceRemaining+=f.remaining;resourceCapacity+=f.capacity;}
-    return {credits:this.credits,powerSupply:this.powerSupply,powerUse:this.powerUse,powerNet:(this.playerFaction?.powerNet??0),tankHp:hp?.current||0,tankMaxHp:hp?.max||0,pendingBuild:this.pendingBuild,buildingCount:this.buildings.length,supportUnitCount:this.supportUnits.length,infantryCount:this.infantryUnits.length,barracksReady:!!barracks,riflemanQueue,riflemanCost:riflemanDef.cost,canTrainRifleman:!!barracks&&this.credits>=riflemanDef.cost&&riflemanQueue<5,fireReady:(tank?.components.weapon?.cooldown||0)<=0,message:this.lastMessage,simTick:this.sim.clock.tick,simHz:this.sim.clock.hz,simPaused:this.sim.paused,entityCount:this.sim.entities.count(),stateHash:this.sim.stateHash(),commandLog:this.sim.commands.recent(6),simulationVersion:RTS_SIMULATION_VERSION,viewMode:this.viewMode,collisionDebug:this.collisionDebug,selectedUnitId:selected?.id||null,selectedUnitType:selected?.components.unitType||null,selectedUnitLabel:selectedDef?.label||null,selectedHp:selectedHp?.current||0,selectedMaxHp:selectedHp?.max||0,selectedOrder:selectedResource?.state||selectedMove?.state||null,selectedCargo:selectedResource?.cargo||0,selectedCapacity:selectedResource?.capacity||0,harvestCredits:this.harvestCredits,resourceFields,resourceRemaining,resourceCapacity};
+    return {credits:this.credits,powerSupply:this.powerSupply,powerUse:this.powerUse,powerNet:(this.playerFaction?.powerNet??0),tankHp:hp?.current||0,tankMaxHp:hp?.max||0,pendingBuild:this.pendingBuild,buildingCount:this.buildings.length,supportUnitCount:this.supportUnits.length,infantryCount:this.infantryUnits.length,barracksReady:!!barracks,riflemanQueue,riflemanCost:riflemanDef.cost,canTrainRifleman:!!barracks&&this.credits>=riflemanDef.cost&&riflemanQueue<5,factoryReady:!!factory,vehicleQueue,vehicleQueueMax:4,mbtCost:mbtDef.cost,hmmwvCost:hmmwvDef.cost,harvesterCost:harvesterDef.cost,canBuildMbt:!!factory&&this.credits>=mbtDef.cost&&vehicleQueue<4,canBuildHmmwv:!!factory&&this.credits>=hmmwvDef.cost&&vehicleQueue<4,canBuildHarvester:!!factory&&this.credits>=harvesterDef.cost&&vehicleQueue<4,fireReady:(tank?.components.weapon?.cooldown||0)<=0,message:this.lastMessage,simTick:this.sim.clock.tick,simHz:this.sim.clock.hz,simPaused:this.sim.paused,entityCount:this.sim.entities.count(),stateHash:this.sim.stateHash(),commandLog:this.sim.commands.recent(6),simulationVersion:RTS_SIMULATION_VERSION,viewMode:this.viewMode,collisionDebug:this.collisionDebug,selectedUnitId:selected?.id||null,selectedUnitType:selected?.components.unitType||null,selectedUnitLabel:selectedDef?.label||null,selectedHp:selectedHp?.current||0,selectedMaxHp:selectedHp?.max||0,selectedOrder:selectedResource?.state||selectedMove?.state||null,selectedCargo:selectedResource?.cargo||0,selectedCapacity:selectedResource?.capacity||0,harvestCredits:this.harvestCredits,resourceFields,resourceRemaining,resourceCapacity};
   }
   _emit(message=null){if(message)this.lastMessage=message;this.onStateChange?.(this.state());}
 }

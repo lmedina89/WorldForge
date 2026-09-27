@@ -1,3 +1,25 @@
+# WorldForge v0.13.14 — Road Grounding + Vehicle Factory Production
+
+WorldForge v0.13.14 advances Skirmish to **0.7.1**, RTS Map Forge to **0.2.9**, and RTS Definitions to **0.6.1**. This is a combined gameplay/terrain milestone so the road fix ships with a meaningful RTS feature instead of as a tiny standalone upload.
+
+## Authoritative road grounding
+- Roads, carved terrain, and unit ground-height queries now share the same deterministic smoothed road-grade function.
+- The visible dark road core uses only a **2.5 cm** rendering bias above the authoritative road grade; the shoulder uses **0.8 cm**. The old large lift that could let tanks visually pass under a road ribbon is removed.
+- `surfaceHeightAt()` recognizes the actual road core and returns its rendered top, so tracked/wheeled units ride the same road surface the player sees.
+- Bridges remain separate raised traversal surfaces and continue to override normal road/terrain height where appropriate.
+- The v0.13.12 continuous-river fix is retained.
+
+## Vehicle Factory production
+- A completed Aegis Vehicle Factory now has a real simulation-owned production queue.
+- The factory can build **Aegis-X MBT ($1,100 / 8 s)**, **HMMWV-50 ($450 / 4 s)**, and **Field Harvester ($800 / 6 s)**. Credits are spent when the order is accepted.
+- Produced vehicles use the factory master's exact `WF_SPAWN_VEHICLE`, `WF_ENTRY`, `WF_EXIT_PATH_0/1/2`, and `WF_RALLY` helpers for rollout instead of appearing beside the building.
+- Factory rollout temporarily ignores only the producing factory's collision volume, then returns to normal oriented vehicle collision after clearing the exit path.
+- Produced vehicles become ordinary selectable RTS units and use the same routed movement system as the existing player units. Extra Harvesters use the same crystal-field/refinery economy loop.
+- The existing Talon button remains development-only until an air-production structure/system is introduced.
+
+## Asset preservation
+No production GLBs were rebuilt or modified. All **16 approved GLBs** match the v0.13.12 release byte-for-byte, including the Rich/Dense crystal masters, Vehicle Factory, Harvester, HMMWV, and Aegis-X.
+
 # WorldForge v0.13.13 — Skirmish Economy & RTS Command Foundation
 
 WorldForge v0.13.13 advances Skirmish to **0.7.0**, RTS Map Forge to **0.2.8**, and RTS Definitions to **0.6.0**. This milestone begins turning the battlefield from an asset test harness into a playable RTS loop while preserving the approved map, structures, vehicles, infantry, and Rich/Dense crystal GLBs.

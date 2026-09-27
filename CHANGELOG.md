@@ -1,3 +1,17 @@
+# v0.13.14 — Road Grounding + Vehicle Factory Production
+
+- WorldForge advanced to **0.13.14**, Skirmish to **0.7.1**, RTS Map Forge to **0.2.9**, and RTS Definitions to **0.6.1**.
+- Replaced the previous elevated road-profile behavior with one authoritative smoothed grade shared by terrain carving, road rendering, and unit surface-height queries.
+- Reduced visible road lift to **0.025 m** and shoulder lift to **0.008 m**, eliminating the large floating-road gap visible over vehicles while preserving z-fight protection.
+- Added `roadSurfaces` grounding metadata so units on the road core use the rendered road top instead of the underlying terrain sample.
+- Preserved the continuous river / bridge water-surface repair from v0.13.12.
+- Added real Aegis Vehicle Factory production queues for Aegis-X, HMMWV-50, and Field Harvester.
+- Added prototype production costs/times: Aegis-X **$1,100 / 8.0 s**, HMMWV-50 **$450 / 4.0 s**, Harvester **$800 / 6.0 s**.
+- Produced vehicles roll out through the exact factory helper path: `WF_SPAWN_VEHICLE` → `WF_ENTRY` → `WF_EXIT_PATH_0/1/2` → `WF_RALLY`.
+- Produced ground vehicles use the same selection, routed movement, OBB collision, and Harvester economy systems as manually deployed units.
+- Talon remains development-only; no air factory was invented in this milestone.
+- No approved GLB was rebuilt or modified.
+
 # v0.13.13 — Skirmish Economy & RTS Command Foundation
 
 - WorldForge advanced to **0.13.13**, Skirmish to **0.7.0**, RTS Map Forge to **0.2.8**, and RTS Definitions to **0.6.0**.

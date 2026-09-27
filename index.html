@@ -152,7 +152,7 @@
     <p class="miniNote"><b>Main-world default:</b> 1,536 m temperate battlefield with enlarged ~260 m base-development reserves. Trees and rock cover stay dense in wilderness but are cleared back from start/build zones, safe expansions, and road corridors.<br><br>Generated tactical structure includes ridge barriers, deliberate passes, valleys/ravines, mountain pockets, hidden expansion bowls, high ground, roads, raised/graded river bridges, multi-cluster resource fields populated with the exact Rich/Dense crystal masters, forests/rocks, and class-specific traversal metadata. Tracked, wheeled, infantry, amphibious and air movement are audited separately.</p>
   </section>
   <section id="skirmishPanel" hidden>
-    <div class="sectionTitle">SKIRMISH LAB 0.6.2 · IMMERSIVE COMBAT UI + COLLISION CLEANUP</div>
+    <div class="sectionTitle">SKIRMISH LAB 0.7.1 · IMMERSIVE COMBAT UI + ECONOMY / VEHICLE PRODUCTION</div>
     <div class="skirmishStatusCard"><b id="skirmishEconomy">$5,000 · POWER 0 / 0</b><span id="skirmishTankStatus">AEGIS-X · 1200 / 1200 HP</span></div>
     <div class="cols"><label>Player faction skin<select id="skirmishPlayerPalette"><option value="aegis" selected>Aegis Olive</option><option value="desert">Desert Tan</option><option value="crimson">Crimson</option><option value="slate">Slate Blue</option><option value="blackops">Black Ops</option></select></label><label>Enemy skin<select id="skirmishEnemyPalette"><option value="crimson" selected>Crimson</option><option value="aegis">Aegis Olive</option><option value="desert">Desert Tan</option><option value="slate">Slate Blue</option><option value="blackops">Black Ops</option></select></label></div><div class="skirmishButtons"><button id="skirmishStart" class="skirmishPrimary">START / RESUME SKIRMISH</button><button id="skirmishReset">RESET SKIRMISH</button></div>
     <p class="miniNote"><b>Main World:</b> Skirmish is currently locked to the approved 1,536 m temperate world · seed 731904 · fortified mountain starts · river + roads. Map Forge remains available for editing/research, but entering Skirmish restores this world.<br><br><b>Scenario start:</b> the exact Tactical Command Post v2.1 master GLB and real Aegis-X v2 test tank spawn in your reserved start region. Building the Power Plant uses the exact compact Field Power Node v1.0 master GLB. The Field Barracks v0.2.3 trains the animated Aegis Rifleman through its recessed deployment exit. The Aegis Vehicle Factory v0.2 and Guardian Turret v0.3 are now exact master-building replacements for their placeholders. Building the Refinery uses the exact Field Refinery v2 master, and when construction completes one exact Field Harvester v2 is bundled with it and parked over the real unload grate using the GLB dock sockets. The older large HQ and power station remain civilian/neutral Building Forge assets. Map Forge creates terrain plus neutral Rich/Dense mineral deposits; faction bases and structures remain separate.</p>
@@ -166,10 +166,10 @@
       <button id="skirmishCancelBuild"><b>CANCEL</b><span>placement</span></button>
     </div>
     <p class="miniNote">Select a structure, then tap valid buildable terrain near one of your completed structures. Credits are deducted immediately and the structure constructs in-place.</p>
-    <div class="sectionTitle">REAL ASSET DEPOT</div>
-    <div class="skirmishButtons"><button id="skirmishSpawnHmmwv">DEPLOY HMMWV-50</button><button id="skirmishSpawnTalon">DEPLOY TALON AH-X</button><button id="skirmishSpawnHarvester">DEPLOY HARVESTER</button></div>
-    <div class="skirmishButtons"><button id="skirmishTrainRiflemanPanel"><b>TRAIN RIFLEMAN</b><span>$120 · requires completed Barracks</span></button></div>
-    <p class="miniNote">These deploy the exact approved HMMWV, attack-helicopter, and Field Harvester GLBs as simulation-owned test units. Each completed Field Refinery also includes one starter Harvester already docked inside. Aegis-X remains the direct-drive combat unit in this pass; vehicle-specific driving/flight/weapon behavior comes next rather than using blocky stand-ins.</p>
+    <div class="sectionTitle">UNIT PRODUCTION</div>
+    <div class="skirmishButtons"><button id="skirmishBuildMbt"><b>BUILD AEGIS-X</b><span>$1,100 · Vehicle Factory</span></button><button id="skirmishSpawnHmmwv"><b>BUILD HMMWV-50</b><span>$450 · Vehicle Factory</span></button><button id="skirmishSpawnHarvester"><b>BUILD HARVESTER</b><span>$800 · Vehicle Factory</span></button></div>
+    <div class="skirmishButtons"><button id="skirmishTrainRiflemanPanel"><b>TRAIN RIFLEMAN</b><span>$120 · Barracks</span></button><button id="skirmishSpawnTalon"><b>DEV TALON AH-X</b><span>air-production system later</span></button></div>
+    <p class="miniNote">Completed Vehicle Factories now spend real credits and queue Aegis-X, HMMWV-50, and Field Harvester production. Vehicles emerge through the exact factory spawn/exit/rally sockets and become normal selectable RTS units. The Talon remains a development-only deploy until an air-production structure is added. Each completed Refinery still includes one starter Harvester already docked inside.</p>
     <div class="sectionTitle">COMBAT TEST</div>
     <div class="skirmishButtons"><button id="skirmishFollow">FOLLOW TANK: ON</button><button id="skirmishFirePanel">FIRE MAIN GUN</button></div>
     <p class="miniNote">Tap a friendly unit to select it, then tap terrain to issue a routed move order. Select a Field Harvester and tap a Rich/Dense crystal field to mine it, return to a completed Refinery, unload, and add credits. With no unit selected, battlefield taps still aim the Aegis-X turret; the drive pad/WASD remains available for manual tank control.</p>
@@ -222,14 +222,15 @@
       <button data-skirmish-build="gunTurret"><b>GUARDIAN TURRET</b><span>$600</span></button>
       <button id="skirmishDrawerCancelBuild"><b>CANCEL</b><span>placement</span></button>
     </div>
-    <div class="skirmishBuildDrawerHead"><b>TRAIN UNITS</b></div>
-    <div class="skirmishBuildDrawerGrid"><button id="skirmishTrainRifleman"><b>RIFLEMAN</b><span>$120 · Barracks</span></button></div>
-    <div class="skirmishBuildDrawerHead skirmishDrawerSubhead"><b>DEPLOY TEST VEHICLES</b></div>
+    <div class="skirmishBuildDrawerHead"><b>TRAIN / PRODUCE UNITS</b></div>
     <div class="skirmishBuildDrawerGrid">
-      <button id="skirmishDrawerSpawnHmmwv"><b>HMMWV-50</b><span>approved vehicle asset</span></button>
-      <button id="skirmishDrawerSpawnTalon"><b>TALON AH-X</b><span>attack helicopter</span></button>
-      <button id="skirmishDrawerSpawnHarvester"><b>HARVESTER</b><span>mines crystal fields</span></button>
+      <button id="skirmishTrainRifleman"><b>RIFLEMAN</b><span>$120 · Barracks</span></button>
+      <button id="skirmishDrawerBuildMbt"><b>AEGIS-X</b><span>$1,100 · Vehicle Factory</span></button>
+      <button id="skirmishDrawerSpawnHmmwv"><b>HMMWV-50</b><span>$450 · Vehicle Factory</span></button>
+      <button id="skirmishDrawerSpawnHarvester"><b>HARVESTER</b><span>$800 · Vehicle Factory</span></button>
     </div>
+    <div class="skirmishBuildDrawerHead skirmishDrawerSubhead"><b>DEV / AIR TEST</b></div>
+    <div class="skirmishBuildDrawerGrid"><button id="skirmishDrawerSpawnTalon"><b>TALON AH-X</b><span>development deploy</span></button></div>
     <div class="skirmishBuildDrawerHead skirmishDrawerSubhead"><b>DEV / COLLISION</b></div>
     <div class="skirmishBuildDrawerGrid"><button id="skirmishCollisionDebug"><b>COLLISION DEBUG</b><span>OFF · show physical footprints</span></button></div>
   </div>

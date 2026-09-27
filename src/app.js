@@ -551,6 +551,12 @@ function updateSkirmishUi(state=skirmish.state()){
     const b=$(id);if(!b)continue;b.disabled=!state.canTrainRifleman;b.classList.toggle('active',state.riflemanQueue>0);
     const span=b.querySelector('span');if(span)span.textContent=state.barracksReady?`$${state.riflemanCost} · queue ${state.riflemanQueue}/5`:`$${state.riflemanCost} · build Barracks`;
   }
+  const vehicleButtons=[
+    {ids:['skirmishBuildMbt','skirmishDrawerBuildMbt'],cost:state.mbtCost,can:state.canBuildMbt,label:'AEGIS-X'},
+    {ids:['skirmishSpawnHmmwv','skirmishDrawerSpawnHmmwv'],cost:state.hmmwvCost,can:state.canBuildHmmwv,label:'HMMWV-50'},
+    {ids:['skirmishSpawnHarvester','skirmishDrawerSpawnHarvester'],cost:state.harvesterCost,can:state.canBuildHarvester,label:'HARVESTER'}
+  ];
+  for(const spec of vehicleButtons)for(const id of spec.ids){const b=$(id);if(!b)continue;b.disabled=!spec.can;b.classList.toggle('active',state.vehicleQueue>0);const span=b.querySelector('span');if(span)span.textContent=state.factoryReady?`$${spec.cost} · factory queue ${state.vehicleQueue}/${state.vehicleQueueMax}`:`$${spec.cost} · build Vehicle Factory`;}
   if($('skirmishCollisionDebug')){const b=$('skirmishCollisionDebug'),span=b.querySelector('span');b.classList.toggle('active',!!state.collisionDebug);if(span)span.textContent=`${state.collisionDebug?'ON':'OFF'} · show physical footprints`;}
   const buildNames={powerPlant:'POWER PLANT',refinery:'REFINERY',barracks:'BARRACKS',vehicleFactory:'VEHICLE FACTORY',gunTurret:'GUARDIAN TURRET'};
   const buildCosts={powerPlant:500,refinery:900,barracks:650,vehicleFactory:1200,gunTurret:600};
@@ -567,7 +573,7 @@ async function activateSkirmishMode({reset=false}={}){
     catch(err){$('status').textContent='Skirmish main-world generation failed: '+err.message;return;}
   }
   showMode('skirmish');setSkirmishBuildDrawer(false);rtsMapForge.overlay.visible=false;rtsMapForge.movementOverlay.visible=false;rtsMapForge.setFogPreview(false);
-  try{await rtsMapForge.awaitResourceAssets();skirmish.setFactionPalettes($('skirmishPlayerPalette').value,$('skirmishEnemyPalette').value);await skirmish.start({reset});configureSceneForMode();syncSkirmishViewport();drawRTSMapMinimap();updateSkirmishUi();$('status').textContent=`Skirmish Lab ${SKIRMISH_VERSION} · economy + command foundation active · tap friendly units to select, terrain to move, and crystal fields with a Harvester to mine.`;}
+  try{await rtsMapForge.awaitResourceAssets();skirmish.setFactionPalettes($('skirmishPlayerPalette').value,$('skirmishEnemyPalette').value);await skirmish.start({reset});configureSceneForMode();syncSkirmishViewport();drawRTSMapMinimap();updateSkirmishUi();$('status').textContent=`Skirmish Lab ${SKIRMISH_VERSION} · economy, routed commands, and Vehicle Factory production active · tap friendly units to select, terrain to move, and crystal fields with a Harvester to mine.`;}
   catch(err){$('status').textContent='Skirmish start failed: '+err.message;}
 }
 
@@ -648,9 +654,11 @@ $('skirmishCancelBuild').onclick=()=>{skirmish.cancelBuild();setSkirmishBuildDra
 $('skirmishDrawerCancelBuild').onclick=()=>{skirmish.cancelBuild();setSkirmishBuildDrawer(false);updateSkirmishUi();};
 $('skirmishPlacementCancel').onclick=()=>{skirmish.cancelBuild();updateSkirmishUi();};
 const deploySkirmishSupport=async(kind,label)=>{try{await skirmish.spawnSupportUnit(kind);updateSkirmishUi();drawRTSMapMinimap();}catch(err){$('status').textContent=`${label} deploy failed: ${err.message}`;}};
-for(const id of ['skirmishSpawnHmmwv','skirmishDrawerSpawnHmmwv'])$(id).onclick=()=>deploySkirmishSupport('hmmwv50','HMMWV');
+const queueSkirmishVehicle=(unitType)=>{skirmish.produceVehicle(unitType);updateSkirmishUi();};
+for(const id of ['skirmishBuildMbt','skirmishDrawerBuildMbt'])$(id).onclick=()=>queueSkirmishVehicle('aegisMbt');
+for(const id of ['skirmishSpawnHmmwv','skirmishDrawerSpawnHmmwv'])$(id).onclick=()=>queueSkirmishVehicle('aegisHmmwv');
+for(const id of ['skirmishSpawnHarvester','skirmishDrawerSpawnHarvester'])$(id).onclick=()=>queueSkirmishVehicle('aegisHarvester');
 for(const id of ['skirmishSpawnTalon','skirmishDrawerSpawnTalon'])$(id).onclick=()=>deploySkirmishSupport('attackHeli','Talon');
-for(const id of ['skirmishSpawnHarvester','skirmishDrawerSpawnHarvester'])$(id).onclick=()=>deploySkirmishSupport('fieldHarvester','Harvester');
 for(const id of ['skirmishTrainRifleman','skirmishTrainRiflemanPanel'])$(id).onclick=()=>{skirmish.trainRifleman();updateSkirmishUi();};
 $('skirmishCollisionDebug').onclick=()=>{skirmish.toggleCollisionDebug();updateSkirmishUi();};
 document.querySelectorAll('[data-skirmish-build]').forEach(b=>b.onclick=()=>{skirmish.selectBuild(b.dataset.skirmishBuild);setSkirmishBuildDrawer(false);updateSkirmishUi();});

@@ -6,7 +6,7 @@ const map=fs.readFileSync(path.join(ROOT,'src/rts-map/rts-map-forge.js'),'utf8')
 const app=fs.readFileSync(path.join(ROOT,'src/app.js'),'utf8');
 const html=fs.readFileSync(path.join(ROOT,'index.html'),'utf8');
 
-assert.match(map,/RTS_MAP_FORGE_VERSION='0\.2\.8'/);
+assert.match(map,/RTS_MAP_FORGE_VERSION='0\.2\.9'/);
 for(const key of ['tracked','wheeled','infantry','amphibious','air']) assert.match(map,new RegExp(`${key}:\\{bit:`));
 assert.match(map,/maxSlopeDeg:32/,'tracked slope profile missing');
 assert.match(map,/maxSlopeDeg:22/,'wheeled slope profile missing');
@@ -27,4 +27,4 @@ assert.match(map,/reachableStartPercent/,'per-class connectivity audit missing')
 assert.match(map,/setMovementPreview/,'movement preview method missing');
 assert.match(app,/mapMovementPreview/,'movement preview UI wiring missing');
 assert.match(html,/id="mapMovementPreview"/,'movement preview selector missing');
-console.log(JSON.stringify({ok:true,rtsMapForge:'0.2.8',movementClasses:5,uprightFoliage:true,gradedBridges:true,classCosts:true,classConnectivity:true},null,2));
+console.log(JSON.stringify({ok:true,rtsMapForge:'0.2.9',movementClasses:5,uprightFoliage:true,gradedBridges:true,classCosts:true,classConnectivity:true},null,2));

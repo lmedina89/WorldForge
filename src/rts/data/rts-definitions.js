@@ -1,4 +1,4 @@
-export const RTS_DEFINITIONS_VERSION='0.6.0';
+export const RTS_DEFINITIONS_VERSION='0.6.1';
 
 
 export const BUILDING_DEFINITIONS=Object.freeze({
@@ -25,11 +25,11 @@ export const WEAPONS=Object.freeze({
 
 export const UNIT_DEFINITIONS=Object.freeze({
   // Ground vehicles use oriented hull footprints for local collision. collisionRadius remains only as a broad fallback / projectile helper.
-  aegisMbt:Object.freeze({id:'aegisMbt',label:'Aegis-X MBT',asset:'assets/aegis_x_mbt_v2.glb',maxHp:1200,locomotor:'trackedHeavy',primaryWeapon:'aegis120mm',collisionRadius:4.8,collisionFootprint:[7.55,3.10],collisionHeadingOffset:0}),
-  aegisHmmwv:Object.freeze({id:'aegisHmmwv',label:'Aegis HMMWV-50',asset:'assets/aegis_hmmwv50_v2.glb',maxHp:540,locomotor:'wheeledLight',collisionRadius:3.2,collisionFootprint:[4.70,2.22],collisionHeadingOffset:0}),
+  aegisMbt:Object.freeze({id:'aegisMbt',label:'Aegis-X MBT',asset:'assets/aegis_x_mbt_v2.glb',maxHp:1200,locomotor:'trackedHeavy',primaryWeapon:'aegis120mm',collisionRadius:4.8,collisionFootprint:[7.55,3.10],collisionHeadingOffset:0,cost:1100,buildSeconds:8.0}),
+  aegisHmmwv:Object.freeze({id:'aegisHmmwv',label:'Aegis HMMWV-50',asset:'assets/aegis_hmmwv50_v2.glb',maxHp:540,locomotor:'wheeledLight',collisionRadius:3.2,collisionFootprint:[4.70,2.22],collisionHeadingOffset:0,cost:450,buildSeconds:4.0}),
   // Aircraft keep an air collision radius; they are excluded from ground OBB blocking while airborne.
   aegisTalon:Object.freeze({id:'aegisTalon',label:'Aegis Talon AH-X',asset:'assets/aegis_talon_ahx.glb',maxHp:720,locomotor:'helicopter',collisionRadius:5.5,airCollisionRadius:5.5}),
   // The Harvester master is visually long across its local Y after the existing import wrapper, so the collision rectangle carries a +90° heading offset.
-  aegisHarvester:Object.freeze({id:'aegisHarvester',label:'Aegis Field Harvester',asset:'assets/aegis_field_harvester_v2.glb',maxHp:900,locomotor:'wheeledHeavy',collisionRadius:4.3,collisionFootprint:[8.30,3.90],collisionHeadingOffset:1.5707963267948966,resourceCapacity:1200,harvestRate:120,unloadRate:600,creditPerUnit:1,dockAlignSocket:'RefineryDockAlignSocket'}),
+  aegisHarvester:Object.freeze({id:'aegisHarvester',label:'Aegis Field Harvester',asset:'assets/aegis_field_harvester_v2.glb',maxHp:900,locomotor:'wheeledHeavy',collisionRadius:4.3,collisionFootprint:[8.30,3.90],collisionHeadingOffset:1.5707963267948966,resourceCapacity:1200,harvestRate:120,unloadRate:600,creditPerUnit:1,dockAlignSocket:'RefineryDockAlignSocket',cost:800,buildSeconds:6.0}),
   aegisRifleman:Object.freeze({id:'aegisRifleman',label:'Aegis Rifleman',asset:'assets/infantry/aegis_rifleman_v03.glb',maxHp:120,locomotor:'infantryLight',primaryWeapon:'aegisRifle',collisionRadius:.40,personalSpace:.82,cost:120,buildSeconds:1.8,walkClip:'CombatWalk',fireClip:'AimFire'})
 });

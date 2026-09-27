@@ -1,3 +1,18 @@
+# WorldForge v0.13.14 Test Report
+
+## Road Grounding + Vehicle Factory Production
+
+Result: **PASS — focused source/regression validation**
+
+- Focused `rts-*.test.mjs` suite: **19 / 19 PASS**.
+- JavaScript syntax checks pass for Map Forge, Skirmish, app wiring, RTS Definitions, and schema modules.
+- New v0.13.14 regression coverage verifies the authoritative road-grade path, tiny road/shoulder render biases, road-aware `surfaceHeightAt()`, removal of the old large road lift, Vehicle Factory queue wiring, exact factory helper sockets, costs/times, rollout collision exception, and UI production controls.
+- Existing Harvester economy, routed movement, resource-field depletion, river continuity, bridge agreement, collision/spacing, master-building, resource-master, and simulation-foundation regressions remain passing.
+- Production GLB hash comparison against the extracted v0.13.12 release: **16 / 16 byte-identical**.
+
+### Mobile validation still required
+The screenshot-driven road issue was caused by the rendered road and unit ground-height paths disagreeing. The source fix now forces them to the same grade, but the final visual confirmation still needs an iPhone/GitHub Pages play test. Vehicle Factory rollout should likewise be checked on-device for camera/readability and exit spacing.
+
 # WorldForge v0.13.13 Test Report
 
 ## Skirmish Economy & RTS Command Foundation
