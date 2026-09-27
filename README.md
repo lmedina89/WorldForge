@@ -1,3 +1,13 @@
+# WorldForge v0.13.12 — Road Surface + River Continuity Fix
+
+WorldForge v0.13.12 advances RTS Map Forge to **0.2.7** with a focused terrain-surface repair based on the mobile battlefield screenshots. Approved Rich/Dense crystal assets and the v0.13.11 multi-cluster resource-field system are unchanged.
+
+- Roads now use a **shared smoothed elevation profile** for the shoulder and dark road core. The core stays slightly above the shoulder, preventing isolated brown shoulder/terrain patches from replacing the road surface on elevation changes.
+- Road cross-sections are level at each sample instead of independently sampling left/right terrain heights, reducing twisting and terrain clipping on side slopes.
+- Road segmentation is increased for smoother grade changes while keeping the existing deterministic road curves and navigation metadata.
+- River water now uses a **smoothed center-channel surface** above the carved river bed instead of sampling the terrain height independently at both banks. This prevents isolated spans of the river ribbon from dropping underneath terrain and visually disappearing.
+- Bridge clearance now references the exact same river-surface calculation, so the water mesh and bridge metadata agree.
+
 # WorldForge v0.13.11 — Multi-Cluster Mineral Fields
 
 WorldForge v0.13.11 advances RTS Map Forge to **0.2.6**. The approved Rich v0.3 and Dense v0.1 GLBs remain byte-for-byte unchanged, but Map Forge now uses them as believable **resource fields** instead of one isolated cluster per node.

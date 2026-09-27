@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { instantiateMasterResource, masterResourceForRichness } from '../rts/rts-asset-library.js';
 
-export const RTS_MAP_FORGE_VERSION='0.2.6';
+export const RTS_MAP_FORGE_VERSION='0.2.7';
 export const RTS_MAP_SCHEMA='worldforge.rts-map.v1';
 
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -253,15 +253,55 @@ export class RTSMapForge{
     return c;
   }
 
-  _makeStrip(pathFn,width,segments,color,zLift=.24){
+  _stripFrame(pathFn,x,width){
+    const size=this.recipe.size,e=Math.max(1.25,size/1024*1.2),y=pathFn(x),dy=pathFn(x+e)-pathFn(x-e),nx=-dy,ny=2*e,n=Math.hypot(nx,ny)||1;
+    const ux=nx/n,uy=ny/n,half=width*.5;
+    return {x,y,ux,uy,left:{x:x-ux*half,y:y-uy*half},right:{x:x+ux*half,y:y+uy*half}};
+  }
+
+  _roadProfileHeight(pathFn,x,width){
+    const size=this.recipe.size,step=Math.max(4,size*.0042),weights=[1,2,3,2,1];
+    let sum=0,weightSum=0;
+    for(let k=-2;k<=2;k++){
+      const sx=x+k*step,frame=this._stripFrame(pathFn,sx,width),center=this.heightAt(frame.x,frame.y),left=this.heightAt(frame.left.x,frame.left.y),right=this.heightAt(frame.right.x,frame.right.y);
+      // A mostly-flat cross-section prevents the road core from diving through the
+      // terrain on side slopes. The carved corridor keeps the lift visually small.
+      const cross=Math.max(center,left,right),w=weights[k+2];sum+=cross*w;weightSum+=w;
+    }
+    return sum/weightSum;
+  }
+
+  _makeRoadStrip(pathFn,width,segments,color,zLift=.18,profileWidth=width){
     const size=this.recipe.size,H=size/2,p=[],idx=[];
     for(let i=0;i<=segments;i++){
-      const x=-H+size*i/segments,y=pathFn(x),e=size/1024*1.2,dy=pathFn(x+e)-pathFn(x-e),nx=-dy,ny=2*e,n=Math.hypot(nx,ny)||1;
-      for(const s of [-1,1]){const xx=x+nx/n*width*.5*s,yy=y+ny/n*width*.5*s,zz=this.heightAt(xx,yy)+zLift;p.push(xx,yy,zz);}
+      const x=-H+size*i/segments,frame=this._stripFrame(pathFn,x,width),zz=this._roadProfileHeight(pathFn,x,profileWidth)+zLift;
+      p.push(frame.left.x,frame.left.y,zz,frame.right.x,frame.right.y,zz);
     }
     for(let i=0;i<segments;i++){const a=i*2,b=a+1,c=a+2,d=c+1;idx.push(a,c,b,b,c,d);}
     const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));g.setIndex(idx);g.computeVertexNormals();
-    const m=new THREE.Mesh(g,mat(color,.96));m.receiveShadow=true;return m;
+    const m=new THREE.Mesh(g,mat(color,.96));m.receiveShadow=true;m.renderOrder=2;return m;
+  }
+
+  _riverSurfaceAt(x,riverFn){
+    const size=this.recipe.size,step=Math.max(5,size*.006),weights=[1,2,3,2,1];
+    let bed=0,weightSum=0;
+    for(let k=-2;k<=2;k++){const sx=x+k*step,w=weights[k+2];bed+=this.heightAt(sx,riverFn(sx))*w;weightSum+=w;}
+    // The old strip sat below the river bed on some terrain samples. Keep the water
+    // safely above the carved channel while still well below the banks.
+    return bed/weightSum+clamp(size*.00155,1.65,2.55);
+  }
+
+  _makeRiverStrip(pathFn,width,segments,color){
+    const size=this.recipe.size,H=size/2,p=[],idx=[];
+    for(let i=0;i<=segments;i++){
+      const x=-H+size*i/segments,frame=this._stripFrame(pathFn,x,width),zz=this._riverSurfaceAt(x,pathFn);
+      // Water is level across the channel at each station; sampling terrain at both
+      // edges made the ribbon fold into the banks and vanish in isolated spans.
+      p.push(frame.left.x,frame.left.y,zz,frame.right.x,frame.right.y,zz);
+    }
+    for(let i=0;i<segments;i++){const a=i*2,b=a+1,c=a+2,d=c+1;idx.push(a,c,b,b,c,d);}
+    const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));g.setIndex(idx);g.computeVertexNormals();
+    const m=new THREE.Mesh(g,mat(color,.28,{transparent:true,opacity:.90,depthWrite:true}));m.receiveShadow=true;m.renderOrder=1;return m;
   }
 
   _bridgeFrame(x,riverFn){
@@ -274,7 +314,7 @@ export class RTSMapForge{
     const outerA={x:x+axis.x*(bankOffset+approachLength),y:y+axis.y*(bankOffset+approachLength)};
     const outerB={x:x-axis.x*(bankOffset+approachLength),y:y-axis.y*(bankOffset+approachLength)};
     const bankA=this.heightAt(ax,ay),bankB=this.heightAt(bx,by),outerAH=this.heightAt(outerA.x,outerA.y),outerBH=this.heightAt(outerB.x,outerB.y);
-    const waterZ=this.heightAt(x,y)-1.05;
+    const waterZ=this._riverSurfaceAt(x,riverFn);
     const minClearance=clamp(size*.0018,1.4,2.8),deckLift=clamp(size*.0008,.55,1.15);
     const deckZ=Math.max(bankA,bankB,waterZ+minClearance)+deckLift;
     const deckLength=bankOffset*2*1.08;
@@ -404,12 +444,12 @@ export class RTSMapForge{
     }
     const biome=BIOMES[recipe.biome],routes=[];
     if(recipe.river){
-      const water=this._makeStrip(shape.river,size*.032,Math.max(80,Math.round(size/5)),biome.water,-1.05);water.material.transparent=true;water.material.opacity=.90;water.material.roughness=.28;water.name='River';this.root.add(water);
+      const water=this._makeRiverStrip(shape.river,size*.032,Math.max(180,Math.round(size/3.2)),biome.water);water.name='River';this.root.add(water);
       [-size*.24,size*.015,size*.25].forEach((bx,i)=>this._addBridge(bx,shape.river,i));
     }
     if(recipe.roads){
       const roadCurves=shape.roadCurves||this._roadCurves(size);
-      roadCurves.forEach((road,i)=>{const segments=Math.max(150,Math.round(size/3.4)),shoulder=this._makeStrip(road.fn,road.width*1.46,segments,biome.roadShoulder,.24);shoulder.name=`RoadShoulder_${i+1}`;this.root.add(shoulder);const r=this._makeStrip(road.fn,road.width,segments,biome.road,.40);r.name=`Road_${i+1}`;this.root.add(r);this.roadFns.push(Object.assign(road.fn,{width:road.width}));routes.push({id:road.id,role:road.role,preferred:road.preferred});});
+      roadCurves.forEach((road,i)=>{const segments=Math.max(220,Math.round(size/2.7)),profileWidth=road.width*1.38,shoulder=this._makeRoadStrip(road.fn,profileWidth,segments,biome.roadShoulder,.10,profileWidth);shoulder.name=`RoadShoulder_${i+1}`;shoulder.renderOrder=1;this.root.add(shoulder);const r=this._makeRoadStrip(road.fn,road.width,segments,biome.road,.18,profileWidth);r.name=`Road_${i+1}`;r.renderOrder=3;this.root.add(r);this.roadFns.push(Object.assign(road.fn,{width:road.width}));routes.push({id:road.id,role:road.role,preferred:road.preferred});});
     }
     // Instanced upright trees / scrub. Three.js cylinder/cone primitives are Y-up, so rotate geometry once into WorldForge Z-up.
     const areaScale=(size/1024)*(size/1024);
@@ -446,7 +486,7 @@ export class RTSMapForge{
     const navigation=this._navigationMetadata(recipe,shape.river,layout),score=this._score(recipe,layout,navigation),crossings=this.bridgeData.map(({_frame,...b})=>b);
     this.metadata={schema:'worldforge.rts-map-meta.v2',mapForgeVersion:RTS_MAP_FORGE_VERSION,recipe,terrain:{chunkSize:+actualChunk.toFixed(2),chunkCount:chunks*chunks,segmentsPerChunk:seg,approxTriangles:tris},startRegions:layout.starts.map((s,i)=>({...s,index:i,radius:+(size*.085).toFixed(2),clearRadius:+(size*.105).toFixed(2),reservedOnly:true})),expansionZones:layout.expansions.map(e=>({...e,x:+e.x.toFixed(2),y:+e.y.toFixed(2),radius:+(size*.035).toFixed(2)})),resourceZones,routes,crossings,navigation,tacticalScore:score,
       routeAffinities:{mainRoad:['wheeled','tracked','infantry'],roughPass:['tracked','infantry'],steepTrail:['infantry'],deepWater:['amphibious','air'],mountain:['air'],bridge:['tracked','wheeled','infantry','amphibious']},
-      notes:['No faction buildings are generated. Start regions are reserved terrain metadata only.','Resource fields now render 3–5 approved Rich clusters or 5–8 approved Dense clusters while remaining one logical economy deposit per field; repeated visuals are GPU-instanced and the source GLBs remain unchanged.','1536 m is the intended main-world scale; enlarged start reserves provide roughly 260 m of usable base diameter before the mountain ring.','Terrain coloration now blends elevation, slope, river moisture, and reserved-base clearing influence for more believable battlefield zones.','Road corridors are terrain-carved and mesh-lifted slightly above the ground so road surfaces stay visually grounded on elevation changes.','Trees and rock cover are excluded from start-development zones, safe expansions, and road setbacks so construction and vehicle lanes stay readable.','Movement metadata is exported per class: tracked, wheeled, infantry, amphibious and air.','Bridges are explicit traversal links with raised decks and graded approach meshes.']};
+      notes:['No faction buildings are generated. Start regions are reserved terrain metadata only.','Resource fields now render 3–5 approved Rich clusters or 5–8 approved Dense clusters while remaining one logical economy deposit per field; repeated visuals are GPU-instanced and the source GLBs remain unchanged.','1536 m is the intended main-world scale; enlarged start reserves provide roughly 260 m of usable base diameter before the mountain ring.','Terrain coloration now blends elevation, slope, river moisture, and reserved-base clearing influence for more believable battlefield zones.','Road corridors use a smoothed flat cross-section profile so the dark road core stays above the terrain instead of exposing brown shoulder/ground patches on elevation changes.','Trees and rock cover are excluded from start-development zones, safe expansions, and road setbacks so construction and vehicle lanes stay readable.','Movement metadata is exported per class: tracked, wheeled, infantry, amphibious and air.','River water now uses a smoothed center-channel surface rather than edge-sampled terrain heights, preventing isolated missing-water gaps; bridges share the same water-surface calculation.' , 'Bridges are explicit traversal links with raised decks and graded approach meshes.']};
     const generationId=this.generationSerial;this.resourceLoadPromise=this._populateResourceAssets(resourceZones,generationId);
     this._buildFog();this.setFogPreview(false);this._buildMovementOverlay();this.root.visible=true;this.overlay.visible=true;this.movementOverlay.visible=this.movementPreview!=='off';return this.metadata;
   }

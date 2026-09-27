@@ -1,3 +1,12 @@
+# WorldForge v0.13.12 Test Report
+
+Focused regression scope: road rendering continuity, river rendering continuity, bridge/water height agreement, existing RTS systems.
+
+- `node --check src/rts-map/rts-map-forge.js`: PASS
+- Dedicated v0.13.12 road/river regression assertions: PASS
+- Focused `rts-*` suite: **17 / 17 PASS**.
+- Approved production GLBs: unchanged by this terrain-only patch.
+
 # WorldForge v0.13.11 Test Report
 
 ## Multi-Cluster Mineral Fields

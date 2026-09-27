@@ -1,3 +1,12 @@
+# v0.13.12 — Road Surface + River Continuity Fix
+
+- WorldForge advanced to **0.13.12** and RTS Map Forge to **0.2.7**.
+- Replaced edge-sampled road ribbons with a smoothed shared profile used by both road shoulder and road core.
+- Kept the dark road core above the shoulder to prevent brown sections caused by clipping/grade mismatch.
+- Added a dedicated river-surface profile above the carved channel; water no longer folds into terrain and disappear in isolated spans.
+- Bridge water height now comes from the same river-surface profile.
+- No approved vehicle, building, infantry, or Rich/Dense crystal GLBs were rebuilt.
+
 # v0.13.11 — Multi-Cluster Mineral Fields
 
 - WorldForge advanced to **0.13.11** and RTS Map Forge to **0.2.6**; RTS Asset Library remains **0.5.1**.
