@@ -1,3 +1,15 @@
+# v0.13.16 — Mobile Command UX + Free Camera
+
+- WorldForge advanced to **0.13.16** and Skirmish to **0.7.3**. RTS Map Forge remains **0.2.9** and RTS Definitions remain **0.6.1**.
+- Added screen-space friendly-unit touch assist: larger for infantry, smaller for vehicles, without changing visible unit scale.
+- Added Harvester-only resource-field touch assist so crystal nodes are easy to select without preventing normal combat units from receiving MOVE orders near resources.
+- Replaced terrain-mesh-dependent move tapping with a map-height ray fallback; ordinary battlefield taps now resolve to an X/Y terrain position even when the ray first encounters decorative geometry or misses a small terrain triangle.
+- MOVE taps now resolve through the existing nearest-open-unit destination search and immediately show the yellow command marker at the legal destination.
+- Increased normal Skirmish tap slop to **14 CSS px** while retaining the 22 px building-placement allowance.
+- Replaced the top HUD `VIEW WIDE` control with **FREE CAM / FOLLOW**. FREE CAM uses one-finger drag with a 14 px drag threshold, retains pinch zoom, clamps pan to map bounds, and FOLLOW tracks the selected unit (or the Aegis-X fallback).
+- Existing building-aware routes, refinery/factory egress, Harvester economy, road/river fixes, and production systems remain intact.
+- No approved GLB was rebuilt or modified.
+
 # v0.13.15 — Base Egress + Building-Aware RTS Orders
 
 - WorldForge advanced to **0.13.15** and Skirmish to **0.7.2**. RTS Map Forge remains **0.2.9** and RTS Definitions remain **0.6.1**.

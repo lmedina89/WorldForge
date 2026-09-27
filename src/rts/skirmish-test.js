@@ -8,7 +8,7 @@ import { LOCOMOTORS, WEAPONS, UNIT_DEFINITIONS } from './data/rts-definitions.js
 import { instantiateMasterBuilding, masterBuildingForRole, MASTER_BUILDINGS } from './rts-asset-library.js';
 import { loadAegisReferenceVehicle } from '../vehicle/vehicle-generator.js';
 
-export const SKIRMISH_VERSION='0.7.2';
+export const SKIRMISH_VERSION='0.7.3';
 
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const angleDelta=(a,b)=>Math.atan2(Math.sin(a-b),Math.cos(a-b));
@@ -93,9 +93,23 @@ export class SkirmishTest{
     const e=this.tank&&this.sim.entities.get(this.tank.entityId);if(e?.components?.input)for(const k of Object.keys(e.components.input))e.components.input[k]=false;
   }
   setDrive(key,on){if(!(key in this.drive)||!this.tank)return;this.drive[key]=!!on;const e=this.sim.entities.get(this.tank.entityId);if(on&&e?.components?.move){e.components.move.moving=false;e.components.move.state='manual';e.components.move.order=null;}this.sim.issueCommand(RTS_COMMANDS.DRIVE_INPUT,{entityId:this.tank.entityId,key,on:!!on},{source:COMMAND_SOURCES.PLAYER});}
-  setFollow(on){this.follow=!!on;this._emit();}
+  setFollow(on){
+    this.follow=!!on;
+    if(this.follow)this._followCamera(true);
+    this._emit(this.follow?'Camera following selected unit · pinch to zoom.':'Free camera engaged · drag the battlefield to pan · pinch to zoom.');
+  }
+  toggleFreeCamera(){this.setFollow(!this.follow);}
   setViewMode(mode='overview'){this.viewMode=mode==='tactical'?'tactical':'overview';this.camera.zoom=1;this._setCamera();this._emit(this.viewMode==='tactical'?'Tactical camera engaged · pinch or wheel for fine zoom.':'Overview camera engaged · pinch or wheel for fine zoom.');}
   toggleViewMode(){this.setViewMode(this.viewMode==='overview'?'tactical':'overview');}
+  panFreeCamera(deltaX,deltaY,rect){
+    if(!this.active||this.follow||!rect?.width||!rect?.height)return false;
+    const viewW=(this.camera.right-this.camera.left)/Math.max(.001,this.camera.zoom||1),viewH=(this.camera.top-this.camera.bottom)/Math.max(.001,this.camera.zoom||1);
+    const right=new THREE.Vector3(1,0,0).applyQuaternion(this.camera.quaternion);right.z=0;if(right.lengthSq()<1e-6)right.set(1,0,0);else right.normalize();
+    const up=new THREE.Vector3(0,1,0).applyQuaternion(this.camera.quaternion);up.z=0;if(up.lengthSq()<1e-6)up.set(0,1,0);else up.normalize();
+    const delta=right.multiplyScalar(-deltaX*(viewW/rect.width)).add(up.multiplyScalar(deltaY*(viewH/rect.height)));
+    const size=this.mapForge.recipe?.size||1024,H=size*.5,margin=Math.min(40,size*.04),old=this.controls.target.clone(),nx=clamp(old.x+delta.x,-H+margin,H-margin),ny=clamp(old.y+delta.y,-H+margin,H-margin),nz=this.mapForge.surfaceHeightAt(nx,ny)+3.2;
+    const actual=new THREE.Vector3(nx-old.x,ny-old.y,nz-old.z);this.controls.target.set(nx,ny,nz);this.camera.position.add(actual);this.camera.lookAt(this.controls.target);return true;
+  }
   resizeCamera(){if(this.active)this._setCamera();}
   setSimulationPaused(paused){this.sim.setPaused(paused);this._emit(paused?'Simulation paused.':'Simulation resumed.');}
   stepSimulation(){if(!this.started)return;this.sim.stepOnce();this._consumeRenderEvents();this._syncViews(this.sim.clock.fixedDelta);this._emit(`Advanced one simulation tick to ${this.sim.clock.tick}.`);}
@@ -113,8 +127,8 @@ export class SkirmishTest{
     const sig=`${this.mapForge.recipe?.seed||0}:${this.mapForge.recipe?.size||0}:${this.mapForge.recipe?.biome||''}`;if(this.mapSignature!==sig)reset=true;
     if(this.started&&!reset){this.setActive(true);this._setCamera();this._emit();return;}
     this.mapSignature=sig;this._clearSession();
-    this.sim.reset({seed:this.mapForge.recipe?.seed||1});this.lastUiTick=-999;this.viewMode='overview';this.camera.zoom=1;this.playerFaction=this.sim.createFaction('player',{credits:5000});this.enemyFaction=this.sim.createFaction('enemy',{credits:0});this.pendingBuild=null;this.buildSerial=1;this.harvestCredits=0;this._registerResourceFields();
-    await this._spawnPlayerTank();await this._spawnStartingConstructionYard();await this._spawnTrainingTarget();this.started=true;this.setActive(true);this._setCamera();this._emit('Skirmish 0.7 ready · tap a friendly unit to select, tap terrain to move, or tap crystals with a Harvester to begin the economy loop.');
+    this.sim.reset({seed:this.mapForge.recipe?.seed||1});this.lastUiTick=-999;this.viewMode='overview';this.follow=true;this.camera.zoom=1;this.playerFaction=this.sim.createFaction('player',{credits:5000});this.enemyFaction=this.sim.createFaction('enemy',{credits:0});this.pendingBuild=null;this.buildSerial=1;this.harvestCredits=0;this._registerResourceFields();
+    await this._spawnPlayerTank();await this._spawnStartingConstructionYard();await this._spawnTrainingTarget();this.started=true;this.setActive(true);this._setCamera();this._emit(`Skirmish ${SKIRMISH_VERSION} ready · tap a friendly unit to select, tap the battlefield to move, or tap crystals with a Harvester. FREE CAM enables drag-to-pan; pinch zoom stays available.`);
   }
 
   _clearSession(){
@@ -503,17 +517,33 @@ export class SkirmishTest{
     }
   }
 
+  _screenDistanceToWorld(clientX,clientY,rect,x,y,z){
+    const p=new THREE.Vector3(x,y,z).project(this.camera);if(p.z<-1||p.z>1)return Infinity;const sx=rect.left+(p.x*.5+.5)*rect.width,sy=rect.top+(-p.y*.5+.5)*rect.height;return Math.hypot(clientX-sx,clientY-sy);
+  }
+  _assistedFriendlyPick(clientX,clientY,rect,{excludeId=null}={}){
+    let best=null,bestD=Infinity;const mobile=rect.width<900;
+    for(const e of this.sim.entities.values()){if(e.kind!=='unit'||e.components.owner!=='player'||e.components.health?.destroyed||e.id===excludeId)continue;const t=e.components.transform,def=UNIT_DEFINITIONS[e.components.unitType]||{},infantry=e.components.unitType==='aegisRifleman',radius=mobile?(infantry?54:46):(infantry?34:30),z=(t.z??this.mapForge.surfaceHeightAt(t.x,t.y))+(infantry?1.0:1.5),d=this._screenDistanceToWorld(clientX,clientY,rect,t.x,t.y,z);if(d<=radius&&d<bestD){bestD=d;best=e;}}return best;
+  }
+  _assistedResourcePick(clientX,clientY,rect){
+    let best=null,bestD=Infinity;const radius=rect.width<900?62:40;for(const e of this.sim.entities.values()){const f=e.components.resourceField;if(e.kind!=='resource'||!f||f.remaining<=0)continue;const p=f.harvestPoint||e.components.transform,z=this.mapForge.surfaceHeightAt(p.x,p.y)+1.2,d=this._screenDistanceToWorld(clientX,clientY,rect,p.x,p.y,z);if(d<=radius&&d<bestD){bestD=d;best=e;}}return best;
+  }
+  _terrainPointFromPointer(){
+    const ray=this.raycaster.ray,dir=ray.direction;if(Math.abs(dir.z)<1e-5)return null;const size=this.mapForge.recipe?.size||1024,H=size*.5;let targetZ=this.controls.target?.z||0,t=(targetZ-ray.origin.z)/dir.z;if(!Number.isFinite(t)||t<0)t=(-ray.origin.z)/dir.z;
+    let x=0,y=0,z=0;for(let i=0;i<5;i++){x=ray.origin.x+dir.x*t;y=ray.origin.y+dir.y*t;x=clamp(x,-H,H);y=clamp(y,-H,H);z=this.mapForge.surfaceHeightAt(x,y);const nt=(z-ray.origin.z)/dir.z;if(!Number.isFinite(nt)||nt<0)break;t=nt;}return {x,y,z};
+  }
+  _showCommandMarker(p){const z=this.mapForge.surfaceHeightAt(p.x,p.y);this.aimMarker.position.set(p.x,p.y,z+.28);this.aimMarker.visible=true;}
   pointerAction(clientX,clientY,rect){
-    if(!this.active)return false;this.pointer.x=((clientX-rect.left)/rect.width)*2-1;this.pointer.y=-((clientY-rect.top)/rect.height)*2+1;this.raycaster.setFromCamera(this.pointer,this.camera);
-    const unitHits=this.raycaster.intersectObjects(this.root.children,true),mapHits=this.raycaster.intersectObjects(this.mapForge.root.children,true);
-    if(this.pendingBuild){if(!mapHits.length)return false;return this.placeSelectedBuilding(mapHits[0].point.x,mapHits[0].point.y);}
-    for(const hit of unitHits){const id=this._entityIdFromObject(hit.object);if(!id)continue;const e=this.sim.entities.get(id);if(e?.kind==='unit'&&e.components.owner==='player'&&!e.components.health?.destroyed)return this._selectEntity(id);}
+    if(!this.active)return false;this.camera.updateMatrixWorld(true);this.pointer.x=((clientX-rect.left)/rect.width)*2-1;this.pointer.y=-((clientY-rect.top)/rect.height)*2+1;this.raycaster.setFromCamera(this.pointer,this.camera);
+    const unitHits=this.raycaster.intersectObjects(this.root.children,true),mapHits=this.raycaster.intersectObjects(this.mapForge.root.children,true),terrainPoint=this._terrainPointFromPointer();
+    if(this.pendingBuild){if(!terrainPoint)return false;return this.placeSelectedBuilding(terrainPoint.x,terrainPoint.y);}
     const selected=this._selectedEntity();
+    for(const hit of unitHits){const id=this._entityIdFromObject(hit.object);if(!id)continue;const e=this.sim.entities.get(id);if(e?.kind==='unit'&&e.components.owner==='player'&&!e.components.health?.destroyed)return this._selectEntity(id);}
+    const assistedUnit=this._assistedFriendlyPick(clientX,clientY,rect,{excludeId:selected?.id||null});if(assistedUnit)return this._selectEntity(assistedUnit.id);
     if(selected){
-      for(const hit of mapHits){const zoneId=this._resourceZoneIdFromHit(hit);if(!zoneId)continue;if(selected.components.unitType!=='aegisHarvester'){this._emit('Only a Field Harvester can mine crystal resources. Tap terrain to move this unit.');return true;}this.sim.issueCommand(RTS_COMMANDS.HARVEST,{entityId:selected.id,zoneId},{source:COMMAND_SOURCES.PLAYER});this._emit('Harvest order queued.');return true;}
-      if(!mapHits.length)return false;const p=mapHits[0].point,z=Math.max(this.mapForge.surfaceHeightAt(p.x,p.y)+.5,p.z);this.aimPoint.set(p.x,p.y,z);this.aimMarker.position.set(p.x,p.y,this.mapForge.surfaceHeightAt(p.x,p.y)+.28);this.aimMarker.visible=true;this.sim.issueCommand(RTS_COMMANDS.MOVE,{entityIds:[selected.id],point:{x:p.x,y:p.y}},{source:COMMAND_SOURCES.PLAYER});if(selected.id===this.tank?.entityId)this.sim.issueCommand(RTS_COMMANDS.AIM,{entityId:selected.id,point:{x:p.x,y:p.y,z}},{source:COMMAND_SOURCES.PLAYER});this._emit(`${UNIT_DEFINITIONS[selected.components.unitType]?.label||'Unit'} move order queued.`);return true;
+      if(selected.components.unitType==='aegisHarvester'){let resourceTarget=null;for(const hit of mapHits){const zoneId=this._resourceZoneIdFromHit(hit);if(!zoneId)continue;resourceTarget=this._resourceFieldByZone(zoneId)||null;if(resourceTarget)break;}if(!resourceTarget)resourceTarget=this._assistedResourcePick(clientX,clientY,rect);if(resourceTarget){this.sim.issueCommand(RTS_COMMANDS.HARVEST,{entityId:selected.id,zoneId:resourceTarget.components.resourceField.zoneId},{source:COMMAND_SOURCES.PLAYER});this._showCommandMarker(resourceTarget.components.resourceField.harvestPoint||resourceTarget.components.transform);this._emit('Harvest order queued.');return true;}}
+      if(!terrainPoint)return false;const loc=selected.components.locomotor,ground=(loc?.movementClass||'tracked')!=='air',resolved=ground?this._nearestOpenUnitDestination(selected,terrainPoint.x,terrainPoint.y):terrainPoint;if(!resolved){this._emit('No traversable destination near that tap. Try a nearby clear patch.');return true;}const z=this.mapForge.surfaceHeightAt(resolved.x,resolved.y)+.5;this.aimPoint.set(resolved.x,resolved.y,z);this._showCommandMarker(resolved);this.sim.issueCommand(RTS_COMMANDS.MOVE,{entityIds:[selected.id],point:{x:resolved.x,y:resolved.y}},{source:COMMAND_SOURCES.PLAYER});if(selected.id===this.tank?.entityId)this.sim.issueCommand(RTS_COMMANDS.AIM,{entityId:selected.id,point:{x:resolved.x,y:resolved.y,z}},{source:COMMAND_SOURCES.PLAYER});const snapped=Math.hypot(resolved.x-terrainPoint.x,resolved.y-terrainPoint.y)>1.0?' · snapped to nearby traversable ground':'';this._emit(`${UNIT_DEFINITIONS[selected.components.unitType]?.label||'Unit'} move order queued${snapped}.`);return true;
     }
-    if(!mapHits.length)return false;const p=mapHits[0].point,z=Math.max(this.mapForge.surfaceHeightAt(p.x,p.y)+.5,p.z);this.aimPoint.set(p.x,p.y,z);this.aimMarker.position.set(p.x,p.y,this.mapForge.surfaceHeightAt(p.x,p.y)+.28);this.aimMarker.visible=true;if(this.tank)this.sim.issueCommand(RTS_COMMANDS.AIM,{entityId:this.tank.entityId,point:{x:p.x,y:p.y,z}},{source:COMMAND_SOURCES.PLAYER});this._emit('Turret aim command queued · tap a friendly unit first to issue RTS movement orders.');return true;
+    if(!terrainPoint)return false;const z=this.mapForge.surfaceHeightAt(terrainPoint.x,terrainPoint.y)+.5;this.aimPoint.set(terrainPoint.x,terrainPoint.y,z);this._showCommandMarker(terrainPoint);if(this.tank)this.sim.issueCommand(RTS_COMMANDS.AIM,{entityId:this.tank.entityId,point:{x:terrainPoint.x,y:terrainPoint.y,z}},{source:COMMAND_SOURCES.PLAYER});this._emit('Turret aim command queued · tap a friendly unit first to issue RTS movement orders.');return true;
   }
 
   fire(){const e=this.tank&&this.sim.entities.get(this.tank.entityId);if(!e||e.components.weapon.cooldown>0)return false;this.sim.issueCommand(RTS_COMMANDS.FIRE,{entityId:e.id},{source:COMMAND_SOURCES.PLAYER});this._emit('Fire command queued.');return true;}
@@ -793,7 +823,7 @@ export class SkirmishTest{
   }
 
   _setCamera(){if(!this.tank)return;const hostAspect=Math.max(.5,this.renderer.domElement.clientWidth/Math.max(1,this.renderer.domElement.clientHeight)),landscape=hostAspect>=1.2,tactical=this.viewMode==='tactical',span=tactical?(landscape?40:46):(landscape?62:58);this.camera.left=-span*hostAspect;this.camera.right=span*hostAspect;this.camera.top=span;this.camera.bottom=-span;this.camera.near=.1;this.camera.far=2200;this.camera.up.set(0,0,1);this.camera.userData.skirmishLandscape=landscape;this.camera.userData.skirmishViewMode=this.viewMode;this.camera.updateProjectionMatrix();this._followCamera(true);}
-  _followCamera(force=false){if(!this.follow||!this.tank)return;const p=this.tank.root.position,target=new THREE.Vector3(p.x,p.y,p.z+3.2),landscape=this.camera.userData.skirmishLandscape!==false,tactical=this.viewMode==='tactical',offset=tactical?(landscape?new THREE.Vector3(54,-68,42):new THREE.Vector3(50,-62,52)):(landscape?new THREE.Vector3(78,-98,58):new THREE.Vector3(65,-82,68)),desired=target.clone().add(offset);if(force){this.camera.position.copy(desired);this.controls.target.copy(target);}else{this.camera.position.lerp(desired,.12);this.controls.target.lerp(target,.16);}this.camera.lookAt(this.controls.target);}
+  _followCamera(force=false){if(!this.follow||!this.tank)return;const selected=this._selectedEntity(),focus=selected||this.sim.entities.get(this.tank.entityId),ft=focus?.components?.transform,p=ft?new THREE.Vector3(ft.x,ft.y,ft.z):this.tank.root.position,target=new THREE.Vector3(p.x,p.y,p.z+3.2),landscape=this.camera.userData.skirmishLandscape!==false,tactical=this.viewMode==='tactical',offset=tactical?(landscape?new THREE.Vector3(54,-68,42):new THREE.Vector3(50,-62,52)):(landscape?new THREE.Vector3(78,-98,58):new THREE.Vector3(65,-82,68)),desired=target.clone().add(offset);if(force){this.camera.position.copy(desired);this.controls.target.copy(target);}else{this.camera.position.lerp(desired,.12);this.controls.target.lerp(target,.16);}this.camera.lookAt(this.controls.target);}
 
   update(dt){if(!this.active||!this.started)return;const steps=this.sim.advance(dt);this._consumeRenderEvents();this._syncViews(dt);if(steps>0)this._updateFx(steps*this.sim.clock.fixedDelta);if(steps>0&&this.sim.clock.tick-this.lastUiTick>=6){this.lastUiTick=this.sim.clock.tick;this._emit();}this._followCamera(false);}
 
@@ -811,8 +841,8 @@ export class SkirmishTest{
     const barracks=this.sim.entities.values().find(e=>e.kind==='building'&&e.components.owner==='player'&&e.components.buildingType==='barracks'&&e.components.construction?.complete&&!e.components.health?.destroyed),factory=this.sim.entities.values().find(e=>e.kind==='building'&&e.components.owner==='player'&&e.components.buildingType==='vehicleFactory'&&e.components.construction?.complete&&!e.components.health?.destroyed);
     const prod=barracks?.components.production,riflemanQueue=(prod?.queue?.length||0)+(prod?.active?1:0),factoryProd=factory?.components.production,vehicleQueue=(factoryProd?.queue?.length||0)+(factoryProd?.active?1:0),riflemanDef=UNIT_DEFINITIONS.aegisRifleman,mbtDef=UNIT_DEFINITIONS.aegisMbt,hmmwvDef=UNIT_DEFINITIONS.aegisHmmwv,harvesterDef=UNIT_DEFINITIONS.aegisHarvester,selected=this._selectedEntity(),selectedDef=selected?UNIT_DEFINITIONS[selected.components.unitType]:null,selectedHp=selected?.components.health,selectedResource=selected?.components.resource,selectedMove=selected?.components.move;
     let resourceRemaining=0,resourceCapacity=0,resourceFields=0;for(const e of this.sim.entities.values()){const f=e.components.resourceField;if(e.kind!=='resource'||!f)continue;resourceFields++;resourceRemaining+=f.remaining;resourceCapacity+=f.capacity;}
-    const commandHint=!selected?'TAP FRIENDLY UNIT TO SELECT · TAP TERRAIN TO MOVE':selected.components.unitType==='aegisHarvester'?'HARVESTER: TAP CRYSTALS = HARVEST · TAP TERRAIN = MOVE':'SELECTED: TAP TERRAIN = MOVE';
-    return {credits:this.credits,powerSupply:this.powerSupply,powerUse:this.powerUse,powerNet:(this.playerFaction?.powerNet??0),tankHp:hp?.current||0,tankMaxHp:hp?.max||0,pendingBuild:this.pendingBuild,buildingCount:this.buildings.length,supportUnitCount:this.supportUnits.length,infantryCount:this.infantryUnits.length,barracksReady:!!barracks,riflemanQueue,riflemanCost:riflemanDef.cost,canTrainRifleman:!!barracks&&this.credits>=riflemanDef.cost&&riflemanQueue<5,factoryReady:!!factory,vehicleQueue,vehicleQueueMax:4,mbtCost:mbtDef.cost,hmmwvCost:hmmwvDef.cost,harvesterCost:harvesterDef.cost,canBuildMbt:!!factory&&this.credits>=mbtDef.cost&&vehicleQueue<4,canBuildHmmwv:!!factory&&this.credits>=hmmwvDef.cost&&vehicleQueue<4,canBuildHarvester:!!factory&&this.credits>=harvesterDef.cost&&vehicleQueue<4,fireReady:(tank?.components.weapon?.cooldown||0)<=0,message:this.lastMessage,simTick:this.sim.clock.tick,simHz:this.sim.clock.hz,simPaused:this.sim.paused,entityCount:this.sim.entities.count(),stateHash:this.sim.stateHash(),commandLog:this.sim.commands.recent(6),simulationVersion:RTS_SIMULATION_VERSION,viewMode:this.viewMode,collisionDebug:this.collisionDebug,selectedUnitId:selected?.id||null,selectedUnitType:selected?.components.unitType||null,selectedUnitLabel:selectedDef?.label||null,selectedHp:selectedHp?.current||0,selectedMaxHp:selectedHp?.max||0,selectedOrder:selectedResource?.state||selectedMove?.state||null,selectedCargo:selectedResource?.cargo||0,selectedCapacity:selectedResource?.capacity||0,commandHint,harvestCredits:this.harvestCredits,resourceFields,resourceRemaining,resourceCapacity};
+    const cameraHint=this.follow?'':' · DRAG = PAN';const commandHint=!selected?`TAP FRIENDLY UNIT TO SELECT${cameraHint}`:selected.components.unitType==='aegisHarvester'?`HARVESTER: TAP CRYSTALS = HARVEST · TAP TERRAIN = MOVE${cameraHint}`:`SELECTED: TAP TERRAIN = MOVE${cameraHint}`;
+    return {credits:this.credits,powerSupply:this.powerSupply,powerUse:this.powerUse,powerNet:(this.playerFaction?.powerNet??0),tankHp:hp?.current||0,tankMaxHp:hp?.max||0,pendingBuild:this.pendingBuild,buildingCount:this.buildings.length,supportUnitCount:this.supportUnits.length,infantryCount:this.infantryUnits.length,barracksReady:!!barracks,riflemanQueue,riflemanCost:riflemanDef.cost,canTrainRifleman:!!barracks&&this.credits>=riflemanDef.cost&&riflemanQueue<5,factoryReady:!!factory,vehicleQueue,vehicleQueueMax:4,mbtCost:mbtDef.cost,hmmwvCost:hmmwvDef.cost,harvesterCost:harvesterDef.cost,canBuildMbt:!!factory&&this.credits>=mbtDef.cost&&vehicleQueue<4,canBuildHmmwv:!!factory&&this.credits>=hmmwvDef.cost&&vehicleQueue<4,canBuildHarvester:!!factory&&this.credits>=harvesterDef.cost&&vehicleQueue<4,fireReady:(tank?.components.weapon?.cooldown||0)<=0,message:this.lastMessage,simTick:this.sim.clock.tick,simHz:this.sim.clock.hz,simPaused:this.sim.paused,entityCount:this.sim.entities.count(),stateHash:this.sim.stateHash(),commandLog:this.sim.commands.recent(6),simulationVersion:RTS_SIMULATION_VERSION,viewMode:this.viewMode,follow:this.follow,freeCamera:!this.follow,collisionDebug:this.collisionDebug,selectedUnitId:selected?.id||null,selectedUnitType:selected?.components.unitType||null,selectedUnitLabel:selectedDef?.label||null,selectedHp:selectedHp?.current||0,selectedMaxHp:selectedHp?.max||0,selectedOrder:selectedResource?.state||selectedMove?.state||null,selectedCargo:selectedResource?.cargo||0,selectedCapacity:selectedResource?.capacity||0,commandHint,harvestCredits:this.harvestCredits,resourceFields,resourceRemaining,resourceCapacity};
   }
   _emit(message=null){if(message)this.lastMessage=message;this.onStateChange?.(this.state());}
 }

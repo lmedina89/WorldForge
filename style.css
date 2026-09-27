@@ -343,3 +343,5 @@ body.skirmish-mode #mapMinimapWrap{
   border-color:#6fd8ff!important;
   background:#17313b!important;
 }
+
+#skirmishHudFollow[hidden]{display:none!important;}

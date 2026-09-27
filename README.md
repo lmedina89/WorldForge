@@ -1,3 +1,26 @@
+# WorldForge v0.13.16 — Mobile Command UX + Free Camera
+
+WorldForge v0.13.16 advances Skirmish to **0.7.3** while keeping RTS Map Forge at **0.2.9** and RTS Definitions at **0.6.1**. This milestone is a focused mobile-control pass before combat/AI: commands should register reliably with a finger, and the camera no longer needs a separate wide/close toggle because pinch zoom already owns scale.
+
+## Forgiving mobile RTS commands
+- Friendly units now have invisible **screen-space touch assist** around their rendered position. Infantry gets the largest assist because it can be only a few pixels wide on iPhone; vehicles use a smaller but still forgiving radius.
+- Resource fields get their own generous touch assist when a Harvester is selected. Non-Harvester units ignore resource touch assist so crystal fields cannot steal an ordinary MOVE tap.
+- Battlefield destination taps no longer depend on hitting a particular terrain mesh triangle. The pointer ray is solved back onto the map height field, so roads, trees, rocks, decorative meshes, shadows, and small geometry gaps cannot silently consume a move order.
+- If the requested destination is blocked or non-traversable, the existing nearest-open-ground search snaps the command to a nearby legal unit pose instead of simply doing nothing. The yellow destination marker is shown at the resolved destination immediately.
+- Normal Skirmish taps now tolerate **14 CSS px** of finger drift; building placement retains its wider 22 px allowance.
+
+## FREE CAM / FOLLOW
+- The old `VIEW WIDE / VIEW CLOSE` HUD control is replaced by **FREE CAM**.
+- FREE CAM detaches from the followed unit: one-finger drag pans across the playable map while pinch zoom remains available. A 14 px drag threshold separates camera panning from taps so a slightly moving finger still issues a command.
+- The button changes to **FOLLOW** while detached. FOLLOW tracks the currently selected friendly unit; if nothing is selected it falls back to the player Aegis-X.
+- Free-camera panning is clamped to the playable world bounds and preserves the current zoom/camera angle.
+
+## Scope boundary
+This milestone deliberately does not add enemy combat/AI yet. It hardens the input/camera layer first so MOVE, HARVEST, and later ATTACK orders all share reliable mobile interaction.
+
+## Asset preservation
+No production GLBs were rebuilt or modified. The approved vehicles, infantry, structures, and Rich/Dense crystal resources remain byte-identical to v0.13.15.
+
 # WorldForge v0.13.15 — Base Egress + Building-Aware RTS Orders
 
 WorldForge v0.13.15 advances Skirmish to **0.7.2** while keeping RTS Map Forge at **0.2.9** and RTS Definitions at **0.6.1**. This milestone fixes the first real RTS command deadlock seen on-device: vehicles could receive orders while sitting inside or beside production/economy structures, but the coarse terrain route did not account for the actual building collision footprints.

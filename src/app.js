@@ -328,14 +328,21 @@ function applyLevelFilter(){
 }
 
 let pointerDown=null,canvasMultiTouch=false;const activeCanvasPointers=new Set();
-renderer.domElement.addEventListener('pointerdown',e=>{activeCanvasPointers.add(e.pointerId);if(activeCanvasPointers.size>1){canvasMultiTouch=true;pointerDown=null;}else pointerDown={id:e.pointerId,x:e.clientX,y:e.clientY};});
+renderer.domElement.addEventListener('pointerdown',e=>{activeCanvasPointers.add(e.pointerId);if(activeCanvasPointers.size>1){canvasMultiTouch=true;pointerDown=null;}else pointerDown={id:e.pointerId,x:e.clientX,y:e.clientY,lastX:e.clientX,lastY:e.clientY,dragging:false};});
+renderer.domElement.addEventListener('pointermove',e=>{
+  if(mode!=='skirmish'||skirmish.follow||canvasMultiTouch||activeCanvasPointers.size!==1||!pointerDown||pointerDown.id!==e.pointerId)return;
+  const moved=Math.hypot(e.clientX-pointerDown.x,e.clientY-pointerDown.y),dragThreshold=14;if(!pointerDown.dragging&&moved<=dragThreshold)return;
+  if(!pointerDown.dragging){pointerDown.dragging=true;pointerDown.lastX=pointerDown.x;pointerDown.lastY=pointerDown.y;}
+  const dx=e.clientX-pointerDown.lastX,dy=e.clientY-pointerDown.lastY;pointerDown.lastX=e.clientX;pointerDown.lastY=e.clientY;const rect=renderer.domElement.getBoundingClientRect();if(skirmish.panFreeCamera(dx,dy,rect)){e.preventDefault();drawRTSMapMinimap();}
+});
 renderer.domElement.addEventListener('pointerup',e=>{
   const wasMulti=canvasMultiTouch;activeCanvasPointers.delete(e.pointerId);
   if(wasMulti){pointerDown=null;if(activeCanvasPointers.size===0)canvasMultiTouch=false;return;}
-  if(!pointerDown||pointerDown.id!==e.pointerId){if(activeCanvasPointers.size===0)canvasMultiTouch=false;return;}const moved=Math.hypot(e.clientX-pointerDown.x,e.clientY-pointerDown.y);pointerDown=null;if(activeCanvasPointers.size===0)canvasMultiTouch=false;
-  // A finger tap on iPhone commonly drifts more than 8 CSS px. During building placement
-  // allow a little extra movement without turning a deliberate tap into a failed gesture.
-  const tapTolerance=(mode==='skirmish'&&skirmish.state().pendingBuild)?22:8;if(moved>tapTolerance)return;
+  if(!pointerDown||pointerDown.id!==e.pointerId){if(activeCanvasPointers.size===0)canvasMultiTouch=false;return;}const moved=Math.hypot(e.clientX-pointerDown.x,e.clientY-pointerDown.y),wasDrag=pointerDown.dragging;pointerDown=null;if(activeCanvasPointers.size===0)canvasMultiTouch=false;
+  if(wasDrag)return;
+  // Touch commands get deliberate slop: normal Skirmish taps tolerate 14 CSS px of finger drift,
+  // while large building footprints retain the wider placement allowance.
+  const tapTolerance=(mode==='skirmish'&&skirmish.state().pendingBuild)?22:(mode==='skirmish'?14:8);if(moved>tapTolerance)return;
   if(mode==='skirmish'){const rect=renderer.domElement.getBoundingClientRect();skirmish.pointerAction(e.clientX,e.clientY,rect);updateSkirmishUi();drawRTSMapMinimap();return;}
   if(!isCompositeMode()||!currentGroup)return;
   const rect=renderer.domElement.getBoundingClientRect();pointer.x=((e.clientX-rect.left)/rect.width)*2-1;pointer.y=-((e.clientY-rect.top)/rect.height)*2+1;raycaster.setFromCamera(pointer,camera);
@@ -541,9 +548,9 @@ function updateSkirmishUi(state=skirmish.state()){
   if($('skirmishHudSelected')){let selected=`AEGIS-X MANUAL · HP ${Math.round(state.tankHp)} / ${Math.round(state.tankMaxHp)}`;if(state.selectedUnitLabel){const short=state.selectedUnitLabel.replace(/^Aegis\s+/i,'').toUpperCase(),order=String(state.selectedOrder||'idle').replace(/([A-Z])/g,' $1').trim().toUpperCase();selected=state.selectedUnitType==='aegisHarvester'?`${short} · CARGO ${Math.round(state.selectedCargo)} / ${Math.round(state.selectedCapacity)} · ${order}`:`${short} · HP ${Math.round(state.selectedHp)} / ${Math.round(state.selectedMaxHp)} · ${order}`;}$('skirmishHudSelected').textContent=selected;}
   if($('skirmishCommandHint'))$('skirmishCommandHint').textContent=state.commandHint||'TAP FRIENDLY UNIT TO SELECT · TAP TERRAIN TO MOVE';
   $('skirmishMessage').textContent=state.message||`Skirmish Lab ${SKIRMISH_VERSION} ready.`;
-  $('skirmishFollow').textContent=`FOLLOW TANK: ${skirmish.follow?'ON':'OFF'}`;
+  $('skirmishFollow').textContent=skirmish.follow?'CAMERA: FOLLOW SELECTED':'CAMERA: FREE DRAG';
   if($('skirmishHudFollow')){$('skirmishHudFollow').textContent=skirmish.follow?'FOLLOW ON':'FOLLOW OFF';$('skirmishHudFollow').classList.toggle('active',skirmish.follow);}
-  if($('skirmishHudView')){$('skirmishHudView').textContent=state.viewMode==='tactical'?'VIEW CLOSE':'VIEW WIDE';$('skirmishHudView').classList.toggle('active',state.viewMode==='tactical');}
+  if($('skirmishHudView')){$('skirmishHudView').textContent=skirmish.follow?'FREE CAM':'FOLLOW';$('skirmishHudView').classList.toggle('active',!skirmish.follow);$('skirmishHudView').title=skirmish.follow?'Detach camera: drag battlefield to pan; pinch to zoom':'Follow the selected unit (or Aegis-X if nothing is selected)';}
   $('skirmishSimStatus').textContent=`SIM ${state.simHz} HZ · TICK ${state.simTick} · ${state.entityCount} ENTITIES · HASH ${state.stateHash}`;
   $('skirmishSimPause').textContent=state.simPaused?'RESUME SIM':'PAUSE SIM';
   $('skirmishCommandLog').textContent=state.commandLog?.length?state.commandLog.map(c=>`#${c.executedTick} ${c.source.toUpperCase()} ${c.type}`).join('\n'):'No commands executed yet.';
@@ -665,7 +672,7 @@ $('skirmishCollisionDebug').onclick=()=>{skirmish.toggleCollisionDebug();updateS
 document.querySelectorAll('[data-skirmish-build]').forEach(b=>b.onclick=()=>{skirmish.selectBuild(b.dataset.skirmishBuild);setSkirmishBuildDrawer(false);updateSkirmishUi();});
 $('skirmishFollow').onclick=()=>{skirmish.setFollow(!skirmish.follow);updateSkirmishUi();};
 $('skirmishHudFollow').onclick=()=>{skirmish.setFollow(!skirmish.follow);updateSkirmishUi();};
-$('skirmishHudView').onclick=()=>{skirmish.toggleViewMode();updateSkirmishUi();};
+$('skirmishHudView').onclick=()=>{skirmish.toggleFreeCamera();updateSkirmishUi();};
 $('skirmishFirePanel').onclick=()=>{skirmish.fire();updateSkirmishUi();};
 $('skirmishFire').onclick=()=>{skirmish.fire();updateSkirmishUi();};
 $('skirmishSimPause').onclick=()=>{skirmish.setSimulationPaused(!skirmish.sim.paused);updateSkirmishUi();};

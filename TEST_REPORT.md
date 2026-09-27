@@ -1,3 +1,18 @@
+# WorldForge v0.13.16 Test Report
+
+## Mobile Command UX + Free Camera
+
+Result: **PASS — focused source/regression validation**
+
+- Focused `tests/rts-*.test.mjs` suite: **21 / 21 PASS**.
+- `node --check` passes for the modified Skirmish, app, and schema modules.
+- New v0.13.16 regression coverage verifies screen-space friendly-unit assist, Harvester resource assist, terrain ray fallback, nearest-valid destination snapping, 14 px touch slop, FREE CAM one-finger drag, FOLLOW-selected behavior, and removal of the `VIEW WIDE` HUD control.
+- Existing building egress/repath, Harvester economy, Vehicle Factory production, resource depletion, collision/spacing, terrain/road/river, master-asset, and simulation suites remain green.
+- All **16 production GLBs** are SHA-256 byte-identical to the v0.13.15 working baseline; this milestone modifies gameplay/input/UI code only.
+
+### On-device focus
+On iPhone, select a tiny Rifleman or vehicle without pixel-perfect tapping, then tap several open-looking destinations including road edges, near trees/rocks, and beside buildings. Each accepted MOVE tap should immediately flash the yellow destination ring and the unit should route to the nearest legal point. Toggle FREE CAM, drag with one finger around the map, pinch zoom, then tap FOLLOW and confirm the camera returns to the selected unit. A small finger wobble should still count as a tap rather than a pan.
+
 # WorldForge v0.13.15 Test Report
 
 ## Focused RTS validation
