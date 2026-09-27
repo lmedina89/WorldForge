@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export const RTS_MAP_FORGE_VERSION='0.2.2';
+export const RTS_MAP_FORGE_VERSION='0.2.3';
 export const RTS_MAP_SCHEMA='worldforge.rts-map.v1';
 
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -40,7 +40,7 @@ const NAV_FLAG=Object.freeze({buildable:1,water:2,cliff:4,road:8,bridge:16,fores
 const toCost10=v=>v===null||!Number.isFinite(v)?0:Math.max(1,Math.min(255,Math.round(v*10)));
 
 export function normalizeRTSMapRecipe(input={}){
-  const size=[512,768,1024,1536].includes(Number(input.size))?Number(input.size):1024;
+  const size=[512,768,1024,1536].includes(Number(input.size))?Number(input.size):1536;
   const players=Number(input.players)===2?2:4;
   return {
     schema:RTS_MAP_SCHEMA,
@@ -51,12 +51,12 @@ export function normalizeRTSMapRecipe(input={}){
     players,
     biome:BIOMES[input.biome]?input.biome:'temperate',
     tacticalProfile:['balanced','mountainPasses','valleyWar'].includes(input.tacticalProfile)?input.tacticalProfile:'balanced',
-    relief:clamp(Number(input.relief)||0.72,0,1),
-    forest:clamp(Number(input.forest)||0.55,0,1),
-    resources:clamp(Number(input.resources)||0.62,0,1),
+    relief:clamp(Number(input.relief)||1,0,1),
+    forest:clamp(Number(input.forest)||1,0,1),
+    resources:clamp(Number(input.resources)||0.75,0,1),
     river:input.river!==false,
     roads:input.roads!==false,
-    startProtection:['open','balanced','fortified'].includes(input.startProtection)?input.startProtection:'balanced'
+    startProtection:['open','balanced','fortified'].includes(input.startProtection)?input.startProtection:'fortified'
   };
 }
 
@@ -94,12 +94,12 @@ export class RTSMapForge{
   _layout(recipe){
     const size=recipe.size,H=size/2;
     const corners=recipe.players===2?
-      [{id:'START_01',x:-H*.80,y:-H*.80,angle:Math.PI/4,owner:'player'},{id:'START_02',x:H*.80,y:H*.80,angle:-3*Math.PI/4,owner:'opponent'}]:
+      [{id:'START_01',x:-H*.68,y:-H*.68,angle:Math.PI/4,owner:'player'},{id:'START_02',x:H*.68,y:H*.68,angle:-3*Math.PI/4,owner:'opponent'}]:
       [
-        {id:'START_01',x:-H*.80,y:-H*.80,angle:Math.PI/4,owner:'player'},
-        {id:'START_02',x:-H*.80,y:H*.80,angle:-Math.PI/4,owner:'opponent'},
-        {id:'START_03',x:H*.80,y:H*.80,angle:-3*Math.PI/4,owner:'opponent'},
-        {id:'START_04',x:H*.80,y:-H*.80,angle:3*Math.PI/4,owner:'opponent'}
+        {id:'START_01',x:-H*.68,y:-H*.68,angle:Math.PI/4,owner:'player'},
+        {id:'START_02',x:-H*.68,y:H*.68,angle:-Math.PI/4,owner:'opponent'},
+        {id:'START_03',x:H*.68,y:H*.68,angle:-3*Math.PI/4,owner:'opponent'},
+        {id:'START_04',x:H*.68,y:-H*.68,angle:3*Math.PI/4,owner:'opponent'}
       ];
     const ex=[];
     for(const s of corners){
@@ -116,8 +116,8 @@ export class RTSMapForge{
     const river=x=>size*.015+size*.07*Math.sin((x+size*.07)/(size*.19))+size*.018*Math.sin(x/(size*.07));
     const ridgeWidth=size*(recipe.tacticalProfile==='mountainPasses'?.045:.06);
     const startRingHeight=(recipe.startProtection==='fortified'?1.28:recipe.startProtection==='open'?.58:1)*amp;
-    const startRingRadius=size*.105;
-    const startRingWidth=size*.026;
+    const startRingRadius=size*.140;
+    const startRingWidth=size*.028;
     const hiddenBowlRadius=size*.065;
     const passXs=[-size*.20,size*.08,size*.31];
     const gauss=(v,w)=>Math.exp(-(v*v)/(w*w));
@@ -141,7 +141,7 @@ export class RTSMapForge{
         const flankGate=1-smooth(angleDiff(a,s.angle+(s.x*s.y>0?.75:-.75))/(Math.PI*.11));
         const gate=Math.max(mainGate,flankGate*.62);
         h+=gauss(d-startRingRadius,startRingWidth)*startRingHeight*(1-gate);
-        if(d<size*.062){const k=smooth((size*.062-d)/(size*.026));h=h*(1-k)+4.5*k;}
+        if(d<size*.085){const k=smooth((size*.085-d)/(size*.028));h=h*(1-k)+4.5*k;}
       }
       // Hidden expansion bowls get ridges with narrow access.
       for(const e of layout.expansions.filter(e=>e.kind==='hiddenPocket')){
@@ -229,7 +229,7 @@ export class RTSMapForge{
   _startMarker(start,index){
     const size=this.recipe.size,z=this.heightAt(start.x,start.y)+.7;
     const g=new THREE.Group();g.name=start.id;
-    const radius=size*.055;
+    const radius=size*.085;
     const fill=new THREE.Mesh(new THREE.CircleGeometry(radius,48),new THREE.MeshBasicMaterial({color:index===0?0x55c97a:0x8da18e,transparent:true,opacity:index===0?.22:.10,depthWrite:false}));fill.position.set(start.x,start.y,z);g.add(fill);
     const pts=[];for(let i=0;i<=64;i++){const a=i/64*Math.PI*2;pts.push(new THREE.Vector3(start.x+Math.cos(a)*radius,start.y+Math.sin(a)*radius,z+.2));}
     g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),lineMaterial(index===0?0x7ff0a0:0xa8b9aa,index===0?.95:.6)));
@@ -331,19 +331,21 @@ export class RTSMapForge{
     }
     // Instanced upright trees / scrub. Three.js cylinder/cone primitives are Y-up, so rotate geometry once into WorldForge Z-up.
     const areaScale=(size/1024)*(size/1024);
-    const treeCount=Math.min(1700,Math.round(areaScale*(260+recipe.forest*360)));
+    const treeCount=Math.min(1850,Math.round(areaScale*(250+recipe.forest*350)));
     const trunkGeo=new THREE.CylinderGeometry(size*.00055,size*.00078,size*.0046,6),crownGeo=new THREE.ConeGeometry(size*.0032,size*.0090,7),trunkMat=mat(biome.trunk,1),crownMat=mat(biome.tree,1);
     trunkGeo.rotateX(Math.PI/2);crownGeo.rotateX(Math.PI/2);
     const trunks=new THREE.InstancedMesh(trunkGeo,trunkMat,treeCount),crowns=new THREE.InstancedMesh(crownGeo,crownMat,treeCount);trunks.castShadow=crowns.castShadow=true;const dummy=new THREE.Object3D();let t=0,attempts=0;
     while(t<treeCount&&attempts++<treeCount*25){
       const x=(random()-.5)*size*.96,y=(random()-.5)*size*.96;if(recipe.river&&Math.abs(y-shape.river(x))<size*.035)continue;
-      if(layout.starts.some(s=>Math.hypot(x-s.x,y-s.y)<size*.075))continue;
+      if(layout.starts.some(s=>Math.hypot(x-s.x,y-s.y)<size*.105))continue;
+      if(layout.expansions.some(e=>Math.hypot(x-e.x,y-e.y)<size*(e.kind==='safeExpansion'?.050:.032)))continue;
+      if(this.roadFns.some(fn=>Math.abs(y-fn(x))<(fn.width||size*.012)*1.35))continue;
       const z=this.heightAt(x,y),scale=.70+random()*.75,yaw=random()*Math.PI*2;dummy.position.set(x,y,z+size*.0023*scale);dummy.scale.set(scale,scale,scale);dummy.rotation.set(0,0,yaw);dummy.updateMatrix();trunks.setMatrixAt(t,dummy.matrix);dummy.position.z=z+size*.0067*scale;dummy.updateMatrix();crowns.setMatrixAt(t,dummy.matrix);this.treePoints.push([x,y]);t++;
     }
     trunks.count=crowns.count=t;trunks.name='ForestTrunks';crowns.name='ForestCanopies';this.root.add(trunks,crowns);
     // Rocks / tactical cover clusters.
     const rockCount=Math.min(420,Math.round(areaScale*(65+recipe.relief*90))),rocks=new THREE.InstancedMesh(new THREE.DodecahedronGeometry(size*.0024,0),mat(biome.rock,1),rockCount);rocks.castShadow=true;
-    for(let i=0;i<rockCount;i++){const x=(random()-.5)*size*.94,y=(random()-.5)*size*.94,z=this.heightAt(x,y),scale=.6+random()*1.6;dummy.position.set(x,y,z+size*.0012*scale);dummy.scale.set(scale,scale,scale*(.45+random()*.45));dummy.rotation.set(random(),random(),random()*6.28);dummy.updateMatrix();rocks.setMatrixAt(i,dummy.matrix);}rocks.name='RockCover';this.root.add(rocks);
+    let rPlaced=0,rAttempts=0;while(rPlaced<rockCount&&rAttempts++<rockCount*22){const x=(random()-.5)*size*.94,y=(random()-.5)*size*.94;if(layout.starts.some(s=>Math.hypot(x-s.x,y-s.y)<size*.095))continue;if(layout.expansions.some(e=>Math.hypot(x-e.x,y-e.y)<size*(e.kind==='safeExpansion'?.042:.026)))continue;if(this.roadFns.some(fn=>Math.abs(y-fn(x))<(fn.width||size*.012)*1.05))continue;const z=this.heightAt(x,y),scale=.6+random()*1.6;dummy.position.set(x,y,z+size*.0012*scale);dummy.scale.set(scale,scale,scale*(.45+random()*.45));dummy.rotation.set(random(),random(),random()*6.28);dummy.updateMatrix();rocks.setMatrixAt(rPlaced++,dummy.matrix);}rocks.count=rPlaced;rocks.name='RockCover';this.root.add(rocks);
     // Resource fields are gameplay markers/objects, not faction structures.
     const resourceCount=recipe.players===4?(size>=1536?13:size>=1024?9:7):(size>=1536?9:size>=1024?6:5),resourceZones=[];
     const resourceMat=mat(biome.resource,.58);for(let i=0;i<resourceCount;i++){
@@ -352,9 +354,9 @@ export class RTSMapForge{
     }
     layout.starts.forEach((s,i)=>this._startMarker(s,i));layout.expansions.forEach(e=>this._zoneMarker(e,e.kind==='hiddenPocket'?0x76a9d8:0x93d49a));
     const navigation=this._navigationMetadata(recipe,shape.river,layout),score=this._score(recipe,layout,navigation),crossings=this.bridgeData.map(({_frame,...b})=>b);
-    this.metadata={schema:'worldforge.rts-map-meta.v2',mapForgeVersion:RTS_MAP_FORGE_VERSION,recipe,terrain:{chunkSize:+actualChunk.toFixed(2),chunkCount:chunks*chunks,segmentsPerChunk:seg,approxTriangles:tris},startRegions:layout.starts.map((s,i)=>({...s,index:i,radius:+(size*.055).toFixed(2),reservedOnly:true})),expansionZones:layout.expansions.map(e=>({...e,x:+e.x.toFixed(2),y:+e.y.toFixed(2),radius:+(size*.035).toFixed(2)})),resourceZones,routes,crossings,navigation,tacticalScore:score,
+    this.metadata={schema:'worldforge.rts-map-meta.v2',mapForgeVersion:RTS_MAP_FORGE_VERSION,recipe,terrain:{chunkSize:+actualChunk.toFixed(2),chunkCount:chunks*chunks,segmentsPerChunk:seg,approxTriangles:tris},startRegions:layout.starts.map((s,i)=>({...s,index:i,radius:+(size*.085).toFixed(2),clearRadius:+(size*.105).toFixed(2),reservedOnly:true})),expansionZones:layout.expansions.map(e=>({...e,x:+e.x.toFixed(2),y:+e.y.toFixed(2),radius:+(size*.035).toFixed(2)})),resourceZones,routes,crossings,navigation,tacticalScore:score,
       routeAffinities:{mainRoad:['wheeled','tracked','infantry'],roughPass:['tracked','infantry'],steepTrail:['infantry'],deepWater:['amphibious','air'],mountain:['air'],bridge:['tracked','wheeled','infantry','amphibious']},
-      notes:['No faction buildings are generated. Start regions are reserved terrain metadata only.','Faction economy/construction systems place structures during gameplay.','Movement metadata is exported per class: tracked, wheeled, infantry, amphibious and air.','Bridges are explicit traversal links with raised decks and graded approach meshes.']};
+      notes:['No faction buildings are generated. Start regions are reserved terrain metadata only.','1536 m is the intended main-world scale; enlarged start reserves provide roughly 260 m of usable base diameter before the mountain ring.','Trees and rock cover are excluded from start-development zones, safe expansions, and road setbacks so construction and vehicle lanes stay readable.','Faction economy/construction systems place structures during gameplay.','Movement metadata is exported per class: tracked, wheeled, infantry, amphibious and air.','Bridges are explicit traversal links with raised decks and graded approach meshes.']};
     this._buildFog();this.setFogPreview(false);this._buildMovementOverlay();this.root.visible=true;this.overlay.visible=true;this.movementOverlay.visible=this.movementPreview!=='off';return this.metadata;
   }
 

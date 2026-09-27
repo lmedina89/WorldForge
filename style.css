@@ -307,3 +307,15 @@ body.skirmish-mode #mapMinimapWrap{
   .skirmishFire{width:66px!important;height:66px!important;min-width:66px!important;min-height:66px!important;font-size:12px!important}
   body.skirmish-mode #mapMinimapWrap{width:128px;bottom:calc(78px + env(safe-area-inset-bottom))}
 }
+
+
+/* v0.13.5 infantry production */
+#skirmishTrainRifleman:disabled,#skirmishTrainRiflemanPanel:disabled{
+  opacity:.48;
+  filter:saturate(.55);
+  cursor:not-allowed;
+}
+#skirmishTrainRifleman.active,#skirmishTrainRiflemanPanel.active{
+  border-color:#7aaa8c;
+  background:#203b2c;
+}

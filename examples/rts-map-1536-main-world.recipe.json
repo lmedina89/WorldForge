@@ -1,0 +1,16 @@
+{
+  "schema": "worldforge.rts-map.v1",
+  "version": "0.2.2",
+  "type": "rtsMap",
+  "seed": 731904,
+  "size": 1536,
+  "players": 4,
+  "biome": "temperate",
+  "tacticalProfile": "balanced",
+  "relief": 1,
+  "forest": 1,
+  "resources": 0.75,
+  "river": true,
+  "roads": true,
+  "startProtection": "fortified"
+}

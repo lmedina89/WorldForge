@@ -13,11 +13,12 @@ for(const rel of [
   'assets/buildings/aegis_tactical_command_post_v21.glb',
   'assets/buildings/aegis_field_power_node_v1.glb',
   'assets/buildings/aegis_field_refinery_v2.glb',
+  'assets/buildings/aegis_field_barracks_v023.glb',
   'assets/buildings/aegis_command_nexus_hq_v13.glb',
   'assets/buildings/aegis_grid_bastion_power_plant_v1.glb'
 ]) assert.ok(fs.statSync(path.join(root,rel)).size>10000,`${rel} missing/too small`);
 
-for(const id of ['tacticalCommandPost','fieldPowerNode','fieldRefinery','commandNexus','gridBastion'])assert.match(lib,new RegExp(id));
+for(const id of ['tacticalCommandPost','fieldPowerNode','fieldRefinery','fieldBarracks','commandNexus','gridBastion'])assert.match(lib,new RegExp(id));
 assert.match(lib,/skirmishDefault:true/);
 assert.match(lib,/classification:'civilian'/);
 assert.match(lib,/WF_TEAM_PRIMARY/);
@@ -28,15 +29,17 @@ assert.match(defs,/masterAsset:'tacticalCommandPost'/);
 assert.match(defs,/masterAsset:'fieldPowerNode'/);
 assert.match(defs,/masterAsset:'fieldRefinery'/);
 assert.match(defs,/starterUnit:'aegisHarvester'/);
+assert.match(defs,/masterAsset:'fieldBarracks'/);
 assert.match(skirmish,/configuredMasterId=def\?\.masterAsset/);
-assert.match(skirmish,/SKIRMISH_VERSION='0\.5\.1'/);
+assert.match(skirmish,/SKIRMISH_VERSION='0\.6\.0'/);
 assert.match(app,/skirmishSpawnHarvester/);
 assert.match(html,/BUILDING FORGE 0\.3/);
 assert.match(html,/Tactical Command Post · v2\.1/);
 assert.match(html,/Field Power Node · v1\.0/);
 assert.match(html,/Field Refinery · v2\.0/);
+assert.match(html,/Field Barracks · v0\.2\.3/);
 assert.match(html,/Civilian \/ neutral masters/);
 assert.match(html,/id="skirmishSpawnHmmwv"/);
 assert.match(html,/id="skirmishSpawnTalon"/);
 assert.match(html,/id="skirmishSpawnHarvester"/);
-console.log(JSON.stringify({ok:true,masterBuildings:5,militaryDefaults:3,civilianMasters:2,palettes:5,skirmishMasterReplacement:true}));
+console.log(JSON.stringify({ok:true,masterBuildings:6,militaryDefaults:4,civilianMasters:2,palettes:5,skirmishMasterReplacement:true}));

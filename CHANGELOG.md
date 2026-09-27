@@ -1,3 +1,16 @@
+# v0.13.5 — Main World + Field Barracks Infantry
+
+- WorldForge advanced to **0.13.5**; Skirmish Lab to **0.6.0**; RTS Map Forge to **0.2.3**; RTS Asset Library to **0.4.0**.
+- Locked playable Skirmish to the approved 1,536 m temperate main world (seed 731904) while leaving Map Forge available for experimentation.
+- Enlarged start development reserves to roughly 260 m diameter and moved starts inward for more construction room.
+- Added vegetation/rock setbacks around base-development areas, safe expansions and road corridors while preserving mountainous/forested wilderness.
+- Added exact **Aegis Field Barracks v0.2.3** master GLB with faction-material slots and validated infantry deployment sockets.
+- Added exact **Aegis Rifleman v0.3** GLB with `CombatWalk` and `AimFire`.
+- Added Barracks production queue, $120 Rifleman training, hidden interior spawn, physical exit/apron traversal and rally movement.
+- Added infantry locomotion using Map Forge's infantry navigation class and small soft contact shadows.
+- Added first-pass Rifleman combat: target facing, service-rifle cooldown/range/damage, AimFire playback and tracer/muzzle feedback.
+- Preserved all previously approved vehicle/building masters, refinery/Harvester docking, tank combat, construction placement and mobile Skirmish UI.
+
 # v0.13.4 — Skirmish Visual Readability + Terrain Pass
 
 - Skirmish Lab advanced to 0.5.1; RTS Map Forge visual version advanced to 0.2.2.

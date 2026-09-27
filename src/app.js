@@ -16,6 +16,11 @@ import { BuildingForge, BUILDING_FORGE_VERSION } from './building/building-forge
 import { FACTION_PALETTES, MASTER_BUILDINGS } from './rts/rts-asset-library.js';
 
 const $=id=>document.getElementById(id);
+const MAIN_WORLD_RTS_RECIPE=Object.freeze({
+  seed:731904,size:1536,players:4,biome:'temperate',tacticalProfile:'balanced',
+  relief:1,forest:1,resources:.75,river:true,roads:true,startProtection:'fortified'
+});
+const isMainWorldRecipe=r=>!!r&&r.seed===MAIN_WORLD_RTS_RECIPE.seed&&r.size===MAIN_WORLD_RTS_RECIPE.size&&r.players===MAIN_WORLD_RTS_RECIPE.players&&r.biome===MAIN_WORLD_RTS_RECIPE.biome&&r.tacticalProfile===MAIN_WORLD_RTS_RECIPE.tacticalProfile&&r.relief===MAIN_WORLD_RTS_RECIPE.relief&&r.forest===MAIN_WORLD_RTS_RECIPE.forest&&r.resources===MAIN_WORLD_RTS_RECIPE.resources&&r.river===MAIN_WORLD_RTS_RECIPE.river&&r.roads===MAIN_WORLD_RTS_RECIPE.roads&&r.startProtection===MAIN_WORLD_RTS_RECIPE.startProtection;
 let mode='building',currentGroup=null,currentSpec=null,selectedPlacementId=null,selectionHelper=null,selectionGuideGroup=null,fieldLevelView='all',characterSprite=null,characterShadow=null,walkDebugGroup=null,characterPos=[0,0,0],characterDir='S',playtestActive=false,walkDebugEnabled=false,followCameraEnabled=true,playtestCameraOffset=new THREE.Vector3(16,-18,12),settlementCharacterSpawnOverride=null;
 const panels={building:$('buildingPanel'),prop:$('propPanel'),foliage:$('foliagePanel'),surface:$('surfacePanel'),traversal:$('traversalPanel'),field:$('fieldPanel'),settlement:$('settlementPanel'),vehicle:$('vehiclePanel'),rtsbuilding:$('rtsBuildingPanel'),rtsmap:$('rtsMapPanel'),skirmish:$('skirmishPanel'),terrain:$('terrainPanel'),landscape:$('landscapePanel')};
 const isCompositeMode=()=>mode==='field'||mode==='settlement';
@@ -480,13 +485,13 @@ function randomFactionVariant(){const rnd=()=>Math.floor(45+Math.random()*170),h
 function readRTSMapRecipe(){
   return {
     seed:+$('mapSeed').value||731904,
-    size:+$('mapSize').value||1024,
+    size:+$('mapSize').value||1536,
     players:+$('mapPlayers').value||4,
     biome:$('mapBiome').value,
     tacticalProfile:$('mapTacticalProfile').value,
-    relief:+$('mapRelief').value||.72,
-    forest:+$('mapForest').value||.55,
-    resources:+$('mapResources').value||.62,
+    relief:+$('mapRelief').value||1,
+    forest:+$('mapForest').value||1,
+    resources:+$('mapResources').value||.75,
     river:$('mapRiver').checked,
     roads:$('mapRoads').checked,
     startProtection:$('mapStartProtection').value
@@ -540,6 +545,10 @@ function updateSkirmishUi(state=skirmish.state()){
   $('skirmishSimPause').textContent=state.simPaused?'RESUME SIM':'PAUSE SIM';
   $('skirmishCommandLog').textContent=state.commandLog?.length?state.commandLog.map(c=>`#${c.executedTick} ${c.source.toUpperCase()} ${c.type}`).join('\n'):'No commands executed yet.';
   document.querySelectorAll('[data-skirmish-build]').forEach(b=>b.classList.toggle('active',b.dataset.skirmishBuild===state.pendingBuild));
+  for(const id of ['skirmishTrainRifleman','skirmishTrainRiflemanPanel']){
+    const b=$(id);if(!b)continue;b.disabled=!state.canTrainRifleman;b.classList.toggle('active',state.riflemanQueue>0);
+    const span=b.querySelector('span');if(span)span.textContent=state.barracksReady?`$${state.riflemanCost} · queue ${state.riflemanQueue}/5`:`$${state.riflemanCost} · build Barracks`;
+  }
   const buildNames={powerPlant:'POWER PLANT',refinery:'REFINERY',barracks:'BARRACKS',vehicleFactory:'VEHICLE FACTORY',gunTurret:'GUN TURRET'};
   const buildCosts={powerPlant:500,refinery:900,barracks:650,vehicleFactory:1200,gunTurret:600};
   const placing=!!state.pendingBuild;
@@ -549,13 +558,13 @@ function updateSkirmishUi(state=skirmish.state()){
   if(mode==='skirmish')$('seedLabel').textContent=`$${state.credits.toLocaleString()}`;
 }
 async function activateSkirmishMode({reset=false}={}){
-  if(!rtsMapForge.recipe){
-    $('status').textContent='Preparing tactical map for Skirmish Lab…';
-    try{rtsMapForge.generate(readRTSMapRecipe());updateRTSMapScore();}
-    catch(err){$('status').textContent='Skirmish map generation failed: '+err.message;return;}
+  if(!isMainWorldRecipe(rtsMapForge.recipe)){
+    $('status').textContent='Preparing 1,536 m Main World for Skirmish Lab…';
+    try{rtsMapForge.generate(MAIN_WORLD_RTS_RECIPE);updateRTSMapScore();reset=true;}
+    catch(err){$('status').textContent='Skirmish main-world generation failed: '+err.message;return;}
   }
   showMode('skirmish');setSkirmishBuildDrawer(false);rtsMapForge.overlay.visible=false;rtsMapForge.movementOverlay.visible=false;rtsMapForge.setFogPreview(false);
-  try{skirmish.setFactionPalettes($('skirmishPlayerPalette').value,$('skirmishEnemyPalette').value);await skirmish.start({reset});configureSceneForMode();syncSkirmishViewport();drawRTSMapMinimap();updateSkirmishUi();$('status').textContent=`Skirmish Lab ${SKIRMISH_VERSION} · vehicle readability + tactical zoom active · exact military masters preserved.`;}
+  try{skirmish.setFactionPalettes($('skirmishPlayerPalette').value,$('skirmishEnemyPalette').value);await skirmish.start({reset});configureSceneForMode();syncSkirmishViewport();drawRTSMapMinimap();updateSkirmishUi();$('status').textContent=`Skirmish Lab ${SKIRMISH_VERSION} · 1536 m main world · Field Barracks + animated Rifleman production active.`;}
   catch(err){$('status').textContent='Skirmish start failed: '+err.message;}
 }
 
@@ -638,6 +647,7 @@ $('skirmishPlacementCancel').onclick=()=>{skirmish.cancelBuild();updateSkirmishU
 $('skirmishSpawnHmmwv').onclick=async()=>{try{await skirmish.spawnSupportUnit('hmmwv50');updateSkirmishUi();drawRTSMapMinimap();}catch(err){$('status').textContent='HMMWV deploy failed: '+err.message;}};
 $('skirmishSpawnTalon').onclick=async()=>{try{await skirmish.spawnSupportUnit('attackHeli');updateSkirmishUi();drawRTSMapMinimap();}catch(err){$('status').textContent='Talon deploy failed: '+err.message;}};
 $('skirmishSpawnHarvester').onclick=async()=>{try{await skirmish.spawnSupportUnit('fieldHarvester');updateSkirmishUi();drawRTSMapMinimap();}catch(err){$('status').textContent='Harvester deploy failed: '+err.message;}};
+for(const id of ['skirmishTrainRifleman','skirmishTrainRiflemanPanel'])$(id).onclick=()=>{skirmish.trainRifleman();updateSkirmishUi();};
 document.querySelectorAll('[data-skirmish-build]').forEach(b=>b.onclick=()=>{skirmish.selectBuild(b.dataset.skirmishBuild);setSkirmishBuildDrawer(false);updateSkirmishUi();});
 $('skirmishFollow').onclick=()=>{skirmish.setFollow(!skirmish.follow);updateSkirmishUi();};
 $('skirmishHudFollow').onclick=()=>{skirmish.setFollow(!skirmish.follow);updateSkirmishUi();};

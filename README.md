@@ -1,3 +1,39 @@
+# WorldForge v0.13.5 — Main World + Field Barracks Infantry
+
+WorldForge v0.13.5 builds directly on the verified v0.13.4 Skirmish Visual Readability baseline. The existing Aegis-X, HMMWV-50, Talon AH-X, Field Harvester, Tactical Command Post, Field Power Node and Field Refinery masters remain preserved while Skirmish gains its first true infantry-production loop and a larger permanent battlefield.
+
+## One 1,536 m Skirmish world
+- Skirmish now restores one approved main-world recipe on entry: seed **731904**, 1,536 m, 4 starts, temperate biome, balanced tactical profile, maximum relief/forest recipe values, resource density 0.75, river + roads, fortified mountain starts.
+- Start positions move inward enough to support larger bases without crowding the world boundary.
+- Flat development reserves expand to roughly **260 m diameter** around each start before the mountain-bowl ring.
+- Trees and rock cover are excluded from the enlarged start-development areas, safe expansion zones and road setbacks.
+- Wilderness, ridges, mountain pockets, river crossings and forested outer regions remain intact so the larger clear bases do not flatten the whole battlefield.
+- Map Forge remains editable, but entering Skirmish restores the approved main world for now.
+
+## Field Barracks v0.2.3 — exact master asset
+- Added the approved detailed **Aegis Field Barracks v0.2.3** GLB as a first-class military master asset.
+- The Barracks uses the shared faction slots `WF_BASE_ARMOR`, `WF_TEAM_PRIMARY`, `WF_TEAM_SECONDARY`, and `WF_TEAM_ACCENT`.
+- The finished deployment geometry is preserved: recessed interior exit, corrected shallow deployment apron, grounded perimeter/rear lights and readable exterior detail.
+- Production sockets are validated from the asset: `WF_SPAWN_INFANTRY`, `WF_ENTRY`, `WF_EXIT_PATH_0`, `WF_EXIT_PATH_1`, `WF_EXIT_PATH_2`, and `WF_RALLY`.
+- The old procedural Barracks remains only as a fallback path if the master fails to load.
+
+## Aegis Rifleman v0.3 — animated 3D infantry
+- Added the approved lightweight animated Rifleman GLB as the first infantry unit.
+- Uses the real `CombatWalk` and `AimFire` clips from the asset.
+- New `infantryLight` locomotor uses the existing Map Forge infantry traversal class instead of vehicle steering rules.
+- A completed Barracks can train Riflemen for **$120** with a five-slot queue.
+- Soldiers spawn out of sight inside the Barracks, follow the authored deployment corridor/apron path, then rally outside instead of popping into existence on the pad.
+- Riflemen receive the same soft ground-contact presentation treatment used by other ground units.
+- First combat pass provides simple automatic rifle engagement against nearby enemy targets with aim-facing, `AimFire`, muzzle/tracer feedback and damage.
+
+## Protection / scope
+- Existing approved vehicle and building GLBs were not modified.
+- Refinery → starter Harvester docking remains unchanged.
+- Existing tank driving, main-gun combat, mobile building placement, VIEW WIDE / VIEW CLOSE, pinch zoom, minimap, simulation snapshot and immersive mobile HUD remain intact.
+- This milestone intentionally adds only the first Rifleman class. Rocket infantry, War Factory production, Helipad production and full unit-selection/order UX remain later work.
+
+---
+
 # WorldForge v0.13.4 — Skirmish Visual Readability + Terrain Pass
 
 WorldForge v0.13.4 keeps the immersive v0.13.3 battlefield UI and adds a focused rendering/readability pass so the approved vehicle masters remain recognizable at RTS distance without adding a bright arcade selection ring.

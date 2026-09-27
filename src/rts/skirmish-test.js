@@ -8,7 +8,7 @@ import { LOCOMOTORS, WEAPONS, UNIT_DEFINITIONS } from './data/rts-definitions.js
 import { instantiateMasterBuilding, masterBuildingForRole, MASTER_BUILDINGS } from './rts-asset-library.js';
 import { loadAegisReferenceVehicle } from '../vehicle/vehicle-generator.js';
 
-export const SKIRMISH_VERSION='0.5.1';
+export const SKIRMISH_VERSION='0.6.0';
 
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const angleDelta=(a,b)=>Math.atan2(Math.sin(a-b),Math.cos(a-b));
@@ -20,7 +20,7 @@ export class SkirmishTest{
     this.scene=scene;this.camera=camera;this.renderer=renderer;this.controls=controls;this.mapForge=mapForge;this.onStateChange=onStateChange;
     this.loader=new GLTFLoader();this.root=new THREE.Group();this.root.name='WorldForgeSkirmish';this.root.visible=false;scene.add(this.root);
     this.effects=new THREE.Group();this.effects.name='SkirmishEffects';this.root.add(this.effects);
-    this.active=false;this.started=false;this.mapSignature='';this.tank=null;this.supportUnits=[];this.supportSerial=0;this.enemyTargets=[];this.buildings=[];this.buildingViewPromises=new Map();this.fx=[];this.projectileViews=new Map();this.renderEvents=[];
+    this.active=false;this.started=false;this.mapSignature='';this.tank=null;this.supportUnits=[];this.supportSerial=0;this.infantryUnits=[];this.infantryViewPromises=new Map();this.riflemanAssetPromise=null;this.enemyTargets=[];this.buildings=[];this.buildingViewPromises=new Map();this.fx=[];this.projectileViews=new Map();this.renderEvents=[];
     this.drive={forward:false,back:false,left:false,right:false};this.aimPoint=new THREE.Vector3();this.pendingBuild=null;this.follow=true;this.viewMode='overview';this.lastMessage='';this.buildSerial=1;this.playerPalette='aegis';this.enemyPalette='crimson';
     this.raycaster=new THREE.Raycaster();this.pointer=new THREE.Vector2();this.softShadowTexture=this._makeSoftShadowTexture();this.aimMarker=this._makeAimMarker();this.root.add(this.aimMarker);this.aimMarker.visible=false;
     this.sim=new RTSSimulation({hz:30,seed:1});this.playerFaction=null;this.enemyFaction=null;this.lastUiTick=-999;this._configureSimulation();
@@ -42,10 +42,14 @@ export class SkirmishTest{
     });
     this.sim.onCommand(RTS_COMMANDS.FIRE,(cmd)=>this._handleFireCommand(cmd));
     this.sim.onCommand(RTS_COMMANDS.BUILD,(cmd)=>this._handlePlaceBuildingCommand(cmd));
+    this.sim.onCommand(RTS_COMMANDS.PRODUCE,(cmd)=>this._handleProduceCommand(cmd));
     this.sim.addSystem('locomotion',(dt)=>this._systemLocomotion(dt),{priority:10});
+    this.sim.addSystem('infantry-locomotion',(dt)=>this._systemInfantryLocomotion(dt),{priority:12});
     this.sim.addSystem('turret-aim',(dt)=>this._systemTurretAim(dt),{priority:20});
     this.sim.addSystem('weapons',(dt)=>this._systemWeapons(dt),{priority:30});
+    this.sim.addSystem('infantry-combat',(dt)=>this._systemInfantryCombat(dt),{priority:35});
     this.sim.addSystem('construction',(dt)=>this._systemConstruction(dt),{priority:40});
+    this.sim.addSystem('production',(dt)=>this._systemProduction(dt),{priority:45});
     this.sim.addSystem('projectiles',(dt)=>this._systemProjectiles(dt),{priority:50});
   }
 
@@ -83,7 +87,7 @@ export class SkirmishTest{
   toggleViewMode(){this.setViewMode(this.viewMode==='overview'?'tactical':'overview');}
   resizeCamera(){if(this.active)this._setCamera();}
   setSimulationPaused(paused){this.sim.setPaused(paused);this._emit(paused?'Simulation paused.':'Simulation resumed.');}
-  stepSimulation(){if(!this.started)return;this.sim.stepOnce();this._consumeRenderEvents();this._syncViews();this._emit(`Advanced one simulation tick to ${this.sim.clock.tick}.`);}
+  stepSimulation(){if(!this.started)return;this.sim.stepOnce();this._consumeRenderEvents();this._syncViews(this.sim.clock.fixedDelta);this._emit(`Advanced one simulation tick to ${this.sim.clock.tick}.`);}
   exportSnapshot(){return this.sim.snapshot();}
 
   async start({reset=false}={}){
@@ -92,11 +96,11 @@ export class SkirmishTest{
     if(this.started&&!reset){this.setActive(true);this._setCamera();this._emit();return;}
     this.mapSignature=sig;this._clearSession();
     this.sim.reset({seed:this.mapForge.recipe?.seed||1});this.lastUiTick=-999;this.viewMode='overview';this.camera.zoom=1;this.playerFaction=this.sim.createFaction('player',{credits:5000});this.enemyFaction=this.sim.createFaction('enemy',{credits:0});this.pendingBuild=null;this.buildSerial=1;
-    await this._spawnPlayerTank();await this._spawnStartingConstructionYard();this._spawnTrainingTarget();this.started=true;this.setActive(true);this._setCamera();this._emit('Skirmish ready · compact military masters active · Field Refinery includes one docked Field Harvester on completion.');
+    await this._spawnPlayerTank();await this._spawnStartingConstructionYard();this._spawnTrainingTarget();this.started=true;this.setActive(true);this._setCamera();this._emit('Skirmish ready · 1536 m main-world layout active · Field Barracks trains animated Riflemen through the real deployment exit.');
   }
 
   _clearSession(){
-    this.clearDrive();this.tank=null;this.supportUnits=[];this.supportSerial=0;this.enemyTargets=[];this.buildings=[];this.buildingViewPromises.clear();this.fx=[];this.projectileViews.clear();this.renderEvents=[];this.aimMarker.visible=false;this.started=false;
+    this.clearDrive();this.tank=null;this.supportUnits=[];this.supportSerial=0;this.infantryUnits=[];this.infantryViewPromises.clear();this.enemyTargets=[];this.buildings=[];this.buildingViewPromises.clear();this.fx=[];this.projectileViews.clear();this.renderEvents=[];this.aimMarker.visible=false;this.started=false;
     while(this.root.children.length){const c=this.root.children[this.root.children.length-1];this.root.remove(c);if(c!==this.aimMarker)disposeObject(c);}
     this.effects=new THREE.Group();this.effects.name='SkirmishEffects';this.root.add(this.effects);this.aimMarker=this._makeAimMarker();this.root.add(this.aimMarker);this.aimMarker.visible=false;
   }
@@ -127,7 +131,77 @@ export class SkirmishTest{
   }
 
   _buildingComponents(type,x,y,{owner='player',complete=false}={}){
-    const def=RTS_BUILDINGS[type];return {buildingType:type,owner,transform:{x,y,z:this.mapForge.surfaceHeightAt(x,y),heading:0},health:{current:def.hp,max:def.hp,destroyed:false},building:{footprint:[...def.footprint],buildRadius:def.buildRadius||0,powerUse:def.powerUse||0,powerSupply:def.powerSupply||0,starterUnit:def.starterUnit||null,starterUnitSpawned:false},construction:{progress:complete?1:0,duration:1.8,complete:!!complete}};
+    const def=RTS_BUILDINGS[type],components={buildingType:type,owner,transform:{x,y,z:this.mapForge.surfaceHeightAt(x,y),heading:0},health:{current:def.hp,max:def.hp,destroyed:false},building:{footprint:[...def.footprint],buildRadius:def.buildRadius||0,powerUse:def.powerUse||0,powerSupply:def.powerSupply||0,starterUnit:def.starterUnit||null,starterUnitSpawned:false},construction:{progress:complete?1:0,duration:1.8,complete:!!complete}};
+    if(type==='barracks')components.production={queue:[],active:null};
+    return components;
+  }
+
+  _buildingLocalPoint(entity,[lx,ly,lz]){
+    const t=entity.components.transform,h=t.heading||0,c=Math.cos(h),s=Math.sin(h);
+    return {x:t.x+c*lx-s*ly,y:t.y+s*lx+c*ly,z:t.z+lz};
+  }
+  _barracksExitProfile(entity){
+    return {
+      spawn:this._buildingLocalPoint(entity,[6.15,0,.68]),
+      entry:this._buildingLocalPoint(entity,[8.18,0,.68]),
+      path0:this._buildingLocalPoint(entity,[8.78,0,.64]),
+      path1:this._buildingLocalPoint(entity,[9.92,0,.52]),
+      path2:this._buildingLocalPoint(entity,[10.55,0,.50]),
+      rally:this._buildingLocalPoint(entity,[12.0,0,.58])
+    };
+  }
+
+  trainRifleman(){
+    if(!this.started)return false;
+    this.sim.issueCommand(RTS_COMMANDS.PRODUCE,{unitType:'aegisRifleman'},{source:COMMAND_SOURCES.PLAYER});
+    this._emit('Rifleman production command queued.');
+    return true;
+  }
+
+  _handleProduceCommand(cmd){
+    const def=UNIT_DEFINITIONS[cmd.payload.unitType];
+    if(!def||def.id!=='aegisRifleman'){this.renderEvents.push({type:'message',message:'Unknown infantry production request.'});return;}
+    const barracks=this.sim.entities.values().find(e=>e.kind==='building'&&e.components.owner==='player'&&e.components.buildingType==='barracks'&&e.components.construction?.complete&&!e.components.health?.destroyed);
+    if(!barracks){this.renderEvents.push({type:'message',message:'Build and complete a Field Barracks before training Riflemen.'});return;}
+    const prod=barracks.components.production||(barracks.components.production={queue:[],active:null});
+    const queued=(prod.queue?.length||0)+(prod.active?1:0);
+    if(queued>=5){this.renderEvents.push({type:'message',message:'Field Barracks queue is full.'});return;}
+    if(!this.playerFaction?.spend(def.cost)){this.renderEvents.push({type:'message',message:`Not enough credits for ${def.label}.`});return;}
+    prod.queue.push({unitType:def.id,remaining:def.buildSeconds,total:def.buildSeconds});
+    this.renderEvents.push({type:'message',message:`${def.label} training · $${def.cost}.`});
+  }
+
+  _spawnRiflemanEntity(barracks){
+    const def=UNIT_DEFINITIONS.aegisRifleman,loc=LOCOMOTORS[def.locomotor],weapon=WEAPONS[def.primaryWeapon],profile=this._barracksExitProfile(barracks),heading=barracks.components.transform.heading||0;
+    const waypoints=[profile.entry,profile.path0,profile.path1,profile.path2,profile.rally].map(p=>({...p}));
+    const e=this.sim.createEntity('unit',{
+      unitType:def.id,owner:'player',
+      transform:{x:profile.spawn.x,y:profile.spawn.y,z:profile.spawn.z,heading},
+      health:{current:def.maxHp,max:def.maxHp,destroyed:false},
+      locomotor:{...loc},
+      move:{waypoints,index:0,moving:true,state:'deploy',exitBuildingId:barracks.id},
+      weapon:{id:weapon.id,cooldown:0},
+      combat:{targetId:null,state:'deploying'}
+    },'player');
+    this.renderEvents.push({type:'spawnRifleman',entityId:e.id});
+    this.renderEvents.push({type:'message',message:'Aegis Rifleman deployed from the Field Barracks.'});
+    return e;
+  }
+
+  async _createRiflemanView(entity){
+    const def=UNIT_DEFINITIONS.aegisRifleman;
+    if(!this.riflemanAssetPromise)this.riflemanAssetPromise=this.loader.loadAsync(def.asset);
+    const gltf=await this.riflemanAssetPromise,source=cloneMaterials(gltf.scene.clone(true));
+    source.traverse(o=>{if(o.isMesh){o.castShadow=true;o.receiveShadow=true;}});
+    const axis=new THREE.Group();axis.name='Rifleman_YUp_to_ZUp';axis.rotation.x=Math.PI/2;axis.add(source);
+    const forwardFix=new THREE.Group();forwardFix.name='Rifleman_ForwardFix';forwardFix.rotation.z=Math.PI/2;forwardFix.add(axis);
+    const root=new THREE.Group();root.name=`PLAYER_Rifleman_${entity.id}`;root.add(forwardFix);this.root.add(root);
+    const mixer=new THREE.AnimationMixer(source),walkClip=THREE.AnimationClip.findByName(gltf.animations,def.walkClip),fireClip=THREE.AnimationClip.findByName(gltf.animations,def.fireClip);
+    const walkAction=walkClip?mixer.clipAction(walkClip):null,fireAction=fireClip?mixer.clipAction(fireClip):null;
+    if(walkAction){walkAction.play();walkAction.paused=false;}
+    if(fireAction){fireAction.setLoop(THREE.LoopOnce,1);fireAction.clampWhenFinished=true;}
+    const view={entityId:entity.id,root,source,axis,forwardFix,mixer,walkAction,fireAction,definition:def,fireTimer:0};
+    this._attachPresentationShadow(view,{air:false});this.infantryUnits.push(view);return view;
   }
   async _createBuildingView(entity,{palette=null,name=null}={}){
     const type=entity.components.buildingType,t=entity.components.transform,c=entity.components.construction,def=RTS_BUILDINGS[type];
@@ -226,9 +300,9 @@ export class SkirmishTest{
   }
 
   _systemWeapons(dt){for(const e of this.sim.entities.values()){if(e.components.weapon)e.components.weapon.cooldown=Math.max(0,e.components.weapon.cooldown-dt);}}
-  _blockedByStructureSim(x,y,ignoreEntityId=null){
+  _blockedByStructureSim(x,y,ignoreEntityId=null,ignoreBuildingId=null){
     for(const e of this.sim.entities.values()){
-      if(e.id===ignoreEntityId||e.components.health?.destroyed||!['building','target'].includes(e.kind))continue;const fp=e.components.building?.footprint||[8,8],r=Math.hypot(fp[0],fp[1])*.46+3,t=e.components.transform;if(Math.hypot(x-t.x,y-t.y)<r)return true;
+      if(e.id===ignoreEntityId||e.id===ignoreBuildingId||e.components.health?.destroyed||!['building','target'].includes(e.kind))continue;const fp=e.components.building?.footprint||[8,8],r=Math.hypot(fp[0],fp[1])*.46+3,t=e.components.transform;if(Math.hypot(x-t.x,y-t.y)<r)return true;
     }return false;
   }
   _systemLocomotion(dt){
@@ -236,12 +310,66 @@ export class SkirmishTest{
     if(turn)t.heading+=turn*loc.turnRate*dt*(Math.abs(throttle)>.01?.72:1);
     if(throttle){const speed=throttle>0?loc.maxSpeed:loc.reverseSpeed,nx=t.x+Math.cos(t.heading)*speed*dt*throttle,ny=t.y+Math.sin(t.heading)*speed*dt*throttle,nav=this.mapForge.movementAt(nx,ny,loc.movementClass);if(nav.allowed&&!this._blockedByStructureSim(nx,ny,e.id)){t.x=nx;t.y=ny;t.z=this.mapForge.surfaceHeightAt(nx,ny)-.1;}}
   }
+  _systemInfantryLocomotion(dt){
+    for(const e of this.sim.entities.values()){
+      if(e.components.unitType!=='aegisRifleman'||e.components.health?.destroyed)continue;
+      const t=e.components.transform,move=e.components.move,loc=e.components.locomotor;if(!move?.moving||!move.waypoints?.length)continue;
+      const wp=move.waypoints[Math.min(move.index,move.waypoints.length-1)],dx=wp.x-t.x,dy=wp.y-t.y,dist=Math.hypot(dx,dy);
+      if(dist<.34){
+        move.index++;
+        if(move.index>=move.waypoints.length){move.moving=false;move.state='rallied';move.exitBuildingId=null;e.components.combat.state='ready';t.z=this.mapForge.surfaceHeightAt(t.x,t.y)+.04;}
+        continue;
+      }
+      const desired=Math.atan2(dy,dx),err=angleDelta(desired,t.heading);t.heading+=clamp(err,-loc.turnRate*dt,loc.turnRate*dt);
+      const step=Math.min(dist,loc.maxSpeed*dt),nx=t.x+Math.cos(desired)*step,ny=t.y+Math.sin(desired)*step,nav=this.mapForge.movementAt(nx,ny,'infantry');
+      if(nav.allowed&&!this._blockedByStructureSim(nx,ny,e.id,move.exitBuildingId)){
+        t.x=nx;t.y=ny;
+        const u=dist>0?Math.min(1,step/dist):1,targetZ=Number.isFinite(wp.z)?wp.z:this.mapForge.surfaceHeightAt(nx,ny)+.04;
+        t.z=t.z+(targetZ-t.z)*Math.max(.35,u);
+      }
+    }
+  }
+
   _systemTurretAim(dt){
     if(!this.tank)return;const e=this.sim.entities.get(this.tank.entityId);if(!e)return;const t=e.components.transform,tur=e.components.turret,a=tur.aimPoint;if(!a)return;const desiredWorld=Math.atan2(a.y-t.y,a.x-t.x),localYaw=angleDelta(desiredWorld,t.heading),yawErr=angleDelta(localYaw,tur.yaw);tur.yaw+=clamp(yawErr,-tur.yawRate*dt,tur.yawRate*dt);const horizontal=Math.hypot(a.x-t.x,a.y-t.y),desiredPitch=clamp(Math.atan2(a.z-(t.z+2.6),horizontal),-.12,.32),pitchErr=desiredPitch-tur.pitch;tur.pitch+=clamp(pitchErr,-tur.pitchRate*dt,tur.pitchRate*dt);
   }
   _systemConstruction(dt){
     for(const e of this.sim.entities.values()){
       const c=e.components.construction;if(!c||c.complete)continue;c.progress=Math.min(1,c.progress+dt/c.duration);if(c.progress>=1){c.complete=true;this.renderEvents.push({type:'constructionComplete',entityId:e.id,label:RTS_BUILDINGS[e.components.buildingType]?.label||'Structure',buildingType:e.components.buildingType});}
+    }
+  }
+
+  _systemProduction(dt){
+    for(const e of this.sim.entities.values()){
+      if(e.kind!=='building'||e.components.buildingType!=='barracks'||!e.components.construction?.complete||e.components.health?.destroyed)continue;
+      const p=e.components.production||(e.components.production={queue:[],active:null});
+      if(!p.active&&p.queue.length)p.active=p.queue.shift();
+      if(!p.active)continue;
+      p.active.remaining=Math.max(0,p.active.remaining-dt);
+      if(p.active.remaining<=0){const unitType=p.active.unitType;p.active=null;if(unitType==='aegisRifleman')this._spawnRiflemanEntity(e);}
+    }
+  }
+
+  _systemInfantryCombat(dt){
+    const rifleDef=UNIT_DEFINITIONS.aegisRifleman,weapon=WEAPONS[rifleDef.primaryWeapon];
+    for(const e of this.sim.entities.values()){
+      if(e.components.unitType!==rifleDef.id||e.components.health?.destroyed||e.components.move?.moving)continue;
+      const t=e.components.transform;
+      let target=null,best=Infinity;
+      for(const other of this.sim.entities.values()){
+        if(other.components.owner!=='enemy'||other.components.health?.destroyed||!['target','unit','building'].includes(other.kind))continue;
+        const ot=other.components.transform,d=Math.hypot(ot.x-t.x,ot.y-t.y);if(d<=weapon.range&&d<best){best=d;target=other;}
+      }
+      if(!target){e.components.combat.targetId=null;e.components.combat.state='ready';continue;}
+      e.components.combat.targetId=target.id;e.components.combat.state='engaging';
+      const tt=target.components.transform,desired=Math.atan2(tt.y-t.y,tt.x-t.x),err=angleDelta(desired,t.heading),turn=e.components.locomotor.turnRate*dt;t.heading+=clamp(err,-turn,turn);
+      if(Math.abs(err)>.18||e.components.weapon.cooldown>0)continue;
+      e.components.weapon.cooldown=weapon.reloadSeconds;
+      const hp=target.components.health;hp.current=Math.max(0,hp.current-weapon.damage);const destroyed=hp.current<=0;if(destroyed)hp.destroyed=true;
+      const from={x:t.x+Math.cos(t.heading)*.55,y:t.y+Math.sin(t.heading)*.55,z:t.z+1.34};
+      const to={x:tt.x,y:tt.y,z:tt.z+(target.kind==='target'?3.0:1.2)};
+      this.renderEvents.push({type:'infantryFire',entityId:e.id,from,to});
+      if(target.kind==='target')this.renderEvents.push({type:'targetHit',entityId:target.id,current:hp.current,max:hp.max,destroyed});
     }
   }
   _systemProjectiles(dt){
@@ -256,9 +384,14 @@ export class SkirmishTest{
   }
 
   _muzzleFlash(pos){const p=new THREE.Vector3(pos.x,pos.y,pos.z),flash=new THREE.Mesh(new THREE.IcosahedronGeometry(1.25,1),new THREE.MeshBasicMaterial({color:0xffbd54,transparent:true,opacity:.95}));flash.position.copy(p);this.effects.add(flash);const light=new THREE.PointLight(0xff8b32,6,28,2);light.position.copy(p);this.effects.add(light);this.fx.push({kind:'flash',mesh:flash,light,life:.10,maxLife:.10});}
+  _rifleTracer(from,to){
+    const a=new THREE.Vector3(from.x,from.y,from.z),b=new THREE.Vector3(to.x,to.y,to.z),g=new THREE.BufferGeometry().setFromPoints([a,b]),m=new THREE.LineBasicMaterial({color:0xffd47a,transparent:true,opacity:.82,depthWrite:false,toneMapped:false}),line=new THREE.Line(g,m);line.name='RifleTracer';this.effects.add(line);
+    const flash=new THREE.Mesh(new THREE.IcosahedronGeometry(.16,0),new THREE.MeshBasicMaterial({color:0xffbd54,transparent:true,opacity:.95,toneMapped:false}));flash.position.copy(a);this.effects.add(flash);
+    this.fx.push({kind:'tracer',mesh:line,flash,life:.075,maxLife:.075});
+  }
   _impact(pos,big=false){const p=new THREE.Vector3(pos.x,pos.y,pos.z),light=new THREE.PointLight(big?0xff7a28:0xffa344,big?10:5,big?42:24,2);light.position.copy(p);this.effects.add(light);this.fx.push({kind:'light',light,life:big?.32:.18,maxLife:big?.32:.18});const count=big?18:9;for(let i=0;i<count;i++){const mesh=new THREE.Mesh(new THREE.IcosahedronGeometry(big?.45:.25,0),new THREE.MeshBasicMaterial({color:i%3===0?0xffd36a:0xff7d2d,transparent:true,opacity:.9}));mesh.position.copy(p);this.effects.add(mesh);const a=Math.random()*Math.PI*2,s=(big?8:5)+Math.random()*(big?16:9);this.fx.push({kind:'particle',mesh,vel:new THREE.Vector3(Math.cos(a)*s,Math.sin(a)*s,4+Math.random()*12),life:.45+Math.random()*.5,maxLife:1});}if(big)this._smokeBurst(p);}
   _smokeBurst(pos){for(let i=0;i<8;i++){const s=new THREE.Mesh(new THREE.SphereGeometry(1.2+Math.random()*.9,7,5),new THREE.MeshBasicMaterial({color:0x2d302e,transparent:true,opacity:.48,depthWrite:false}));s.position.copy(pos).add(new THREE.Vector3((Math.random()-.5)*3,(Math.random()-.5)*3,1+Math.random()*3));this.effects.add(s);this.fx.push({kind:'smoke',mesh:s,vel:new THREE.Vector3((Math.random()-.5)*1.3,(Math.random()-.5)*1.3,2+Math.random()*2),life:2.2+Math.random()*1.5,maxLife:3.5});}}
-  _updateFx(dt){for(let i=this.fx.length-1;i>=0;i--){const f=this.fx[i];f.life-=dt;const t=clamp(f.life/Math.max(.001,f.maxLife),0,1);if(f.kind==='flash'){f.mesh.scale.setScalar(1+(1-t)*1.4);f.mesh.material.opacity=t;if(f.light)f.light.intensity=6*t;}else if(f.kind==='light'){f.light.intensity*=Math.pow(.08,dt);}else if(f.kind==='particle'){f.vel.z-=14*dt;f.mesh.position.addScaledVector(f.vel,dt);f.mesh.material.opacity=t;}else if(f.kind==='smoke'){f.mesh.position.addScaledVector(f.vel,dt);f.mesh.scale.multiplyScalar(1+dt*.55);f.mesh.material.opacity=.48*t;}if(f.life<=0){if(f.mesh){this.effects.remove(f.mesh);disposeObject(f.mesh);}if(f.light)this.effects.remove(f.light);this.fx.splice(i,1);}}}
+  _updateFx(dt){for(let i=this.fx.length-1;i>=0;i--){const f=this.fx[i];f.life-=dt;const t=clamp(f.life/Math.max(.001,f.maxLife),0,1);if(f.kind==='flash'){f.mesh.scale.setScalar(1+(1-t)*1.4);f.mesh.material.opacity=t;if(f.light)f.light.intensity=6*t;}else if(f.kind==='tracer'){f.mesh.material.opacity=.82*t;if(f.flash)f.flash.material.opacity=t;}else if(f.kind==='light'){f.light.intensity*=Math.pow(.08,dt);}else if(f.kind==='particle'){f.vel.z-=14*dt;f.mesh.position.addScaledVector(f.vel,dt);f.mesh.material.opacity=t;}else if(f.kind==='smoke'){f.mesh.position.addScaledVector(f.vel,dt);f.mesh.scale.multiplyScalar(1+dt*.55);f.mesh.material.opacity=.48*t;}if(f.life<=0){if(f.mesh){this.effects.remove(f.mesh);disposeObject(f.mesh);}if(f.flash){this.effects.remove(f.flash);disposeObject(f.flash);}if(f.light)this.effects.remove(f.light);this.fx.splice(i,1);}}}
 
   _consumeRenderEvents(){
     for(const ev of this.renderEvents.splice(0)){
@@ -266,14 +399,17 @@ export class SkirmishTest{
       else if(ev.type==='spawnBuilding'){const e=this.sim.entities.get(ev.entityId);if(e){const promise=this._createBuildingView(e,{name:ev.name});this.buildingViewPromises.set(e.id,promise);promise.catch(err=>{console.error('Building view load failed',err);this.renderEvents.push({type:'message',message:`${RTS_BUILDINGS[e.components.buildingType]?.label||'Building'} visual load failed: ${err.message}`});});}}
       else if(ev.type==='constructionComplete'){const v=this.buildings.find(b=>b.entityId===ev.entityId);if(v)v.group.scale.z=1;this.lastMessage=`${ev.label} complete.`;if(ev.buildingType==='refinery'){void this._spawnStarterHarvesterForRefinery(ev.entityId).catch(err=>{const e=this.sim.entities.get(ev.entityId);if(e?.components?.building)e.components.building.starterUnitSpawned=false;console.error('Starter harvester spawn failed',err);this.renderEvents.push({type:'message',message:`Refinery completed, but starter Harvester failed to dock: ${err.message}`});});}}
       else if(ev.type==='spawnProjectile'){const e=this.sim.entities.get(ev.entityId);if(e){const mesh=new THREE.Mesh(new THREE.SphereGeometry(.28,8,6),new THREE.MeshStandardMaterial({color:0xffd37a,emissive:0xff7a18,emissiveIntensity:3,roughness:.25}));const t=e.components.transform;mesh.position.set(t.x,t.y,t.z);this.effects.add(mesh);this.projectileViews.set(e.id,mesh);}}
+      else if(ev.type==='spawnRifleman'){const e=this.sim.entities.get(ev.entityId);if(e){const promise=this._createRiflemanView(e);this.infantryViewPromises.set(e.id,promise);promise.catch(err=>{console.error('Rifleman visual load failed',err);this.renderEvents.push({type:'message',message:`Rifleman visual load failed: ${err.message}`});});}}
+      else if(ev.type==='infantryFire'){const v=this.infantryUnits.find(x=>x.entityId===ev.entityId);if(v?.fireAction){v.fireTimer=.70;if(v.walkAction)v.walkAction.paused=true;v.fireAction.reset();v.fireAction.setLoop(THREE.LoopOnce,1);v.fireAction.clampWhenFinished=true;v.fireAction.play();}this._rifleTracer(ev.from,ev.to);}
       else if(ev.type==='muzzleFlash')this._muzzleFlash(ev.position);
       else if(ev.type==='impact')this._impact(ev.position,ev.big);
       else if(ev.type==='targetHit'){const v=this.enemyTargets.find(t=>t.entityId===ev.entityId);if(ev.destroyed){if(v)v.group.visible=false;this.lastMessage='Training target destroyed.';}else this.lastMessage=`Hit training target · ${Math.round(ev.current)}/${Math.round(ev.max)} HP.`;}
     }
   }
-  _syncViews(){
+  _syncViews(dt=0){
     if(this.tank){const e=this.sim.entities.get(this.tank.entityId);if(e){const t=e.components.transform,tur=e.components.turret;this.tank.root.position.set(t.x,t.y,t.z);this.tank.root.rotation.z=t.heading;this.tank.turret.rotation.y=tur.yaw;this.tank.gun.rotation.z=tur.pitch;this._updatePresentationShadow(this.tank,t);}}
     for(const v of this.supportUnits){const e=this.sim.entities.get(v.entityId);if(!e)continue;const t=e.components.transform;v.root.position.set(t.x,t.y,t.z);v.root.rotation.z=t.heading;if(v.rotorMain)v.rotorMain.rotation.y+=.18;if(v.rotorTail)v.rotorTail.rotation.x+=.24;this._updatePresentationShadow(v,t);}
+    for(const v of this.infantryUnits){const e=this.sim.entities.get(v.entityId);if(!e||e.components.health?.destroyed){v.root.visible=false;continue;}const t=e.components.transform,moving=!!e.components.move?.moving;v.root.position.set(t.x,t.y,t.z);v.root.rotation.z=t.heading;if(v.fireTimer>0){v.fireTimer=Math.max(0,v.fireTimer-dt);}else if(v.walkAction){if(moving){v.walkAction.paused=false;v.walkAction.enabled=true;v.walkAction.play();}else{v.walkAction.paused=true;v.walkAction.time=.25;}}v.mixer?.update?.(dt);this._updatePresentationShadow(v,t);}
     for(const v of this.buildings){const e=this.sim.entities.get(v.entityId);if(!e)continue;const t=e.components.transform,c=e.components.construction;v.group.position.set(t.x,t.y,t.z);v.group.rotation.z=t.heading||0;if(c&&!c.complete)v.group.scale.z=Math.max(.03,c.progress);else v.group.scale.z=1;if(v.functional?.radar)v.functional.radar.rotation.y+=.006;if(v.functional?.fans)for(const f of v.functional.fans)f.rotation.y+=.08;if(v.functional?.dustFan)v.functional.dustFan.rotation.y+=.12;}
     for(const [id,mesh] of [...this.projectileViews.entries()]){const e=this.sim.entities.get(id);if(!e){this.effects.remove(mesh);disposeObject(mesh);this.projectileViews.delete(id);}else{const t=e.components.transform;mesh.position.set(t.x,t.y,t.z);}}
   }
@@ -281,16 +417,22 @@ export class SkirmishTest{
   _setCamera(){if(!this.tank)return;const hostAspect=Math.max(.5,this.renderer.domElement.clientWidth/Math.max(1,this.renderer.domElement.clientHeight)),landscape=hostAspect>=1.2,tactical=this.viewMode==='tactical',span=tactical?(landscape?40:46):(landscape?62:58);this.camera.left=-span*hostAspect;this.camera.right=span*hostAspect;this.camera.top=span;this.camera.bottom=-span;this.camera.near=.1;this.camera.far=2200;this.camera.up.set(0,0,1);this.camera.userData.skirmishLandscape=landscape;this.camera.userData.skirmishViewMode=this.viewMode;this.camera.updateProjectionMatrix();this._followCamera(true);}
   _followCamera(force=false){if(!this.follow||!this.tank)return;const p=this.tank.root.position,target=new THREE.Vector3(p.x,p.y,p.z+3.2),landscape=this.camera.userData.skirmishLandscape!==false,tactical=this.viewMode==='tactical',offset=tactical?(landscape?new THREE.Vector3(54,-68,42):new THREE.Vector3(50,-62,52)):(landscape?new THREE.Vector3(78,-98,58):new THREE.Vector3(65,-82,68)),desired=target.clone().add(offset);if(force){this.camera.position.copy(desired);this.controls.target.copy(target);}else{this.camera.position.lerp(desired,.12);this.controls.target.lerp(target,.16);}this.camera.lookAt(this.controls.target);}
 
-  update(dt){if(!this.active||!this.started)return;const steps=this.sim.advance(dt);this._consumeRenderEvents();this._syncViews();if(steps>0)this._updateFx(steps*this.sim.clock.fixedDelta);if(steps>0&&this.sim.clock.tick-this.lastUiTick>=6){this.lastUiTick=this.sim.clock.tick;this._emit();}this._followCamera(false);}
+  update(dt){if(!this.active||!this.started)return;const steps=this.sim.advance(dt);this._consumeRenderEvents();this._syncViews(dt);if(steps>0)this._updateFx(steps*this.sim.clock.fixedDelta);if(steps>0&&this.sim.clock.tick-this.lastUiTick>=6){this.lastUiTick=this.sim.clock.tick;this._emit();}this._followCamera(false);}
 
   drawMinimap(canvas){
     this.mapForge.drawMinimap(canvas);if(!canvas||!this.mapForge.recipe)return;const ctx=canvas.getContext('2d'),w=canvas.width,size=this.mapForge.recipe.size,H=size/2,s=w/size;
     for(const v of this.buildings){const e=this.sim.entities.get(v.entityId);if(!e||e.components.health?.destroyed)continue;const t=e.components.transform;ctx.fillStyle=e.components.owner==='player'?'#6de38d':'#da6958';ctx.fillRect((t.x+H)*s-2,w-(t.y+H)*s-2,4,4);}
     for(const v of this.enemyTargets){const e=this.sim.entities.get(v.entityId);if(!e||e.components.health?.destroyed)continue;const t=e.components.transform;ctx.fillStyle='#df6657';ctx.beginPath();ctx.arc((t.x+H)*s,w-(t.y+H)*s,4,0,Math.PI*2);ctx.fill();}
     for(const v of this.supportUnits){const e=this.sim.entities.get(v.entityId);if(!e||e.components.health?.destroyed)continue;const t=e.components.transform;ctx.fillStyle='#7fdba0';ctx.beginPath();ctx.arc((t.x+H)*s,w-(t.y+H)*s,3,0,Math.PI*2);ctx.fill();}
+    for(const v of this.infantryUnits){const e=this.sim.entities.get(v.entityId);if(!e||e.components.health?.destroyed)continue;const t=e.components.transform;ctx.fillStyle='#a8f2b7';ctx.beginPath();ctx.arc((t.x+H)*s,w-(t.y+H)*s,1.8,0,Math.PI*2);ctx.fill();}
     if(this.tank){const e=this.sim.entities.get(this.tank.entityId);if(e){const t=e.components.transform;ctx.fillStyle='#a9ffb6';ctx.beginPath();ctx.arc((t.x+H)*s,w-(t.y+H)*s,5,0,Math.PI*2);ctx.fill();}}
   }
 
-  state(){const tank=this.tank&&this.sim.entities.get(this.tank.entityId),hp=tank?.components.health;return {credits:this.credits,powerSupply:this.powerSupply,powerUse:this.powerUse,powerNet:(this.playerFaction?.powerNet??0),tankHp:hp?.current||0,tankMaxHp:hp?.max||0,pendingBuild:this.pendingBuild,buildingCount:this.buildings.length,supportUnitCount:this.supportUnits.length,fireReady:(tank?.components.weapon?.cooldown||0)<=0,message:this.lastMessage,simTick:this.sim.clock.tick,simHz:this.sim.clock.hz,simPaused:this.sim.paused,entityCount:this.sim.entities.count(),stateHash:this.sim.stateHash(),commandLog:this.sim.commands.recent(6),simulationVersion:RTS_SIMULATION_VERSION,viewMode:this.viewMode};}
+  state(){
+    const tank=this.tank&&this.sim.entities.get(this.tank.entityId),hp=tank?.components.health;
+    const barracks=this.sim.entities.values().find(e=>e.kind==='building'&&e.components.owner==='player'&&e.components.buildingType==='barracks'&&e.components.construction?.complete&&!e.components.health?.destroyed);
+    const prod=barracks?.components.production,riflemanQueue=(prod?.queue?.length||0)+(prod?.active?1:0),riflemanDef=UNIT_DEFINITIONS.aegisRifleman;
+    return {credits:this.credits,powerSupply:this.powerSupply,powerUse:this.powerUse,powerNet:(this.playerFaction?.powerNet??0),tankHp:hp?.current||0,tankMaxHp:hp?.max||0,pendingBuild:this.pendingBuild,buildingCount:this.buildings.length,supportUnitCount:this.supportUnits.length,infantryCount:this.infantryUnits.length,barracksReady:!!barracks,riflemanQueue,riflemanCost:riflemanDef.cost,canTrainRifleman:!!barracks&&this.credits>=riflemanDef.cost&&riflemanQueue<5,fireReady:(tank?.components.weapon?.cooldown||0)<=0,message:this.lastMessage,simTick:this.sim.clock.tick,simHz:this.sim.clock.hz,simPaused:this.sim.paused,entityCount:this.sim.entities.count(),stateHash:this.sim.stateHash(),commandLog:this.sim.commands.recent(6),simulationVersion:RTS_SIMULATION_VERSION,viewMode:this.viewMode};
+  }
   _emit(message=null){if(message)this.lastMessage=message;this.onStateChange?.(this.state());}
 }

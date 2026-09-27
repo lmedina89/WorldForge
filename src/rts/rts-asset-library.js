@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-export const RTS_ASSET_LIBRARY_VERSION='0.3.0';
+export const RTS_ASSET_LIBRARY_VERSION='0.4.0';
 
 export const FACTION_PALETTES=Object.freeze({
   aegis:Object.freeze({id:'aegis',label:'Aegis Olive',base:'#777b70',primary:'#60704f',secondary:'#39483c',accent:'#c9a54b'}),
@@ -44,6 +44,17 @@ export const MASTER_BUILDINGS=Object.freeze({
       accent:['WF_TEAM_ACCENT']
     }),
     requiredNodes:['BuildingRoot','ApronFeederRoot','DustCollectorFanRoot','DockSignalRoot','HarvesterQueueSocket','HarvesterApproachSocket','HarvesterDockSocket','HarvesterUnloadSocket','HarvesterExitSocket','HarvesterRallySocket','ReceiverPitSocket','OreFlowFXSocket','DustFXSocket','MainEntranceSocket','PowerInputSocket','RepairSocket','ResourceOutputSocket','BuildOriginSocket']
+  }),
+  fieldBarracks:Object.freeze({
+    id:'fieldBarracks',label:'Aegis Field Barracks',role:'barracks',classification:'military',version:'0.2.3',asset:'assets/buildings/aegis_field_barracks_v023.glb',
+    footprint:[18.15,12.95],height:8.01,skirmishDefault:true,
+    slots:Object.freeze({
+      base:['WF_BASE_ARMOR'],
+      primary:['WF_TEAM_PRIMARY'],
+      secondary:['WF_TEAM_SECONDARY'],
+      accent:['WF_TEAM_ACCENT']
+    }),
+    requiredNodes:['FieldBarracksRoot','WF_SPAWN_INFANTRY','WF_ENTRY','WF_EXIT_PATH_0','WF_EXIT_PATH_1','WF_EXIT_PATH_2','WF_RALLY','WF_CONSTRUCTION','WF_DAMAGE_CENTER']
   }),
   commandNexus:Object.freeze({
     id:'commandNexus',label:'Civilian Helicopter Operations Station',role:'neutralHeliStation',classification:'civilian',version:'1.3',asset:'assets/buildings/aegis_command_nexus_hq_v13.glb',
