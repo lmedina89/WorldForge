@@ -1,3 +1,15 @@
+# v0.13.4 — Skirmish Visual Readability + Terrain Pass
+
+- Skirmish Lab advanced to 0.5.1; RTS Map Forge visual version advanced to 0.2.2.
+- Added soft contact shadows for every ground vehicle spawned through Skirmish, including Aegis-X, HMMWV-50 and Field Harvester.
+- Added a separate altitude-aware helicopter shadow profile that becomes broader/fainter with height.
+- Deliberately did **not** add a permanent selection ring; unit readability comes from lighting, shadows, terrain contrast and camera scale instead.
+- Added VIEW WIDE / VIEW CLOSE camera modes. Wide preserves the existing landscape overview; Close uses a tighter orthographic span and lower follow-camera angle to reveal the real master-model detail.
+- Enabled wheel/pinch zoom while Skirmish is active. Multi-touch gestures are suppressed from tap/build placement so pinch zoom cannot accidentally place structures.
+- Reduced flat ambient fill in Skirmish and strengthened the dedicated map key light for better normals/silhouette readability.
+- Refined RTS terrain colors with subtle slope-based darkening and darker road cores plus earth shoulders. Navigation, terrain heights and gameplay metadata are unchanged.
+- All approved master GLBs, protected RPG/world generators, Vehicle Forge/Baker, Building Forge, simulation/economy, refinery/harvester docking and construction legality remain unchanged.
+
 # v0.13.3 — Skirmish Immersive Combat UI
 
 - Skirmish Lab advanced to 0.5.0.

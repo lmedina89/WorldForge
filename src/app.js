@@ -24,7 +24,7 @@ const scene=new THREE.Scene();scene.background=new THREE.Color(0x0d1310);scene.f
 const camera=new THREE.OrthographicCamera(-12,12,8,-8,.1,400);camera.up.set(0,0,1);camera.position.set(15,-18,13);camera.lookAt(0,0,2);
 const renderer=new THREE.WebGLRenderer({antialias:false,alpha:true,preserveDrawingBuffer:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(1.25,devicePixelRatio||1));renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;$('canvasHost').appendChild(renderer.domElement);
 const controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.target.set(0,0,2);
-scene.add(new THREE.AmbientLight(0xbfd0c8,1.15));const sun=new THREE.DirectionalLight(0xffe6bd,2.6);sun.position.set(-12,-16,22);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);scene.add(sun);
+const ambient=new THREE.AmbientLight(0xbfd0c8,1.15);scene.add(ambient);const sun=new THREE.DirectionalLight(0xffe6bd,2.6);sun.position.set(-12,-16,22);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);scene.add(sun);
 const ground=new THREE.Mesh(new THREE.PlaneGeometry(180,180),new THREE.MeshStandardMaterial({color:0x536849,roughness:1}));ground.position.z=-.02;ground.receiveShadow=true;scene.add(ground);
 const grid=new THREE.GridHelper(80,80,0x34443a,0x243029);grid.rotation.x=Math.PI/2;grid.position.z=.012;scene.add(grid);
 const vehicleBaker=new VehicleBaker({scene,camera,renderer,controls});
@@ -37,9 +37,12 @@ $('version').textContent='v'+WORLDFORGE_VERSION;
 
 function configureControlsForMode(){
   const mapMode=mode==='rtsmap',skirmishMode=mode==='skirmish';
-  controls.enabled=!skirmishMode;
-  controls.enableRotate=!mapMode;
-  controls.enablePan=true;
+  controls.enabled=true;
+  controls.enableRotate=!mapMode&&!skirmishMode;
+  controls.enablePan=!skirmishMode;
+  controls.enableZoom=true;
+  controls.minZoom=skirmishMode?.85:.25;
+  controls.maxZoom=skirmishMode?2.35:8;
   controls.screenSpacePanning=true;
   controls.mouseButtons.LEFT=mapMode?THREE.MOUSE.PAN:THREE.MOUSE.ROTATE;
   controls.mouseButtons.RIGHT=THREE.MOUSE.PAN;
@@ -62,8 +65,8 @@ function configureSceneForMode(){
   const mapMode=mode==='rtsmap',skirmishMode=mode==='skirmish',mapLike=mapMode||skirmishMode;
   document.body.classList.toggle('rts-map-mode',mapMode);
   document.body.classList.toggle('skirmish-mode',skirmishMode);
-  if(mapLike){scene.background.set(0x91a9ac);scene.fog.color.set(0x91a9ac);scene.fog.near=380;scene.fog.far=Math.max(1100,(rtsMapForge.recipe?.size||1024)*1.35);}
-  else{camera.up.set(0,0,1);scene.background.set(0x0d1310);scene.fog.color.set(0x0d1310);scene.fog.near=55;scene.fog.far=150;}
+  if(mapLike){scene.background.set(0x91a9ac);scene.fog.color.set(0x91a9ac);scene.fog.near=380;scene.fog.far=Math.max(1100,(rtsMapForge.recipe?.size||1024)*1.35);sun.castShadow=false;if(skirmishMode){ambient.intensity=.34;sun.intensity=.42;rtsMapForge.setVisualProfile('skirmish');}else{ambient.intensity=.56;sun.intensity=.68;rtsMapForge.setVisualProfile('map');}}
+  else{camera.up.set(0,0,1);scene.background.set(0x0d1310);scene.fog.color.set(0x0d1310);scene.fog.near=55;scene.fog.far=150;ambient.intensity=1.15;sun.intensity=2.6;sun.castShadow=true;}
   $('mapMinimapWrap').hidden=!mapLike;
   $('skirmishHud').hidden=!skirmishMode;
   if(!skirmishMode)setSkirmishBuildDrawer(false);
@@ -319,10 +322,12 @@ function applyLevelFilter(){
   document.querySelectorAll('[data-level-view]').forEach(b=>b.classList.toggle('active',String(b.dataset.levelView)===String(fieldLevelView)));
 }
 
-let pointerDown=null;
-renderer.domElement.addEventListener('pointerdown',e=>{pointerDown={x:e.clientX,y:e.clientY};});
+let pointerDown=null,canvasMultiTouch=false;const activeCanvasPointers=new Set();
+renderer.domElement.addEventListener('pointerdown',e=>{activeCanvasPointers.add(e.pointerId);if(activeCanvasPointers.size>1){canvasMultiTouch=true;pointerDown=null;}else pointerDown={id:e.pointerId,x:e.clientX,y:e.clientY};});
 renderer.domElement.addEventListener('pointerup',e=>{
-  if(!pointerDown)return;const moved=Math.hypot(e.clientX-pointerDown.x,e.clientY-pointerDown.y);pointerDown=null;
+  const wasMulti=canvasMultiTouch;activeCanvasPointers.delete(e.pointerId);
+  if(wasMulti){pointerDown=null;if(activeCanvasPointers.size===0)canvasMultiTouch=false;return;}
+  if(!pointerDown||pointerDown.id!==e.pointerId){if(activeCanvasPointers.size===0)canvasMultiTouch=false;return;}const moved=Math.hypot(e.clientX-pointerDown.x,e.clientY-pointerDown.y);pointerDown=null;if(activeCanvasPointers.size===0)canvasMultiTouch=false;
   // A finger tap on iPhone commonly drifts more than 8 CSS px. During building placement
   // allow a little extra movement without turning a deliberate tap into a failed gesture.
   const tapTolerance=(mode==='skirmish'&&skirmish.state().pendingBuild)?22:8;if(moved>tapTolerance)return;
@@ -331,6 +336,7 @@ renderer.domElement.addEventListener('pointerup',e=>{
   const rect=renderer.domElement.getBoundingClientRect();pointer.x=((e.clientX-rect.left)/rect.width)*2-1;pointer.y=-((e.clientY-rect.top)/rect.height)*2+1;raycaster.setFromCamera(pointer,camera);
   const hits=raycaster.intersectObject(currentGroup,true);for(const h of hits){let o=h.object,id=o.userData?.placementId;while(!id&&o.parent&&o!==currentGroup){o=o.parent;id=o.userData?.placementId;}if(id){selectPlacement(id);return;}}
 });
+renderer.domElement.addEventListener('pointercancel',e=>{activeCanvasPointers.delete(e.pointerId);pointerDown=null;if(activeCanvasPointers.size===0)canvasMultiTouch=false;});
 
 
 function pixelCharacterTexture(dir='S'){
@@ -529,6 +535,7 @@ function updateSkirmishUi(state=skirmish.state()){
   $('skirmishMessage').textContent=state.message||`Skirmish Lab ${SKIRMISH_VERSION} ready.`;
   $('skirmishFollow').textContent=`FOLLOW TANK: ${skirmish.follow?'ON':'OFF'}`;
   if($('skirmishHudFollow')){$('skirmishHudFollow').textContent=skirmish.follow?'FOLLOW ON':'FOLLOW OFF';$('skirmishHudFollow').classList.toggle('active',skirmish.follow);}
+  if($('skirmishHudView')){$('skirmishHudView').textContent=state.viewMode==='tactical'?'VIEW CLOSE':'VIEW WIDE';$('skirmishHudView').classList.toggle('active',state.viewMode==='tactical');}
   $('skirmishSimStatus').textContent=`SIM ${state.simHz} HZ · TICK ${state.simTick} · ${state.entityCount} ENTITIES · HASH ${state.stateHash}`;
   $('skirmishSimPause').textContent=state.simPaused?'RESUME SIM':'PAUSE SIM';
   $('skirmishCommandLog').textContent=state.commandLog?.length?state.commandLog.map(c=>`#${c.executedTick} ${c.source.toUpperCase()} ${c.type}`).join('\n'):'No commands executed yet.';
@@ -548,7 +555,7 @@ async function activateSkirmishMode({reset=false}={}){
     catch(err){$('status').textContent='Skirmish map generation failed: '+err.message;return;}
   }
   showMode('skirmish');setSkirmishBuildDrawer(false);rtsMapForge.overlay.visible=false;rtsMapForge.movementOverlay.visible=false;rtsMapForge.setFogPreview(false);
-  try{skirmish.setFactionPalettes($('skirmishPlayerPalette').value,$('skirmishEnemyPalette').value);await skirmish.start({reset});configureSceneForMode();syncSkirmishViewport();drawRTSMapMinimap();updateSkirmishUi();$('status').textContent=`Skirmish Lab ${SKIRMISH_VERSION} · immersive landscape HUD active · exact military masters preserved.`;}
+  try{skirmish.setFactionPalettes($('skirmishPlayerPalette').value,$('skirmishEnemyPalette').value);await skirmish.start({reset});configureSceneForMode();syncSkirmishViewport();drawRTSMapMinimap();updateSkirmishUi();$('status').textContent=`Skirmish Lab ${SKIRMISH_VERSION} · vehicle readability + tactical zoom active · exact military masters preserved.`;}
   catch(err){$('status').textContent='Skirmish start failed: '+err.message;}
 }
 
@@ -634,6 +641,7 @@ $('skirmishSpawnHarvester').onclick=async()=>{try{await skirmish.spawnSupportUni
 document.querySelectorAll('[data-skirmish-build]').forEach(b=>b.onclick=()=>{skirmish.selectBuild(b.dataset.skirmishBuild);setSkirmishBuildDrawer(false);updateSkirmishUi();});
 $('skirmishFollow').onclick=()=>{skirmish.setFollow(!skirmish.follow);updateSkirmishUi();};
 $('skirmishHudFollow').onclick=()=>{skirmish.setFollow(!skirmish.follow);updateSkirmishUi();};
+$('skirmishHudView').onclick=()=>{skirmish.toggleViewMode();updateSkirmishUi();};
 $('skirmishFirePanel').onclick=()=>{skirmish.fire();updateSkirmishUi();};
 $('skirmishFire').onclick=()=>{skirmish.fire();updateSkirmishUi();};
 $('skirmishSimPause').onclick=()=>{skirmish.setSimulationPaused(!skirmish.sim.paused);updateSkirmishUi();};

@@ -1,21 +1,33 @@
-# WorldForge v0.13.3 — Skirmish Immersive Combat UI
+# WorldForge v0.13.4 — Skirmish Visual Readability + Terrain Pass
 
-WorldForge v0.13.3 is a focused visual/UI pass for Skirmish Lab. The simulation, building rules, exact approved GLBs and refinery/harvester pairing remain unchanged.
+WorldForge v0.13.4 keeps the immersive v0.13.3 battlefield UI and adds a focused rendering/readability pass so the approved vehicle masters remain recognizable at RTS distance without adding a bright arcade selection ring.
 
-## Skirmish Lab 0.5 — immersive battlefield presentation
-- Entering Skirmish hides the WorldForge editor and expands the battlefield to the full available browser viewport.
-- Landscape is the primary mobile layout; portrait remains playable and shows a small rotate-for-best-view hint.
-- The old permanent CONSTRUCTION panel is replaced by a compact **BUILD** button and slide-in battlefield drawer.
-- Selecting POWER PLANT / REFINERY / BARRACKS / VEHICLE FACTORY / GUN TURRET immediately closes the drawer and enters placement mode.
-- Placement mode shows only a small in-game banner with the selected structure, cost and CANCEL action.
-- Top HUD now carries credits/power, Aegis-X health, follow toggle and EXIT.
-- Drive pad, FIRE button and minimap are positioned inside the game viewport with iPhone safe-area padding.
-- Browser page scrolling, text selection, callouts and accidental touch gestures are suppressed only while Skirmish is active.
-- Orientation/visual-viewport changes trigger renderer and Skirmish-camera resizing.
-- Landscape camera uses a wider orthographic span and lower camera angle to expose more base/battlefield without changing simulation coordinates.
+## Skirmish Lab 0.5.1 — vehicle presentation
+- Added soft ground-contact shadows to **all Skirmish ground vehicles**: Aegis-X, HMMWV-50, Field Harvester, and future units that use the same support-unit path.
+- Helicopters use a separate softer ground-shadow profile. The shadow expands and fades with altitude instead of looking glued to the aircraft.
+- The system supplements the normal directional shadow map; it does not alter the approved GLB geometry or authored materials.
+- No permanent selection ring was added. The battlefield remains semi-realistic and uncluttered.
 
-> On iPhone Safari this fills the web page's usable viewport. Safari's own browser chrome can still remain visible unless the site is launched as an installed/home-screen web app.
+## Camera / model-detail pass
+- Default **VIEW WIDE** preserves the landscape distance introduced in v0.13.3.
+- New **VIEW CLOSE** tactical camera increases the apparent size of the exact vehicle models and lowers the viewing angle slightly so turret, hull, wheels/tracks and other authored detail remain visible.
+- Pinch zoom on touch and wheel zoom on desktop now work while Skirmish follow mode is active.
+- Two-finger pinch gestures are explicitly excluded from battlefield tap/build placement handling so zooming cannot accidentally place a structure.
 
+## RTS Map Forge 0.2.2 — visual-only terrain refinement
+- Temperate/drylands/alpine palettes now have stronger low/mid/high-ground separation while remaining muted enough for unit readability.
+- Terrain vertices receive subtle slope darkening, which makes ridges, bowls and elevation transitions easier to read at gameplay distance.
+- Roads now have a darker core plus a restrained earth shoulder, improving route visibility without changing navigation metadata.
+- Lighting in Skirmish uses less flat ambient fill and a stronger map key light, revealing vehicle surface detail and terrain shape more clearly.
+- Terrain geometry, height function, buildability, movement classes, bridge topology, resource locations and tactical metadata are unchanged.
+
+## Protection
+- Exact approved master GLBs remain byte-identical to v0.13.3: Aegis-X, HMMWV-50, Talon AH-X, Field Harvester v2, Tactical Command Post v2.1, Field Power Node v1.0, Field Refinery v2, Command Nexus and Grid Bastion.
+- Protected RPG/world generators, Vehicle Forge/Baker, Building Forge and RTS simulation files remain byte-identical to v0.13.3.
+- This pass changes presentation/camera and RTS-map visual rendering only; simulation, economy, docking, combat, pathing and construction legality are untouched.
+
+## v0.13.3 immersive UI remains intact
+- Full-viewport Skirmish mode, landscape-first HUD, BUILD drawer, mobile refinery placement hotfix, safe-area handling and exact refinery/harvester docking are retained.
 
 WorldForge now includes the exact approved **Aegis Field Refinery v2.0** and **Aegis Field Harvester v2.0** as first-class master assets in Forge and Skirmish Lab.
 
@@ -44,10 +56,11 @@ WorldForge now includes the exact approved **Aegis Field Refinery v2.0** and **A
 - Packaged Field Harvester SHA-256: `7485c6449fe7ac64eabc7f91d4bd920bc8ffeebf73a9521297e7500df0ba4c43`
 - These match the approved source GLBs byte-for-byte.
 
-## Protection
-- All 15 protected RPG/world generator files remain byte-identical to v0.13.1.
-- RTS Map Forge and Vehicle Baker remain byte-identical to v0.13.1.
-- Existing Aegis-X, HMMWV-50, Talon AH-X, Command Post, Field Power Node, Command Nexus, Grid Bastion and BTR GLBs remain byte-identical.
+## Historical asset protection
+- All protected RPG/world generator files remain byte-identical to their protected baselines.
+- Vehicle Baker and the approved master-asset geometry remain unchanged.
+- RTS Map Forge gameplay topology/navigation remains unchanged; v0.13.4 intentionally changes only its visual palette, slope shading, road shoulders and lighting profile.
+- Existing Aegis-X, HMMWV-50, Talon AH-X, Command Post, Field Power Node, Field Refinery, Field Harvester, Command Nexus, Grid Bastion and BTR GLBs remain byte-identical.
 
 
 ## v0.13.2.1 mobile refinery placement hotfix

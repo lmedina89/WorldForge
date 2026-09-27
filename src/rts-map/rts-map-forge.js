@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export const RTS_MAP_FORGE_VERSION='0.2.1';
+export const RTS_MAP_FORGE_VERSION='0.2.2';
 export const RTS_MAP_SCHEMA='worldforge.rts-map.v1';
 
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -22,9 +22,9 @@ function box(parent,x,y,z,sx,sy,sz,color,rough=.9){
 function lineMaterial(color,opacity=.9){return new THREE.LineBasicMaterial({color,transparent:opacity<1,opacity,depthWrite:false});}
 
 const BIOMES={
-  temperate:{low:0x6d805f,mid:0x748462,high:0x7d8266,tree:0x315a39,trunk:0x584735,rock:0x76766d,road:0x585953,water:0x4d8394,resource:0xd0b44a},
-  drylands:{low:0x8b7c59,mid:0x9b895f,high:0xa29167,tree:0x5e6d3d,trunk:0x65513a,rock:0x81745f,road:0x6b6254,water:0x538697,resource:0xd4b04d},
-  alpine:{low:0x667760,mid:0x6f7965,high:0x8b8d80,tree:0x2e4e39,trunk:0x534638,rock:0x777a77,road:0x555854,water:0x4f8192,resource:0xcbb04c}
+  temperate:{low:0x627557,mid:0x71805d,high:0x85866f,tree:0x285136,trunk:0x554536,rock:0x74736a,road:0x4b4c46,roadShoulder:0x676153,water:0x477f90,resource:0xd0b44a},
+  drylands:{low:0x887858,mid:0x9a875f,high:0xaa956c,tree:0x59693b,trunk:0x65503a,rock:0x7e725e,road:0x625b50,roadShoulder:0x7f6e53,water:0x4f8393,resource:0xd4b04d},
+  alpine:{low:0x60725d,mid:0x6d7864,high:0x8a8d81,tree:0x284a36,trunk:0x504438,rock:0x737874,road:0x50534f,roadShoulder:0x68685f,water:0x4b7d8e,resource:0xcbb04c}
 };
 
 
@@ -67,8 +67,8 @@ export class RTSMapForge{
     this.overlay=new THREE.Group();this.overlay.name='WorldForgeRTSMapOverlay';this.overlay.visible=false;scene.add(this.overlay);
     this.movementOverlay=new THREE.Group();this.movementOverlay.name='WorldForgeRTSMovementOverlay';this.movementOverlay.visible=false;scene.add(this.movementOverlay);
     this.lightRig=new THREE.Group();this.lightRig.visible=false;
-    const hemi=new THREE.HemisphereLight(0xf2f8ff,0x68735d,1.55);
-    const key=new THREE.DirectionalLight(0xffefd2,1.35);key.position.set(-180,-230,330);key.castShadow=true;key.shadow.mapSize.set(1024,1024);key.shadow.camera.near=10;key.shadow.camera.far=2800;this.mapKey=key;
+    const hemi=new THREE.HemisphereLight(0xf2f8ff,0x68735d,1.55);this.mapHemi=hemi;
+    const key=new THREE.DirectionalLight(0xffefd2,1.35);key.position.set(-180,-230,330);key.castShadow=true;key.shadow.mapSize.set(1024,1024);key.shadow.camera.near=10;key.shadow.camera.far=2800;key.shadow.bias=-.00018;key.shadow.normalBias=.045;key.shadow.radius=2;this.mapKey=key;
     this.lightRig.add(hemi,key);scene.add(this.lightRig);
     this.recipe=null;this.metadata=null;this.heightAt=()=>0;this.fogPreview=false;this.fogTexture=null;this.fogMesh=null;this.fogCanvas=null;this.fogCtx=null;
     this.movementPreview='off';this.bridgeData=[];this.roadFns=[];this.treePoints=[];
@@ -78,6 +78,11 @@ export class RTSMapForge{
     this.root.visible=!!active;this.overlay.visible=!!active;this.lightRig.visible=!!active;
     this.movementOverlay.visible=!!active&&this.movementPreview!=='off'&&!!this.metadata;
     if(this.fogMesh)this.fogMesh.visible=!!active&&this.fogPreview;
+  }
+  setVisualProfile(profile='map'){
+    const skirmish=profile==='skirmish';
+    if(this.mapHemi)this.mapHemi.intensity=skirmish?.82:1.18;
+    if(this.mapKey){this.mapKey.intensity=skirmish?2.05:1.58;this.mapKey.shadow.bias=skirmish?-.00022:-.00018;this.mapKey.shadow.normalBias=skirmish?.05:.045;}
   }
 
   disposeGenerated(){
@@ -155,10 +160,11 @@ export class RTSMapForge{
     return {heightAt:fn,river};
   }
 
-  _terrainColor(recipe,z,random){
+  _terrainColor(recipe,z,random,slopeDeg=0,riverProximity=0){
     const b=BIOMES[recipe.biome];let c;
     if(z>18+recipe.relief*12)c=new THREE.Color(b.high);else if(z>7)c=new THREE.Color(b.mid);else c=new THREE.Color(b.low);
-    c.offsetHSL((random()-.5)*.008,(random()-.5)*.025,(random()-.5)*.045);return c;
+    const slopeShade=clamp(slopeDeg/42,0,1)*.085,lowlandCool=clamp(riverProximity,0,1)*.018;
+    c.offsetHSL((random()-.5)*.008,(random()-.5)*.022+lowlandCool,(random()-.5)*.035-slopeShade-lowlandCool*.5);return c;
   }
 
   _makeStrip(pathFn,width,segments,color,zLift=.24){
@@ -304,11 +310,11 @@ export class RTSMapForge{
     for(let cy=0;cy<chunks;cy++)for(let cx=0;cx<chunks;cx++){
       const p=[],colors=[],idx=[];
       for(let j=0;j<=seg;j++)for(let i=0;i<=seg;i++){
-        const x=-H+cx*actualChunk+i/seg*actualChunk,y=-H+cy*actualChunk+j/seg*actualChunk,z=this.heightAt(x,y),c=this._terrainColor(recipe,z,random);p.push(x,y,z);colors.push(c.r,c.g,c.b);
+        const x=-H+cx*actualChunk+i/seg*actualChunk,y=-H+cy*actualChunk+j/seg*actualChunk,z=this.heightAt(x,y),sample=Math.max(1.5,actualChunk/seg*.22),gx=(this.heightAt(x+sample,y)-this.heightAt(x-sample,y))/(sample*2),gy=(this.heightAt(x,y+sample)-this.heightAt(x,y-sample))/(sample*2),slopeDeg=Math.atan(Math.hypot(gx,gy))*180/Math.PI,riverProximity=recipe.river?clamp(1-Math.abs(y-shape.river(x))/(size*.055),0,1):0,c=this._terrainColor(recipe,z,random,slopeDeg,riverProximity);p.push(x,y,z);colors.push(c.r,c.g,c.b);
       }
       for(let j=0;j<seg;j++)for(let i=0;i<seg;i++){const a=j*(seg+1)+i,b=a+1,c=a+seg+1,d=c+1;idx.push(a,b,c,b,d,c);tris+=2;}
       const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(p,3));geo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));geo.setIndex(idx);geo.computeVertexNormals();
-      const mesh=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({vertexColors:true,roughness:.98,metalness:0}));mesh.name=`TerrainChunk_${cx}_${cy}`;mesh.receiveShadow=true;this.root.add(mesh);
+      const mesh=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({vertexColors:true,roughness:.96,metalness:0,dithering:true}));mesh.name=`TerrainChunk_${cx}_${cy}`;mesh.receiveShadow=true;this.root.add(mesh);
     }
     const biome=BIOMES[recipe.biome],routes=[];
     if(recipe.river){
@@ -321,7 +327,7 @@ export class RTSMapForge{
         x=> size*.14-.30*x+size*.024*Math.sin((x-size*.06)/(size*.16)),
         x=> size*.015+size*.018*Math.sin(x/(size*.15))
       ];
-      roadFns.forEach((fn,i)=>{const width=size*(i===2?.010:.012),r=this._makeStrip(fn,width,Math.max(90,Math.round(size/5)),biome.road,.28);r.name=`Road_${i+1}`;this.root.add(r);this.roadFns.push(Object.assign(fn,{width}));routes.push({id:`ROAD_${i+1}`,role:i===0?'mainRoute':i===1?'flankRoute':'centralConnector',preferred:['wheeled','tracked','infantry']});});
+      roadFns.forEach((fn,i)=>{const width=size*(i===2?.010:.012),segments=Math.max(90,Math.round(size/5)),shoulder=this._makeStrip(fn,width*1.28,segments,biome.roadShoulder,.18);shoulder.name=`RoadShoulder_${i+1}`;this.root.add(shoulder);const r=this._makeStrip(fn,width,segments,biome.road,.30);r.name=`Road_${i+1}`;this.root.add(r);this.roadFns.push(Object.assign(fn,{width}));routes.push({id:`ROAD_${i+1}`,role:i===0?'mainRoute':i===1?'flankRoute':'centralConnector',preferred:['wheeled','tracked','infantry']});});
     }
     // Instanced upright trees / scrub. Three.js cylinder/cone primitives are Y-up, so rotate geometry once into WorldForge Z-up.
     const areaScale=(size/1024)*(size/1024);
