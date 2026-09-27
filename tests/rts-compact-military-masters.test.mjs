@@ -30,4 +30,7 @@ const cp=validate('assets/buildings/aegis_tactical_command_post_v21.glb',
 const power=validate('assets/buildings/aegis_field_power_node_v1.glb',
  ['BuildingRoot','CoolingFanRoot_1','CoolingFanRoot_2','MainEntranceSocket','ServiceVehicleSocket','PowerOutputSocket','BuildOriginSocket','RepairSocket','DamageFX_GeneratorHall'],
  ['WF_TEAM_PRIMARY','WF_TEAM_SECONDARY','WF_TEAM_ACCENT']);
-console.log(JSON.stringify({ok:true,commandPost:cp,fieldPowerNode:power}));
+const refinery=validate('assets/buildings/aegis_field_refinery_v2.glb',
+ ['BuildingRoot','ApronFeederRoot','DustCollectorFanRoot','HarvesterDockSocket','HarvesterUnloadSocket','HarvesterExitSocket','ReceiverPitSocket','BuildOriginSocket'],
+ ['WF_TEAM_PRIMARY','WF_TEAM_SECONDARY','WF_TEAM_ACCENT']);
+console.log(JSON.stringify({ok:true,commandPost:cp,fieldPowerNode:power,fieldRefinery:refinery}));

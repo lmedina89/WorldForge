@@ -1,0 +1,58 @@
+{
+  "id": "aegis_field_refinery",
+  "displayName": "Aegis Field Refinery",
+  "asset": "Aegis_Field_Refinery_v2.glb",
+  "category": "refinery",
+  "version": "2.0",
+  "cost": 900,
+  "buildTimeSeconds": 28,
+  "powerConsumption": 24,
+  "footprintMeters": [
+    34,
+    26
+  ],
+  "maxSlopeDegrees": 6,
+  "dockProfile": {
+    "type": "drive_through_bottom_dump",
+    "movementClasses": [
+      "tracked",
+      "wheeled"
+    ],
+    "clearWidthMeters": 6.2,
+    "clearHeightMeters": 6.2,
+    "recommendedVehicleMaxWidthMeters": 4.6,
+    "recommendedVehicleMaxHeightMeters": 4.8,
+    "recommendedVehicleMaxLengthMeters": 10.0,
+    "queueSocket": "HarvesterQueueSocket",
+    "approachSocket": "HarvesterApproachSocket",
+    "dockSocket": "HarvesterDockSocket",
+    "unloadSocket": "HarvesterUnloadSocket",
+    "exitSocket": "HarvesterExitSocket",
+    "rallySocket": "HarvesterRallySocket",
+    "receiverSocket": "ReceiverPitSocket",
+    "oneWay": true,
+    "forwardEntry": true,
+    "reverseRequired": false
+  },
+  "teamColorSlots": {
+    "primaryMaterial": "WF_TEAM_PRIMARY",
+    "secondaryMaterial": "WF_TEAM_SECONDARY",
+    "accentMaterial": "WF_TEAM_ACCENT"
+  },
+  "animationBindings": [
+    {
+      "root": "ApronFeederRoot",
+      "type": "materialFlowLoop",
+      "speed": 0.7
+    },
+    {
+      "root": "DustCollectorFanRoot",
+      "type": "continuousYaw",
+      "rpm": 92
+    },
+    {
+      "root": "DockSignalRoot",
+      "type": "dockSignal"
+    }
+  ]
+}

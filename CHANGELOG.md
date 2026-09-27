@@ -1,5 +1,17 @@
 # WorldForge Changelog
 
+## v0.13.2 — Refinery + Harvester Master Pair
+- Added exact Aegis Field Refinery v2.0 master GLB to Building Forge and Skirmish.
+- Added exact Aegis Field Harvester v2.0 master GLB to Vehicle Forge and Skirmish.
+- Building Forge bumped to 0.3.0; master registry now validates the Refinery receiving/docking socket contract.
+- Vehicle Generator/Forge reference layer bumped to 0.4.0 with the Field Harvester as a reference-grade family.
+- Shared RTS definitions now bind `refinery.masterAsset = fieldRefinery` and `refinery.starterUnit = aegisHarvester`.
+- Added `wheeledHeavy` locomotor profile and Aegis Harvester unit definition.
+- Skirmish Lab bumped to 0.4.0. A completed Refinery automatically creates one starter Harvester aligned by `HarvesterDockSocket` ↔ `RefineryDockAlignSocket` and parked over the unloading grate.
+- Added manual DEPLOY HARVESTER test action.
+- Added exact-asset SHA validation and refinery/harvester pairing regression test.
+- Protected generators, Map Forge, Vehicle Baker and all previously approved master GLBs remain unchanged.
+
 ## v0.13.1 — Compact Military Master Swap
 - Added `Aegis_Tactical_Command_Post_v2_1.glb` to the RTS master-building registry.
 - Added `Aegis_Field_Power_Node_v1.glb` to the RTS master-building registry.

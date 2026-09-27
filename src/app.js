@@ -601,6 +601,7 @@ $('skirmishExit').onclick=()=>activateRTSMapMode();
 $('skirmishCancelBuild').onclick=()=>{skirmish.cancelBuild();updateSkirmishUi();};
 $('skirmishSpawnHmmwv').onclick=async()=>{try{await skirmish.spawnSupportUnit('hmmwv50');updateSkirmishUi();drawRTSMapMinimap();}catch(err){$('status').textContent='HMMWV deploy failed: '+err.message;}};
 $('skirmishSpawnTalon').onclick=async()=>{try{await skirmish.spawnSupportUnit('attackHeli');updateSkirmishUi();drawRTSMapMinimap();}catch(err){$('status').textContent='Talon deploy failed: '+err.message;}};
+$('skirmishSpawnHarvester').onclick=async()=>{try{await skirmish.spawnSupportUnit('fieldHarvester');updateSkirmishUi();drawRTSMapMinimap();}catch(err){$('status').textContent='Harvester deploy failed: '+err.message;}};
 document.querySelectorAll('[data-skirmish-build]').forEach(b=>b.onclick=()=>{skirmish.selectBuild(b.dataset.skirmishBuild);updateSkirmishUi();});
 $('skirmishFollow').onclick=()=>{skirmish.setFollow(!skirmish.follow);updateSkirmishUi();};
 $('skirmishFirePanel').onclick=()=>{skirmish.fire();updateSkirmishUi();};

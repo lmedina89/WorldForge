@@ -1,12 +1,13 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-export const VEHICLE_GENERATOR_VERSION='0.3.0';
+export const VEHICLE_GENERATOR_VERSION='0.4.0';
 
 export const VEHICLE_ARCHETYPES=Object.freeze({
   mbt:{label:'Main Battle Tank',drive:'tracked',quality:'aegis'},
   hmmwv50:{label:'Aegis HMMWV-50',drive:'wheeled4',quality:'aegis-reference',reference:true},
   attackHeli:{label:'Aegis Talon AH-X',drive:'rotaryWing',quality:'aegis-reference',reference:true},
+  fieldHarvester:{label:'Aegis Field Harvester',drive:'wheeled6',quality:'aegis-reference',reference:true},
   lightTank:{label:'Light Tank',drive:'tracked',length:6.0,width:3.0,height:1.25,wheels:5,module:'turret',weapon:'cannon',weaponScale:.72},
   apc:{label:'Tracked APC',drive:'tracked',length:6.8,width:3.2,height:1.75,wheels:6,module:'troop',weapon:'mg',weaponScale:.36},
   ifv:{label:'8×8 IFV',drive:'wheeled8',length:7.2,width:3.0,height:1.75,wheels:4,module:'ifv',weapon:'autocannon',weaponScale:.62},
@@ -43,6 +44,11 @@ export const AEGIS_REFERENCE_VEHICLES=Object.freeze({
     label:'Aegis Talon AH-X',asset:'assets/aegis_talon_ahx.glb',root:'AircraftRoot',drive:'rotaryWing',quality:'aegis-reference',
     functionalNodes:['AircraftRoot','FuselageRoot','MainRotorRoot','TailRotorRoot','SensorTurretRoot','GunYawRoot','GunPitchRoot'],
     sockets:['GunMuzzleSocket','RocketEffectSocket_L','RocketEffectSocket_R','EngineExhaustSocket_L','EngineExhaustSocket_R','MainRotorEffectSocket','TailRotorEffectSocket']
+  },
+  fieldHarvester:{
+    label:'Aegis Field Harvester',asset:'assets/aegis_field_harvester_v2.glb',root:'VehicleRoot',drive:'wheeled6',quality:'aegis-reference',
+    functionalNodes:['VehicleRoot','HullRoot','FrontLeftSteerRoot','FrontRightSteerRoot','FrontLeftWheelSpinRoot','FrontRightWheelSpinRoot','MidLeftWheelSpinRoot','MidRightWheelSpinRoot','RearLeftWheelSpinRoot','RearRightWheelSpinRoot','CollectorLiftRoot','CollectorDrumRoot','LeftGatheringArmRoot','RightGatheringArmRoot','IntakeBeltRoot','HopperDoorLeftRoot','HopperDoorRightRoot'],
+    sockets:['ResourceIntakeSocket','CargoFillSocket','BottomDumpSocket','RefineryDockAlignSocket','DumpFXSocket','DockSensorLeftSocket','DockSensorRightSocket','RWSHardpointSocket']
   }
 });
 
@@ -52,6 +58,9 @@ const referenceCache=new Map();
 export function isAegisReferenceVehicle(type){return !!AEGIS_REFERENCE_VEHICLES[type];}
 
 function paletteColorForMaterial(name,p){
+  if(name==='WF_TEAM_PRIMARY')return p.armor;
+  if(name==='WF_TEAM_SECONDARY')return p.armor2;
+  if(name==='WF_TEAM_ACCENT')return p.team;
   if(name==='Armor_Olive')return p.armor;
   if(name==='Armor_Dark')return p.armor2;
   if(name==='Armor_Highlight')return p.armor3;

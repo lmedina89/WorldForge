@@ -85,8 +85,8 @@
     <p class="miniNote">Arrow/WASD or the pad moves the temporary 8-direction pixel walker across settlement walk levels.</p>
   </section>
   <section id="vehiclePanel" hidden>
-    <div class="sectionTitle">VEHICLE FORGE 0.3 · AEGIS REFERENCE FAMILIES</div>
-    <div class="cols"><label>Vehicle family<select id="vehicleArchetype"><option value="mbt">Main Battle Tank · Aegis Grammar</option><option value="hmmwv50">Aegis HMMWV-50 · Reference Grade</option><option value="attackHeli">Aegis Talon AH-X · Reference Grade</option><option value="lightTank">Light Tank</option><option value="apc">Tracked APC</option><option value="ifv">8×8 IFV</option><option value="mrap">MRAP / Armored Car</option><option value="spg">Self-Propelled Artillery</option><option value="mlrs">Multiple Rocket Launcher</option><option value="sam">SAM Carrier</option><option value="spaag">Anti-Air Gun</option><option value="recon">Recon Vehicle</option><option value="truck">Military Cargo Truck</option></select></label><label>Design language<select id="vehicleStyle"><option value="angular" selected>Angular</option><option value="industrial">Industrial</option><option value="compact">Compact</option></select></label></div>
+    <div class="sectionTitle">VEHICLE FORGE 0.4 · AEGIS REFERENCE FAMILIES</div>
+    <div class="cols"><label>Vehicle family<select id="vehicleArchetype"><option value="mbt">Main Battle Tank · Aegis Grammar</option><option value="hmmwv50">Aegis HMMWV-50 · Reference Grade</option><option value="attackHeli">Aegis Talon AH-X · Reference Grade</option><option value="fieldHarvester">Aegis Field Harvester v2 · Refinery-Matched</option><option value="lightTank">Light Tank</option><option value="apc">Tracked APC</option><option value="ifv">8×8 IFV</option><option value="mrap">MRAP / Armored Car</option><option value="spg">Self-Propelled Artillery</option><option value="mlrs">Multiple Rocket Launcher</option><option value="sam">SAM Carrier</option><option value="spaag">Anti-Air Gun</option><option value="recon">Recon Vehicle</option><option value="truck">Military Cargo Truck</option></select></label><label>Design language<select id="vehicleStyle"><option value="angular" selected>Angular</option><option value="industrial">Industrial</option><option value="compact">Compact</option></select></label></div>
     <div class="cols"><label>Palette<select id="vehiclePalette"><option value="olive" selected>Olive</option><option value="desert">Desert</option><option value="slate">Slate</option><option value="red">Red faction</option></select></label><label>Vehicle seed<input id="vehicleSeed" type="number" min="1" max="999999" value="48127"></label></div>
     <div class="cols"><label>MBT silhouette<select id="vehicleSilhouette"><option value="auto">Auto by seed</option><option value="wedge" selected>Wedge</option><option value="heavy">Heavy</option><option value="compact">Compact</option></select></label><label>Detail level<select id="vehicleDetail"><option value="enhanced" selected>Enhanced</option><option value="standard">Standard</option></select></label></div>
     <label>MBT road wheels<select id="vehicleRoadWheels"><option value="auto" selected>Auto by silhouette</option><option value="6">6 road wheels</option><option value="7">7 road wheels</option></select></label>
@@ -109,12 +109,13 @@
     <p class="miniNote">The generated models are intended to be usable directly as lightweight 3D GLBs or baked to sprites. Imported GLBs assume forward +X at offset 0; adjust offset when needed. The included BTR benchmark is auto-calibrated to −90°.</p>
   </section>
   <section id="rtsBuildingPanel" hidden>
-    <div class="sectionTitle">BUILDING FORGE 0.2 · MILITARY + CIVILIAN MASTERS</div>
+    <div class="sectionTitle">BUILDING FORGE 0.3 · MILITARY + CIVILIAN MASTERS</div>
     <div class="buildingSourceCard"><b id="rtsBuildingName">Aegis Tactical Command Post</b><span id="rtsBuildingStats">Approved master GLB · faction-ready</span></div>
     <label>Master building<select id="rtsBuildingAsset">
       <optgroup label="Military faction masters">
         <option value="tacticalCommandPost" selected>Tactical Command Post · v2.1</option>
         <option value="fieldPowerNode">Field Power Node · v1.0</option>
+        <option value="fieldRefinery">Field Refinery · v2.0</option>
       </optgroup>
       <optgroup label="Civilian / neutral masters">
         <option value="commandNexus">Helicopter Operations Station · v1.3</option>
@@ -126,7 +127,7 @@
     <div class="buildingColorGrid"><label>Base armor<input id="rtsBuildingBase" type="color" value="#777b70"></label><label>Primary<input id="rtsBuildingPrimary" type="color" value="#60704f"></label><label>Secondary<input id="rtsBuildingSecondary" type="color" value="#39483c"></label><label>Accent<input id="rtsBuildingAccent" type="color" value="#c9a54b"></label></div>
     <div class="checks"><label><input id="rtsBuildingAnimate" type="checkbox" checked> Preview functional roots</label><label><input type="checkbox" checked disabled> Preserve neutral PBR materials</label></div><div class="vehicleButtons"><button id="rtsBuildingLoad" class="vehicleGenerate">LOAD MASTER</button><button id="rtsBuildingRandomize">RANDOM FACTION VARIANT</button></div>
     <div class="vehicleButtons"><button id="rtsBuildingExportGLB">EXPORT BUILDING GLB</button><button id="rtsBuildingExportDefinition">EXPORT DEFINITION</button></div>
-    <p class="miniNote"><b>Master-asset workflow:</b> Forge loads exact approved GLBs, applies semantic faction color slots, validates roots/sockets, and exports game-ready variants. The compact Tactical Command Post and Field Power Node are the current military Skirmish defaults; the larger earlier assets remain available as civilian/neutral infrastructure. Future Barracks, Refinery, Vehicle Factory and defenses plug into this same registry.</p>
+    <p class="miniNote"><b>Master-asset workflow:</b> Forge loads exact approved GLBs, applies semantic faction color slots, validates roots/sockets, and exports game-ready variants. The compact Tactical Command Post and Field Power Node are the current military Skirmish defaults; the larger earlier assets remain available as civilian/neutral infrastructure. The compact Field Refinery v2 now uses this same exact-master pipeline. Future Barracks, Vehicle Factory and defenses plug into the registry the same way.</p>
     <p class="miniNote"><b>Faction colors:</b> neutral steel/glass/hazard materials stay authored; base armor and team slots can be recolored independently. This same palette contract is used by Skirmish Lab.</p>
   </section>
   <section id="rtsMapPanel" hidden>
@@ -150,10 +151,10 @@
     <p class="miniNote">Generated tactical structure includes ridge barriers, deliberate passes, valleys/ravines, mountain pockets, hidden expansion bowls, high ground, roads, raised/graded river bridges, resource zones, forests/rocks, and class-specific traversal metadata. Tracked, wheeled, infantry, amphibious and air movement are audited separately.</p>
   </section>
   <section id="skirmishPanel" hidden>
-    <div class="sectionTitle">SKIRMISH LAB 0.3.1 · COMPACT MILITARY MASTERS</div>
+    <div class="sectionTitle">SKIRMISH LAB 0.4 · REFINERY + HARVESTER PAIRING</div>
     <div class="skirmishStatusCard"><b id="skirmishEconomy">$5,000 · POWER 0 / 0</b><span id="skirmishTankStatus">AEGIS-X · 1200 / 1200 HP</span></div>
     <div class="cols"><label>Player faction skin<select id="skirmishPlayerPalette"><option value="aegis" selected>Aegis Olive</option><option value="desert">Desert Tan</option><option value="crimson">Crimson</option><option value="slate">Slate Blue</option><option value="blackops">Black Ops</option></select></label><label>Enemy skin<select id="skirmishEnemyPalette"><option value="crimson" selected>Crimson</option><option value="aegis">Aegis Olive</option><option value="desert">Desert Tan</option><option value="slate">Slate Blue</option><option value="blackops">Black Ops</option></select></label></div><div class="skirmishButtons"><button id="skirmishStart" class="skirmishPrimary">START / RESUME SKIRMISH</button><button id="skirmishReset">RESET SKIRMISH</button></div>
-    <p class="miniNote"><b>Scenario start:</b> the exact Tactical Command Post v2.1 master GLB and real Aegis-X v2 test tank spawn in your reserved start region. Building the Power Plant uses the exact compact Field Power Node v1.0 master GLB. The older large HQ and power station remain civilian/neutral Building Forge assets. Map Forge still creates terrain only.</p>
+    <p class="miniNote"><b>Scenario start:</b> the exact Tactical Command Post v2.1 master GLB and real Aegis-X v2 test tank spawn in your reserved start region. Building the Power Plant uses the exact compact Field Power Node v1.0 master GLB. Building the Refinery uses the exact Field Refinery v2 master, and when construction completes one exact Field Harvester v2 is bundled with it and parked over the real unload grate using the GLB dock sockets. The older large HQ and power station remain civilian/neutral Building Forge assets. Map Forge still creates terrain only.</p>
     <div class="sectionTitle">CONSTRUCTION</div>
     <div class="skirmishBuildGrid">
       <button data-skirmish-build="powerPlant"><b>POWER PLANT</b><span>$500</span></button>
@@ -165,8 +166,8 @@
     </div>
     <p class="miniNote">Select a structure, then tap valid buildable terrain near one of your completed structures. Credits are deducted immediately and the structure constructs in-place.</p>
     <div class="sectionTitle">REAL ASSET DEPOT</div>
-    <div class="skirmishButtons"><button id="skirmishSpawnHmmwv">DEPLOY HMMWV-50</button><button id="skirmishSpawnTalon">DEPLOY TALON AH-X</button></div>
-    <p class="miniNote">These deploy the exact approved HMMWV and attack-helicopter GLBs as simulation-owned test units. Aegis-X remains the direct-drive combat unit in this pass; vehicle-specific driving/flight/weapon behavior comes next rather than using blocky stand-ins.</p>
+    <div class="skirmishButtons"><button id="skirmishSpawnHmmwv">DEPLOY HMMWV-50</button><button id="skirmishSpawnTalon">DEPLOY TALON AH-X</button><button id="skirmishSpawnHarvester">DEPLOY HARVESTER</button></div>
+    <p class="miniNote">These deploy the exact approved HMMWV, attack-helicopter, and Field Harvester GLBs as simulation-owned test units. Each completed Field Refinery also includes one starter Harvester already docked inside. Aegis-X remains the direct-drive combat unit in this pass; vehicle-specific driving/flight/weapon behavior comes next rather than using blocky stand-ins.</p>
     <div class="sectionTitle">COMBAT TEST</div>
     <div class="skirmishButtons"><button id="skirmishFollow">FOLLOW TANK: ON</button><button id="skirmishFirePanel">FIRE MAIN GUN</button></div>
     <p class="miniNote">Hold the drive pad or WASD to drive the articulated Aegis-X across tracked-vehicle terrain. Tap the battlefield to aim the independent turret. FIRE now enters the fixed-tick command stream; projectile gameplay state is simulation-owned while Three.js renders the shell and effects.</p>

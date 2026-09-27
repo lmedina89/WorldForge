@@ -1,0 +1,112 @@
+{
+  "id": "aegis_field_harvester",
+  "displayName": "Aegis Field Harvester",
+  "asset": "Aegis_Field_Harvester_v2.glb",
+  "category": "resource_harvester",
+  "version": "2.0",
+  "locomotor": "heavy_wheeled_6x6",
+  "dimensionsMeters": {
+    "exportedBounds": [
+      4.1,
+      3.865,
+      8.895
+    ]
+  },
+  "resourceSystem": {
+    "capacity": 1200,
+    "collectorType": "front_rotary_gatherer",
+    "intakeSocket": "ResourceIntakeSocket",
+    "cargoFillSocket": "CargoFillSocket",
+    "dumpType": "bottom_clamshell",
+    "bottomDumpSocket": "BottomDumpSocket",
+    "dumpFXSocket": "DumpFXSocket"
+  },
+  "refineryCompatibility": {
+    "refineryId": "aegis_field_refinery",
+    "refineryDockType": "drive_through_bottom_dump",
+    "dockAlignSocket": "RefineryDockAlignSocket",
+    "vehicleFitsDeclaredEnvelope": true,
+    "requiredWidthMeters": 4.1,
+    "requiredHeightMeters": 3.87,
+    "requiredLengthMeters": 8.9,
+    "refineryClearWidthMeters": 6.2,
+    "refineryClearHeightMeters": 6.2,
+    "refineryMaxVehicleLengthMeters": 10.0,
+    "oneWayForwardDocking": true,
+    "reverseRequired": false
+  },
+  "teamColorSlots": {
+    "primaryMaterial": "WF_TEAM_PRIMARY",
+    "secondaryMaterial": "WF_TEAM_SECONDARY",
+    "accentMaterial": "WF_TEAM_ACCENT"
+  },
+  "animationBindings": [
+    {
+      "root": "CollectorDrumRoot",
+      "type": "continuousRoll",
+      "rpm": 135
+    },
+    {
+      "root": "IntakeBeltRoot",
+      "type": "harvestBelt",
+      "speed": 1
+    },
+    {
+      "root": "CollectorLiftRoot",
+      "type": "pitch",
+      "stowedDegrees": 16,
+      "workingDegrees": 0
+    },
+    {
+      "root": "LeftGatheringArmRoot",
+      "type": "yaw",
+      "stowedDegrees": 18,
+      "workingDegrees": 0
+    },
+    {
+      "root": "RightGatheringArmRoot",
+      "type": "yaw",
+      "stowedDegrees": -18,
+      "workingDegrees": 0
+    },
+    {
+      "root": "HopperDoorLeftRoot",
+      "type": "dumpDoor",
+      "closedDegrees": 0,
+      "openDegrees": -58
+    },
+    {
+      "root": "HopperDoorRightRoot",
+      "type": "dumpDoor",
+      "closedDegrees": 0,
+      "openDegrees": 58
+    },
+    {
+      "roots": [
+        "FrontLeftSteerRoot",
+        "FrontRightSteerRoot"
+      ],
+      "type": "steering",
+      "maxDegrees": 28
+    },
+    {
+      "roots": [
+        "FrontLeftWheelSpinRoot",
+        "FrontRightWheelSpinRoot",
+        "MidLeftWheelSpinRoot",
+        "MidRightWheelSpinRoot",
+        "RearLeftWheelSpinRoot",
+        "RearRightWheelSpinRoot"
+      ],
+      "type": "wheelSpin"
+    }
+  ],
+  "gameplay": {
+    "armorClass": "heavy_utility",
+    "maxSpeedMps": 10.5,
+    "reverseSpeedMps": 4.5,
+    "turnRadiusMeters": 7.2,
+    "maxSlopeDegrees": 22,
+    "weaponHardpoint": "RWSHardpointSocket"
+  }
+}

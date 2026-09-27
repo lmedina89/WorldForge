@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-export const RTS_ASSET_LIBRARY_VERSION='0.2.0';
+export const RTS_ASSET_LIBRARY_VERSION='0.3.0';
 
 export const FACTION_PALETTES=Object.freeze({
   aegis:Object.freeze({id:'aegis',label:'Aegis Olive',base:'#777b70',primary:'#60704f',secondary:'#39483c',accent:'#c9a54b'}),
@@ -33,6 +33,17 @@ export const MASTER_BUILDINGS=Object.freeze({
       accent:['WF_TEAM_ACCENT']
     }),
     requiredNodes:['BuildingRoot','CoolingFanRoot_1','CoolingFanRoot_2','MainEntranceSocket','ServiceVehicleSocket','PowerOutputSocket','BuildOriginSocket','RepairSocket','DamageFX_GeneratorHall']
+  }),
+  fieldRefinery:Object.freeze({
+    id:'fieldRefinery',label:'Aegis Field Refinery',role:'refinery',classification:'military',version:'2.0',asset:'assets/buildings/aegis_field_refinery_v2.glb',
+    footprint:[34,26],height:15.21,skirmishDefault:true,
+    slots:Object.freeze({
+      base:[],
+      primary:['WF_TEAM_PRIMARY'],
+      secondary:['WF_TEAM_SECONDARY'],
+      accent:['WF_TEAM_ACCENT']
+    }),
+    requiredNodes:['BuildingRoot','ApronFeederRoot','DustCollectorFanRoot','DockSignalRoot','HarvesterQueueSocket','HarvesterApproachSocket','HarvesterDockSocket','HarvesterUnloadSocket','HarvesterExitSocket','HarvesterRallySocket','ReceiverPitSocket','OreFlowFXSocket','DustFXSocket','MainEntranceSocket','PowerInputSocket','RepairSocket','ResourceOutputSocket','BuildOriginSocket']
   }),
   commandNexus:Object.freeze({
     id:'commandNexus',label:'Civilian Helicopter Operations Station',role:'neutralHeliStation',classification:'civilian',version:'1.3',asset:'assets/buildings/aegis_command_nexus_hq_v13.glb',
