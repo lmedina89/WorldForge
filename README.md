@@ -31,3 +31,10 @@ WorldForge now includes the exact approved **Aegis Field Refinery v2.0** and **A
 - All 15 protected RPG/world generator files remain byte-identical to v0.13.1.
 - RTS Map Forge and Vehicle Baker remain byte-identical to v0.13.1.
 - Existing Aegis-X, HMMWV-50, Talon AH-X, Command Post, Field Power Node, Command Nexus, Grid Bastion and BTR GLBs remain byte-identical.
+
+
+## v0.13.2.1 mobile refinery placement hotfix
+- Skirmish building placement now searches for the nearest legal footprint around the tapped point when the exact center is blocked/non-buildable.
+- Search is bounded to 66 m and still obeys affordability, construction radius, terrain buildability and building-collision rules.
+- iPhone build-placement taps allow 22 CSS px of finger drift while a building is selected; normal aim/interaction remains at the original 8 px threshold.
+- Exact Aegis Field Refinery v2 and Aegis Field Harvester v2 GLBs are unchanged byte-for-byte.

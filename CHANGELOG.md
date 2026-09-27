@@ -1,3 +1,11 @@
+# v0.13.2.1 — Refinery Placement Hotfix
+
+- Fixed large-building placement on mobile, especially the 34 × 26 m Field Refinery.
+- Tapping near a legal site now snaps to the nearest valid footprint center instead of requiring a pixel-perfect legal center.
+- Increased tap-drift tolerance only while a Skirmish building is selected.
+- Existing construction constraints remain authoritative.
+- No master GLB geometry was modified.
+
 # WorldForge Changelog
 
 ## v0.13.2 — Refinery + Harvester Master Pair

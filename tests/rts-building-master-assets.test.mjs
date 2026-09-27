@@ -29,7 +29,7 @@ assert.match(defs,/masterAsset:'fieldPowerNode'/);
 assert.match(defs,/masterAsset:'fieldRefinery'/);
 assert.match(defs,/starterUnit:'aegisHarvester'/);
 assert.match(skirmish,/configuredMasterId=def\?\.masterAsset/);
-assert.match(skirmish,/SKIRMISH_VERSION='0\.4\.0'/);
+assert.match(skirmish,/SKIRMISH_VERSION='0\.4\.1'/);
 assert.match(app,/skirmishSpawnHarvester/);
 assert.match(html,/BUILDING FORGE 0\.3/);
 assert.match(html,/Tactical Command Post · v2\.1/);

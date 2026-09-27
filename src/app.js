@@ -308,7 +308,10 @@ function applyLevelFilter(){
 let pointerDown=null;
 renderer.domElement.addEventListener('pointerdown',e=>{pointerDown={x:e.clientX,y:e.clientY};});
 renderer.domElement.addEventListener('pointerup',e=>{
-  if(!pointerDown)return;const moved=Math.hypot(e.clientX-pointerDown.x,e.clientY-pointerDown.y);pointerDown=null;if(moved>8)return;
+  if(!pointerDown)return;const moved=Math.hypot(e.clientX-pointerDown.x,e.clientY-pointerDown.y);pointerDown=null;
+  // A finger tap on iPhone commonly drifts more than 8 CSS px. During building placement
+  // allow a little extra movement without turning a deliberate tap into a failed gesture.
+  const tapTolerance=(mode==='skirmish'&&skirmish.state().pendingBuild)?22:8;if(moved>tapTolerance)return;
   if(mode==='skirmish'){const rect=renderer.domElement.getBoundingClientRect();skirmish.pointerAction(e.clientX,e.clientY,rect);updateSkirmishUi();drawRTSMapMinimap();return;}
   if(!isCompositeMode()||!currentGroup)return;
   const rect=renderer.domElement.getBoundingClientRect();pointer.x=((e.clientX-rect.left)/rect.width)*2-1;pointer.y=-((e.clientY-rect.top)/rect.height)*2+1;raycaster.setFromCamera(pointer,camera);

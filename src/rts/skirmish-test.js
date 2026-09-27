@@ -8,7 +8,7 @@ import { LOCOMOTORS, WEAPONS, UNIT_DEFINITIONS } from './data/rts-definitions.js
 import { instantiateMasterBuilding, masterBuildingForRole, MASTER_BUILDINGS } from './rts-asset-library.js';
 import { loadAegisReferenceVehicle } from '../vehicle/vehicle-generator.js';
 
-export const SKIRMISH_VERSION='0.4.0';
+export const SKIRMISH_VERSION='0.4.1';
 
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const angleDelta=(a,b)=>Math.atan2(Math.sin(a-b),Math.cos(a-b));
@@ -159,7 +159,30 @@ export class SkirmishTest{
   _withinBuildRadius(x,y){return this.buildings.some(v=>{const e=this.sim.entities.get(v.entityId);return e&&e.components.owner==='player'&&e.components.construction?.complete&&Math.hypot(x-e.components.transform.x,y-e.components.transform.y)<=Math.max(85,v.def.buildRadius||105);});}
   _collidesBuilding(x,y,def){const r=Math.hypot(def.footprint[0],def.footprint[1])*.48;return this.buildings.some(v=>{const e=this.sim.entities.get(v.entityId);if(!e||e.components.health?.destroyed)return false;const br=Math.hypot(v.def.footprint[0],v.def.footprint[1])*.48;return Math.hypot(x-e.components.transform.x,y-e.components.transform.y)<r+br+2;});}
   _canPlace(type,x,y){const def=RTS_BUILDINGS[type];if(!def)return {ok:false,message:'Unknown structure.'};if(!this.playerFaction?.canAfford(def.cost))return {ok:false,message:`Not enough credits for ${def.label}.`};if(!this._isBuildableFootprint(x,y,def))return {ok:false,message:'Cannot build there: terrain is too steep, blocked, road/water, or otherwise non-buildable.'};if(!this._withinBuildRadius(x,y))return {ok:false,message:'Cannot build there: outside current construction radius.'};if(this._collidesBuilding(x,y,def))return {ok:false,message:'Cannot build there: another structure is too close.'};return {ok:true};}
-  placeSelectedBuilding(x,y){const type=this.pendingBuild;if(!type)return false;const check=this._canPlace(type,x,y);if(!check.ok){this._emit(check.message);return false;}this.sim.issueCommand(RTS_COMMANDS.BUILD,{type,x,y},{source:COMMAND_SOURCES.PLAYER});this.pendingBuild=null;this._emit(`${RTS_BUILDINGS[type].label} placement command queued.`);return true;}
+  _nearestValidPlacement(type,x,y,{maxRadius=66,step=6}={}){
+    const direct=this._canPlace(type,x,y);if(direct.ok)return {x,y,distance:0};
+    // Non-spatial failures cannot be solved by moving the footprint.
+    if(/Unknown structure|Not enough credits/i.test(direct.message||''))return {error:direct.message};
+    // Mobile placement aid: large footprints are easy to tap a few metres off a legal center.
+    // Search concentric rings and return the nearest legal center, never a guessed fixed offset.
+    for(let r=step;r<=maxRadius;r+=step){
+      const points=Math.max(12,Math.ceil((Math.PI*2*r)/step));
+      for(let i=0;i<points;i++){
+        const a=(i/points)*Math.PI*2+(r/step%2)*.173,px=x+Math.cos(a)*r,py=y+Math.sin(a)*r;
+        if(this._canPlace(type,px,py).ok)return {x:px,y:py,distance:r};
+      }
+    }
+    return {error:direct.message||'No legal building footprint near that point.'};
+  }
+  placeSelectedBuilding(x,y){
+    const type=this.pendingBuild;if(!type)return false;
+    const placement=this._nearestValidPlacement(type,x,y);
+    if(placement.error){this._emit(`${placement.error} Try a clearer patch of terrain.`);return false;}
+    this.sim.issueCommand(RTS_COMMANDS.BUILD,{type,x:placement.x,y:placement.y},{source:COMMAND_SOURCES.PLAYER});
+    this.pendingBuild=null;
+    const snapped=placement.distance>0?` · snapped ${Math.round(placement.distance)} m to nearest legal footprint`:'';
+    this._emit(`${RTS_BUILDINGS[type].label} placement command queued${snapped}.`);return true;
+  }
   _handlePlaceBuildingCommand(cmd){
     const {type,x,y}=cmd.payload,def=RTS_BUILDINGS[type],check=this._canPlace(type,x,y);if(!def||!check.ok){this.renderEvents.push({type:'message',message:check.message||'Build command rejected.'});return;}
     if(!this.playerFaction.spend(def.cost)){this.renderEvents.push({type:'message',message:`Not enough credits for ${def.label}.`});return;}
