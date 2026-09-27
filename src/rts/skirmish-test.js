@@ -5,10 +5,10 @@ import { RTSSimulation, RTS_SIMULATION_VERSION } from './sim/rts-simulation.js';
 import { COMMAND_SOURCES } from './sim/command-bus.js';
 import { RTS_COMMANDS } from './sim/rts-commands.js';
 import { LOCOMOTORS, WEAPONS, UNIT_DEFINITIONS } from './data/rts-definitions.js';
-import { instantiateMasterBuilding, masterBuildingForRole } from './rts-asset-library.js';
+import { instantiateMasterBuilding, masterBuildingForRole, MASTER_BUILDINGS } from './rts-asset-library.js';
 import { loadAegisReferenceVehicle } from '../vehicle/vehicle-generator.js';
 
-export const SKIRMISH_VERSION='0.3.0';
+export const SKIRMISH_VERSION='0.3.1';
 
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const angleDelta=(a,b)=>Math.atan2(Math.sin(a-b),Math.cos(a-b));
@@ -71,7 +71,7 @@ export class SkirmishTest{
     if(this.started&&!reset){this.setActive(true);this._setCamera();this._emit();return;}
     this.mapSignature=sig;this._clearSession();
     this.sim.reset({seed:this.mapForge.recipe?.seed||1});this.lastUiTick=-999;this.playerFaction=this.sim.createFaction('player',{credits:5000});this.enemyFaction=this.sim.createFaction('enemy',{credits:0});this.pendingBuild=null;this.buildSerial=1;
-    await this._spawnPlayerTank();await this._spawnStartingConstructionYard();this._spawnTrainingTarget();this.started=true;this.setActive(true);this._setCamera();this._emit('Skirmish ready · real master HQ/Power assets enabled · drive, aim, fire, and build normally.');
+    await this._spawnPlayerTank();await this._spawnStartingConstructionYard();this._spawnTrainingTarget();this.started=true;this.setActive(true);this._setCamera();this._emit('Skirmish ready · Tactical Command Post + Field Power Node masters active · drive, aim, fire, and build normally.');
   }
 
   _clearSession(){
@@ -110,7 +110,7 @@ export class SkirmishTest{
   async _createBuildingView(entity,{palette=null,name=null}={}){
     const type=entity.components.buildingType,t=entity.components.transform,c=entity.components.construction,def=RTS_BUILDINGS[type];
     const factionPalette=palette||(entity.components.owner==='enemy'?this.enemyPalette:this.playerPalette);
-    let g,masterAsset=null;const master=masterBuildingForRole(type);
+    let g,masterAsset=null;const configuredMasterId=def?.masterAsset;const master=(configuredMasterId&&MASTER_BUILDINGS[configuredMasterId])||masterBuildingForRole(type);
     if(master){
       try{
         const loaded=await instantiateMasterBuilding(master.id,{palette:factionPalette});masterAsset=master.id;
@@ -122,7 +122,7 @@ export class SkirmishTest{
     const view={entityId:entity.id,id:g.name,type,group:g,def,owner:entity.components.owner,masterAsset,functional:{radar:g.getObjectByName('RadarYawRoot'),fans:[1,2,3,4].map(i=>g.getObjectByName(`CoolingFanRoot_${i}`)).filter(Boolean)}};this.buildings.push(view);return view;
   }
   async _spawnStartingConstructionYard(){
-    const start=this.mapForge.metadata.startRegions[0],e=this.sim.createEntity('building',this._buildingComponents('constructionYard',start.x,start.y,{owner:'player',complete:true}),'player');await this._createBuildingView(e,{name:'PLAYER_CommandNexus'});
+    const start=this.mapForge.metadata.startRegions[0],e=this.sim.createEntity('building',this._buildingComponents('constructionYard',start.x,start.y,{owner:'player',complete:true}),'player');await this._createBuildingView(e,{name:'PLAYER_TacticalCommandPost'});
   }
   _spawnTrainingTarget(){
     const start=this.mapForge.metadata.startRegions[0],toward=new THREE.Vector2(-start.x,-start.y).normalize(),side=new THREE.Vector2(-toward.y,toward.x),x=start.x+toward.x*145+side.x*24,y=start.y+toward.y*145+side.y*24;

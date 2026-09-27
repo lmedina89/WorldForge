@@ -19,7 +19,7 @@ assert.match(app,/activateRTSMapMode/);
 assert.match(app,/generateRTSMap/);
 assert.match(app,/jumpFromMinimap/);
 assert.match(css,/rts-map-mode/);
-assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.0'/);
+assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.1'/);
 assert.match(schema,/rtsMapForge: '0\.2\.1'/);
 const ids=[...html.matchAll(/id="([^"]+)"/g)].map(x=>x[1]);
 assert.equal(new Set(ids).size,ids.length,'duplicate DOM ids');

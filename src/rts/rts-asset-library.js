@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-export const RTS_ASSET_LIBRARY_VERSION='0.1.0';
+export const RTS_ASSET_LIBRARY_VERSION='0.2.0';
 
 export const FACTION_PALETTES=Object.freeze({
   aegis:Object.freeze({id:'aegis',label:'Aegis Olive',base:'#777b70',primary:'#60704f',secondary:'#39483c',accent:'#c9a54b'}),
@@ -12,9 +12,31 @@ export const FACTION_PALETTES=Object.freeze({
 });
 
 export const MASTER_BUILDINGS=Object.freeze({
+  tacticalCommandPost:Object.freeze({
+    id:'tacticalCommandPost',label:'Aegis Tactical Command Post',role:'constructionYard',classification:'military',version:'2.1',asset:'assets/buildings/aegis_tactical_command_post_v21.glb',
+    footprint:[31.6,23.925],height:18.6,skirmishDefault:true,
+    slots:Object.freeze({
+      base:['WF_NEUTRAL_ARMOR_LIGHT'],
+      primary:['WF_TEAM_PRIMARY'],
+      secondary:['WF_TEAM_SECONDARY'],
+      accent:['WF_TEAM_ACCENT']
+    }),
+    requiredNodes:['BuildingRoot','ServiceBayDoorRoot','RadarYawRoot','RadarDishPitchRoot','MainEntranceSocket','ServiceBayExitSocket','RallySocket','BuildOriginSocket','PowerSocket','DamageFX_Core']
+  }),
+  fieldPowerNode:Object.freeze({
+    id:'fieldPowerNode',label:'Aegis Field Power Node',role:'powerPlant',classification:'military',version:'1.0',asset:'assets/buildings/aegis_field_power_node_v1.glb',
+    footprint:[24.1,20.74],height:13.995,skirmishDefault:true,
+    slots:Object.freeze({
+      base:['Military_Concrete_Dark'],
+      primary:['WF_TEAM_PRIMARY'],
+      secondary:['WF_TEAM_SECONDARY'],
+      accent:['WF_TEAM_ACCENT']
+    }),
+    requiredNodes:['BuildingRoot','CoolingFanRoot_1','CoolingFanRoot_2','MainEntranceSocket','ServiceVehicleSocket','PowerOutputSocket','BuildOriginSocket','RepairSocket','DamageFX_GeneratorHall']
+  }),
   commandNexus:Object.freeze({
-    id:'commandNexus',label:'Aegis Command Nexus HQ',role:'constructionYard',version:'1.3',asset:'assets/buildings/aegis_command_nexus_hq_v13.glb',
-    footprint:[52.8,41.2],height:24.31,
+    id:'commandNexus',label:'Civilian Helicopter Operations Station',role:'neutralHeliStation',classification:'civilian',version:'1.3',asset:'assets/buildings/aegis_command_nexus_hq_v13.glb',
+    footprint:[52.8,41.2],height:24.31,skirmishDefault:false,
     slots:Object.freeze({
       base:['Concrete_Armor','Concrete_Dark'],
       primary:['Command_Red'],
@@ -24,8 +46,8 @@ export const MASTER_BUILDINGS=Object.freeze({
     requiredNodes:['BuildingRoot','VehicleBayDoorRoot','RadarYawRoot','RadarDishPitchRoot','MainEntranceSocket','VehicleBayExitSocket','RallySocket','BuildOriginSocket']
   }),
   gridBastion:Object.freeze({
-    id:'gridBastion',label:'Aegis Grid Bastion Power Plant',role:'powerPlant',version:'1.0',asset:'assets/buildings/aegis_grid_bastion_power_plant_v1.glb',
-    footprint:[38.9,35.5],height:16.61,
+    id:'gridBastion',label:'Civilian Regional Power Station',role:'neutralPowerStation',classification:'civilian',version:'1.0',asset:'assets/buildings/aegis_grid_bastion_power_plant_v1.glb',
+    footprint:[38.9,35.5],height:16.61,skirmishDefault:false,
     slots:Object.freeze({
       base:['Military_Concrete','Military_Concrete_Dark'],
       primary:['WF_TEAM_PRIMARY'],
@@ -111,4 +133,7 @@ export async function instantiateMasterBuilding(assetId,{palette='aegis',colors=
   return {group:source,definition:def,info:{...info,assetId:def.id,label:def.label,role:def.role,version:def.version,missingRequiredNodes:missing,palette:applied}};
 }
 
-export function masterBuildingForRole(role){return Object.values(MASTER_BUILDINGS).find(x=>x.role===role)||null;}
+export function masterBuildingForRole(role){
+  const matches=Object.values(MASTER_BUILDINGS).filter(x=>x.role===role);
+  return matches.find(x=>x.skirmishDefault)||matches[0]||null;
+}

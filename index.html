@@ -109,15 +109,24 @@
     <p class="miniNote">The generated models are intended to be usable directly as lightweight 3D GLBs or baked to sprites. Imported GLBs assume forward +X at offset 0; adjust offset when needed. The included BTR benchmark is auto-calibrated to −90°.</p>
   </section>
   <section id="rtsBuildingPanel" hidden>
-    <div class="sectionTitle">BUILDING FORGE 0.1 · MASTER MILITARY ASSETS</div>
-    <div class="buildingSourceCard"><b id="rtsBuildingName">Aegis Command Nexus HQ</b><span id="rtsBuildingStats">Approved master GLB · faction-ready</span></div>
-    <label>Master building<select id="rtsBuildingAsset"><option value="commandNexus" selected>Command Nexus HQ · v1.3</option><option value="gridBastion">Grid Bastion Power Plant · v1.0</option></select></label>
+    <div class="sectionTitle">BUILDING FORGE 0.2 · MILITARY + CIVILIAN MASTERS</div>
+    <div class="buildingSourceCard"><b id="rtsBuildingName">Aegis Tactical Command Post</b><span id="rtsBuildingStats">Approved master GLB · faction-ready</span></div>
+    <label>Master building<select id="rtsBuildingAsset">
+      <optgroup label="Military faction masters">
+        <option value="tacticalCommandPost" selected>Tactical Command Post · v2.1</option>
+        <option value="fieldPowerNode">Field Power Node · v1.0</option>
+      </optgroup>
+      <optgroup label="Civilian / neutral masters">
+        <option value="commandNexus">Helicopter Operations Station · v1.3</option>
+        <option value="gridBastion">Regional Power Station · v1.0</option>
+      </optgroup>
+    </select></label>
     <label>Faction palette<select id="rtsBuildingPalette"><option value="aegis" selected>Aegis Olive</option><option value="desert">Desert Tan</option><option value="crimson">Crimson</option><option value="slate">Slate Blue</option><option value="blackops">Black Ops</option></select></label>
     <div class="sectionTitle">FACTION MATERIAL SLOTS</div>
     <div class="buildingColorGrid"><label>Base armor<input id="rtsBuildingBase" type="color" value="#777b70"></label><label>Primary<input id="rtsBuildingPrimary" type="color" value="#60704f"></label><label>Secondary<input id="rtsBuildingSecondary" type="color" value="#39483c"></label><label>Accent<input id="rtsBuildingAccent" type="color" value="#c9a54b"></label></div>
     <div class="checks"><label><input id="rtsBuildingAnimate" type="checkbox" checked> Preview functional roots</label><label><input type="checkbox" checked disabled> Preserve neutral PBR materials</label></div><div class="vehicleButtons"><button id="rtsBuildingLoad" class="vehicleGenerate">LOAD MASTER</button><button id="rtsBuildingRandomize">RANDOM FACTION VARIANT</button></div>
     <div class="vehicleButtons"><button id="rtsBuildingExportGLB">EXPORT BUILDING GLB</button><button id="rtsBuildingExportDefinition">EXPORT DEFINITION</button></div>
-    <p class="miniNote"><b>Master-asset workflow:</b> Forge does not downgrade these approved buildings into boxy procedural approximations. It loads the exact master geometry, applies semantic faction color slots, validates roots/sockets, and exports game-ready variants. Future Barracks, Refinery, Vehicle Factory and defenses plug into this same registry.</p>
+    <p class="miniNote"><b>Master-asset workflow:</b> Forge loads exact approved GLBs, applies semantic faction color slots, validates roots/sockets, and exports game-ready variants. The compact Tactical Command Post and Field Power Node are the current military Skirmish defaults; the larger earlier assets remain available as civilian/neutral infrastructure. Future Barracks, Refinery, Vehicle Factory and defenses plug into this same registry.</p>
     <p class="miniNote"><b>Faction colors:</b> neutral steel/glass/hazard materials stay authored; base armor and team slots can be recolored independently. This same palette contract is used by Skirmish Lab.</p>
   </section>
   <section id="rtsMapPanel" hidden>
@@ -141,10 +150,10 @@
     <p class="miniNote">Generated tactical structure includes ridge barriers, deliberate passes, valleys/ravines, mountain pockets, hidden expansion bowls, high ground, roads, raised/graded river bridges, resource zones, forests/rocks, and class-specific traversal metadata. Tracked, wheeled, infantry, amphibious and air movement are audited separately.</p>
   </section>
   <section id="skirmishPanel" hidden>
-    <div class="sectionTitle">SKIRMISH LAB 0.3 · MASTER ASSET INTEGRATION</div>
+    <div class="sectionTitle">SKIRMISH LAB 0.3.1 · COMPACT MILITARY MASTERS</div>
     <div class="skirmishStatusCard"><b id="skirmishEconomy">$5,000 · POWER 0 / 0</b><span id="skirmishTankStatus">AEGIS-X · 1200 / 1200 HP</span></div>
     <div class="cols"><label>Player faction skin<select id="skirmishPlayerPalette"><option value="aegis" selected>Aegis Olive</option><option value="desert">Desert Tan</option><option value="crimson">Crimson</option><option value="slate">Slate Blue</option><option value="blackops">Black Ops</option></select></label><label>Enemy skin<select id="skirmishEnemyPalette"><option value="crimson" selected>Crimson</option><option value="aegis">Aegis Olive</option><option value="desert">Desert Tan</option><option value="slate">Slate Blue</option><option value="blackops">Black Ops</option></select></label></div><div class="skirmishButtons"><button id="skirmishStart" class="skirmishPrimary">START / RESUME SKIRMISH</button><button id="skirmishReset">RESET SKIRMISH</button></div>
-    <p class="miniNote"><b>Scenario start:</b> the exact Command Nexus HQ master GLB and real Aegis-X v2 test tank spawn in your reserved start region. Building the Power Plant uses the exact Grid Bastion master GLB. Map Forge still creates terrain only.</p>
+    <p class="miniNote"><b>Scenario start:</b> the exact Tactical Command Post v2.1 master GLB and real Aegis-X v2 test tank spawn in your reserved start region. Building the Power Plant uses the exact compact Field Power Node v1.0 master GLB. The older large HQ and power station remain civilian/neutral Building Forge assets. Map Forge still creates terrain only.</p>
     <div class="sectionTitle">CONSTRUCTION</div>
     <div class="skirmishBuildGrid">
       <button data-skirmish-build="powerPlant"><b>POWER PLANT</b><span>$500</span></button>
