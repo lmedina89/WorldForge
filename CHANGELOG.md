@@ -1,3 +1,16 @@
+# v0.13.15 — Base Egress + Building-Aware RTS Orders
+
+- WorldForge advanced to **0.13.15** and Skirmish to **0.7.2**. RTS Map Forge remains **0.2.9** and RTS Definitions remain **0.6.1**.
+- Added building-aware local route planning layered over the existing terrain A* route. Structure collision rectangles are expanded by the moving unit footprint so vehicles plan around actual buildings rather than attempting to drive through them.
+- Added automatic egress handling for units that begin an order inside a structure collision footprint.
+- Vehicle Factory deployment now clears its temporary factory-collision exception after `WF_EXIT_PATH_2`, before the final rally step.
+- Field Refinery now records and uses `HarvesterApproachSocket`, `HarvesterDockSocket`, `HarvesterExitSocket`, and `HarvesterRallySocket` as an authored Harvester dock/egress profile.
+- Returning Harvesters route to the exterior approach first, then perform a short controlled docking move into the Refinery. Departing Harvesters exit through the authored exit/rally path before resuming the field route.
+- Refined refinery collision-ignore semantics so the Refinery is ignored only while actually parked/departing/docking/unloading, not indefinitely while the Harvester is elsewhere on the map.
+- Added progress/stuck recovery: a ground unit that stops making progress automatically re-plans around base obstructions and reports the re-route once.
+- Added an always-visible mobile command hint for unit selection, movement, and Harvester crystal-field orders.
+- No production GLBs were rebuilt or modified.
+
 # v0.13.14 — Road Grounding + Vehicle Factory Production
 
 - WorldForge advanced to **0.13.14**, Skirmish to **0.7.1**, RTS Map Forge to **0.2.9**, and RTS Definitions to **0.6.1**.

@@ -51,7 +51,7 @@ assert.match(map,/richness==='dense'\?5\+Math\.floor\(random\(\)\*4\):3\+Math\.f
 assert.match(map,/awaitResourceAssets/);
 assert.match(app,/logical fields · GPU-instanced/);
 assert.match(html,/exact approved Rich v0\.3 and Dense v0\.1 crystal-cluster GLBs/);
-assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.14'/);
+assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.15'/);
 assert.match(schema,/rtsMapForge: '0\.2\.9'/);
 assert.match(schema,/rtsAssetLibrary: '0\.5\.1'/);
-console.log(JSON.stringify({ok:true,worldforge:'0.13.14',mapForge:'0.2.9',assetLibrary:'0.5.1',resources:['rich','dense'],multiClusterFields:true,gpuInstanced:true,placeholderGeometryRemoved:true,exactHashesVerified:true},null,2));
+console.log(JSON.stringify({ok:true,worldforge:'0.13.15',mapForge:'0.2.9',assetLibrary:'0.5.1',resources:['rich','dense'],multiClusterFields:true,gpuInstanced:true,placeholderGeometryRemoved:true,exactHashesVerified:true},null,2));

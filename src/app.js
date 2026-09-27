@@ -539,6 +539,7 @@ function updateSkirmishUi(state=skirmish.state()){
   $('skirmishTankStatus').textContent=`AEGIS-X · ${Math.round(state.tankHp)} / ${Math.round(state.tankMaxHp)} HP`;
   if($('skirmishHudEconomy'))$('skirmishHudEconomy').textContent=`$${state.credits.toLocaleString()} · PWR ${netText}`;
   if($('skirmishHudSelected')){let selected=`AEGIS-X MANUAL · HP ${Math.round(state.tankHp)} / ${Math.round(state.tankMaxHp)}`;if(state.selectedUnitLabel){const short=state.selectedUnitLabel.replace(/^Aegis\s+/i,'').toUpperCase(),order=String(state.selectedOrder||'idle').replace(/([A-Z])/g,' $1').trim().toUpperCase();selected=state.selectedUnitType==='aegisHarvester'?`${short} · CARGO ${Math.round(state.selectedCargo)} / ${Math.round(state.selectedCapacity)} · ${order}`:`${short} · HP ${Math.round(state.selectedHp)} / ${Math.round(state.selectedMaxHp)} · ${order}`;}$('skirmishHudSelected').textContent=selected;}
+  if($('skirmishCommandHint'))$('skirmishCommandHint').textContent=state.commandHint||'TAP FRIENDLY UNIT TO SELECT · TAP TERRAIN TO MOVE';
   $('skirmishMessage').textContent=state.message||`Skirmish Lab ${SKIRMISH_VERSION} ready.`;
   $('skirmishFollow').textContent=`FOLLOW TANK: ${skirmish.follow?'ON':'OFF'}`;
   if($('skirmishHudFollow')){$('skirmishHudFollow').textContent=skirmish.follow?'FOLLOW ON':'FOLLOW OFF';$('skirmishHudFollow').classList.toggle('active',skirmish.follow);}

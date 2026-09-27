@@ -1,3 +1,17 @@
+# WorldForge v0.13.15 Test Report
+
+## Focused RTS validation
+
+- **20/20 `tests/rts-*.test.mjs` suites pass.**
+- `node --check` passes for the modified Skirmish and app modules.
+- New v0.13.15 coverage verifies building-aware route helpers, refinery approach/exit/rally sockets, factory egress lifetime, stuck re-routing, docking state transition, and the mobile command hint.
+- Existing terrain/road/river, resource field, collision/spacing, economy, production, infantry, master-building, visual-readability, and simulation-foundation suites remain green.
+- All **16 packaged GLBs** are SHA-256 byte-identical to the v0.13.14 package; this milestone changes gameplay/navigation/UI code only.
+
+## On-device focus
+
+Test a starter Harvester parked in the Refinery by selecting it and tapping a crystal field. It should leave the unload bay, clear the base, route around structures, harvest, return to the exterior Refinery approach, dock/unload, and leave again. Also produce an HMMWV/Harvester/Aegis-X from the Vehicle Factory and issue a move order after rollout; the unit should not remain wedged against the factory or adjacent structures.
+
 # WorldForge v0.13.14 Test Report
 
 ## Road Grounding + Vehicle Factory Production

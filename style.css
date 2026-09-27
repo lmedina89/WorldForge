@@ -164,6 +164,7 @@ body.skirmish-mode button{touch-action:manipulation;-webkit-tap-highlight-color:
   backdrop-filter:blur(5px);
 }
 #skirmishHudSelected{justify-self:center}
+.skirmishCommandHint{position:absolute;top:58px;left:50%;transform:translateX(-50%);padding:5px 8px;background:rgba(6,11,9,.70);border:1px solid rgba(143,247,165,.24);color:#cfe0d5;font-size:8px;letter-spacing:.055em;line-height:1.15;white-space:nowrap;pointer-events:none;backdrop-filter:blur(4px);}
 
 .skirmishBuildDrawer{
   position:absolute;
@@ -285,6 +286,7 @@ body.skirmish-mode #mapMinimapWrap{
   .skirmishRotateHint{display:block}
   .skirmishHudTop{grid-template-columns:1fr auto;gap:5px}
   #skirmishHudSelected{grid-column:1 / -1;grid-row:2;justify-self:center;min-height:34px;padding:5px 8px;font-size:9px}
+  .skirmishCommandHint{top:94px;font-size:7.5px;max-width:88vw;overflow:hidden;text-overflow:ellipsis}
   #skirmishHudEconomy{font-size:9px;padding:6px 7px}
   #skirmishHud button{min-height:42px;padding:7px 9px;font-size:10px}
   #skirmishHudFollow{display:none}
@@ -300,6 +302,7 @@ body.skirmish-mode #mapMinimapWrap{
   #skirmishHud{padding-top:calc(4px + env(safe-area-inset-top));padding-bottom:calc(5px + env(safe-area-inset-bottom))}
   #skirmishHud button{min-height:38px;padding:5px 8px;font-size:9px}
   #skirmishHudEconomy,#skirmishHudSelected{min-height:38px;padding:5px 8px;font-size:9px}
+  .skirmishCommandHint{top:44px;font-size:7px}
   .skirmishBuildDrawer{top:calc(50px + env(safe-area-inset-top));max-height:calc(100dvh - 112px - env(safe-area-inset-top) - env(safe-area-inset-bottom))}
   .skirmishPlacementBanner{top:calc(50px + env(safe-area-inset-top))}
   .skirmishDrive{grid-template-columns:repeat(3,44px);grid-template-rows:repeat(2,40px)}

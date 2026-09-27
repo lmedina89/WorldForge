@@ -1,3 +1,13 @@
+# WorldForge v0.13.15 — Base Egress + Building-Aware RTS Orders
+
+WorldForge v0.13.15 advances Skirmish to **0.7.2** while keeping RTS Map Forge at **0.2.9** and RTS Definitions at **0.6.1**. This milestone fixes the first real RTS command deadlock seen on-device: vehicles could receive orders while sitting inside or beside production/economy structures, but the coarse terrain route did not account for the actual building collision footprints.
+
+The command layer now performs **building-aware local route planning** on top of the existing map navigation route, inflating structure footprints by the selected unit's size and inserting safe detours around the base. A selected unit that starts inside a structure collision area first gets an **egress path** before continuing to the ordered destination. Vehicle Factory rollout still follows the authored `WF_SPAWN_VEHICLE` / `WF_ENTRY` / `WF_EXIT_PATH_*` / `WF_RALLY` sockets, and the rollout collision exception now ends after the vehicle clears the factory instead of remaining broad for the whole order.
+
+The Field Refinery now uses its authored **HarvesterApproachSocket, HarvesterDockSocket, HarvesterExitSocket, and HarvesterRallySocket** as a real dock/egress profile. A starter or returning Harvester routes to the exterior approach first, enters the unload bay only for docking/unloading, then exits through the authored exit/rally path before resuming harvest. Moving units also track lack of progress and automatically re-route around nearby base obstructions instead of remaining in a permanent `MOVING` state.
+
+Mobile command guidance is now visible directly in Skirmish: tap a friendly unit to select it, tap terrain to move, and with a Harvester selected tap a crystal field to harvest.
+
 # WorldForge v0.13.14 — Road Grounding + Vehicle Factory Production
 
 WorldForge v0.13.14 advances Skirmish to **0.7.1**, RTS Map Forge to **0.2.9**, and RTS Definitions to **0.6.1**. This is a combined gameplay/terrain milestone so the road fix ships with a meaningful RTS feature instead of as a tiny standalone upload.
