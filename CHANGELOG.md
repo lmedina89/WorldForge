@@ -1,3 +1,14 @@
+# v0.13.9 — Believable Terrain & Road Grounding
+
+- WorldForge advanced to **0.13.9** and RTS Map Forge to **0.2.4**.
+- Reworked battlefield terrain coloration to blend elevation, slope, river moisture, and base-clearing influence.
+- Added more coherent lowland, midland, upland, and rocky zone transitions for the RTS main world.
+- Added road-corridor terrain carving and increased road mesh lift to reduce z-fighting, terrain fall-through, and color flicker on elevation changes.
+- Increased road strip segmentation so routes conform more cleanly to varied relief.
+- Updated foliage placement to prefer wetter flatter ground and updated rock placement to prefer steeper uplands.
+- Preserved gameplay readability by keeping start areas, safe expansions, and road setbacks cleaner.
+- No RTS structure GLBs were rebuilt or modified.
+
 # v0.13.8 — Unit Collision & Infantry Spacing
 
 - WorldForge advanced to **0.13.8**, Skirmish Lab to **0.6.3**, and RTS Definitions to **0.5.3**.

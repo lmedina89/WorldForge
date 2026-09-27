@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export const RTS_MAP_FORGE_VERSION='0.2.3';
+export const RTS_MAP_FORGE_VERSION='0.2.4';
 export const RTS_MAP_SCHEMA='worldforge.rts-map.v1';
 
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
@@ -26,7 +26,7 @@ const BIOMES={
   drylands:{low:0x887858,mid:0x9a875f,high:0xaa956c,tree:0x59693b,trunk:0x65503a,rock:0x7e725e,road:0x625b50,roadShoulder:0x7f6e53,water:0x4f8393,resource:0xd4b04d},
   alpine:{low:0x60725d,mid:0x6d7864,high:0x8a8d81,tree:0x284a36,trunk:0x504438,rock:0x737874,road:0x50534f,roadShoulder:0x68685f,water:0x4b7d8e,resource:0xcbb04c}
 };
-
+const lerpColor=(a,b,t)=>new THREE.Color(a).lerp(new THREE.Color(b),clamp(t,0,1));
 
 export const RTS_MOVEMENT_CLASSES=Object.freeze({
   tracked:{bit:1,label:'Tracked',maxSlopeDeg:32,roadCost:.78,groundCost:1.00,roughCost:1.28,forestPenalty:.07},
@@ -110,10 +110,19 @@ export class RTSMapForge{
     return {starts:corners,expansions:ex};
   }
 
+  _roadCurves(size){
+    return [
+      {id:'ROAD_1',role:'mainRoute',preferred:['wheeled','tracked','infantry'],width:size*.012,fn:x=>-size*.13+.34*x+size*.028*Math.sin((x+size*.1)/(size*.17))},
+      {id:'ROAD_2',role:'flankRoute',preferred:['wheeled','tracked','infantry'],width:size*.012,fn:x=>size*.14-.30*x+size*.024*Math.sin((x-size*.06)/(size*.16))},
+      {id:'ROAD_3',role:'centralConnector',preferred:['wheeled','tracked','infantry'],width:size*.010,fn:x=>size*.015+size*.018*Math.sin(x/(size*.15))}
+    ];
+  }
+
   _makeTerrainFunction(recipe,layout){
-    const size=recipe.size,H=size/2,relief=recipe.relief;
+    const size=recipe.size,relief=recipe.relief;
     const amp=12+relief*18;
     const river=x=>size*.015+size*.07*Math.sin((x+size*.07)/(size*.19))+size*.018*Math.sin(x/(size*.07));
+    const roadCurves=recipe.roads?this._roadCurves(size):[];
     const ridgeWidth=size*(recipe.tacticalProfile==='mountainPasses'?.045:.06);
     const startRingHeight=(recipe.startProtection==='fortified'?1.28:recipe.startProtection==='open'?.58:1)*amp;
     const startRingRadius=size*.140;
@@ -122,19 +131,15 @@ export class RTSMapForge{
     const passXs=[-size*.20,size*.08,size*.31];
     const gauss=(v,w)=>Math.exp(-(v*v)/(w*w));
     const angleDiff=(a,b)=>Math.abs(Math.atan2(Math.sin(a-b),Math.cos(a-b)));
-    const fn=(x,y)=>{
+    const raw=(x,y)=>{
       let h=(Math.sin(x*0.014*(1024/size))*2.2+Math.cos(y*0.016*(1024/size))*1.8+Math.sin((x+y)*0.024*(1024/size))*.9)*(0.65+relief*.6);
       h+=Math.sin(Math.hypot(x+size*.10,y-size*.03)*0.018*(1024/size))*4.5*relief;
-      // Major diagonal ridge with intentionally carved passes.
       const ridgeLine=y-(.46*x+size*.035);
       let passMask=1;for(const px of passXs)passMask*=1-gauss(x-px,size*.05);
       h+=gauss(ridgeLine,ridgeWidth)*amp*.62*passMask;
-      // Opposing secondary ridge / high ground.
       h+=gauss(y+0.32*x+size*.12,size*.08)*amp*.28;
-      // Long low valley and ravine for concealed movement.
       h-=gauss(x+size*.055+.20*y,size*.028)*amp*.34;
       h-=gauss(y-size*.18*Math.sin(x/(size*.19))-size*.11,size*.045)*amp*.22;
-      // Start-region mountain bowls. Main opening points toward map center; small rear/flank cut avoids single-route traps.
       for(const s of layout.starts){
         const dx=x-s.x,dy=y-s.y,d=Math.hypot(dx,dy),a=Math.atan2(dy,dx);
         const mainGate=1-smooth(angleDiff(a,s.angle)/(Math.PI*.19));
@@ -143,35 +148,69 @@ export class RTSMapForge{
         h+=gauss(d-startRingRadius,startRingWidth)*startRingHeight*(1-gate);
         if(d<size*.085){const k=smooth((size*.085-d)/(size*.028));h=h*(1-k)+4.5*k;}
       }
-      // Hidden expansion bowls get ridges with narrow access.
       for(const e of layout.expansions.filter(e=>e.kind==='hiddenPocket')){
         const dx=x-e.x,dy=y-e.y,d=Math.hypot(dx,dy),a=Math.atan2(dy,dx),toCenter=Math.atan2(-e.y,-e.x);
         const gate=1-smooth(angleDiff(a,toCenter)/(Math.PI*.13));
         h+=gauss(d-hiddenBowlRadius,size*.018)*amp*.40*(1-gate);
         h-=gauss(d,size*.042)*amp*.10;
       }
-      // River depression through center.
       if(recipe.river){const ry=river(x),rd=Math.abs(y-ry);h-=gauss(rd,size*.020)*amp*.32;}
-      // Plateau / artillery high-ground pockets.
       h+=gauss(Math.hypot(x-size*.12,y-size*.24),size*.12)*amp*.24;
       h+=gauss(Math.hypot(x+size*.26,y+size*.02),size*.11)*amp*.22;
       return h;
     };
-    return {heightAt:fn,river};
+    const fn=(x,y)=>{
+      let h=raw(x,y);
+      for(const road of roadCurves){
+        const dy=y-road.fn(x),reach=road.width*1.85,ad=Math.abs(dy);
+        if(ad>=reach)continue;
+        const w=smooth(1-ad/reach),step=Math.max(6,size*.006);
+        const roadBase=(raw(x-step*2,road.fn(x-step*2))+raw(x-step,road.fn(x-step))+raw(x,road.fn(x))+raw(x+step,road.fn(x+step))+raw(x+step*2,road.fn(x+step*2)))/5;
+        const cut=amp*.0045;
+        h=THREE.MathUtils.lerp(h,roadBase-cut,w*(ad<road.width*.7?.88:.58));
+      }
+      return h;
+    };
+    return {heightAt:fn,river,roadCurves};
   }
 
-  _terrainColor(recipe,z,random,slopeDeg=0,riverProximity=0){
-    const b=BIOMES[recipe.biome];let c;
-    if(z>18+recipe.relief*12)c=new THREE.Color(b.high);else if(z>7)c=new THREE.Color(b.mid);else c=new THREE.Color(b.low);
-    const slopeShade=clamp(slopeDeg/42,0,1)*.085,lowlandCool=clamp(riverProximity,0,1)*.018;
-    c.offsetHSL((random()-.5)*.008,(random()-.5)*.022+lowlandCool,(random()-.5)*.035-slopeShade-lowlandCool*.5);return c;
+  _terrainContext(recipe,layout,x,y,z,slopeDeg=0,riverProximity=0){
+    const size=recipe.size;
+    let baseClear=0;
+    for(const s of layout.starts){
+      const d=Math.hypot(x-s.x,y-s.y);
+      if(d<size*.13)baseClear=Math.max(baseClear,1-clamp((d-size*.06)/(size*.07),0,1));
+    }
+    for(const e of layout.expansions){
+      const r=e.kind==='safeExpansion'?size*.050:size*.036,d=Math.hypot(x-e.x,y-e.y);
+      if(d<r*2.1)baseClear=Math.max(baseClear,(1-clamp((d-r*.7)/(r*1.4),0,1))*(e.kind==='safeExpansion'?.52:.34));
+    }
+    const macro=.5+.5*((Math.sin((x+y)*0.0026)+Math.sin(x*0.0031)+Math.cos(y*0.0028))/3);
+    const upland=smooth(clamp((z-4)/(18+recipe.relief*12),0,1));
+    const rocky=clamp(smooth(clamp((slopeDeg-13)/22,0,1))*.72+upland*.18,0,1);
+    const dry=clamp(smooth(clamp(upland*(1-riverProximity*.72)+clamp((slopeDeg-9)/22,0,1)*.34,0,1))*.75+macro*.10,0,1);
+    return {baseClear,macro,upland,rocky,dry};
+  }
+
+  _terrainColor(recipe,z,random,slopeDeg=0,riverProximity=0,zone={}){
+    const b=BIOMES[recipe.biome];
+    const low=new THREE.Color(b.low),mid=new THREE.Color(b.mid),high=new THREE.Color(b.high),tree=new THREE.Color(b.tree),rock=new THREE.Color(b.rock),shoulder=new THREE.Color(b.roadShoulder),water=new THREE.Color(b.water);
+    const elev=clamp((z+6)/(30+recipe.relief*18),0,1);
+    let c=elev<.45?low.clone().lerp(mid,elev/.45):mid.clone().lerp(high,(elev-.45)/.55);
+    const lush=low.clone().lerp(tree,.34).lerp(water,.08);
+    c.lerp(lush,clamp(riverProximity*.52*(1-(zone.dry||0)*.35),0,1));
+    c.lerp(shoulder,clamp((zone.dry||0)*.16+(zone.baseClear||0)*.12,0,.24));
+    c.lerp(rock,clamp(zone.rocky||0,0,1)*.74);
+    const slopeShade=clamp(slopeDeg/42,0,1)*.075,riverLift=clamp(riverProximity,0,1)*.022,macroShift=((zone.macro??.5)-.5)*.018;
+    c.offsetHSL((random()-.5)*.006,(random()-.5)*.018+macroShift,(random()-.5)*.025-slopeShade+riverLift-(zone.baseClear||0)*.016);
+    return c;
   }
 
   _makeStrip(pathFn,width,segments,color,zLift=.24){
     const size=this.recipe.size,H=size/2,p=[],idx=[];
     for(let i=0;i<=segments;i++){
       const x=-H+size*i/segments,y=pathFn(x),e=size/1024*1.2,dy=pathFn(x+e)-pathFn(x-e),nx=-dy,ny=2*e,n=Math.hypot(nx,ny)||1;
-      for(const s of [-1,1]){const xx=x+nx/n*width*.5*s,yy=y+ny/n*width*.5*s;p.push(xx,yy,this.heightAt(xx,yy)+zLift);}
+      for(const s of [-1,1]){const xx=x+nx/n*width*.5*s,yy=y+ny/n*width*.5*s,zz=this.heightAt(xx,yy)+zLift;p.push(xx,yy,zz);}
     }
     for(let i=0;i<segments;i++){const a=i*2,b=a+1,c=a+2,d=c+1;idx.push(a,c,b,b,c,d);}
     const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));g.setIndex(idx);g.computeVertexNormals();
@@ -310,7 +349,7 @@ export class RTSMapForge{
     for(let cy=0;cy<chunks;cy++)for(let cx=0;cx<chunks;cx++){
       const p=[],colors=[],idx=[];
       for(let j=0;j<=seg;j++)for(let i=0;i<=seg;i++){
-        const x=-H+cx*actualChunk+i/seg*actualChunk,y=-H+cy*actualChunk+j/seg*actualChunk,z=this.heightAt(x,y),sample=Math.max(1.5,actualChunk/seg*.22),gx=(this.heightAt(x+sample,y)-this.heightAt(x-sample,y))/(sample*2),gy=(this.heightAt(x,y+sample)-this.heightAt(x,y-sample))/(sample*2),slopeDeg=Math.atan(Math.hypot(gx,gy))*180/Math.PI,riverProximity=recipe.river?clamp(1-Math.abs(y-shape.river(x))/(size*.055),0,1):0,c=this._terrainColor(recipe,z,random,slopeDeg,riverProximity);p.push(x,y,z);colors.push(c.r,c.g,c.b);
+        const x=-H+cx*actualChunk+i/seg*actualChunk,y=-H+cy*actualChunk+j/seg*actualChunk,z=this.heightAt(x,y),sample=Math.max(1.5,actualChunk/seg*.22),gx=(this.heightAt(x+sample,y)-this.heightAt(x-sample,y))/(sample*2),gy=(this.heightAt(x,y+sample)-this.heightAt(x,y-sample))/(sample*2),slopeDeg=Math.atan(Math.hypot(gx,gy))*180/Math.PI,riverProximity=recipe.river?clamp(1-Math.abs(y-shape.river(x))/(size*.055),0,1):0,zone=this._terrainContext(recipe,layout,x,y,z,slopeDeg,riverProximity),c=this._terrainColor(recipe,z,random,slopeDeg,riverProximity,zone);p.push(x,y,z);colors.push(c.r,c.g,c.b);
       }
       for(let j=0;j<seg;j++)for(let i=0;i<seg;i++){const a=j*(seg+1)+i,b=a+1,c=a+seg+1,d=c+1;idx.push(a,b,c,b,d,c);tris+=2;}
       const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(p,3));geo.setAttribute('color',new THREE.Float32BufferAttribute(colors,3));geo.setIndex(idx);geo.computeVertexNormals();
@@ -322,12 +361,8 @@ export class RTSMapForge{
       [-size*.24,size*.015,size*.25].forEach((bx,i)=>this._addBridge(bx,shape.river,i));
     }
     if(recipe.roads){
-      const roadFns=[
-        x=>-size*.13+.34*x+size*.028*Math.sin((x+size*.1)/(size*.17)),
-        x=> size*.14-.30*x+size*.024*Math.sin((x-size*.06)/(size*.16)),
-        x=> size*.015+size*.018*Math.sin(x/(size*.15))
-      ];
-      roadFns.forEach((fn,i)=>{const width=size*(i===2?.010:.012),segments=Math.max(90,Math.round(size/5)),shoulder=this._makeStrip(fn,width*1.28,segments,biome.roadShoulder,.18);shoulder.name=`RoadShoulder_${i+1}`;this.root.add(shoulder);const r=this._makeStrip(fn,width,segments,biome.road,.30);r.name=`Road_${i+1}`;this.root.add(r);this.roadFns.push(Object.assign(fn,{width}));routes.push({id:`ROAD_${i+1}`,role:i===0?'mainRoute':i===1?'flankRoute':'centralConnector',preferred:['wheeled','tracked','infantry']});});
+      const roadCurves=shape.roadCurves||this._roadCurves(size);
+      roadCurves.forEach((road,i)=>{const segments=Math.max(150,Math.round(size/3.4)),shoulder=this._makeStrip(road.fn,road.width*1.46,segments,biome.roadShoulder,.24);shoulder.name=`RoadShoulder_${i+1}`;this.root.add(shoulder);const r=this._makeStrip(road.fn,road.width,segments,biome.road,.40);r.name=`Road_${i+1}`;this.root.add(r);this.roadFns.push(Object.assign(road.fn,{width:road.width}));routes.push({id:road.id,role:road.role,preferred:road.preferred});});
     }
     // Instanced upright trees / scrub. Three.js cylinder/cone primitives are Y-up, so rotate geometry once into WorldForge Z-up.
     const areaScale=(size/1024)*(size/1024);
@@ -337,15 +372,17 @@ export class RTSMapForge{
     const trunks=new THREE.InstancedMesh(trunkGeo,trunkMat,treeCount),crowns=new THREE.InstancedMesh(crownGeo,crownMat,treeCount);trunks.castShadow=crowns.castShadow=true;const dummy=new THREE.Object3D();let t=0,attempts=0;
     while(t<treeCount&&attempts++<treeCount*25){
       const x=(random()-.5)*size*.96,y=(random()-.5)*size*.96;if(recipe.river&&Math.abs(y-shape.river(x))<size*.035)continue;
-      if(layout.starts.some(s=>Math.hypot(x-s.x,y-s.y)<size*.105))continue;
-      if(layout.expansions.some(e=>Math.hypot(x-e.x,y-e.y)<size*(e.kind==='safeExpansion'?.050:.032)))continue;
-      if(this.roadFns.some(fn=>Math.abs(y-fn(x))<(fn.width||size*.012)*1.35))continue;
-      const z=this.heightAt(x,y),scale=.70+random()*.75,yaw=random()*Math.PI*2;dummy.position.set(x,y,z+size*.0023*scale);dummy.scale.set(scale,scale,scale);dummy.rotation.set(0,0,yaw);dummy.updateMatrix();trunks.setMatrixAt(t,dummy.matrix);dummy.position.z=z+size*.0067*scale;dummy.updateMatrix();crowns.setMatrixAt(t,dummy.matrix);this.treePoints.push([x,y]);t++;
+      if(layout.starts.some(s=>Math.hypot(x-s.x,y-s.y)<size*.110))continue;
+      if(layout.expansions.some(e=>Math.hypot(x-e.x,y-e.y)<size*(e.kind==='safeExpansion'?.055:.034)))continue;
+      if(this.roadFns.some(fn=>Math.abs(y-fn(x))<(fn.width||size*.012)*1.45))continue;
+      const z=this.heightAt(x,y),sample=Math.max(1.6,size*.0022),gx=(this.heightAt(x+sample,y)-this.heightAt(x-sample,y))/(sample*2),gy=(this.heightAt(x,y+sample)-this.heightAt(x,y-sample))/(sample*2),slopeDeg=Math.atan(Math.hypot(gx,gy))*180/Math.PI,riverProximity=recipe.river?clamp(1-Math.abs(y-shape.river(x))/(size*.085),0,1):0,zone=this._terrainContext(recipe,layout,x,y,z,slopeDeg,riverProximity),treeChance=clamp(.12+recipe.forest*(.28+riverProximity*.44+(1-zone.dry)*.28-zone.rocky*.46-zone.baseClear*.24),.05,.94);
+      if(random()>treeChance)continue;
+      const scale=.62+random()*.78*(1-zone.rocky*.22),yaw=random()*Math.PI*2;dummy.position.set(x,y,z+size*.0023*scale);dummy.scale.set(scale,scale,scale);dummy.rotation.set(0,0,yaw);dummy.updateMatrix();trunks.setMatrixAt(t,dummy.matrix);dummy.position.z=z+size*.0067*scale;dummy.updateMatrix();crowns.setMatrixAt(t,dummy.matrix);this.treePoints.push([x,y]);t++;
     }
     trunks.count=crowns.count=t;trunks.name='ForestTrunks';crowns.name='ForestCanopies';this.root.add(trunks,crowns);
     // Rocks / tactical cover clusters.
     const rockCount=Math.min(420,Math.round(areaScale*(65+recipe.relief*90))),rocks=new THREE.InstancedMesh(new THREE.DodecahedronGeometry(size*.0024,0),mat(biome.rock,1),rockCount);rocks.castShadow=true;
-    let rPlaced=0,rAttempts=0;while(rPlaced<rockCount&&rAttempts++<rockCount*22){const x=(random()-.5)*size*.94,y=(random()-.5)*size*.94;if(layout.starts.some(s=>Math.hypot(x-s.x,y-s.y)<size*.095))continue;if(layout.expansions.some(e=>Math.hypot(x-e.x,y-e.y)<size*(e.kind==='safeExpansion'?.042:.026)))continue;if(this.roadFns.some(fn=>Math.abs(y-fn(x))<(fn.width||size*.012)*1.05))continue;const z=this.heightAt(x,y),scale=.6+random()*1.6;dummy.position.set(x,y,z+size*.0012*scale);dummy.scale.set(scale,scale,scale*(.45+random()*.45));dummy.rotation.set(random(),random(),random()*6.28);dummy.updateMatrix();rocks.setMatrixAt(rPlaced++,dummy.matrix);}rocks.count=rPlaced;rocks.name='RockCover';this.root.add(rocks);
+    let rPlaced=0,rAttempts=0;while(rPlaced<rockCount&&rAttempts++<rockCount*22){const x=(random()-.5)*size*.94,y=(random()-.5)*size*.94;if(layout.starts.some(s=>Math.hypot(x-s.x,y-s.y)<size*.095))continue;if(layout.expansions.some(e=>Math.hypot(x-e.x,y-e.y)<size*(e.kind==='safeExpansion'?.042:.026)))continue;if(this.roadFns.some(fn=>Math.abs(y-fn(x))<(fn.width||size*.012)*1.08))continue;const z=this.heightAt(x,y),sample=Math.max(1.6,size*.0024),gx=(this.heightAt(x+sample,y)-this.heightAt(x-sample,y))/(sample*2),gy=(this.heightAt(x,y+sample)-this.heightAt(x,y-sample))/(sample*2),slopeDeg=Math.atan(Math.hypot(gx,gy))*180/Math.PI,riverProximity=recipe.river?clamp(1-Math.abs(y-shape.river(x))/(size*.085),0,1):0,zone=this._terrainContext(recipe,layout,x,y,z,slopeDeg,riverProximity),rockChance=clamp(.10+zone.rocky*.78+zone.upland*.18-riverProximity*.14-zone.baseClear*.26,.06,.96);if(random()>rockChance)continue;const scale=.52+random()*1.15+zone.rocky*.68;dummy.position.set(x,y,z+size*.0012*scale);dummy.scale.set(scale,scale,scale*(.45+random()*.45));dummy.rotation.set(random(),random(),random()*6.28);dummy.updateMatrix();rocks.setMatrixAt(rPlaced++,dummy.matrix);}rocks.count=rPlaced;rocks.name='RockCover';this.root.add(rocks);
     // Resource fields are gameplay markers/objects, not faction structures.
     const resourceCount=recipe.players===4?(size>=1536?13:size>=1024?9:7):(size>=1536?9:size>=1024?6:5),resourceZones=[];
     const resourceMat=mat(biome.resource,.58);for(let i=0;i<resourceCount;i++){
@@ -356,7 +393,7 @@ export class RTSMapForge{
     const navigation=this._navigationMetadata(recipe,shape.river,layout),score=this._score(recipe,layout,navigation),crossings=this.bridgeData.map(({_frame,...b})=>b);
     this.metadata={schema:'worldforge.rts-map-meta.v2',mapForgeVersion:RTS_MAP_FORGE_VERSION,recipe,terrain:{chunkSize:+actualChunk.toFixed(2),chunkCount:chunks*chunks,segmentsPerChunk:seg,approxTriangles:tris},startRegions:layout.starts.map((s,i)=>({...s,index:i,radius:+(size*.085).toFixed(2),clearRadius:+(size*.105).toFixed(2),reservedOnly:true})),expansionZones:layout.expansions.map(e=>({...e,x:+e.x.toFixed(2),y:+e.y.toFixed(2),radius:+(size*.035).toFixed(2)})),resourceZones,routes,crossings,navigation,tacticalScore:score,
       routeAffinities:{mainRoad:['wheeled','tracked','infantry'],roughPass:['tracked','infantry'],steepTrail:['infantry'],deepWater:['amphibious','air'],mountain:['air'],bridge:['tracked','wheeled','infantry','amphibious']},
-      notes:['No faction buildings are generated. Start regions are reserved terrain metadata only.','1536 m is the intended main-world scale; enlarged start reserves provide roughly 260 m of usable base diameter before the mountain ring.','Trees and rock cover are excluded from start-development zones, safe expansions, and road setbacks so construction and vehicle lanes stay readable.','Faction economy/construction systems place structures during gameplay.','Movement metadata is exported per class: tracked, wheeled, infantry, amphibious and air.','Bridges are explicit traversal links with raised decks and graded approach meshes.']};
+      notes:['No faction buildings are generated. Start regions are reserved terrain metadata only.','1536 m is the intended main-world scale; enlarged start reserves provide roughly 260 m of usable base diameter before the mountain ring.','Terrain coloration now blends elevation, slope, river moisture, and reserved-base clearing influence for more believable battlefield zones.','Road corridors are terrain-carved and mesh-lifted slightly above the ground so road surfaces stay visually grounded on elevation changes.','Trees and rock cover are excluded from start-development zones, safe expansions, and road setbacks so construction and vehicle lanes stay readable.','Movement metadata is exported per class: tracked, wheeled, infantry, amphibious and air.','Bridges are explicit traversal links with raised decks and graded approach meshes.']};
     this._buildFog();this.setFogPreview(false);this._buildMovementOverlay();this.root.visible=true;this.overlay.visible=true;this.movementOverlay.visible=this.movementPreview!=='off';return this.metadata;
   }
 

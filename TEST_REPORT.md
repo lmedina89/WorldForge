@@ -1,3 +1,25 @@
+# WorldForge v0.13.9 Test Report
+
+## Believable Terrain & Road Grounding
+
+Result: **PASS**
+
+### Validation
+- Focused RTS terrain/map tests passed: `rts-map-forge`, `rts-map-traversal-v020`, `rts-skirmish-visual-readability`, `rts-skirmish-immersive-ui`, and `rts-main-world-infantry-v0135`.
+- JavaScript syntax/load checks passed for the updated RTS Map Forge module.
+- No RTS structure GLB assets were rebuilt or modified for this milestone.
+
+### Terrain
+- Terrain coloration now blends elevation, slope, river moisture, and reserved-base clearing influence.
+- Lowland, midland, upland, and rocky zones now read more distinctly while staying stylized and playable.
+- Tree placement now prefers wetter and gentler terrain; rocks prefer uplands and steeper slopes.
+
+### Roads
+- Road corridors now carve gently into terrain before the visible road surface is laid down.
+- Road shoulders and roadbeds use higher ground offset to reduce z-fighting and slope flicker.
+- Road strip tessellation was increased so routes conform more cleanly to height changes.
+
+
 # WorldForge v0.13.8 Test Report
 
 ## Unit Collision & Infantry Spacing

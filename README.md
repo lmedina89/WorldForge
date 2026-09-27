@@ -1,3 +1,23 @@
+# WorldForge v0.13.9 — Believable Terrain & Road Grounding
+
+WorldForge v0.13.9 advances RTS Map Forge to **0.2.4** with a focused battlefield-believability pass. Terrain coloration now responds more coherently to elevation, slope, river moisture, and reserved base clearings, while road corridors are carved and lifted so they stay visually grounded across elevation changes. No RTS structure GLBs were rebuilt for this milestone.
+
+## Terrain zoning improvements
+- Lowlands near water read greener and cooler
+- Midlands stay readable and playable for core maneuver space
+- Uplands and steep slopes transition drier and rockier
+- Reserved start and expansion clearings stay slightly more worn and faction-ready
+
+## Road grounding improvements
+- Road corridors now softly flatten into the local terrain
+- Road shoulders and roadbeds ride slightly above the carved surface to avoid z-fighting and color flicker
+- Road segmentation was increased so routes conform more cleanly to elevation changes
+
+## Vegetation and rock placement logic
+- Trees prefer wetter and gentler terrain
+- Rocky cover prefers uplands and steeper ground
+- Start areas, safe expansions, and road setbacks remain clearer for gameplay readability
+
 # WorldForge v0.13.8 — Unit Collision & Infantry Spacing
 
 WorldForge v0.13.8 builds on the v0.13.7 rotor/fan-axis and building-footprint cleanup with a full local unit-collision pass. No GLB was rebuilt for this milestone.
