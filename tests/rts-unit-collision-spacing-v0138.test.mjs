@@ -11,8 +11,8 @@ const sk=read('src/rts/skirmish-test.js');
 const html=read('index.html');
 const app=read('src/app.js');
 
-assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.19'/);
-assert.match(schema,/skirmish: '0\.7\.6'/);
+assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.22'/);
+assert.match(schema,/skirmish: '0\.7\.7'/);
 assert.match(defs,/RTS_DEFINITIONS_VERSION='0\.6\.1'/);
 
 assert.match(defs,/aegisMbt:.*collisionFootprint:\[7\.55,3\.10\]/s);
@@ -29,7 +29,7 @@ for(const phrase of [
   "_definitionCollisionRect(def,x,y,heading=0)",
   "_unitCollisionRect(e,x=null,y=null,heading=null)",
   "_rectOverlapDepth(a,b,gap=0)",
-  "_tryGroundUnitMove(e,dx,dy)",
+  "_tryGroundUnitMove(e,dx,dy,{allowSteer=false}",
   "_findOpenGroundSpawn(def,x,y,heading)",
   "_systemLocalSeparation(dt)",
   "_barracksRallySlot(entity,index)",
@@ -49,8 +49,8 @@ assert.match(app,/state\.collisionDebug/);
 
 console.log(JSON.stringify({
   ok:true,
-  worldforge:'0.13.19',
-  skirmish:'0.7.6',
+  worldforge:'0.13.22',
+  skirmish:'0.7.7',
   orientedGroundVehicleCollision:true,
   cornerSliding:true,
   turnValidation:true,

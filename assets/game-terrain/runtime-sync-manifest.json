@@ -1,0 +1,38 @@
+{
+  "source": "ForgeRTS v0.6.6.8",
+  "purpose": "WorldForge Game Terrain Workbench exact runtime snapshot",
+  "files": {
+    "src/game-terrain/terrain-sampler.js": {
+      "sha256": "d88d3456154a7759e078d1945e36e22714afe810171841a3d68f1f63b0b4b50a",
+      "bytes": 4308
+    },
+    "src/game-terrain/terrain-renderer.js": {
+      "sha256": "a8d560b49db1652ef5b306b96f66412cd4010480775d0e90e3f7c6d721754c1c",
+      "bytes": 6969
+    },
+    "assets/game-terrain/forgerts_training_ground.json": {
+      "sha256": "b7f54a9792e6df5e90b635a7fe02b6d3e6ad3e2bbe5f0dfc6f0eba8e66c9bfc9",
+      "bytes": 10738
+    },
+    "assets/terrain/temperate_grass.png": {
+      "sha256": "cb4077ef69208afef4b06827a9a88ac7db31d3463bac5548a85a3f2792da7da4",
+      "bytes": 38798
+    },
+    "assets/terrain/temperate_dirt.png": {
+      "sha256": "580f2d4cb4726ba39dd7a13085ce2e200ad877d126b6535c9a3a2b69a2a01a19",
+      "bytes": 38824
+    },
+    "assets/terrain/temperate_rock.png": {
+      "sha256": "91dae5b49d664d5104eebf6cc5bc1b04c1ed2bd4577e0dfa90feec7d4b99e209",
+      "bytes": 50562
+    },
+    "assets/terrain/road_asphalt.png": {
+      "sha256": "613fb6d324af553f90b5b3e1455db657e9f169920ed4512bfef288c0c05b9185",
+      "bytes": 28077
+    },
+    "assets/terrain/road_shoulders.png": {
+      "sha256": "0c6ec4699e0a81719b90cb7686176e3701a718a2cecd767bf96c4c068a702ea1",
+      "bytes": 39331
+    }
+  }
+}

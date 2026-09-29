@@ -8,7 +8,7 @@ import { LOCOMOTORS, WEAPONS, UNIT_DEFINITIONS } from './data/rts-definitions.js
 import { instantiateMasterBuilding, masterBuildingForRole, MASTER_BUILDINGS } from './rts-asset-library.js';
 import { loadAegisReferenceVehicle } from '../vehicle/vehicle-generator.js';
 
-export const SKIRMISH_VERSION='0.7.6';
+export const SKIRMISH_VERSION='0.7.7';
 
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const angleDelta=(a,b)=>Math.atan2(Math.sin(a-b),Math.cos(a-b));
@@ -149,7 +149,7 @@ export class SkirmishTest{
     if(this.started&&!reset){this.setActive(true);this._setCamera();this._emit();return;}
     this.mapSignature=sig;this._clearSession();
     this.sim.reset({seed:this.mapForge.recipe?.seed||1});this.lastUiTick=-999;this.viewMode='overview';this.follow=true;this.camera.zoom=1;this.playerFaction=this.sim.createFaction('player',{credits:5000});this.enemyFaction=this.sim.createFaction('enemy',{credits:0});this.pendingBuild=null;this.buildSerial=1;this.harvestCredits=0;this._registerResourceFields();
-    await this._spawnPlayerTank();await this._spawnStartingConstructionYard();await this._spawnEnemySandboxBase();this.started=true;this.setActive(true);this._setCamera();this._emit(`Skirmish ${SKIRMISH_VERSION} ready · ground vehicles now stage fully clear of production structures and mobile MOVE taps have wider touch tolerance. Tap friendlies to command, explore with FREE CAM, and use the Aegis-X main gun against hostile structures.`);
+    await this._spawnPlayerTank();await this._spawnStartingConstructionYard();await this._spawnEnemySandboxBase();this.started=true;this.setActive(true);this._setCamera();this._emit(`Skirmish ${SKIRMISH_VERSION} ready · persistent MOVE orders now separate destination, routing, locomotion, and stuck recovery. Tap friendlies to command, explore with FREE CAM, and use the Aegis-X main gun against hostile structures.`);
   }
 
   _clearSession(){
@@ -518,10 +518,13 @@ export class SkirmishTest{
   }
   _planGroundRoute(e,toX,toY,{fromX=null,fromY=null,ignoreBuildingIds=[]}={}){
     const t=e.components.transform,sx=fromX??t.x,sy=fromY??t.y,loc=e.components.locomotor,kind=loc?.movementClass||'tracked',goal=this._nearestOpenUnitDestination(e,toX,toY);if(!goal)return [];
-    const base=this.mapForge.findPath(sx,sy,goal.x,goal.y,kind);if(!base.length)return [];const start={x:sx,y:sy,z:this.mapForge.surfaceHeightAt(sx,sy)-.1},nodes=[start,...base.map(p=>({x:p.x,y:p.y,z:p.z}))],goalIndex=nodes.length-1,rects=this._routeBlockRects(e,{ignoreBuildingIds,includeDynamicUnits:true});
-    for(const r of rects){const axes=this._rectAxes(r.heading||0),pad=r.dynamic?.30:.45,hx=r.footprint[0]*.5+pad,hy=r.footprint[1]*.5+pad;for(const [lx,ly] of [[-hx,-hy],[hx,-hy],[hx,hy],[-hx,hy]]){const x=r.x+axes[0][0]*lx+axes[1][0]*ly,y=r.y+axes[0][1]*lx+axes[1][1]*ly;if(this.mapForge.movementAt(x,y,kind).allowed)nodes.push({x,y,z:this.mapForge.surfaceHeightAt(x,y)-.1});}}
+    // Global routing owns terrain + static structures only. Moving friendlies are intentionally
+    // left to the locomotor/local-avoidance layer so a temporary traffic jam cannot invalidate
+    // a persistent MOVE order or make the pathfinder repeatedly chase another vehicle.
+    const base=this.mapForge.findPath(sx,sy,goal.x,goal.y,kind);if(!base.length)return [];const start={x:sx,y:sy,z:this.mapForge.surfaceHeightAt(sx,sy)-.1},nodes=[start,...base.map(p=>({x:p.x,y:p.y,z:p.z}))],goalIndex=nodes.length-1,rects=this._routeBlockRects(e,{ignoreBuildingIds,includeDynamicUnits:false});
+    for(const r of rects){const axes=this._rectAxes(r.heading||0),pad=.45,hx=r.footprint[0]*.5+pad,hy=r.footprint[1]*.5+pad;for(const [lx,ly] of [[-hx,-hy],[hx,-hy],[hx,hy],[-hx,hy]]){const x=r.x+axes[0][0]*lx+axes[1][0]*ly,y=r.y+axes[0][1]*lx+axes[1][1]*ly;if(this.mapForge.movementAt(x,y,kind).allowed)nodes.push({x,y,z:this.mapForge.surfaceHeightAt(x,y)-.1});}}
     const n=nodes.length,dist=new Float64Array(n),prev=new Int32Array(n),used=new Uint8Array(n);dist.fill(Infinity);prev.fill(-1);dist[0]=0;
-    for(let iter=0;iter<n;iter++){let u=-1,best=Infinity;for(let i=0;i<n;i++)if(!used[i]&&dist[i]<best){best=dist[i];u=i;}if(u<0)break;if(u===goalIndex)break;used[u]=1;for(let v=1;v<n;v++){if(v===u||used[v])continue;const a=nodes[u],b=nodes[v];if(!this._segmentClearForUnit(e,a,b,{ignoreBuildingIds,includeDynamicUnits:true}))continue;const nd=dist[u]+Math.hypot(b.x-a.x,b.y-a.y);if(nd<dist[v]){dist[v]=nd;prev[v]=u;}}}
+    for(let iter=0;iter<n;iter++){let u=-1,best=Infinity;for(let i=0;i<n;i++)if(!used[i]&&dist[i]<best){best=dist[i];u=i;}if(u<0)break;if(u===goalIndex)break;used[u]=1;for(let v=1;v<n;v++){if(v===u||used[v])continue;const a=nodes[u],b=nodes[v];if(!this._segmentClearForUnit(e,a,b,{ignoreBuildingIds,includeDynamicUnits:false}))continue;const nd=dist[u]+Math.hypot(b.x-a.x,b.y-a.y);if(nd<dist[v]){dist[v]=nd;prev[v]=u;}}}
     if(!Number.isFinite(dist[goalIndex]))return [];const out=[];let cur=goalIndex;while(cur>0){out.push(nodes[cur]);cur=prev[cur];if(cur<0)return [];}out.reverse();return out;
   }
   _containingBuilding(e){
@@ -550,8 +553,12 @@ export class SkirmishTest{
     const move=e?.components?.move;if(!move?.controlledEgress)return true;const source=move.exitBuildingId?this.sim.entities.get(move.exitBuildingId):null;if(!source||source.components.health?.destroyed){move.exitBuildingId=null;move.exitBuildingUntilIndex=null;move.controlledEgress=false;return true;}
     if(!this._unitFullyOutsideBuilding(e,source,null,null,null,move.egressClearance||.90))return false;move.exitBuildingId=null;move.exitBuildingUntilIndex=null;move.controlledEgress=false;if(e.components.docked?.state==='departing')e.components.docked.state='enroute';return true;
   }
-  _installMove(e,path,{state,order,destination,exitBuildingId=null,exitBuildingUntilIndex=null,controlledEgress=false,egressClearance=.90}={}){
-    if(!path?.length)return false;const move=e.components.move||(e.components.move={});move.waypoints=path.map(p=>({...p}));move.index=0;move.moving=true;move.state=state||'moving';move.order=order||'move';move.destination={...destination};move.resolvedDestination={...path[path.length-1]};move.stuckSeconds=0;move.lastProgressX=e.components.transform.x;move.lastProgressY=e.components.transform.y;move.lastProgressSeconds=0;move.exitBuildingId=exitBuildingId;move.exitBuildingUntilIndex=exitBuildingUntilIndex;move.controlledEgress=!!controlledEgress;move.egressClearance=egressClearance;return true;
+  _installMove(e,path,{state,order,destination,exitBuildingId=null,exitBuildingUntilIndex=null,controlledEgress=false,egressClearance=.90,preserveRecovery=false}={}){
+    if(!path?.length)return false;const move=e.components.move||(e.components.move={}),prevRepaths=move.repathCount||0,prevFailures=move.failedRepaths||0,prevGrace=move.unitCollisionGraceSeconds||0;
+    move.waypoints=path.map(p=>({...p}));move.index=0;move.moving=true;move.state=state||'moving';move.order=order||'move';
+    // The requested destination is the persistent command. The route is disposable and may be
+    // rebuilt without changing what the player asked the unit to do.
+    move.destination={...destination};move.requestedDestination={...destination};move.resolvedDestination={...path[path.length-1]};move.stuckSeconds=0;move.blockedSeconds=0;move.lastProgressX=e.components.transform.x;move.lastProgressY=e.components.transform.y;move.lastProgressSeconds=0;move.repathCooldown=preserveRecovery?Math.max(.45,move.repathCooldown||0):0;move.repathCount=preserveRecovery?prevRepaths:0;move.failedRepaths=preserveRecovery?prevFailures:0;move.unitCollisionGraceSeconds=preserveRecovery?prevGrace:0;move.exitBuildingId=exitBuildingId;move.exitBuildingUntilIndex=exitBuildingUntilIndex;move.controlledEgress=!!controlledEgress;move.egressClearance=egressClearance;return true;
   }
   _commandMoveEntity(e,x,y,{state='moving',order='move',skipEgress=false}={}){
     if(!e||e.kind!=='unit'||e.components.health?.destroyed)return false;const t=e.components.transform,loc=e.components.locomotor,kind=loc?.movementClass||'tracked';if(kind==='air')return this._installMove(e,[{x,y,z:this.mapForge.surfaceHeightAt(x,y)+(loc.preferredAltitude||28)}],{state,order,destination:{x,y}});
@@ -561,13 +568,32 @@ export class SkirmishTest{
     }
     const path=this._planGroundRoute(e,x,y);return this._installMove(e,path,{state,order,destination:{x,y}});
   }
+  _repathPersistentMove(e,{reason='blocked'}={}){
+    const move=e?.components?.move,dest=move?.requestedDestination||move?.destination;if(!move||!dest||move.controlledEgress)return false;
+    if((move.repathCooldown||0)>0)return false;const path=this._planGroundRoute(e,dest.x,dest.y);move.repathCooldown=.80;
+    if(!path.length){move.failedRepaths=(move.failedRepaths||0)+1;return false;}
+    const oldState=move.state,oldOrder=move.order,oldRepaths=move.repathCount||0,oldFailures=move.failedRepaths||0,oldGrace=move.unitCollisionGraceSeconds||0;
+    this._installMove(e,path,{state:oldState,order:oldOrder,destination:dest,preserveRecovery:true});const nm=e.components.move;nm.repathCount=oldRepaths+1;nm.failedRepaths=oldFailures;nm.unitCollisionGraceSeconds=oldGrace;nm.repathReason=reason;nm.repathCooldown=.80;return true;
+  }
+  _recoverPersistentMove(e,dt,{label='Unit'}={}){
+    const move=e?.components?.move;if(!move?.moving||!move.requestedDestination||move.controlledEgress)return;
+    move.blockedSeconds=(move.blockedSeconds||0)+dt;
+    // Re-path deliberately rather than every frame. Rapid path churn is worse than a short wait.
+    if(move.blockedSeconds>.65&&move.repathCooldown<=0){const repathed=this._repathPersistentMove(e,{reason:'stuck'});if(repathed){move.blockedSeconds=0;if(e.components.owner==='player'&&move.repathCount===1)this.renderEvents.push({type:'message',message:`${label} re-routing to the requested destination.`});return;}}
+    // If local traffic keeps pinning the unit, briefly ignore UNIT-vs-UNIT collision only.
+    // Terrain and structures remain authoritative. This is an escape valve, not noclip.
+    if(move.blockedSeconds>1.35&&(move.unitCollisionGraceSeconds||0)<=0){move.unitCollisionGraceSeconds=.70;move.blockedSeconds=.35;if(e.components.owner==='player'&&(move.repathCount||0)<3)this.renderEvents.push({type:'message',message:`${label} clearing local traffic.`});return;}
+    // A persistent order survives a failed route attempt and gets another chance. Only give up
+    // after several seconds of no progress and several failed route computations.
+    if((move.failedRepaths||0)>=3&&move.blockedSeconds>3.2){move.moving=false;move.state='blocked';move.stuckSeconds=0;if(e.components.owner==='player')this.renderEvents.push({type:'message',message:`${label} cannot reach that destination · choose another position.`});}
+  }
   _handleMoveCommand(cmd){
     const ids=Array.isArray(cmd.payload.entityIds)?cmd.payload.entityIds:[cmd.payload.entityId].filter(Boolean),point=cmd.payload.point;if(!point)return;let moved=0,failed=0;
     for(const id of ids){const e=this.sim.entities.get(id);if(!e||e.components.owner!=='player'||e.kind!=='unit')continue;if(e.components.unitType==='aegisHarvester'&&e.components.resource){e.components.resource.autoHarvest=false;e.components.resource.targetResourceEntityId=null;e.components.resource.state='moving';}if(this._commandMoveEntity(e,point.x,point.y,{state:'commanded',order:'move'}))moved++;else failed++;}
     this.renderEvents.push({type:'message',message:moved?`${moved>1?moved+' units':'Unit'} moving to ordered position${failed?' · '+failed+' route failed':''}.`:'No traversable route to that position.'});
   }
   _handleStopCommand(cmd){
-    const ids=Array.isArray(cmd.payload.entityIds)?cmd.payload.entityIds:[cmd.payload.entityId].filter(Boolean);for(const id of ids){const e=this.sim.entities.get(id);if(!e?.components?.move)continue;e.components.move.moving=false;e.components.move.state='stopped';e.components.move.order='stop';if(e.components.resource){e.components.resource.autoHarvest=false;e.components.resource.state=e.components.resource.cargo>0?'holding':'idle';}}
+    const ids=Array.isArray(cmd.payload.entityIds)?cmd.payload.entityIds:[cmd.payload.entityId].filter(Boolean);for(const id of ids){const e=this.sim.entities.get(id);if(!e?.components?.move)continue;e.components.move.moving=false;e.components.move.state='stopped';e.components.move.order='stop';e.components.move.requestedDestination=null;e.components.move.waypoints=[];if(e.components.resource){e.components.resource.autoHarvest=false;e.components.resource.state=e.components.resource.cargo>0?'holding':'idle';}}
   }
   _beginHarvestTrip(harvester,target){
     const r=harvester?.components?.resource,field=target?.components?.resourceField;if(!r||!field||field.remaining<=0)return false;const hp=field.harvestPoint||target.components.transform;r.targetResourceEntityId=target.id;r.autoHarvest=true;r.state='toResource';if(r.refineryEntityId)harvester.components.docked={...(harvester.components.docked||{}),refineryEntityId:r.refineryEntityId,state:'departing'};const ok=this._commandMoveEntity(harvester,hp.x,hp.y,{state:'toResource',order:'harvest'});if(ok)r.harvestApproach={...harvester.components.move.resolvedDestination};else r.state='idle';return ok;
@@ -719,26 +745,19 @@ export class SkirmishTest{
   _moveGroundUnitTo(e,x,y){
     const t=e.components.transform;t.x=x;t.y=y;t.z=this.mapForge.surfaceHeightAt(x,y)-.1;
   }
-  _tryGroundUnitMove(e,dx,dy){
-    const t=e.components.transform,loc=e.components.locomotor,nx=t.x+dx,ny=t.y+dy;
-    if(!this.mapForge.movementAt(nx,ny,loc.movementClass).allowed)return false;
-    const moveOpts={ignoreBuildingId:e.components.move?.exitBuildingId||null};
-    const blockers=this._unitPoseBlockers(e,nx,ny,t.heading,moveOpts);
-    if(!blockers.length){this._moveGroundUnitTo(e,nx,ny);return true;}
-    const candidates=[];
-    for(const b of blockers){
-      const axes=this._rectAxes(b.rect.heading||0);
-      for(const axis of axes){const proj=dx*axis[0]+dy*axis[1];if(Math.abs(proj)>.01)candidates.push([axis[0]*proj,axis[1]*proj]);}
-      if(b.kind==='unit'){const ox=t.x-b.rect.x,oy=t.y-b.rect.y,d=Math.hypot(ox,oy)||1,tx=-oy/d,ty=ox/d,proj=dx*tx+dy*ty,mag=Math.max(.06,Math.hypot(dx,dy));if(Math.abs(proj)>.01)candidates.push([tx*proj,ty*proj]);candidates.push([tx*mag*.88,ty*mag*.88],[-tx*mag*.88,-ty*mag*.88]);}
-    }
-    candidates.push([dx,0],[0,dy]);
-    candidates.sort((a,b)=>(b[0]*b[0]+b[1]*b[1])-(a[0]*a[0]+a[1]*a[1]));
-    const seen=new Set();
-    for(const [sx,sy] of candidates){
-      const key=`${sx.toFixed(3)}:${sy.toFixed(3)}`;if(seen.has(key)||Math.hypot(sx,sy)<.01)continue;seen.add(key);
-      const px=t.x+sx,py=t.y+sy;if(!this.mapForge.movementAt(px,py,loc.movementClass).allowed)continue;
-      if(this._unitPoseAllowed(e,px,py,t.heading,moveOpts)){this._moveGroundUnitTo(e,px,py);return true;}
-    }
+  _tryGroundUnitMove(e,dx,dy,{allowSteer=false}={}){
+    const t=e.components.transform,loc=e.components.locomotor,move=e.components.move||{},distance=Math.hypot(dx,dy);if(distance<1e-5)return false;
+    const baseCourse=Math.atan2(dy,dx),ignoreUnits=(move.unitCollisionGraceSeconds||0)>0,moveOpts={ignoreBuildingId:move.exitBuildingId||null,ignoreUnits};
+    const tryPose=(course,scale=1)=>{const step=distance*scale,nx=t.x+Math.cos(course)*step,ny=t.y+Math.sin(course)*step;if(!this.mapForge.movementAt(nx,ny,loc.movementClass).allowed)return false;if(!this._unitPoseAllowed(e,nx,ny,course,moveOpts))return false;this._moveGroundUnitTo(e,nx,ny);if(allowSteer)t.heading=course;return true;};
+    if(tryPose(baseCourse,1))return true;
+    // Locomotor-level steering fan. The path says where to go; this layer finds a locally
+    // collision-free course around traffic without rewriting the persistent order.
+    if(allowSteer){for(const off of [.24,-.24,.46,-.46,.72,-.72,1.02,-1.02])for(const scale of [1,.72,.46])if(tryPose(baseCourse+off,scale))return true;}
+    // Preserve the old axis slide as a last-resort building-edge escape for manual driving.
+    const nx=t.x+dx,ny=t.y+dy,blockers=this._unitPoseBlockers(e,nx,ny,t.heading,moveOpts),candidates=[];
+    for(const b of blockers){const axes=this._rectAxes(b.rect.heading||0);for(const axis of axes){const proj=dx*axis[0]+dy*axis[1];if(Math.abs(proj)>.01)candidates.push([axis[0]*proj,axis[1]*proj]);}if(b.kind==='unit'&&!ignoreUnits){const ox=t.x-b.rect.x,oy=t.y-b.rect.y,d=Math.hypot(ox,oy)||1,tx=-oy/d,ty=ox/d,proj=dx*tx+dy*ty,mag=distance;if(Math.abs(proj)>.01)candidates.push([tx*proj,ty*proj]);candidates.push([tx*mag*.88,ty*mag*.88],[-tx*mag*.88,-ty*mag*.88]);}}
+    candidates.push([dx,0],[0,dy]);candidates.sort((a,b)=>(b[0]*b[0]+b[1]*b[1])-(a[0]*a[0]+a[1]*a[1]));const seen=new Set();
+    for(const [sx,sy] of candidates){const key=`${sx.toFixed(3)}:${sy.toFixed(3)}`;if(seen.has(key)||Math.hypot(sx,sy)<.01)continue;seen.add(key);const px=t.x+sx,py=t.y+sy;if(!this.mapForge.movementAt(px,py,loc.movementClass).allowed)continue;if(this._unitPoseAllowed(e,px,py,t.heading,moveOpts)){this._moveGroundUnitTo(e,px,py);return true;}}
     return false;
   }
   _systemLocomotion(dt){
@@ -746,7 +765,7 @@ export class SkirmishTest{
       if(e.kind!=='unit'||e.components.health?.destroyed||this._isInfantry(e))continue;const c=e.components,t=c.transform,loc=c.locomotor;if(!loc)continue;
       const input=e.id===this.tank?.entityId?c.input:null,throttle=input?((input.forward?1:0)-(input.back?1:0)):0,turn=input?((input.left?1:0)-(input.right?1:0)):0,manual=!!(throttle||turn);
       if(manual&&loc.movementClass!=='air'){
-        if(c.move){c.move.moving=false;c.move.state='manual';c.move.order=null;}
+        if(c.move){c.move.moving=false;c.move.state='manual';c.move.order=null;c.move.requestedDestination=null;c.move.waypoints=[];}
         if(turn){const next=t.heading+turn*loc.turnRate*dt*(Math.abs(throttle)>.01?.72:1),currentDepth=this._unitPoseCollisionDepth(e,t.x,t.y,t.heading),nextDepth=this._unitPoseCollisionDepth(e,t.x,t.y,next);if(nextDepth<=.001||nextDepth<=currentDepth+.002)t.heading=next;}
         if(throttle){const speed=throttle>0?loc.maxSpeed:loc.reverseSpeed,step=speed*dt*throttle;this._tryGroundUnitMove(e,Math.cos(t.heading)*step,Math.sin(t.heading)*step);}continue;
       }
@@ -755,21 +774,21 @@ export class SkirmishTest{
         move.index=(move.index||0)+1;if(move.controlledEgress&&move.index>(move.exitBuildingUntilIndex??-1))this._releaseControlledEgressIfClear(e);
         if(move.index>=move.waypoints.length){
           if(move.controlledEgress&&!this._releaseControlledEgressIfClear(e)){const source=move.exitBuildingId?this.sim.entities.get(move.exitBuildingId):null,escape=source?this._findBuildingEgressPoint(e,source,move.destination?.x??t.x,move.destination?.y??t.y):null;if(escape&&Math.hypot(escape.x-t.x,escape.y-t.y)>.45){move.waypoints.push(escape);move.exitBuildingUntilIndex=move.waypoints.length-1;continue;}move.moving=false;move.state='blocked';move.stuckSeconds=0;if(c.owner==='player')this.renderEvents.push({type:'message',message:`${def.label||'Unit'} could not clear its production structure.`});continue;}
-          move.moving=false;move.state=move.state==='deploy'?'rallied':'arrived';move.exitBuildingId=null;move.exitBuildingUntilIndex=null;move.controlledEgress=false;move.stuckSeconds=0;
+          move.moving=false;move.state=move.state==='deploy'?'rallied':'arrived';move.exitBuildingId=null;move.exitBuildingUntilIndex=null;move.controlledEgress=false;move.stuckSeconds=0;move.blockedSeconds=0;move.unitCollisionGraceSeconds=0;
         }continue;
       }
       const desired=Math.atan2(dy,dx),err=angleDelta(desired,t.heading),turnStep=(loc.turnRate||1)*dt;t.heading+=clamp(err,-turnStep,turnStep);
       if(loc.movementClass==='air'){
         const step=Math.min(dist,(loc.maxSpeed||30)*dt),nx=t.x+Math.cos(desired)*step,ny=t.y+Math.sin(desired)*step,ground=this.mapForge.surfaceHeightAt(nx,ny),targetZ=ground+(loc.preferredAltitude||28),dz=targetZ-t.z,maxDz=(dz>=0?(loc.climbRate||10):(loc.descentRate||10))*dt;t.x=nx;t.y=ny;t.z+=clamp(dz,-maxDz,maxDz);move.stuckSeconds=0;continue;
       }
-      if(Math.abs(err)>1.18&&!move.controlledEgress)continue;const speed=(loc.maxSpeed||8)*(move.controlledEgress?.55:Math.max(.22,Math.cos(err))),step=Math.min(dist,speed*dt),oldX=t.x,oldY=t.y,moved=move.controlledEgress?this._tryControlledEgressMove(e,Math.cos(desired)*step,Math.sin(desired)*step):this._tryGroundUnitMove(e,Math.cos(t.heading)*step,Math.sin(t.heading)*step);
-      if(moved&&Math.hypot(t.x-oldX,t.y-oldY)>.01){move.stuckSeconds=0;move.lastProgressSeconds=0;move.lastProgressX=t.x;move.lastProgressY=t.y;continue;}move.stuckSeconds=(move.stuckSeconds||0)+dt;move.lastProgressSeconds=(move.lastProgressSeconds||0)+dt;
-      if(move.stuckSeconds>.75&&move.destination&&!move.controlledEgress){const oldState=move.state,oldOrder=move.order,dest={...move.destination};if(this._commandMoveEntity(e,dest.x,dest.y,{state:oldState,order:oldOrder})){const nm=e.components.move;nm.repathCount=(move.repathCount||0)+1;if(c.owner==='player'&&nm.repathCount===1)this.renderEvents.push({type:'message',message:`${def.label||'Unit'} re-routing around base obstruction.`});}else{move.moving=false;move.state='blocked';move.stuckSeconds=0;if(c.owner==='player')this.renderEvents.push({type:'message',message:`${def.label||'Unit'} route blocked.`});}}
+      move.repathCooldown=Math.max(0,(move.repathCooldown||0)-dt);move.unitCollisionGraceSeconds=Math.max(0,(move.unitCollisionGraceSeconds||0)-dt);
+      if(Math.abs(err)>1.18&&!move.controlledEgress){move.blockedSeconds=Math.max(0,(move.blockedSeconds||0)-dt*.35);continue;}const speed=(loc.maxSpeed||8)*(move.controlledEgress?.55:Math.max(.24,Math.cos(err))),step=Math.min(dist,speed*dt),oldX=t.x,oldY=t.y,moved=move.controlledEgress?this._tryControlledEgressMove(e,Math.cos(desired)*step,Math.sin(desired)*step):this._tryGroundUnitMove(e,Math.cos(t.heading)*step,Math.sin(t.heading)*step,{allowSteer:true});
+      if(moved&&Math.hypot(t.x-oldX,t.y-oldY)>.01){move.stuckSeconds=0;move.blockedSeconds=0;move.lastProgressSeconds=0;move.lastProgressX=t.x;move.lastProgressY=t.y;continue;}move.stuckSeconds=(move.stuckSeconds||0)+dt;move.lastProgressSeconds=(move.lastProgressSeconds||0)+dt;this._recoverPersistentMove(e,dt,{label:def.label||'Unit'});
     }
   }
 
   _tryInfantryMove(e,dx,dy,ignoreBuildingId=null){
-    const t=e.components.transform,nx=t.x+dx,ny=t.y+dy,opts={ignoreBuildingId,ignoreInfantry:true,gap:.035};
+    const t=e.components.transform,nx=t.x+dx,ny=t.y+dy,move=e.components.move||{},opts={ignoreBuildingId,ignoreInfantry:true,ignoreUnits:(move.unitCollisionGraceSeconds||0)>0,gap:.035};
     if(this.mapForge.movementAt(nx,ny,'infantry').allowed&&this._unitPoseAllowed(e,nx,ny,t.heading,opts)){t.x=nx;t.y=ny;return true;}
     const d=Math.hypot(dx,dy)||1,tx=-dy/d,ty=dx/d,desired=Math.atan2(dy,dx);
     // Try progressively stronger sidesteps. This prevents a rifleman whose route brushes
@@ -787,11 +806,11 @@ export class SkirmishTest{
   _systemInfantryLocomotion(dt){
     for(const e of this.sim.entities.values()){
       if(e.components.unitType!=='aegisRifleman'||e.components.health?.destroyed)continue;
-      const t=e.components.transform,move=e.components.move,loc=e.components.locomotor;if(!move?.moving||!move.waypoints?.length)continue;
+      const t=e.components.transform,move=e.components.move,loc=e.components.locomotor;if(!move?.moving||!move.waypoints?.length)continue;move.repathCooldown=Math.max(0,(move.repathCooldown||0)-dt);move.unitCollisionGraceSeconds=Math.max(0,(move.unitCollisionGraceSeconds||0)-dt);
       const wp=move.waypoints[Math.min(move.index,move.waypoints.length-1)],dx=wp.x-t.x,dy=wp.y-t.y,dist=Math.hypot(dx,dy);
       if(dist<.30){
         move.index++;
-        if(move.index>=move.waypoints.length){move.moving=false;move.state=move.state==='deploy'?'rallied':'arrived';move.exitBuildingId=null;if(e.components.combat)e.components.combat.state='ready';t.z=this.mapForge.surfaceHeightAt(t.x,t.y)+.04;}
+        if(move.index>=move.waypoints.length){move.moving=false;move.state=move.state==='deploy'?'rallied':'arrived';move.exitBuildingId=null;move.blockedSeconds=0;move.unitCollisionGraceSeconds=0;if(e.components.combat)e.components.combat.state='ready';t.z=this.mapForge.surfaceHeightAt(t.x,t.y)+.04;}
         continue;
       }
       const desired=Math.atan2(dy,dx),err=angleDelta(desired,t.heading);t.heading+=clamp(err,-loc.turnRate*dt,loc.turnRate*dt);
@@ -800,12 +819,7 @@ export class SkirmishTest{
         const moved=Math.hypot(t.x-oldX,t.y-oldY),u=dist>0?Math.min(1,moved/dist):1,targetZ=Number.isFinite(wp.z)?wp.z:this.mapForge.surfaceHeightAt(t.x,t.y)+.04;t.z=t.z+(targetZ-t.z)*Math.max(.35,u);
         if(moved>.006){move.stuckSeconds=0;move.lastProgressX=t.x;move.lastProgressY=t.y;continue;}
       }
-      move.stuckSeconds=(move.stuckSeconds||0)+dt;
-      if(move.stuckSeconds>.55&&move.destination){
-        const oldState=move.state,oldOrder=move.order,dest={...move.destination},oldCount=move.repathCount||0;
-        if(this._commandMoveEntity(e,dest.x,dest.y,{state:oldState,order:oldOrder})){const nm=e.components.move;nm.repathCount=oldCount+1;if(e.components.owner==='player'&&nm.repathCount===1)this.renderEvents.push({type:'message',message:'Rifleman finding a clear step around obstruction.'});}
-        else{move.moving=false;move.state='blocked';move.stuckSeconds=0;if(e.components.owner==='player')this.renderEvents.push({type:'message',message:'Rifleman route blocked · choose another destination.'});}
-      }
+      move.stuckSeconds=(move.stuckSeconds||0)+dt;this._recoverPersistentMove(e,dt,{label:'Rifleman'});
     }
   }
   _circleRectPush(px,py,radius,rect,gap=.05){

@@ -1,3 +1,61 @@
+# WorldForge v0.13.22 — Game Terrain Visual Foundation A/B
+
+WorldForge v0.13.22 advances **Game Terrain Workbench to 0.2** and begins the actual terrain-quality pass without touching ForgeRTS gameplay or replacing terrain with GLBs. The original ForgeRTS v0.6.6.8 `TerrainSampler`, `TerrainRenderer`, Training Ground map, and source-sync manifest remain present and unchanged.
+
+The GAME TERRAIN tab now has a direct **CURRENT GAME / EXPERIMENTAL V2** A/B switch. CURRENT runs the byte-for-byte ForgeRTS renderer. EXPERIMENTAL runs the same exact map, height sampler, splat weights, roads, and water through a candidate renderer intended for later ForgeRTS integration after visual approval.
+
+Experimental V2 adds:
+- 4 m default visual mesh cells (3/4/5/6 m selectable) while keeping the same TerrainSampler heights.
+- dual-scale de-tiling for grass and dirt to reduce obvious texture repetition.
+- large-scale macro color breakup.
+- generated close-range normal detail for grass, dirt, rock, asphalt, and road shoulders.
+- triplanar rock projection so steep slopes do not smear the rock texture.
+- distance-faded micro-normal detail to reduce far-camera shimmer.
+- improved normal-mapped road presentation while preserving terrain-conforming road geometry.
+- exported `terrain.visual` settings so an approved visual profile can move into ForgeRTS without a GLB conversion step.
+
+The important boundary is preserved: the original game renderer remains untouched for comparison, and the experimental renderer is additive. No approved production GLB or protected procedural generator is intentionally changed.
+
+# WorldForge v0.13.21 — Game Terrain Workbench Foundation
+
+WorldForge v0.13.21 adds **Game Terrain Workbench 0.1** without changing the protected procedural generators, Skirmish simulation, or any approved production GLB. The new `GAME TERRAIN` mode previews terrain through byte-for-byte copies of ForgeRTS v0.6.6.8 `TerrainSampler` and `TerrainRenderer`, using the current ForgeRTS Training Ground map and terrain textures.
+
+The workbench edits fields already understood by the ForgeRTS map contract (heightfield noise, splat thresholds/tile scales, sun intensity, seed), offers Wide/Close/Ground/Top inspection views, can import ForgeRTS map JSON, and exports ForgeRTS map JSON directly. No terrain GLB is required. See `GAME_TERRAIN_WORKBENCH.md` for the runtime-sync boundary and hashes.
+
+## Preservation
+- All **16 existing production GLBs** are byte-for-byte unchanged from v0.13.20.
+- All 14 protected generator files are byte-for-byte unchanged from the v0.13.20 baseline. The old `protected_generator_hashes_v092.txt` itself already contains one stale hash for `src/generators/index.js`; that pre-existing manifest mismatch is unchanged.
+- RTS Map Forge remains 0.2.9 and Skirmish remains 0.7.7.
+
+# WorldForge v0.13.20 — Persistent Orders + Locomotor Core
+
+WorldForge v0.13.20 advances Skirmish to **0.7.7** while keeping RTS Map Forge at **0.2.9** and RTS Definitions at **0.6.1**. This milestone replaces the last patch-on-patch ground movement behavior with a clearer RTS command stack: **persistent requested destination → static route → locomotor/local avoidance → throttled stuck recovery**. The design was informed by studying the publicly released Command & Conquer: Generals / Zero Hour source architecture, but WorldForge uses a new JavaScript implementation; no EA code or assets are copied into the project.
+
+## Persistent movement orders
+- A MOVE/HARVEST/RETURN order now stores the requested destination separately from the current waypoint route. Re-planning can replace the route without changing what the player asked the unit to do.
+- STOP and manual Aegis-X driving explicitly clear the persistent request. A temporary local blockage therefore cannot silently cancel an order, but an intentional player cancellation still does.
+- Destination correction remains in front of routing, so an invalid exact tap can resolve to nearby traversable ground rather than disappearing.
+
+## Static route, dynamic locomotor
+- Global route planning now reasons about terrain and static structure footprints only. Moving friendly vehicles are no longer promoted into hard route-graph obstacles that can make a valid command fail just because traffic changed between frames.
+- Ground locomotion now samples a local steering fan around the desired course. The route answers **where** to go; the locomotor decides **how to get around immediate traffic** without rewriting the order.
+- Existing oriented vehicle/building collision remains authoritative. Controlled Vehicle Factory / Refinery egress remains a separate state and is preserved.
+
+## Throttled stuck recovery
+- Units no longer request a brand-new route every few frames while blocked. Re-pathing is throttled and always targets the original requested destination.
+- If local traffic continues to pin a unit, it receives a short **unit-to-unit collision grace window** so it can clear a jam. Terrain and building collision are never ignored by this recovery path.
+- Riflemen use the same persistent recovery policy as vehicles while retaining their infantry-specific local sidestep/radial movement.
+- A route is only abandoned after repeated failed route computations and several seconds without progress; the HUD then reports that the destination cannot be reached.
+
+## Why this pass
+The prior mobility releases progressively fixed touch selection, factory egress, building-aware paths, and local sidestepping, but on-device testing still showed HMMWVs and Riflemen becoming selective or stopping after earlier commands. The remaining problem was architectural: moving units were influencing the global path while local collision simultaneously tried to solve the same traffic. v0.13.20 gives those responsibilities separate layers.
+
+## Scope boundary
+This release deliberately finishes the movement architecture before the planned health/armor, ATTACK/STOP/GUARD UI, strategic enemy economy/production AI, and victory/defeat milestone.
+
+## Asset preservation
+All 16 approved production GLBs remain unchanged from v0.13.19.
+
 # WorldForge v0.13.19 — Ground Mobility Reliability 2
 
 WorldForge v0.13.19 advances Skirmish to **0.7.6** while keeping RTS Map Forge at **0.2.9** and RTS Definitions at **0.6.1**. This milestone targets the two remaining on-device mobility failures: produced ground vehicles could still lose their safe egress state before fully clearing the Vehicle Factory, and Rifleman move taps could still feel too exact on iPhone.

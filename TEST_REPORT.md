@@ -1,3 +1,45 @@
+# WorldForge v0.13.22 Test Report
+
+## Game Terrain Visual Foundation A/B
+
+- New Game Terrain Workbench 0.2 regression: **PASS**.
+- Current self-contained suite: **30 / 30 PASS**.
+- Seven legacy tests still depend on historical external fixture directories (`/mnt/data/worldforge-v0.4.0` through `/mnt/data/worldforge-v0.9.1`) and are not shipped in the current package; these are unchanged inherited test-environment failures.
+- Protected procedural generator comparison vs v0.13.21 baseline: **14 / 14 byte-for-byte unchanged**.
+- Existing production GLBs vs v0.13.21 baseline: **16 / 16 byte-for-byte unchanged**.
+- Exact ForgeRTS v0.6.6.8 current-runtime snapshots remain unchanged:
+  - `terrain-sampler.js` SHA-256 `d88d3456154a7759e078d1945e36e22714afe810171841a3d68f1f63b0b4b50a`
+  - `terrain-renderer.js` SHA-256 `a8d560b49db1652ef5b306b96f66412cd4010480775d0e90e3f7c6d721754c1c`
+  - bundled current Training Ground map SHA-256 `b7f54a9792e6df5e90b635a7fe02b6d3e6ad3e2bbe5f0dfc6f0eba8e66c9bfc9`
+- Experimental renderer source syntax check: **PASS**.
+- App / workbench / schema syntax checks: **PASS**.
+- DOM ID/reference audit including the new A/B and visual controls: **PASS**.
+- Added five derived normal-map textures for terrain/roads; no approved model asset was rebuilt.
+
+## Visual acceptance still required
+
+Automated validation confirms source wiring, preservation, map compatibility and deterministic terrain sampling. It does not replace an iPhone/Safari visual check. The intended acceptance test is to open **GAME TERRAIN**, flip between **CURRENT GAME** and **EXPERIMENTAL V2**, then inspect WIDE, CLOSE and GROUND views for texture repetition, slope quality, normal shimmer, road grounding and performance.
+
+---
+
+# WorldForge v0.13.20 Test Report
+
+## Persistent Orders + Locomotor Core
+
+Result: **PASS — focused source/regression validation**
+
+- Focused `tests/rts-*.test.mjs` suite: **25 / 25 PASS**, including new v0.13.20 persistent-order/locomotor regression coverage.
+- JavaScript syntax checks pass for Skirmish, app wiring, and schema.
+- New regression coverage verifies persistent requested destinations, throttled re-pathing, static-only global routing, locomotor steering around local traffic, short unit-only collision grace, shared Rifleman/vehicle recovery, explicit cancellation semantics, and preservation of controlled production egress.
+- Existing economy, enemy sandbox, resource fields, roads/rivers, free camera, mobile touch, collision/spacing, production, and asset-master regressions remain in the focused suite.
+- Production asset hashes are compared to v0.13.19 before packaging; no approved GLB is intentionally modified by this release.
+
+### On-device validation focus
+On iPhone, select one HMMWV after it has fully cleared the factory and issue at least **five destinations in a row** without reselecting it. Park another friendly vehicle near its path and confirm the HMMWV bends around or clears the traffic while still pursuing the last requested destination. Repeat with a Rifleman through the same base area. Also retarget a factory vehicle during rollout to confirm controlled egress remains independent of normal locomotion.
+
+### Scope boundary
+Combat/health rebalance and strategic enemy AI remain intentionally outside this pass until repeated ground MOVE commands are proven boringly reliable on-device.
+
 # WorldForge v0.13.19 Test Report
 
 ## Ground Mobility Reliability 2

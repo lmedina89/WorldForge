@@ -11,6 +11,7 @@ import { snapScalar, snapRotationRadians, nearestLevel, nearestEdgeAdjustment, w
 import { VehicleBaker, VEHICLE_BAKER_VERSION } from './vehicle/vehicle-baker.js';
 import { generateLowPolyVehicle, loadAegisReferenceVehicle, isAegisReferenceVehicle, VEHICLE_GENERATOR_VERSION, VEHICLE_ARCHETYPES } from './vehicle/vehicle-generator.js';
 import { RTSMapForge, RTS_MAP_FORGE_VERSION } from './rts-map/rts-map-forge.js';
+import { GameTerrainWorkbench, GAME_TERRAIN_WORKBENCH_VERSION, FORGERTS_TERRAIN_SOURCE_VERSION, EXPERIMENTAL_TERRAIN_RENDERER_VERSION } from './game-terrain/terrain-workbench.js';
 import { SkirmishTest, SKIRMISH_VERSION } from './rts/skirmish-test.js';
 import { BuildingForge, BUILDING_FORGE_VERSION } from './building/building-forge.js';
 import { FACTION_PALETTES, MASTER_BUILDINGS } from './rts/rts-asset-library.js';
@@ -22,7 +23,7 @@ const MAIN_WORLD_RTS_RECIPE=Object.freeze({
 });
 const isMainWorldRecipe=r=>!!r&&r.seed===MAIN_WORLD_RTS_RECIPE.seed&&r.size===MAIN_WORLD_RTS_RECIPE.size&&r.players===MAIN_WORLD_RTS_RECIPE.players&&r.biome===MAIN_WORLD_RTS_RECIPE.biome&&r.tacticalProfile===MAIN_WORLD_RTS_RECIPE.tacticalProfile&&r.relief===MAIN_WORLD_RTS_RECIPE.relief&&r.forest===MAIN_WORLD_RTS_RECIPE.forest&&r.resources===MAIN_WORLD_RTS_RECIPE.resources&&r.river===MAIN_WORLD_RTS_RECIPE.river&&r.roads===MAIN_WORLD_RTS_RECIPE.roads&&r.startProtection===MAIN_WORLD_RTS_RECIPE.startProtection;
 let mode='building',currentGroup=null,currentSpec=null,selectedPlacementId=null,selectionHelper=null,selectionGuideGroup=null,fieldLevelView='all',characterSprite=null,characterShadow=null,walkDebugGroup=null,characterPos=[0,0,0],characterDir='S',playtestActive=false,walkDebugEnabled=false,followCameraEnabled=true,playtestCameraOffset=new THREE.Vector3(16,-18,12),settlementCharacterSpawnOverride=null;
-const panels={building:$('buildingPanel'),prop:$('propPanel'),foliage:$('foliagePanel'),surface:$('surfacePanel'),traversal:$('traversalPanel'),field:$('fieldPanel'),settlement:$('settlementPanel'),vehicle:$('vehiclePanel'),rtsbuilding:$('rtsBuildingPanel'),rtsmap:$('rtsMapPanel'),skirmish:$('skirmishPanel'),terrain:$('terrainPanel'),landscape:$('landscapePanel')};
+const panels={building:$('buildingPanel'),prop:$('propPanel'),foliage:$('foliagePanel'),surface:$('surfacePanel'),traversal:$('traversalPanel'),field:$('fieldPanel'),settlement:$('settlementPanel'),vehicle:$('vehiclePanel'),rtsbuilding:$('rtsBuildingPanel'),gameterrain:$('gameTerrainPanel'),rtsmap:$('rtsMapPanel'),skirmish:$('skirmishPanel'),terrain:$('terrainPanel'),landscape:$('landscapePanel')};
 const isCompositeMode=()=>mode==='field'||mode==='settlement';
 
 const scene=new THREE.Scene();scene.background=new THREE.Color(0x0d1310);scene.fog=new THREE.Fog(0x0d1310,55,150);
@@ -35,13 +36,14 @@ const grid=new THREE.GridHelper(80,80,0x34443a,0x243029);grid.rotation.x=Math.PI
 const vehicleBaker=new VehicleBaker({scene,camera,renderer,controls});
 const buildingForge=new BuildingForge({scene,camera,renderer,controls});
 const rtsMapForge=new RTSMapForge({scene,camera,renderer,controls});
+const gameTerrainWorkbench=new GameTerrainWorkbench({scene,camera,renderer,controls});
 const skirmish=new SkirmishTest({scene,camera,renderer,controls,mapForge:rtsMapForge,onStateChange:updateSkirmishUi});
 let mapLastView='overview',mapZonesVisible=true,mapMiniLast=0,skirmishBuildDrawerOpen=false;
 const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
 $('version').textContent='v'+WORLDFORGE_VERSION;
 
 function configureControlsForMode(){
-  const mapMode=mode==='rtsmap',skirmishMode=mode==='skirmish';
+  const mapMode=mode==='rtsmap',gameTerrainMode=mode==='gameterrain',skirmishMode=mode==='skirmish';
   controls.enabled=true;
   controls.enableRotate=!mapMode&&!skirmishMode;
   controls.enablePan=!skirmishMode;
@@ -67,15 +69,15 @@ function syncSkirmishViewport(){
 }
 
 function configureSceneForMode(){
-  const mapMode=mode==='rtsmap',skirmishMode=mode==='skirmish',mapLike=mapMode||skirmishMode;
-  document.body.classList.toggle('rts-map-mode',mapMode);
+  const mapMode=mode==='rtsmap',gameTerrainMode=mode==='gameterrain',skirmishMode=mode==='skirmish',mapLike=mapMode||gameTerrainMode||skirmishMode;
+  document.body.classList.toggle('rts-map-mode',mapMode||gameTerrainMode);
   document.body.classList.toggle('skirmish-mode',skirmishMode);
   if(mapLike){scene.background.set(0x91a9ac);scene.fog.color.set(0x91a9ac);scene.fog.near=380;scene.fog.far=Math.max(1100,(rtsMapForge.recipe?.size||1024)*1.35);sun.castShadow=false;if(skirmishMode){ambient.intensity=.34;sun.intensity=.42;rtsMapForge.setVisualProfile('skirmish');}else{ambient.intensity=.56;sun.intensity=.68;rtsMapForge.setVisualProfile('map');}}
   else{camera.up.set(0,0,1);scene.background.set(0x0d1310);scene.fog.color.set(0x0d1310);scene.fog.near=55;scene.fog.far=150;ambient.intensity=1.15;sun.intensity=2.6;sun.castShadow=true;}
-  $('mapMinimapWrap').hidden=!mapLike;
+  $('mapMinimapWrap').hidden=!(mapMode||skirmishMode);
   $('skirmishHud').hidden=!skirmishMode;
   if(!skirmishMode)setSkirmishBuildDrawer(false);
-  $('viewportHint').textContent=skirmishMode?'':mapMode?'Drag to pan · wheel/pinch to zoom · tap minimap to jump · editor overview is not gameplay camera':'Drag to orbit · wheel/pinch to zoom · same recipe = same asset';
+  $('viewportHint').textContent=skirmishMode?'':mapMode?'Drag to pan · wheel/pinch to zoom · tap minimap to jump · editor overview is not gameplay camera':gameTerrainMode?'Drag to orbit · wheel/pinch to zoom · exact ForgeRTS runtime terrain preview':'Drag to orbit · wheel/pinch to zoom · same recipe = same asset';
   configureControlsForMode();
   requestAnimationFrame(()=>resize());
 }
@@ -84,10 +86,11 @@ function showMode(next){
   if(mode!=='settlement'&&playtestActive)setPlaytest(false);
   document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x.dataset.mode===mode));
   Object.entries(panels).forEach(([key,p])=>p.hidden=key!==mode);
-  document.querySelectorAll('.proceduralUi').forEach(el=>el.hidden=mode==='vehicle'||mode==='rtsbuilding'||mode==='rtsmap'||mode==='skirmish');
-  if(currentGroup)currentGroup.visible=!['vehicle','rtsbuilding','rtsmap','skirmish'].includes(mode);
+  document.querySelectorAll('.proceduralUi').forEach(el=>el.hidden=mode==='vehicle'||mode==='rtsbuilding'||mode==='gameterrain'||mode==='rtsmap'||mode==='skirmish');
+  if(currentGroup)currentGroup.visible=!['vehicle','rtsbuilding','gameterrain','rtsmap','skirmish'].includes(mode);
   vehicleBaker.setActive(mode==='vehicle');
   buildingForge.setActive(mode==='rtsbuilding');
+  gameTerrainWorkbench.setActive(mode==='gameterrain');
   rtsMapForge.setActive(mode==='rtsmap'||mode==='skirmish');
   skirmish.setActive(mode==='skirmish');
   if(mode==='skirmish'){rtsMapForge.overlay.visible=false;rtsMapForge.movementOverlay.visible=false;if(rtsMapForge.fogMesh)rtsMapForge.fogMesh.visible=false;}
@@ -96,6 +99,7 @@ function showMode(next){
   if(mode!=='settlement'){hideCharacter();settlementCharacterSpawnOverride=null;}
   if(mode==='vehicle'){$('modeLabel').textContent='VEHICLE BAKER';$('seedLabel').textContent='8-DIR';}
   if(mode==='rtsbuilding'){$('modeLabel').textContent='BUILDING FORGE';$('seedLabel').textContent='MASTER';}
+  if(mode==='gameterrain'){$('modeLabel').textContent='GAME TERRAIN';$('seedLabel').textContent=gameTerrainWorkbench.map?String(gameTerrainWorkbench.map.seed):'RUNTIME';}
   if(mode==='rtsmap'){$('modeLabel').textContent='RTS MAP FORGE';$('seedLabel').textContent=`${rtsMapForge.recipe?.size||1024}M`;}
   if(mode==='skirmish'){$('modeLabel').textContent='SKIRMISH LAB';$('seedLabel').textContent=`$${skirmish.credits.toLocaleString()}`;}
   syncPlaytestButtons();updateSelectedUi();
@@ -185,8 +189,8 @@ function setDefaultCamera(recipe){
   controls.target.set(0,0,targetHeight(recipe));camera.lookAt(controls.target);controls.update();
 }
 function updateModeEnvironment(){
-  ground.visible=!['surface','field','settlement','terrain','vehicle','rtsbuilding','rtsmap','skirmish'].includes(mode);
-  grid.visible=!['surface','field','settlement','vehicle','rtsbuilding','rtsmap','skirmish'].includes(mode);
+  ground.visible=!['surface','field','settlement','terrain','vehicle','rtsbuilding','gameterrain','rtsmap','skirmish'].includes(mode);
+  grid.visible=!['surface','field','settlement','vehicle','rtsbuilding','gameterrain','rtsmap','skirmish'].includes(mode);
 }
 function renderRecipe(recipe,{resetCamera=true}={}){
   clearSelectionHelper();
@@ -540,6 +544,81 @@ function activateRTSMapMode(){
 }
 function rtsMapBaseName(){const r=rtsMapForge.recipe||readRTSMapRecipe();return `worldforge_rtsmap_${r.size}m_${r.seed}`;}
 
+function gameTerrainSettings(){
+  return {
+    seed:+$('gameTerrainSeed').value||1,
+    baseHeight:+$('gameTerrainBaseHeight').value,
+    noiseScale:+$('gameTerrainNoiseScale').value,
+    amplitude:+$('gameTerrainAmplitude').value,
+    octaves:+$('gameTerrainOctaves').value,
+    persistence:+$('gameTerrainPersistence').value,
+    grassTile:+$('gameTerrainGrassTile').value,
+    dirtTile:+$('gameTerrainDirtTile').value,
+    rockTile:+$('gameTerrainRockTile').value,
+    cliffStart:+$('gameTerrainCliffStart').value,
+    cliffFull:+$('gameTerrainCliffFull').value,
+    sunIntensity:+$('gameTerrainSunIntensity').value,
+    cellMeters:+$('gameTerrainCellMeters').value,
+    macroVariation:+$('gameTerrainMacroVariation').value,
+    normalStrength:+$('gameTerrainNormalStrength').value,
+    surfaceContrast:+$('gameTerrainSurfaceContrast').value,
+    detailMix:+$('gameTerrainDetailMix').value
+  };
+}
+function syncGameTerrainInputs(){
+  const map=gameTerrainWorkbench.map;if(!map)return;
+  const hf=map.terrain.heightfield,noise=hf.noise||{},cliffs=map.terrain.cliffs||{},mats=Object.fromEntries((map.terrain.materials||[]).map(m=>[m.id,m])),visual=map.terrain.visual||{};
+  $('gameTerrainSeed').value=map.seed??1;$('gameTerrainBaseHeight').value=hf.baseHeight??0;$('gameTerrainNoiseScale').value=noise.scale??118;$('gameTerrainAmplitude').value=noise.amplitude??5.2;$('gameTerrainOctaves').value=noise.octaves??4;$('gameTerrainPersistence').value=noise.persistence??.48;$('gameTerrainPersistenceOut').textContent=Number(noise.persistence??.48).toFixed(2);
+  $('gameTerrainGrassTile').value=mats.grass?.tileMeters??18;$('gameTerrainDirtTile').value=mats.dirt?.tileMeters??14;$('gameTerrainRockTile').value=mats.rock?.tileMeters??12;$('gameTerrainCliffStart').value=cliffs.slopeStartDeg??23;$('gameTerrainCliffFull').value=cliffs.slopeFullDeg??36;$('gameTerrainSunIntensity').value=map.environment?.sunIntensity??2.15;
+  $('gameTerrainCellMeters').value=String(visual.cellMeters??4);$('gameTerrainMacroVariation').value=visual.macroVariation??.20;$('gameTerrainMacroVariationOut').textContent=Number(visual.macroVariation??.20).toFixed(2);$('gameTerrainNormalStrength').value=visual.normalStrength??.85;$('gameTerrainNormalStrengthOut').textContent=Number(visual.normalStrength??.85).toFixed(2);$('gameTerrainSurfaceContrast').value=visual.surfaceContrast??1.08;$('gameTerrainSurfaceContrastOut').textContent=Number(visual.surfaceContrast??1.08).toFixed(2);$('gameTerrainDetailMix').value=visual.detailMix??.28;$('gameTerrainDetailMixOut').textContent=Number(visual.detailMix??.28).toFixed(2);
+  $('gameTerrainMapName').textContent=`${map.name||map.id||'ForgeRTS Map'} · v${map.version??'?'}`;
+}
+function updateGameTerrainUi(info=gameTerrainWorkbench.info){
+  if(!info)return;
+  const experimental=info.rendererMode==='experimental';
+  $('gameTerrainStats').textContent=`${info.width} × ${info.depth} m · ${info.terrainVertices.toLocaleString()} terrain vertices · ${info.terrainTriangles.toLocaleString()} tris · ${info.cellMeters} m cells · ${info.roads} roads · ${info.rivers} river${info.rivers===1?'':'s'}`;
+  $('gameTerrainAudit').innerHTML=experimental
+    ?`<b>EXPERIMENTAL V2 · REAL FORGERTS DATA PATH</b><br>ForgeRTS ${FORGERTS_TERRAIN_SOURCE_VERSION} TerrainSampler + candidate renderer ${EXPERIMENTAL_TERRAIN_RENDERER_VERSION} · same heightfield/splat/roads/water · macro breakup + de-tiling + normal detail + triplanar rock · seed ${info.seed}.`
+    :`<b>CURRENT GAME · BYTE-FOR-BYTE RENDERER</b><br>ForgeRTS ${FORGERTS_TERRAIN_SOURCE_VERSION} TerrainSampler + TerrainRenderer · 6 m terrain cells · current grass/dirt/rock shader · seed ${info.seed}.`;
+  $('gameTerrainRendererCurrent').classList.toggle('active',!experimental);$('gameTerrainRendererExperimental').classList.toggle('active',experimental);
+  $('modeLabel').textContent='GAME TERRAIN';$('seedLabel').textContent=String(info.seed);
+}
+function applyGameTerrainEnvironment(){
+  const env=gameTerrainWorkbench.map?.environment||{},d=env.sunDirection||{x:-.55,y:1,z:.32};
+  scene.background.set(env.skyColor||'#8da0a4');scene.fog.color.set(env.fogColor||'#8b9791');scene.fog.near=env.fogNear??300;scene.fog.far=env.fogFar??820;
+  // ForgeRTS Y-up sun direction transformed into WorldForge Z-up for road/water materials.
+  sun.position.set(d.x*120,-d.z*120,d.y*120);ambient.intensity=.42;sun.intensity=.52;sun.castShadow=false;
+}
+function setGameTerrainView(view){
+  if(!gameTerrainWorkbench.map)return;
+  const host=$('canvasHost'),aspect=Math.max(.5,host.clientWidth/Math.max(1,host.clientHeight));
+  gameTerrainWorkbench.setView(view,aspect);
+  for(const [id,v] of [['gameTerrainViewWide','wide'],['gameTerrainViewClose','close'],['gameTerrainViewGround','ground'],['gameTerrainViewTop','top']])$(id).classList.toggle('active',v===view);
+}
+async function rebuildGameTerrain({resetView=false}={}){
+  if(!gameTerrainWorkbench.map)return;
+  $('status').textContent=`Game Terrain Workbench ${GAME_TERRAIN_WORKBENCH_VERSION} · rebuilding ${gameTerrainWorkbench.getRendererMode()==='experimental'?'experimental':'current'} terrain…`;
+  try{
+    gameTerrainWorkbench.applySettings(gameTerrainSettings());
+    const info=await gameTerrainWorkbench.rebuild();
+    gameTerrainWorkbench.setRoadsVisible($('gameTerrainRoads').checked);gameTerrainWorkbench.setWaterVisible($('gameTerrainWater').checked);gameTerrainWorkbench.setWireframe($('gameTerrainWireframe').checked);
+    applyGameTerrainEnvironment();syncGameTerrainInputs();updateGameTerrainUi(info);setGameTerrainView(resetView?'wide':gameTerrainWorkbench.view||'wide');
+    $('status').textContent=`Game Terrain Workbench ${GAME_TERRAIN_WORKBENCH_VERSION} · ${info.rendererMode==='experimental'?'experimental candidate':'current game'} terrain rebuilt · ${info.terrainVertices.toLocaleString()} vertices · ${info.terrainTriangles.toLocaleString()} tris.`;
+  }catch(err){$('status').textContent='Game terrain rebuild failed: '+err.message;}
+}
+async function activateGameTerrainMode(){
+  showMode('gameterrain');
+  try{
+    if(!gameTerrainWorkbench.hasMap()){
+      $('status').textContent=`Loading ForgeRTS ${FORGERTS_TERRAIN_SOURCE_VERSION} runtime terrain…`;
+      const info=await gameTerrainWorkbench.loadBundled();syncGameTerrainInputs();updateGameTerrainUi(info);
+    }
+    applyGameTerrainEnvironment();gameTerrainWorkbench.setRoadsVisible($('gameTerrainRoads').checked);gameTerrainWorkbench.setWaterVisible($('gameTerrainWater').checked);gameTerrainWorkbench.setWireframe($('gameTerrainWireframe').checked);setGameTerrainView(gameTerrainWorkbench.view||'wide');
+    $('status').textContent=`Game Terrain Workbench ${GAME_TERRAIN_WORKBENCH_VERSION} ready · ${gameTerrainWorkbench.getRendererMode()==='experimental'?'experimental V2 on real ForgeRTS data':'exact current ForgeRTS renderer'}.`;
+  }catch(err){$('status').textContent='Game terrain load failed: '+err.message;}
+}
+function gameTerrainBaseName(){const m=gameTerrainWorkbench.map||{};return `${m.id||'forgerts_map'}_terrain_${m.seed||1}`;}
+
 function updateSkirmishUi(state=skirmish.state()){
   const powerText=`POWER ${state.powerUse} / ${state.powerSupply}`,netText=`${state.powerNet>=0?'+':''}${state.powerNet}`;
   $('skirmishEconomy').textContent=`$${state.credits.toLocaleString()} · ${powerText}`;
@@ -581,7 +660,7 @@ async function activateSkirmishMode({reset=false}={}){
     catch(err){$('status').textContent='Skirmish main-world generation failed: '+err.message;return;}
   }
   showMode('skirmish');setSkirmishBuildDrawer(false);rtsMapForge.overlay.visible=false;rtsMapForge.movementOverlay.visible=false;rtsMapForge.setFogPreview(false);
-  try{await rtsMapForge.awaitResourceAssets();skirmish.setFactionPalettes($('skirmishPlayerPalette').value,$('skirmishEnemyPalette').value);await skirmish.start({reset});configureSceneForMode();syncSkirmishViewport();drawRTSMapMinimap();updateSkirmishUi();$('status').textContent=`Skirmish Lab ${SKIRMISH_VERSION} · ground mobility reliability, economy, and Crimson enemy sandbox active · tap friendlies to command, hostile targets to aim the Aegis-X, and crystals with a Harvester to mine.`;}
+  try{await rtsMapForge.awaitResourceAssets();skirmish.setFactionPalettes($('skirmishPlayerPalette').value,$('skirmishEnemyPalette').value);await skirmish.start({reset});configureSceneForMode();syncSkirmishViewport();drawRTSMapMinimap();updateSkirmishUi();$('status').textContent=`Skirmish Lab ${SKIRMISH_VERSION} · persistent orders + locomotor recovery, economy, and Crimson enemy sandbox active · tap friendlies to command, hostile targets to aim the Aegis-X, and crystals with a Harvester to mine.`;}
   catch(err){$('status').textContent='Skirmish start failed: '+err.message;}
 }
 
@@ -636,6 +715,27 @@ $('vehicleResetCamera').onclick=()=>vehicleBaker.fitPreview(vehicleAspect());
 $('vehicleExportMeta').onclick=()=>{if(!vehicleBaker.hasModel())return $('status').textContent='Load a GLB vehicle first.';const base=(vehicleBaker.sourceName||'vehicle').replace(/\.(glb|gltf)$/i,'');download(vehicleMetaBlob(),`${base}.vehicle.json`);$('status').textContent='Vehicle metadata exported.';};
 document.querySelectorAll('[data-vehicle-dir]').forEach(b=>b.onclick=()=>setVehicleDirection(+b.dataset.vehicleDir));
 $('vehicleBake').onclick=async()=>{if(!vehicleBaker.hasModel())return $('status').textContent='Load a GLB vehicle first.';const btn=$('vehicleBake');btn.disabled=true;$('status').textContent='Baking 8 deterministic vehicle directions…';try{const result=await vehicleBaker.bakeSpriteSheet({frameSize:+$('vehicleFrameSize').value||128,includeShadow:$('vehicleShadow').checked});download(result.blob,`${result.baseName}_8dir_${result.metadata.frame.width}px.png`);$('status').textContent=`Baked 8 directions · ${result.metadata.frame.width}px frames · transparent PNG. Use EXPORT META JSON for the matching metadata file.`;vehicleBaker.fitPreview(vehicleAspect());}catch(err){$('status').textContent='Vehicle bake failed: '+err.message;}finally{btn.disabled=false;}};
+
+$('gameTerrainRendererCurrent').onclick=async()=>{if(gameTerrainWorkbench.getRendererMode()==='current')return;$('status').textContent='Switching to current ForgeRTS terrain renderer…';const info=await gameTerrainWorkbench.setRendererMode('current');updateGameTerrainUi(info);gameTerrainWorkbench.setRoadsVisible($('gameTerrainRoads').checked);gameTerrainWorkbench.setWaterVisible($('gameTerrainWater').checked);gameTerrainWorkbench.setWireframe($('gameTerrainWireframe').checked);setGameTerrainView(gameTerrainWorkbench.view||'wide');$('status').textContent='CURRENT GAME terrain active · byte-for-byte ForgeRTS renderer.';};
+$('gameTerrainRendererExperimental').onclick=async()=>{if(gameTerrainWorkbench.getRendererMode()==='experimental')return;$('status').textContent='Switching to experimental terrain renderer…';gameTerrainWorkbench.applySettings(gameTerrainSettings());const info=await gameTerrainWorkbench.setRendererMode('experimental');updateGameTerrainUi(info);gameTerrainWorkbench.setRoadsVisible($('gameTerrainRoads').checked);gameTerrainWorkbench.setWaterVisible($('gameTerrainWater').checked);gameTerrainWorkbench.setWireframe($('gameTerrainWireframe').checked);setGameTerrainView(gameTerrainWorkbench.view||'wide');$('status').textContent='EXPERIMENTAL V2 terrain active · same ForgeRTS terrain data, upgraded visuals.';};
+$('gameTerrainMacroVariation').oninput=()=>{$('gameTerrainMacroVariationOut').textContent=Number($('gameTerrainMacroVariation').value).toFixed(2);};
+$('gameTerrainNormalStrength').oninput=()=>{$('gameTerrainNormalStrengthOut').textContent=Number($('gameTerrainNormalStrength').value).toFixed(2);};
+$('gameTerrainSurfaceContrast').oninput=()=>{$('gameTerrainSurfaceContrastOut').textContent=Number($('gameTerrainSurfaceContrast').value).toFixed(2);};
+$('gameTerrainDetailMix').oninput=()=>{$('gameTerrainDetailMixOut').textContent=Number($('gameTerrainDetailMix').value).toFixed(2);};
+$('gameTerrainRebuild').onclick=()=>rebuildGameTerrain({resetView:false});
+$('gameTerrainRandomize').onclick=()=>{$('gameTerrainSeed').value=crypto.getRandomValues(new Uint32Array(1))[0]%1000000;rebuildGameTerrain({resetView:false});};
+$('gameTerrainPersistence').oninput=()=>{$('gameTerrainPersistenceOut').textContent=Number($('gameTerrainPersistence').value).toFixed(2);};
+$('gameTerrainViewWide').onclick=()=>setGameTerrainView('wide');
+$('gameTerrainViewClose').onclick=()=>setGameTerrainView('close');
+$('gameTerrainViewGround').onclick=()=>setGameTerrainView('ground');
+$('gameTerrainViewTop').onclick=()=>setGameTerrainView('top');
+$('gameTerrainWireframe').onchange=()=>gameTerrainWorkbench.setWireframe($('gameTerrainWireframe').checked);
+$('gameTerrainRoads').onchange=()=>gameTerrainWorkbench.setRoadsVisible($('gameTerrainRoads').checked);
+$('gameTerrainWater').onchange=()=>gameTerrainWorkbench.setWaterVisible($('gameTerrainWater').checked);
+$('gameTerrainLoadCurrent').onclick=async()=>{if(!gameTerrainWorkbench.baselineMap)return;await gameTerrainWorkbench.reset();syncGameTerrainInputs();updateGameTerrainUi();applyGameTerrainEnvironment();setGameTerrainView('wide');$('status').textContent='Game terrain reset to the bundled current ForgeRTS map.';};
+$('gameTerrainImport').onclick=()=>$('gameTerrainFile').click();
+$('gameTerrainFile').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{$('status').textContent=`Loading ForgeRTS map ${file.name}…`;const info=await gameTerrainWorkbench.loadFile(file);syncGameTerrainInputs();updateGameTerrainUi(info);applyGameTerrainEnvironment();setGameTerrainView('wide');$('status').textContent=`Loaded ${file.name} through the exact ForgeRTS terrain runtime.`;}catch(err){$('status').textContent='Game terrain map import failed: '+err.message;}e.target.value='';};
+$('gameTerrainExport').onclick=()=>{if(!gameTerrainWorkbench.map)return;download(new Blob([JSON.stringify(gameTerrainWorkbench.exportMap(),null,2)],{type:'application/json'}),gameTerrainBaseName()+'.map.json');$('status').textContent='ForgeRTS-format map JSON exported. No terrain conversion step is required.';};
 
 $('mapGenerate').onclick=()=>generateRTSMap({resetView:true});
 $('mapRandomize').onclick=()=>{$('mapSeed').value=crypto.getRandomValues(new Uint32Array(1))[0]%1000000;generateRTSMap({resetView:true});};
@@ -692,7 +792,7 @@ window.addEventListener('keydown',e=>{
 window.addEventListener('keyup',e=>{if(mode!=='skirmish')return;const keyMap={w:'forward',W:'forward',ArrowUp:'forward',s:'back',S:'back',ArrowDown:'back',a:'left',A:'left',ArrowLeft:'left',d:'right',D:'right',ArrowRight:'right'};if(keyMap[e.key]){e.preventDefault();skirmish.setDrive(keyMap[e.key],false);}});
 
 $('buildingEngine').onchange=()=>{syncBuildingEngineUI();regenerate();};
-document.querySelectorAll('.tab').forEach(b=>b.onclick=async()=>{const next=b.dataset.mode;if(next==='vehicle')await activateVehicleMode();else if(next==='rtsbuilding')await activateRTSBuildingMode();else if(next==='rtsmap')activateRTSMapMode();else if(next==='skirmish')await activateSkirmishMode({reset:false});else{showMode(next);regenerate();}});
+document.querySelectorAll('.tab').forEach(b=>b.onclick=async()=>{const next=b.dataset.mode;if(next==='vehicle')await activateVehicleMode();else if(next==='rtsbuilding')await activateRTSBuildingMode();else if(next==='gameterrain')await activateGameTerrainMode();else if(next==='rtsmap')activateRTSMapMode();else if(next==='skirmish')await activateSkirmishMode({reset:false});else{showMode(next);regenerate();}});
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));
 document.querySelectorAll('[data-nudge]').forEach(b=>b.onclick=()=>{const [x,y]=b.dataset.nudge.split(',').map(Number);nudge(x,y);});
 $('fieldLevelDown').onclick=()=>{const step=editorStep();editField(p=>{if(!p.locked)p.position[2]=(p.position[2]||0)-step;});};
@@ -730,6 +830,6 @@ const outputMap={traversalWidth:'traversalWidthOut',traversalLength:'traversalLe
 function syncOutputs(){for(const [id,outId] of Object.entries(outputMap)){const el=$(id),out=$(outId);if(el&&out)out.value=el.value;}}
 for(const id of Object.keys(outputMap)){const el=$(id);if(el)el.oninput=()=>syncOutputs();}syncOutputs();
 syncBuildingPaletteInputs();
-function resize(){const host=$('canvasHost'),w=Math.max(320,Math.floor(host.clientWidth)),h=Math.max(220,Math.floor(host.clientHeight));renderer.setSize(w,h,false);if(mode==='vehicle')vehicleBaker.fitPreview(w/Math.max(1,h));else if(mode==='rtsbuilding')buildingForge.fitPreview(w/Math.max(1,h));else if(mode==='rtsmap'){rtsMapForge.setView(mapLastView,w/Math.max(1,h));drawRTSMapMinimap();}else if(mode==='skirmish'){skirmish.resizeCamera();drawRTSMapMinimap();}else fitCamera(currentSpec?spanFor(currentSpec.recipe):10);}window.addEventListener('resize',resize);window.visualViewport?.addEventListener('resize',resize);window.addEventListener('orientationchange',()=>setTimeout(()=>{resize();if(mode==='skirmish')syncSkirmishViewport();},120));
+function resize(){const host=$('canvasHost'),w=Math.max(320,Math.floor(host.clientWidth)),h=Math.max(220,Math.floor(host.clientHeight));renderer.setSize(w,h,false);if(mode==='vehicle')vehicleBaker.fitPreview(w/Math.max(1,h));else if(mode==='rtsbuilding')buildingForge.fitPreview(w/Math.max(1,h));else if(mode==='gameterrain'){gameTerrainWorkbench.setView(gameTerrainWorkbench.view||'wide',w/Math.max(1,h));}else if(mode==='rtsmap'){rtsMapForge.setView(mapLastView,w/Math.max(1,h));drawRTSMapMinimap();}else if(mode==='skirmish'){skirmish.resizeCamera();drawRTSMapMinimap();}else fitCamera(currentSpec?spanFor(currentSpec.recipe):10);}window.addEventListener('resize',resize);window.visualViewport?.addEventListener('resize',resize);window.addEventListener('orientationchange',()=>setTimeout(()=>{resize();if(mode==='skirmish')syncSkirmishViewport();},120));
 syncBuildingEngineUI();resize();refreshProjects();regenerate();syncPlaytestButtons();updateSkirmishUi();
 let lastAnimTime=0;(function animate(t=0){requestAnimationFrame(animate);const dt=Math.min(.05,Math.max(0,(t-lastAnimTime)/1000||0));lastAnimTime=t;if(playtestActive&&followCameraEnabled&&characterSprite?.visible){const target=new THREE.Vector3(characterPos[0],characterPos[1],characterPos[2]+1);controls.target.lerp(target,.16);const desired=target.clone().add(playtestCameraOffset);camera.position.lerp(desired,.14);camera.lookAt(controls.target);}if(mode==='rtsbuilding')buildingForge.update(dt);if(mode==='skirmish')skirmish.update(dt);controls.update();if((mode==='rtsmap'||mode==='skirmish')&&t-mapMiniLast>140){drawRTSMapMinimap();mapMiniLast=t;}renderer.render(scene,camera);})();

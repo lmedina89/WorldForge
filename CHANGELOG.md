@@ -1,3 +1,38 @@
+# v0.13.22 — Game Terrain Visual Foundation A/B
+
+- Advanced Game Terrain Workbench to **0.2.0**.
+- Added CURRENT GAME / EXPERIMENTAL V2 renderer A/B switching.
+- Preserved the byte-for-byte ForgeRTS v0.6.6.8 TerrainSampler and TerrainRenderer snapshots for truthful current-game comparison.
+- Added an additive candidate terrain renderer using the same runtime map/sampler data.
+- Added macro variation, dual-scale de-tiling, close-range material normal detail, triplanar rock projection, distance detail fade, selectable 3–6 m visual terrain cells, and improved normal-mapped roads.
+- Added derived normal maps for current temperate terrain and road textures; no production GLB was rebuilt.
+- Added `terrain.visual` profile export fields so approved visual settings can be transferred into ForgeRTS later.
+- Updated terrain workbench regression coverage while keeping protected generators, Skirmish, and RTS Map Forge outside this visual-only milestone.
+
+# v0.13.21 — Game Terrain Workbench Foundation
+
+- Added `GAME TERRAIN` as an additive WorldForge mode.
+- Added Game Terrain Workbench 0.1 using byte-for-byte ForgeRTS v0.6.6.8 terrain sampler and renderer snapshots.
+- Bundled the current ForgeRTS Training Ground map plus exact current grass/dirt/rock/road textures for truthful runtime preview.
+- Added runtime map controls for seed, height/noise settings, material tile scale, rock-slope thresholds, and sun intensity.
+- Added Wide, Close, Ground, and Top terrain inspection views plus road/water visibility and wireframe audit.
+- Added direct ForgeRTS map JSON import/export. No GLB terrain conversion is used by this workflow.
+- Added a runtime-sync SHA-256 manifest and regression test verifying the copied game terrain source snapshot.
+- Preserved RTS Map Forge 0.2.9, Skirmish 0.7.7, all protected generators, and all 16 existing production GLBs.
+
+# v0.13.20 — Persistent Orders + Locomotor Core
+
+- WorldForge advanced to **0.13.20** and Skirmish to **0.7.7**. RTS Map Forge remains **0.2.9** and RTS Definitions remain **0.6.1**.
+- Added persistent requested destinations so route recalculation no longer replaces/cancels the player's order.
+- Changed global ground routing to terrain + static building obstacles; moving vehicles are handled by local locomotor avoidance rather than hard route-graph blocking.
+- Added local steering-fan movement for ground vehicles, while preserving oriented collision and production egress.
+- Added throttled re-pathing toward the original requested destination instead of rapid path churn.
+- Added a short unit-only collision-grace recovery for genuine traffic jams; terrain and structures remain collidable at all times.
+- Unified Rifleman and ground-vehicle stuck recovery around the persistent-order controller.
+- STOP/manual drive explicitly clear the persistent order.
+- Architecture was informed by the released Generals/Zero Hour source design; implementation is original WorldForge JavaScript and includes no copied EA source/assets.
+- No approved production GLB was rebuilt.
+
 # v0.13.19 — Ground Mobility Reliability 2
 
 - WorldForge advanced to **0.13.19** and Skirmish to **0.7.6**. RTS Map Forge remains **0.2.9** and RTS Definitions remain **0.6.1**.
