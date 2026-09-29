@@ -50,7 +50,7 @@ export class TerrainSurfaceGenerator{
     let road=0,roadCore=0;
     if(roadHit){
       const r=roadHit.item,half=(r.width??8)*.5,shoulder=r.shoulderWidth??4,blend=this.visual.roadBlendMeters??8;
-      road=1-smoothstep(half+shoulder*.35,half+shoulder+blend,roadHit.distance);
+      road=1-smoothstep(half+shoulder*.20,half+shoulder+blend*.55,roadHit.distance);
       roadCore=1-smoothstep(Math.max(0,half-1.0),half+1.4,roadHit.distance);
     }
 
@@ -69,15 +69,15 @@ export class TerrainSurfaceGenerator{
 
     let rock=clamp(rockBase*(.88+medium*.20),0,1);
     const dryBare=smoothstep(.57,.86,medium*.58+exposure*.42)*(1-moisture*.55);
-    let dirt=clamp(.025 + dryBare*.50 + Math.max(0,exposure-.60)*.18,0,.58);
-    dirt=clamp(dirt + road*.86 + riverSoil*.54,0,1);
+    let dirt=clamp(.018 + dryBare*.28 + Math.max(0,exposure-.64)*.12,0,.46);
+    dirt=clamp(dirt + road*.72 + riverSoil*.48,0,1);
     wet=clamp(wet*(1-rock*.88),0,1);
     rock=clamp(rock*(1-roadCore*.72)*(1-wet*.55),0,1);
 
     // Roads and wet banks deliberately suppress grass, while broad noise only
     // breaks up the remaining natural cover instead of choosing the material alone.
     let grass=clamp(1-dirt-rock-wet,0,1);
-    grass*=clamp(.94+(broad-.5)*.20+moisture*.16-road*.42-riverSoil*.20,.18,1.10);
+    grass*=clamp(1.00+(broad-.5)*.16+moisture*.18-road*.40-riverSoil*.16,.22,1.12);
     dirt=clamp(dirt + (1-grass-rock-wet)*.22,0,1);
 
     const sum=grass+dirt+rock+wet||1;

@@ -1,3 +1,22 @@
+# WorldForge v0.13.27 Test Report
+
+## Terrain recovery checks
+
+- PASS — all 92 JS/MJS source and test files parse with `node --check`.
+- PASS — Game Terrain focused test set.
+- PASS — exact ForgeRTS v0.6.6.8 runtime-sync hashes remain unchanged.
+- PASS — Iron Valley all 6 validation routes remain under their configured slope limits.
+- PASS — strategic height tiers remain 27 m west base / ~19 m mid terrace / 6.6 m main valley / 32 m command mesa.
+- PASS — PBR V6 contains Three.js tone-mapping + colorspace output chunks.
+- PASS — distance-aware micro-detail fade and RTS palette separation are present.
+- PASS — road overlay stability controls (positive offset + polygon offset + depthWrite false) are present.
+- PASS — road terrain blend is capped at 5.5 m in the authored showcase.
+- PASS — protected runtime sampler, renderer, Training Ground and legacy synced textures match `runtime-sync-manifest.json`.
+
+### Environment limitation
+
+A true headless WebGL screenshot could not be produced in this container because Chromium cannot initialize EGL/ANGLE here. Visual acceptance still needs the real iPhone Safari path; the source/geometry/hash/static tests above are complete.
+
 # WorldForge v0.13.26 Test Report
 
 ## Curated Strategic Battlefield + Valid Landforms

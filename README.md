@@ -1,21 +1,29 @@
-# WorldForge v0.13.26 — PBR True-Color Terrain Correction
+# WorldForge v0.13.27 — Game Terrain Recovery
 
-Game Terrain now defaults to **Iron Valley**, a fixed detailed RTS battlefield with authored plateaus, valleys, mountain passes and validated vehicle ramps. Use GAME TERRAIN directly; the advanced terrain tuning controls are optional and collapsed.
+WorldForge v0.13.27 is a focused recovery pass for GAME TERRAIN after the Iron Valley + PBR V5 changes produced poor mobile presentation.
 
-# WorldForge v0.13.24 — Game Terrain PBR Material Foundation
+## What changed
 
-WorldForge now previews the same ForgeRTS heightfield/roads/water with a PBR V5 True Color experimental terrain path using real 1K CC0 Poly Haven ground materials. CURRENT GAME is retained for exact A/B comparison.
+- **PBR V6 · RTS BLEND** replaces PBR V5 as the experimental presentation path.
+- The authored Iron Valley heightfield/landforms, road routes, water, validation routes and deterministic seed are preserved.
+- Grass/dirt/rock/wet channels now use a restrained **RTS-readable palette** while Poly Haven 1K CC0 maps provide close-range PBR detail instead of controlling the entire battlefield hue.
+- Micro albedo/normal detail fades with camera distance to stop the noisy/repetitive gravel/mud look in WIDE/CLOSE views.
+- Natural dirt breakup is reduced and road shoulder blending is tightened so the battlefield no longer turns into broad muddy bands.
+- Road overlays use a larger terrain offset, polygon offset and no depth write to prevent broken/z-fighting strips on iPhone/WebGL.
+- Strategic WIDE/CLOSE/GROUND camera presets are higher and more top-down so the authored terrain reads as an RTS battlefield instead of a tilted terrain sheet.
+- Preview lighting for standard road/water materials is raised for readability.
 
-## PBR V5 True Color material set
+## Protected baseline
 
-- Grass Ground — 2.5 m scan — grass / worn turf
-- Brown Mud Leaves 01 — 1.3 m scan — exposed organic soil
-- Rocks Ground 02 — 2 m scan — rocky/exposed ground
-- Dry River Pebbles — 2 m scan — riverbank / gravel
-- Rocky Terrain 02 — 90 m scan — large-scale rocky macro breakup
+The exact ForgeRTS v0.6.6.8 runtime snapshot remains protected and unchanged:
 
-The live candidate uses diffuse/color, OpenGL normal and ARM maps. Displacement files are intentionally not shipped in the runtime candidate yet.
+- `src/game-terrain/terrain-sampler.js`
+- `src/game-terrain/terrain-renderer.js`
+- `assets/game-terrain/forgerts_training_ground.json`
+- legacy temperate terrain/road textures listed in `runtime-sync-manifest.json`
 
-## Safe ForgeRTS workflow
+WorldForge remains the proving ground. **Do not port PBR V6 into ForgeRTS until it is visually approved on-device.**
 
-Approve PBR V5 True Color visually and performance-wise in WorldForge first. Then port only the validated renderer/material settings into ForgeRTS. TerrainSampler, pathfinding, passability, water blocking and deterministic gameplay authority remain unchanged.
+## Acceptance views
+
+Check the same map in **WIDE → CLOSE → GROUND → TOP**. The main acceptance points are: material separation, readable green/soil/rock distribution, reduced repetition, stable roads, clean river banks, no harsh blend grids, and no mobile shimmer/z-fighting.

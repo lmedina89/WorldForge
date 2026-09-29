@@ -9,6 +9,6 @@ assert.match(renderer,/altUv\(/,'candidate must use non-identical-scale second s
 assert.doesNotMatch(renderer,/vec4 edge=vec4\(lum\(grass\)/,'source texel luminance must not mutate splat weights');
 assert.equal(map.terrain.visual.blendDetail,0);
 assert.ok(map.environment.sunIntensity<=1.2,'authored showcase lighting should stay neutral, not burn in a warm 4x sun');
-assert.ok(map.terrain.visual.macroVariation<=0.06,'macro tint must not overwhelm source albedo');
+assert.ok(map.terrain.visual.macroVariation<=0.12,'macro tint must remain restrained');
 assert.equal(map.terrain.visual.surfaceContrast,1);
-console.log(JSON.stringify({ok:true,worldforge:'0.13.26',trueColorOutput:true,sourceFaithfulBlend:true,neutralAuthoredLighting:true}));
+console.log(JSON.stringify({ok:true,worldforge:'0.13.27',trueColorOutput:true,sourceFaithfulBlend:true,neutralAuthoredLighting:true}));

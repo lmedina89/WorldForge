@@ -10,29 +10,29 @@ const read=p=>fs.readFileSync(path.join(ROOT,p));
 const text=p=>read(p).toString('utf8');
 const sha=p=>crypto.createHash('sha256').update(read(p)).digest('hex');
 
-const schema=text('src/core/schema.js'),app=text('src/app.js'),html=text('index.html'),wrapper=text('src/game-terrain/terrain-workbench.js'),v5=text('src/game-terrain/terrain-renderer-v5.js');
+const schema=text('src/core/schema.js'),app=text('src/app.js'),html=text('index.html'),wrapper=text('src/game-terrain/terrain-workbench.js'),v6=text('src/game-terrain/terrain-renderer-v6.js');
 const manifest=JSON.parse(text('assets/game-terrain/runtime-sync-manifest.json'));
 const map=JSON.parse(text('assets/game-terrain/forgerts_training_ground.json'));
 
-assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.26'/);
-assert.match(schema,/gameTerrainWorkbench: '0\.6\.0'/);
-assert.match(wrapper,/GAME_TERRAIN_WORKBENCH_VERSION='0\.6\.0'/);
+assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.27'/);
+assert.match(schema,/gameTerrainWorkbench: '0\.7\.0'/);
+assert.match(wrapper,/GAME_TERRAIN_WORKBENCH_VERSION='0\.7\.0'/);
 assert.match(wrapper,/FORGERTS_TERRAIN_SOURCE_VERSION='0\.6\.6\.8'/);
-assert.match(wrapper,/EXPERIMENTAL_TERRAIN_RENDERER_VERSION='0\.5\.0'/);
-assert.match(wrapper,/TerrainRendererV5/);
-assert.match(v5,/TerrainSurfaceGenerator/);
-assert.match(v5,/uSplat/);
-assert.match(v5,/uMacro/);
-assert.match(v5,/uWet/);
-assert.match(v5,/triNormal/);
+assert.match(wrapper,/EXPERIMENTAL_TERRAIN_RENDERER_VERSION='0\.6\.0'/);
+assert.match(wrapper,/TerrainRendererV6/);
+assert.match(v6,/TerrainSurfaceGenerator/);
+assert.match(v6,/uSplat/);
+assert.match(v6,/uMacro/);
+assert.match(v6,/uWet/);
+assert.match(v6,/triNormal/);
 assert.ok(fs.existsSync(path.join(ROOT,'assets/terrain/temperate_wetbank.png')));
 assert.ok(fs.existsSync(path.join(ROOT,'assets/terrain/temperate_wetbank_normal.png')));
 for(const f of ['grass_ground_diff_1k.jpg','grass_ground_nor_gl_1k.png','grass_ground_arm_1k.jpg','brown_mud_leaves_01_diff_1k.jpg','brown_mud_leaves_01_nor_gl_1k.png','brown_mud_leaves_01_arm_1k.jpg','rocks_ground_02_col_1k.jpg','rocks_ground_02_nor_gl_1k.png','rocks_ground_02_arm_1k.jpg','dry_river_pebbles_diff_1k.jpg','dry_river_pebbles_nor_gl_1k.png','dry_river_pebbles_arm_1k.jpg','rocky_terrain_02_diff_1k.jpg'])assert.ok(fs.existsSync(path.join(ROOT,'assets/terrain/polyhaven',f)),f);
-assert.match(v5,/uGrassARM/);assert.match(v5,/uHemiIntensity/);assert.match(v5,/rocky_terrain_02_diff_1k/);
-assert.match(v5,/#include <colorspace_fragment>/);
-assert.match(v5,/altUv\(/);
-assert.doesNotMatch(v5,/vec4 edge=vec4\(lum\(grass\)/);
-assert.match(v5,/LinearMipmapLinearFilter/);
+assert.match(v6,/uGrassARM/);assert.match(v6,/uHemiIntensity/);assert.match(v6,/rocky_terrain_02_diff_1k/);
+assert.match(v6,/#include <colorspace_fragment>/);
+assert.match(v6,/altUv\(/);
+assert.doesNotMatch(v6,/vec4 edge=vec4\(lum\(grass\)/);
+assert.match(v6,/LinearMipmapLinearFilter/);
 
 
 for(const id of ['gameTerrainRendererCurrent','gameTerrainRendererExperimental','gameTerrainMacroVariation','gameTerrainNormalStrength','gameTerrainSurfaceContrast','gameTerrainBlendDetail','gameTerrainRoadBlend','gameTerrainBankWetness','gameTerrainSplatCell','gameTerrainMacroCell','gameTerrainCellMeters','gameTerrainPanel','gameTerrainRebuild','gameTerrainViewWide','gameTerrainViewClose','gameTerrainViewGround','gameTerrainViewTop','gameTerrainImport','gameTerrainExport','gameTerrainFile'])assert.match(html,new RegExp(`id="${id}"`));
@@ -52,7 +52,7 @@ for(const [x,z] of [[0,0],[-205,-35],[0,132],[-145,-176]]){
   assert.ok(Math.abs(sum-1)<1e-6);
   assert.ok(Object.values(s).every(Number.isFinite));
 }
-assert.ok(surface.sample(-205,-35).dirt>.9,'road core should paint compacted/dirt channel');
+assert.ok(surface.sample(-205,-35).dirt>.82,'road core should paint compacted/dirt channel without over-wide mud shoulders');
 assert.ok(surface.sample(0,132).wet>.5,'river edge should paint wet-bank channel');
 
 const ids=[...html.matchAll(/id="([^"]+)"/g)].map(x=>x[1]);
@@ -60,4 +60,4 @@ assert.equal(new Set(ids).size,ids.length,'duplicate DOM ids');
 const refs=[...app.matchAll(/\$\('([^']+)'\)/g)].map(x=>x[1]);
 const missing=[...new Set(refs.filter(x=>!ids.includes(x)))];
 assert.deepEqual(missing,[],'app references missing DOM ids');
-console.log(JSON.stringify({ok:true,worldforge:'0.13.26',terrainWorkbench:'0.6.0',forgertsSource:'0.6.6.8',runtimeSourceHashesVerified:true,pbrV5TrueColor:true,splat:[splat.width,splat.height],macro:[macro.width,macro.height]},null,2));
+console.log(JSON.stringify({ok:true,worldforge:'0.13.27',terrainWorkbench:'0.7.0',forgertsSource:'0.6.6.8',runtimeSourceHashesVerified:true,pbrV6RtsBlend:true,splat:[splat.width,splat.height],macro:[macro.width,macro.height]},null,2));

@@ -649,13 +649,13 @@
     },
     "visual": {
       "cellMeters": 4,
-      "macroVariation": 0.045,
-      "normalStrength": 0.58,
+      "macroVariation": 0.09,
+      "normalStrength": 0.5,
       "surfaceContrast": 1.0,
-      "detailMix": 0.1,
+      "detailMix": 0.08,
       "splatCellMeters": 2.0,
       "macroCellMeters": 8,
-      "roadBlendMeters": 9,
+      "roadBlendMeters": 5.5,
       "bankWetness": 0.72,
       "blendDetail": 0.0,
       "wetTileMeters": 2.0,
@@ -688,6 +688,12 @@
           "albedo": "assets/terrain/polyhaven/rocky_terrain_02_diff_1k.jpg",
           "tileMeters": 90
         }
+      },
+      "rtsPalette": {
+        "grass": "#5e784e",
+        "dirt": "#7b6549",
+        "rock": "#73756e",
+        "wet": "#625b50"
       }
     }
   },
@@ -1462,8 +1468,8 @@
     }
   ],
   "environment": {
-    "skyColor": "#aebfc5",
-    "fogColor": "#a8b6b5",
+    "skyColor": "#8fa1a4",
+    "fogColor": "#89958f",
     "fogNear": 360,
     "fogFar": 980,
     "hemisphereSky": "#dce7e9",

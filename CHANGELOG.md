@@ -1,3 +1,16 @@
+# v0.13.27 — Game Terrain Recovery / PBR V6 RTS Blend
+
+- Replaced the active experimental Game Terrain renderer with `terrain-renderer-v6.js`.
+- Added RTS palette separation from photographic PBR micro-detail so the battlefield no longer inherits the brown/yellow cast of the source grass material.
+- Added distance-aware albedo and normal detail fade for RTS-scale cameras.
+- Reduced random dirt dominance and tightened road-terrain shoulder blending.
+- Stabilized road overlays for mobile WebGL with positive height offset, polygon offset, and disabled depth writes.
+- Raised strategic camera presets to reduce exposed terrain-sheet edges and improve landform readability.
+- Raised road/water preview lighting while keeping the custom terrain lighting controlled by the map environment.
+- Preserved Iron Valley strategic geometry and all six validated vehicle routes.
+- Preserved the exact ForgeRTS v0.6.6.8 TerrainSampler/TerrainRenderer/Training Ground runtime snapshot.
+- Added `game-terrain-recovery-v01327.test.mjs`.
+
 # v0.13.26 — PBR True-Color / Repetition Correction
 
 - Fixed the custom terrain shader output pipeline so sRGB Poly Haven textures are converted back through Three.js output color space instead of being displayed as raw linear values.

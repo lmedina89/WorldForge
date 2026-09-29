@@ -39,4 +39,4 @@ assert.ok(mesa>29 && mesa<35,`central mesa ${mesa}`);
 assert.ok(mesa-westMid>10,'mesa must materially exceed mid terrace');
 assert.ok(westMid-valley>5,'mid terrace must materially exceed valley');
 
-console.log(JSON.stringify({ok:true,worldforge:'0.13.26',terrainWorkbench:'0.6.0',showcase:map.name,routeAudit,tiers:{westHigh:+westHigh.toFixed(2),westMid:+westMid.toFixed(2),valley:+valley.toFixed(2),mesa:+mesa.toFixed(2)}},null,2));
+console.log(JSON.stringify({ok:true,worldforge:'0.13.27',terrainWorkbench:'0.7.0',showcase:map.name,routeAudit,tiers:{westHigh:+westHigh.toFixed(2),westMid:+westMid.toFixed(2),valley:+valley.toFixed(2),mesa:+mesa.toFixed(2)}},null,2));

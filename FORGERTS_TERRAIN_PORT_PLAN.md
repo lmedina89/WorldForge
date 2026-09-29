@@ -1,10 +1,7 @@
-# ForgeRTS terrain port plan — PBR V5 True Color
+# ForgeRTS Terrain Port Plan
 
-1. Approve PBR V5 True Color in WorldForge on iPhone Safari and desktop.
-2. Keep ForgeRTS TerrainSampler and all simulation terrain authority unchanged.
-3. Copy the approved PBR renderer + terrain surface generator and the selected 1K runtime texture maps.
-4. Add the approved `terrain.visual` material-set settings to ForgeRTS map loading.
-5. A/B ForgeRTS current terrain against the WorldForge-approved seed/camera views.
-6. Run full gameplay/pathfinding/collision regression tests before replacing the default renderer.
+Current candidate: **WorldForge PBR V6 · RTS BLEND**.
 
-No terrain GLB is involved.
+Do not port yet. First approve WorldForge on the real target device in WIDE/CLOSE/GROUND/TOP.
+
+When approved, port only the validated presentation pieces (surface mask tuning, palette/detail shader, road overlay stability, lighting/material parameters). Keep the ForgeRTS v0.6.6.8 TerrainSampler, gameplay height authority, pathfinding, passability, slope rules, water blocking, deterministic simulation and map contract unchanged unless a separate gameplay change is explicitly approved.

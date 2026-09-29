@@ -562,7 +562,7 @@ function gameTerrainSettings(){
     macroVariation:+$('gameTerrainMacroVariation').value,
     normalStrength:+$('gameTerrainNormalStrength').value,
     surfaceContrast:+$('gameTerrainSurfaceContrast').value,
-    detailMix:.22,
+    detailMix:.12,
     splatCellMeters:+$('gameTerrainSplatCell').value,
     macroCellMeters:+$('gameTerrainMacroCell').value,
     roadBlendMeters:+$('gameTerrainRoadBlend').value,
@@ -589,7 +589,7 @@ function updateGameTerrainUi(info=gameTerrainWorkbench.info){
     $('gameTerrainAudit').innerHTML=`<b>IRON VALLEY · AUTHORED STRATEGIC LANDFORMS</b><br>${valid}/${routes.length} validated vehicle routes · plateaus + terraces + explicit graded ramps + valley corridors${worst?` · worst sampled route slope ${worst.maxSlopeDeg.toFixed(1)}°`:''}.<br>${routeLines}`;
   }else{
     $('gameTerrainAudit').innerHTML=experimental
-      ?`<b>PBR V5 TRUE-COLOR · FORGERTS TRAINING GROUND</b><br>Poly Haven 1K CC0 grass/soil/rock/riverbank PBR · RGBA splat + macro maps · triplanar rocky ground · seed ${info.seed}.`
+      ?`<b>PBR V6 RTS-BLEND · FORGERTS TRAINING GROUND</b><br>Poly Haven 1K CC0 grass/soil/rock/riverbank PBR · RGBA splat + macro maps · triplanar rocky ground · seed ${info.seed}.`
       :`<b>CURRENT FORGERTS TRAINING GROUND</b><br>ForgeRTS ${FORGERTS_TERRAIN_SOURCE_VERSION} TerrainSampler + TerrainRenderer · current per-vertex grass/dirt/rock shader · seed ${info.seed}.`;
   }
   $('gameTerrainRendererCurrent').classList.toggle('active',!experimental);$('gameTerrainRendererExperimental').classList.toggle('active',experimental);
@@ -600,7 +600,7 @@ function applyGameTerrainEnvironment(){
   const env=gameTerrainWorkbench.map?.environment||{},d=env.sunDirection||{x:-.55,y:1,z:.32};
   scene.background.set(env.skyColor||'#8da0a4');scene.fog.color.set(env.fogColor||'#8b9791');scene.fog.near=env.fogNear??300;scene.fog.far=env.fogFar??820;
   // Game Terrain stays in ForgeRTS native Y-up coordinates for exact shader preview.
-  sun.position.set(d.x*120,d.y*120,d.z*120);ambient.intensity=.42;sun.intensity=.52;sun.castShadow=false;
+  sun.position.set(d.x*120,d.y*120,d.z*120);ambient.intensity=.68;sun.intensity=.76;sun.castShadow=false;
 }
 function setGameTerrainView(view){
   if(!gameTerrainWorkbench.map)return;
@@ -627,7 +627,7 @@ async function activateGameTerrainMode(){
       const info=await gameTerrainWorkbench.loadShowcase();syncGameTerrainInputs();updateGameTerrainUi(info);
     }
     applyGameTerrainEnvironment();gameTerrainWorkbench.setRoadsVisible($('gameTerrainRoads').checked);gameTerrainWorkbench.setWaterVisible($('gameTerrainWater').checked);gameTerrainWorkbench.setRoutesVisible($('gameTerrainRoutes').checked);gameTerrainWorkbench.setWireframe($('gameTerrainWireframe').checked);setGameTerrainView(gameTerrainWorkbench.view||'wide');
-    $('status').textContent=`Game Terrain Workbench ${GAME_TERRAIN_WORKBENCH_VERSION} ready · ${gameTerrainWorkbench.mapSource==='showcase'?'Iron Valley curated battlefield':'ForgeRTS training ground'} · ${gameTerrainWorkbench.getRendererMode()==='experimental'?'PBR V5 true-color':'legacy surface'}.`;
+    $('status').textContent=`Game Terrain Workbench ${GAME_TERRAIN_WORKBENCH_VERSION} ready · ${gameTerrainWorkbench.mapSource==='showcase'?'Iron Valley curated battlefield':'ForgeRTS training ground'} · ${gameTerrainWorkbench.getRendererMode()==='experimental'?'PBR V6 RTS-blend':'legacy surface'}.`;
   }catch(err){$('status').textContent='Game terrain load failed: '+err.message;}
 }
 function gameTerrainBaseName(){const m=gameTerrainWorkbench.map||{};return `${m.id||'forgerts_map'}_terrain_${m.seed||1}`;}
@@ -730,7 +730,7 @@ document.querySelectorAll('[data-vehicle-dir]').forEach(b=>b.onclick=()=>setVehi
 $('vehicleBake').onclick=async()=>{if(!vehicleBaker.hasModel())return $('status').textContent='Load a GLB vehicle first.';const btn=$('vehicleBake');btn.disabled=true;$('status').textContent='Baking 8 deterministic vehicle directions…';try{const result=await vehicleBaker.bakeSpriteSheet({frameSize:+$('vehicleFrameSize').value||128,includeShadow:$('vehicleShadow').checked});download(result.blob,`${result.baseName}_8dir_${result.metadata.frame.width}px.png`);$('status').textContent=`Baked 8 directions · ${result.metadata.frame.width}px frames · transparent PNG. Use EXPORT META JSON for the matching metadata file.`;vehicleBaker.fitPreview(vehicleAspect());}catch(err){$('status').textContent='Vehicle bake failed: '+err.message;}finally{btn.disabled=false;}};
 
 $('gameTerrainRendererCurrent').onclick=async()=>{if(gameTerrainWorkbench.getRendererMode()==='current')return;$('status').textContent='Switching to legacy terrain surface renderer…';const info=await gameTerrainWorkbench.setRendererMode('current');updateGameTerrainUi(info);gameTerrainWorkbench.setRoadsVisible($('gameTerrainRoads').checked);gameTerrainWorkbench.setWaterVisible($('gameTerrainWater').checked);gameTerrainWorkbench.setRoutesVisible($('gameTerrainRoutes').checked);gameTerrainWorkbench.setWireframe($('gameTerrainWireframe').checked);setGameTerrainView(gameTerrainWorkbench.view||'wide');$('status').textContent=info.samplerMode==='forgerts-baseline'?'CURRENT FORGERTS terrain active · byte-for-byte renderer + sampler.':'Legacy surface renderer active on the curated strategic landform sampler.';};
-$('gameTerrainRendererExperimental').onclick=async()=>{if(gameTerrainWorkbench.getRendererMode()==='experimental')return;$('status').textContent='Switching to PBR terrain renderer…';const info=await gameTerrainWorkbench.setRendererMode('experimental');updateGameTerrainUi(info);gameTerrainWorkbench.setRoadsVisible($('gameTerrainRoads').checked);gameTerrainWorkbench.setWaterVisible($('gameTerrainWater').checked);gameTerrainWorkbench.setRoutesVisible($('gameTerrainRoutes').checked);gameTerrainWorkbench.setWireframe($('gameTerrainWireframe').checked);setGameTerrainView(gameTerrainWorkbench.view||'wide');$('status').textContent='PBR V5 true-color terrain active · source-faithful color management + de-tiling + authored splat blending.';};
+$('gameTerrainRendererExperimental').onclick=async()=>{if(gameTerrainWorkbench.getRendererMode()==='experimental')return;$('status').textContent='Switching to PBR terrain renderer…';const info=await gameTerrainWorkbench.setRendererMode('experimental');updateGameTerrainUi(info);gameTerrainWorkbench.setRoadsVisible($('gameTerrainRoads').checked);gameTerrainWorkbench.setWaterVisible($('gameTerrainWater').checked);gameTerrainWorkbench.setRoutesVisible($('gameTerrainRoutes').checked);gameTerrainWorkbench.setWireframe($('gameTerrainWireframe').checked);setGameTerrainView(gameTerrainWorkbench.view||'wide');$('status').textContent='PBR V6 RTS-blend terrain active · readable material palette + distance-aware detail + stable roads.';};
 $('gameTerrainMacroVariation').oninput=()=>{$('gameTerrainMacroVariationOut').textContent=Number($('gameTerrainMacroVariation').value).toFixed(2);};
 $('gameTerrainNormalStrength').oninput=()=>{$('gameTerrainNormalStrengthOut').textContent=Number($('gameTerrainNormalStrength').value).toFixed(2);};
 $('gameTerrainSurfaceContrast').oninput=()=>{$('gameTerrainSurfaceContrastOut').textContent=Number($('gameTerrainSurfaceContrast').value).toFixed(2);};
