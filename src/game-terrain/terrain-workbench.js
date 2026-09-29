@@ -1,21 +1,27 @@
 import * as THREE from 'three';
 import { TerrainSampler } from './terrain-sampler.js';
 import { TerrainRenderer } from './terrain-renderer.js';
-import { ExperimentalTerrainRenderer } from './terrain-renderer-v2.js';
+import { TerrainRendererV3 } from './terrain-renderer-v3.js';
 
-export const GAME_TERRAIN_WORKBENCH_VERSION='0.2.0';
+export const GAME_TERRAIN_WORKBENCH_VERSION='0.3.0';
 export const FORGERTS_TERRAIN_SOURCE_VERSION='0.6.6.8';
-export const EXPERIMENTAL_TERRAIN_RENDERER_VERSION='0.1.0';
+export const EXPERIMENTAL_TERRAIN_RENDERER_VERSION='0.2.0';
 
 const clone=v=>JSON.parse(JSON.stringify(v));
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,Number(v)));
 
 const DEFAULT_VISUAL=Object.freeze({
   cellMeters:4,
-  macroVariation:.20,
-  normalStrength:.85,
-  surfaceContrast:1.08,
-  detailMix:.28
+  macroVariation:.22,
+  normalStrength:.95,
+  surfaceContrast:1.06,
+  detailMix:.22,
+  splatCellMeters:2.5,
+  macroCellMeters:8,
+  roadBlendMeters:8,
+  bankWetness:.82,
+  blendDetail:.12,
+  wetTileMeters:11
 });
 
 function disposeObject(root){
@@ -38,9 +44,9 @@ export class GameTerrainWorkbench{
   constructor({scene,camera,renderer,controls}){
     this.scene=scene;this.camera=camera;this.renderer=renderer;this.controls=controls;
     this.root=new THREE.Group();this.root.name='WorldForgeGameTerrainWorkbench';this.root.visible=false;scene.add(this.root);
-    // ForgeRTS is Y-up (X/Z ground plane). WorldForge is Z-up (X/Y ground plane).
-    // This presentation rotation does not modify map heights, material weights or road/water data.
-    this.runtimeRoot=new THREE.Group();this.runtimeRoot.name='ForgeRTSRuntimeTerrain';this.runtimeRoot.rotation.x=Math.PI/2;this.root.add(this.runtimeRoot);
+    // Game Terrain deliberately stays in ForgeRTS native Y-up coordinates.
+    // That keeps shader projection, slope normals and lighting identical to the game path.
+    this.runtimeRoot=new THREE.Group();this.runtimeRoot.name='ForgeRTSRuntimeTerrain';this.root.add(this.runtimeRoot);
     this.map=null;this.baselineMap=null;this.terrain=null;this.runtimeRenderer=null;this.info=null;this.loaded=false;this.view='wide';
     this.rendererMode='experimental';
   }
@@ -105,6 +111,12 @@ export class GameTerrainWorkbench{
     if(Number.isFinite(+s.normalStrength))visual.normalStrength=clamp(s.normalStrength,0,1.8);
     if(Number.isFinite(+s.surfaceContrast))visual.surfaceContrast=clamp(s.surfaceContrast,.7,1.5);
     if(Number.isFinite(+s.detailMix))visual.detailMix=clamp(s.detailMix,0,.55);
+    if(Number.isFinite(+s.splatCellMeters))visual.splatCellMeters=clamp(s.splatCellMeters,1.5,5);
+    if(Number.isFinite(+s.macroCellMeters))visual.macroCellMeters=clamp(s.macroCellMeters,4,24);
+    if(Number.isFinite(+s.roadBlendMeters))visual.roadBlendMeters=clamp(s.roadBlendMeters,2,20);
+    if(Number.isFinite(+s.bankWetness))visual.bankWetness=clamp(s.bankWetness,0,1);
+    if(Number.isFinite(+s.blendDetail))visual.blendDetail=clamp(s.blendDetail,0,.28);
+    if(Number.isFinite(+s.wetTileMeters))visual.wetTileMeters=clamp(s.wetTileMeters,4,30);
   }
 
   async rebuild(){
@@ -114,7 +126,7 @@ export class GameTerrainWorkbench{
     this.terrain=new TerrainSampler(this.map);
     this.runtimeRenderer=this.rendererMode==='current'
       ?new TerrainRenderer({scene:this.runtimeRoot,map:this.map,terrain:this.terrain})
-      :new ExperimentalTerrainRenderer({scene:this.runtimeRoot,map:this.map,terrain:this.terrain,camera:this.camera});
+      :new TerrainRendererV3({scene:this.runtimeRoot,map:this.map,terrain:this.terrain,camera:this.camera});
     await this.runtimeRenderer.build();
     this._syncPresentationUniforms();
     this._applyVisibility();
@@ -123,10 +135,8 @@ export class GameTerrainWorkbench{
   }
 
   _syncPresentationUniforms(){
-    // Preserve ForgeRTS lighting direction after rotating the Y-up runtime into WorldForge Z-up.
     const d=this.map?.environment?.sunDirection||{x:-.55,y:1,z:.32};
     const v=new THREE.Vector3(d.x,d.y,d.z).normalize();
-    const q=new THREE.Quaternion();this.runtimeRoot.getWorldQuaternion(q);v.applyQuaternion(q).normalize();
     this.runtimeRoot.traverse(o=>{
       const mats=Array.isArray(o.material)?o.material:(o.material?[o.material]:[]);
       for(const m of mats)if(m?.uniforms?.uSunDir?.value?.copy)m.uniforms.uSunDir.value.copy(v);
@@ -136,6 +146,7 @@ export class GameTerrainWorkbench{
   _disposeRuntime(){
     if(this.runtimeRenderer?.textures)for(const t of this.runtimeRenderer.textures.values())t?.dispose?.();
     if(this.runtimeRenderer?.normalTextures)for(const t of this.runtimeRenderer.normalTextures.values())t?.dispose?.();
+    if(this.runtimeRenderer?.generatedTextures)for(const t of this.runtimeRenderer.generatedTextures)t?.dispose?.();
     while(this.runtimeRoot.children.length){const c=this.runtimeRoot.children[this.runtimeRoot.children.length-1];this.runtimeRoot.remove(c);disposeObject(c);}
     this.runtimeRenderer=null;this.terrain=null;
   }
@@ -150,7 +161,8 @@ export class GameTerrainWorkbench{
       materials:(this.map.terrain.materials||[]).map(m=>({id:m.id,tileMeters:m.tileMeters,albedo:m.albedo})),
       visual:clone(this.map.terrain.visual||DEFAULT_VISUAL),
       sourceVersion:FORGERTS_TERRAIN_SOURCE_VERSION,
-      experimentalVersion:EXPERIMENTAL_TERRAIN_RENDERER_VERSION
+      experimentalVersion:EXPERIMENTAL_TERRAIN_RENDERER_VERSION,
+      surfaceStats:clone(this.runtimeRenderer?.surfaceStats||null)
     };
   }
 
@@ -170,15 +182,15 @@ export class GameTerrainWorkbench{
     if(!this.map)return;
     this.view=view;const w=this.map.size.width,d=this.map.size.depth,max=Math.max(w,d),a=Math.max(.5,Number(aspect)||1.4);
     const setSpan=span=>{this.camera.left=-span*a*.5;this.camera.right=span*a*.5;this.camera.top=span*.5;this.camera.bottom=-span*.5;this.camera.zoom=1;this.camera.updateProjectionMatrix();};
-    this.camera.up.set(0,0,1);
+    this.camera.up.set(0,1,0);
     if(view==='top'){
-      this.camera.up.set(0,1,0);setSpan(max*1.02);this.controls.target.set(0,0,0);this.camera.position.set(0,0,max*.92);this.camera.lookAt(0,0,0);
+      this.camera.up.set(0,0,-1);setSpan(max*1.02);this.controls.target.set(0,0,0);this.camera.position.set(0,max*.92,0);this.camera.lookAt(0,0,0);
     }else if(view==='close'){
-      setSpan(Math.min(max*.32,210));this.controls.target.set(0,0,8);this.camera.position.set(92,-124,72);this.camera.lookAt(this.controls.target);
+      setSpan(Math.min(max*.32,210));this.controls.target.set(0,8,0);this.camera.position.set(92,72,124);this.camera.lookAt(this.controls.target);
     }else if(view==='ground'){
-      setSpan(Math.min(max*.20,135));this.controls.target.set(0,55,7);this.camera.position.set(0,-105,22);this.camera.lookAt(this.controls.target);
+      setSpan(Math.min(max*.20,135));this.controls.target.set(0,7,55);this.camera.position.set(0,22,-105);this.camera.lookAt(this.controls.target);
     }else{
-      setSpan(max*.78);this.controls.target.set(0,0,4);this.camera.position.set(max*.34,-max*.42,max*.36);this.camera.lookAt(this.controls.target);
+      setSpan(max*.78);this.controls.target.set(0,4,0);this.camera.position.set(max*.34,max*.36,-max*.42);this.camera.lookAt(this.controls.target);
     }
     this.controls.update();
   }

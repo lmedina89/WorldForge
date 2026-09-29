@@ -26,7 +26,7 @@ const sk=read('src/rts/skirmish-test.js');
 const html=read('index.html');
 const app=read('src/app.js');
 
-assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.22'/);
+assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.23'/);
 assert.match(schema,/rtsMapForge: '0\.2\.9'/);
 assert.match(schema,/rtsAssetLibrary: '0\.5\.1'/);
 assert.match(schema,/skirmish: '0\.7\.7'/);
@@ -85,7 +85,7 @@ assert.match(app,/skirmish\.trainRifleman/);
 
 console.log(JSON.stringify({
   ok:true,
-  worldforge:'0.13.22',
+  worldforge:'0.13.23',
   mapForge:'0.2.9',
   skirmish:'0.7.7',
   mainWorldMeters:1536,

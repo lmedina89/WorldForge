@@ -132,11 +132,11 @@
     <p class="miniNote"><b>Faction colors:</b> neutral steel/glass/hazard materials stay authored; base armor and team slots can be recolored independently. This same palette contract is used by Skirmish Lab.</p>
   </section>
   <section id="gameTerrainPanel" hidden>
-    <div class="sectionTitle">GAME TERRAIN WORKBENCH 0.2 · CURRENT / EXPERIMENTAL</div>
+    <div class="sectionTitle">GAME TERRAIN WORKBENCH 0.3 · SPLAT + MACROTEXTURE</div>
     <div class="buildingSourceCard"><b id="gameTerrainMapName">ForgeRTS Training Ground 02</b><span id="gameTerrainStats">Loading game terrain…</span></div>
     <p class="miniNote"><b>Real game path:</b> CURRENT is the byte-for-byte ForgeRTS v0.6.6.8 terrain renderer. EXPERIMENTAL uses the same exact map, <code>TerrainSampler</code>, heightfield, splat weights, roads and water, but swaps in the candidate visual renderer we can later move into ForgeRTS after approval.</p>
     <div class="sectionTitle">RENDERER A / B</div>
-    <div class="mapViewButtons"><button id="gameTerrainRendererCurrent">CURRENT GAME</button><button id="gameTerrainRendererExperimental" class="active">EXPERIMENTAL V2</button></div>
+    <div class="mapViewButtons"><button id="gameTerrainRendererCurrent">CURRENT GAME</button><button id="gameTerrainRendererExperimental" class="active">SPLAT V3</button></div>
     <label>Map seed<div class="seedrow"><input id="gameTerrainSeed" type="number" value="731904"><button id="gameTerrainRandomize">↻</button></div></label>
     <div class="sectionTitle">HEIGHTFIELD</div>
     <div class="cols"><label>Base height<input id="gameTerrainBaseHeight" type="number" min="-20" max="40" step="0.5" value="2"></label><label>Noise scale m<input id="gameTerrainNoiseScale" type="number" min="20" max="400" step="2" value="118"></label></div>
@@ -147,11 +147,14 @@
     <div class="cols"><label>Rock tile m<input id="gameTerrainRockTile" type="number" min="2" max="80" step="1" value="12"></label><label>Sun intensity<input id="gameTerrainSunIntensity" type="number" min="0.1" max="5" step="0.05" value="2.15"></label></div>
     <div class="cols"><label>Rock starts °<input id="gameTerrainCliffStart" type="number" min="5" max="60" step="1" value="23"></label><label>Rock full °<input id="gameTerrainCliffFull" type="number" min="6" max="75" step="1" value="36"></label></div>
     <div class="sectionTitle">EXPERIMENTAL SURFACE DETAIL</div>
-    <label>Macro variation <input id="gameTerrainMacroVariation" type="range" min="0" max="0.5" step="0.01" value="0.20"><output id="gameTerrainMacroVariationOut">0.20</output></label>
-    <label>Normal detail <input id="gameTerrainNormalStrength" type="range" min="0" max="1.8" step="0.05" value="0.85"><output id="gameTerrainNormalStrengthOut">0.85</output></label>
-    <label>Surface contrast <input id="gameTerrainSurfaceContrast" type="range" min="0.7" max="1.5" step="0.01" value="1.08"><output id="gameTerrainSurfaceContrastOut">1.08</output></label>
-    <label>De-tiling blend <input id="gameTerrainDetailMix" type="range" min="0" max="0.55" step="0.01" value="0.28"><output id="gameTerrainDetailMixOut">0.28</output></label>
-    <div class="cols"><label>Visual mesh cell m<select id="gameTerrainCellMeters"><option value="6">6 m · current density</option><option value="5">5 m</option><option value="4" selected>4 m · experimental</option><option value="3">3 m · high</option></select></label><label>Rock projection<input value="Triplanar" disabled></label></div>
+    <label>Macro color variation <input id="gameTerrainMacroVariation" type="range" min="0" max="0.5" step="0.01" value="0.22"><output id="gameTerrainMacroVariationOut">0.22</output></label>
+    <label>Normal detail <input id="gameTerrainNormalStrength" type="range" min="0" max="1.8" step="0.05" value="0.95"><output id="gameTerrainNormalStrengthOut">0.95</output></label>
+    <label>Surface contrast <input id="gameTerrainSurfaceContrast" type="range" min="0.7" max="1.5" step="0.01" value="1.06"><output id="gameTerrainSurfaceContrastOut">1.06</output></label>
+    <label>Material edge detail <input id="gameTerrainBlendDetail" type="range" min="0" max="0.28" step="0.01" value="0.12"><output id="gameTerrainBlendDetailOut">0.12</output></label>
+    <label>Road terrain blend m <input id="gameTerrainRoadBlend" type="range" min="2" max="20" step="0.5" value="8"><output id="gameTerrainRoadBlendOut">8.0</output></label>
+    <label>River-bank wetness <input id="gameTerrainBankWetness" type="range" min="0" max="1" step="0.02" value="0.82"><output id="gameTerrainBankWetnessOut">0.82</output></label>
+    <div class="cols"><label>Splat texel<select id="gameTerrainSplatCell"><option value="3">3 m · light</option><option value="2.5" selected>2.5 m · balanced</option><option value="2">2 m · high</option></select></label><label>Macro texel<select id="gameTerrainMacroCell"><option value="12">12 m</option><option value="8" selected>8 m</option><option value="6">6 m</option></select></label></div>
+    <div class="cols"><label>Visual mesh cell m<select id="gameTerrainCellMeters"><option value="6">6 m · current density</option><option value="5">5 m</option><option value="4" selected>4 m · candidate</option><option value="3">3 m · high</option></select></label><label>Rock projection<input value="Triplanar color + normal" disabled></label></div>
     <button id="gameTerrainRebuild" class="primary">REBUILD TERRAIN PREVIEW</button>
     <div class="mapViewButtons"><button id="gameTerrainViewWide">WIDE</button><button id="gameTerrainViewClose">CLOSE</button><button id="gameTerrainViewGround">GROUND</button><button id="gameTerrainViewTop">TOP</button></div>
     <div class="checks"><label><input id="gameTerrainRoads" type="checkbox" checked> Show runtime roads</label><label><input id="gameTerrainWater" type="checkbox" checked> Show runtime water</label></div>
@@ -159,7 +162,7 @@
     <div class="sectionTitle">FORGERTS MAP</div>
     <input id="gameTerrainFile" type="file" accept="application/json,.json" hidden>
     <div class="mapViewButtons"><button id="gameTerrainLoadCurrent">RESET CURRENT GAME MAP</button><button id="gameTerrainImport">IMPORT MAP JSON</button><button id="gameTerrainExport">EXPORT MAP JSON</button></div>
-    <div id="gameTerrainAudit" class="mapScore">Experimental renderer is using the current ForgeRTS terrain data path. Toggle CURRENT GAME for a direct A/B comparison.</div>
+    <div id="gameTerrainAudit" class="mapScore">SPLAT V3 uses the same ForgeRTS heightfield, roads and water, but replaces per-vertex 3-way blending with runtime RGBA splat + macro-color maps. Toggle CURRENT GAME for A/B.</div>
     <p class="miniNote"><b>Experimental V2 adds:</b> 4 m default visual mesh density, macro color breakup, two-scale de-tiling, close-range material normal detail, triplanar rock projection, distance-faded micro detail, and normal-mapped roads. The current renderer remains bundled and untouched for comparison.</p>
   </section>
   <section id="rtsMapPanel" hidden>

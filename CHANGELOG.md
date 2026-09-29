@@ -1,3 +1,17 @@
+# v0.13.23 — Game Terrain Splat + Macrotexture Foundation
+
+- Game Terrain Workbench advanced to **0.3.0**.
+- Replaced the experimental per-vertex 3-way visual blend with a runtime-generated RGBA splat/distribution map.
+- Added separate grass, dirt, rock and wet-bank channels driven by slope, road distance, river moisture/distance, exposure and deterministic breakup.
+- Added a real macro-color map for coherent large-scale dry/green/cool variation instead of shader sine-wave breakup.
+- Added dedicated wet-bank albedo/normal textures derived from the existing temperate soil family.
+- Roads now paint compacted soil into the terrain distribution and V3 renders only a feathered road core instead of a full rectangular shoulder ribbon.
+- Riverbanks now suppress grass and transition through damp soil before ordinary terrain.
+- Rock projection now uses triplanar color and triplanar normal detail.
+- GAME TERRAIN now previews in ForgeRTS native Y-up coordinates so shader projection/normal behavior is directly portable.
+- Exact ForgeRTS v0.6.6.8 CURRENT GAME TerrainSampler, TerrainRenderer and Training Ground snapshots remain unchanged for A/B comparison.
+- Added explicit ForgeRTS terrain-port plan; no ForgeRTS gameplay/runtime package is modified by this WorldForge milestone.
+
 # v0.13.22 — Game Terrain Visual Foundation A/B
 
 - Advanced Game Terrain Workbench to **0.2.0**.

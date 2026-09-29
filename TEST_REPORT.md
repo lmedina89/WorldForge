@@ -1,3 +1,29 @@
+# WorldForge v0.13.23 Test Report
+
+## Game Terrain Splat + Macrotexture Foundation
+
+- New Game Terrain Workbench 0.3 regression: **PASS**.
+- Current self-contained suite: **30 / 30 PASS**.
+- Seven inherited legacy tests still require historical fixture directories not shipped in this package; unchanged test-environment limitation.
+- Existing production GLBs vs v0.13.22 baseline: **16 / 16 byte-for-byte unchanged**.
+- All `src/generators/*.js` files vs v0.13.22 baseline: **15 / 15 byte-for-byte unchanged**.
+- Protected v0.9.2 generator manifest still contains the inherited stale `src/generators/index.js` hash; the actual file is unchanged from v0.13.22.
+- Exact ForgeRTS v0.6.6.8 CURRENT GAME snapshots remain byte-identical:
+  - `terrain-sampler.js` SHA-256 `d88d3456154a7759e078d1945e36e22714afe810171841a3d68f1f63b0b4b50a`
+  - `terrain-renderer.js` SHA-256 `a8d560b49db1652ef5b306b96f66412cd4010480775d0e90e3f7c6d721754c1c`
+  - Training Ground map SHA-256 `b7f54a9792e6df5e90b635a7fe02b6d3e6ad3e2bbe5f0dfc6f0eba8e66c9bfc9`
+- Default SPLAT V3 distribution map: **256 × 192** (2.5 m/texel).
+- Default macro-color map: **80 × 60** (8 m/texel).
+- Road-core sample resolves >90% dirt channel; river-edge sample resolves >50% wet-bank channel.
+- New/modified JavaScript syntax checks: **PASS**.
+- DOM ID/reference audit: **PASS**.
+
+## Visual acceptance still required
+
+Automated validation cannot replace iPhone/Safari inspection. In GAME TERRAIN, compare CURRENT GAME vs SPLAT V3 in WIDE, CLOSE, GROUND and TOP. Primary acceptance points are material-boundary quality, grass color breakup, road shoulder integration, riverbank transitions, rock projection, shimmer and rebuild/render performance. ForgeRTS itself remains unchanged until this candidate is approved.
+
+---
+
 # WorldForge v0.13.22 Test Report
 
 ## Game Terrain Visual Foundation A/B
