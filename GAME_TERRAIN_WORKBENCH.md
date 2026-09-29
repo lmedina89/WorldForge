@@ -1,4 +1,4 @@
-# Game Terrain Workbench 0.8 — Source Detail + Bounds-Based Camera
+# Game Terrain Workbench 0.9 — Direct-Source Terrain
 
 ## Purpose
 
@@ -6,18 +6,28 @@ GAME TERRAIN remains a WorldForge proving environment. It does not change ForgeR
 
 ## Current candidate
 
-**PBR V7 · SOURCE DETAIL** preserves the actual Poly Haven source albedo as the dominant surface signal. Grass, soil, rock and wet-bank textures receive only restrained average-color correction toward the authored RTS palette; the shader no longer replaces their photographic color structure with a flat palette.
+**PBR V8 · DIRECT SOURCE** fixes the main v0.13.28 failure: the Poly Haven albedo was technically loaded, but it was tiled at approximately physical scan scale (1.3–2.5 m). At a 200–600 m RTS view that creates dozens to hundreds of repetitions across the screen, so mipmapping averages the source into smooth color.
 
-Color texture detail is left to texture mipmapping at distance. Normal-map contribution is distance-aware so CLOSE/GROUND retain useful surface relief while WIDE remains readable.
+V8 uses separate scales:
+- grass overview albedo: 18 m; physical normal/ARM detail: 2.5 m
+- dirt overview albedo: 14 m; physical normal/ARM detail: 1.3 m
+- rock overview albedo: 12 m; physical normal/ARM detail: 2.0 m
+- wet-bank overview albedo: 10 m; physical normal/ARM detail: 2.0 m
 
-## Camera correction
+The source photograph is the dominant color/detail signal. Palette correction is deliberately restrained.
 
-Iron Valley is 768×576 m. The previous shared orthographic camera retained a 400 m far plane even when WIDE/TOP camera positions were farther away than that, which could clip most of the map. Workbench 0.8 scales the far plane to the battlefield and computes strategic WIDE framing from the actual map bounds plus sampled terrain height range.
+## Roads
+
+V7 dropped authored shoulder meshes and widened the dark road core. V8 restores `road.shoulder`, restores the exact authored road width, retains soft edge alpha, and keeps stable positive/polygon offsets for mobile WebGL.
+
+## Camera
+
+WIDE uses projected map bounds for both Iron Valley and the 640×480 ForgeRTS Training Ground. CLOSE/GROUND keep more battlefield context instead of filling the viewport with one road strip.
 
 ## Protected systems
 
-The following remain unchanged: Iron Valley landform geometry, the strategic sampler, splat generation, roads/water, validation routes, production GLBs, protected generators, and the byte-identical ForgeRTS v0.6.6.8 runtime snapshot.
+ForgeRTS v0.6.6.8 TerrainSampler/TerrainRenderer/Training Ground remain byte-identical. Iron Valley strategic geometry, six validated routes, splat generation, source PBR assets, generators, and production GLBs are unchanged.
 
 ## Device check
 
-On iPhone Safari, check **PBR V7 · SOURCE DETAIL** in WIDE first (whole battlefield should remain visible), then CLOSE/GROUND (source grass/soil/rock texture should be visibly photographic rather than flat color), then TOP.
+Check **PBR V8 · DIRECT SOURCE** in WIDE first, then CLOSE/GROUND, then TOP. Verify visible grass/soil/rock texture structure, readable shoulders/road core, full-map WIDE framing, and no shimmer/z-fighting.

@@ -2,11 +2,11 @@ import * as THREE from 'three';
 import { TerrainSampler } from './terrain-sampler.js';
 import { StrategicTerrainSampler } from './strategic-terrain-sampler.js';
 import { TerrainRenderer } from './terrain-renderer.js';
-import { TerrainRendererV7 } from './terrain-renderer-v7.js';
+import { TerrainRendererV8 } from './terrain-renderer-v8.js';
 
-export const GAME_TERRAIN_WORKBENCH_VERSION='0.8.0';
+export const GAME_TERRAIN_WORKBENCH_VERSION='0.9.0';
 export const FORGERTS_TERRAIN_SOURCE_VERSION='0.6.6.8';
-export const EXPERIMENTAL_TERRAIN_RENDERER_VERSION='0.7.0';
+export const EXPERIMENTAL_TERRAIN_RENDERER_VERSION='0.8.0';
 
 const clone=v=>JSON.parse(JSON.stringify(v));
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,Number(v)));
@@ -135,7 +135,7 @@ export class GameTerrainWorkbench{
     this.terrain=this.map.terrain?.landforms?new StrategicTerrainSampler(this.map):new TerrainSampler(this.map);
     this.runtimeRenderer=this.rendererMode==='current'
       ?new TerrainRenderer({scene:this.runtimeRoot,map:this.map,terrain:this.terrain})
-      :new TerrainRendererV7({scene:this.runtimeRoot,map:this.map,terrain:this.terrain,camera:this.camera,renderer:this.renderer});
+      :new TerrainRendererV8({scene:this.runtimeRoot,map:this.map,terrain:this.terrain,camera:this.camera,renderer:this.renderer});
     await this.runtimeRenderer.build();
     this._buildRouteDebug();
     this._syncPresentationUniforms();
@@ -242,37 +242,36 @@ export class GameTerrainWorkbench{
     return {lo,hi};
   }
 
-  _fitStrategicWide(aspect,setSpan){
+  _fitBoundsView(aspect,setSpan,{direction=null,padding=1.10,targetOffset=null}={}){
     const w=this.map.size.width,d=this.map.size.depth,max=Math.max(w,d),a=Math.max(.5,aspect);
-    const {lo,hi}=this._heightRange(14),target=new THREE.Vector3(0,(lo+hi)*.5,0);
-    const direction=new THREE.Vector3(.58,.72,-.58).normalize(),distance=max*.68;
-    this.camera.up.set(0,1,0);this.controls.target.copy(target);this.camera.position.copy(target).addScaledVector(direction,distance);this.camera.lookAt(target);this.camera.updateMatrixWorld(true);
+    const {lo,hi}=this._heightRange(18),target=new THREE.Vector3(0,(lo+hi)*.5,0);
+    if(targetOffset)target.add(targetOffset);
+    const dir=(direction||new THREE.Vector3(.56,.74,-.60)).clone().normalize(),distance=max*.82;
+    this.camera.up.set(0,1,0);this.controls.target.copy(target);this.camera.position.copy(target).addScaledVector(dir,distance);this.camera.lookAt(target);this.camera.updateMatrixWorld(true);
     const right=new THREE.Vector3().setFromMatrixColumn(this.camera.matrixWorld,0).normalize(),up=new THREE.Vector3().setFromMatrixColumn(this.camera.matrixWorld,1).normalize();
     let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
     for(const x of [-w*.5,w*.5])for(const y of [lo,hi])for(const z of [-d*.5,d*.5]){
       const rel=new THREE.Vector3(x,y,z).sub(target),sx=rel.dot(right),sy=rel.dot(up);minX=Math.min(minX,sx);maxX=Math.max(maxX,sx);minY=Math.min(minY,sy);maxY=Math.max(maxY,sy);
     }
-    const span=Math.max(maxY-minY,(maxX-minX)/a)*1.08;setSpan(span);
+    setSpan(Math.max(maxY-minY,(maxX-minX)/a)*padding);
   }
 
   setView(view='wide',aspect=1.4){
     if(!this.map)return;
     this.view=view;const w=this.map.size.width,d=this.map.size.depth,max=Math.max(w,d),a=Math.max(.5,Number(aspect)||1.4);
     const setSpan=span=>{this.camera.left=-span*a*.5;this.camera.right=span*a*.5;this.camera.top=span*.5;this.camera.bottom=-span*.5;this.camera.zoom=1;this.camera.updateProjectionMatrix();};
-    // The shared WorldForge camera starts with far=400. Iron Valley's old WIDE/TOP
-    // positions exceeded that range and mobile Safari clipped most of the battlefield.
-    this.camera.near=.1;this.camera.far=Math.max(1800,max*3);this.camera.up.set(0,1,0);
+    this.camera.near=.1;this.camera.far=Math.max(2200,max*3.4);this.camera.up.set(0,1,0);
     const strategic=!!this.map.terrain?.landforms;
     if(view==='top'){
-      this.camera.up.set(0,0,-1);setSpan(Math.max(d*1.08,w/a*1.08));this.controls.target.set(0,0,0);this.camera.position.set(0,max*.92,0);this.camera.lookAt(0,0,0);
+      this.camera.up.set(0,0,-1);setSpan(Math.max(d*1.08,w/a*1.08));this.controls.target.set(0,0,0);this.camera.position.set(0,max*.96,0);this.camera.lookAt(0,0,0);
     }else if(view==='close'){
-      setSpan(strategic ? Math.min(max*.27,190) : Math.min(max*.32,210));this.controls.target.set(0,strategic ? 11 : 8,strategic ? -18 : 0);this.camera.position.set(strategic ? 86 : 92,strategic ? 126 : 72,strategic ? 132 : 124);this.camera.lookAt(this.controls.target);
+      const {lo,hi}=this._heightRange(14),targetY=(lo+hi)*.5;
+      setSpan(strategic?Math.min(max*.48,360):Math.min(max*.55,352));this.controls.target.set(0,targetY,strategic?-10:0);this.camera.position.set(strategic?168:150,strategic?170:142,strategic?190:176);this.camera.lookAt(this.controls.target);
     }else if(view==='ground'){
-      setSpan(strategic ? Math.min(max*.18,124) : Math.min(max*.20,135));this.controls.target.set(0,strategic ? 9 : 7,strategic ? 36 : 55);this.camera.position.set(0,strategic ? 34 : 22,strategic ? -118 : -105);this.camera.lookAt(this.controls.target);
-    }else if(strategic){
-      this._fitStrategicWide(a,setSpan);
+      const {lo,hi}=this._heightRange(14),targetY=(lo+hi)*.5;
+      setSpan(strategic?Math.min(max*.30,230):Math.min(max*.36,232));this.controls.target.set(0,targetY+3,strategic?32:30);this.camera.position.set(strategic?34:28,strategic?66:58,strategic?-160:-142);this.camera.lookAt(this.controls.target);
     }else{
-      setSpan(max*.78);this.controls.target.set(0,4,0);this.camera.position.set(max*.34,max*.36,-max*.42);this.camera.lookAt(this.controls.target);
+      this._fitBoundsView(a,setSpan,{direction:new THREE.Vector3(.56,.74,-.60),padding:1.10});
     }
     this.camera.updateProjectionMatrix();this.controls.update();
   }

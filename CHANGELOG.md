@@ -1,3 +1,14 @@
+# v0.13.29 — Direct-Source Terrain + Road/Camera Correction
+
+- Added **PBR V8 · DIRECT SOURCE** as the active experimental Game Terrain renderer; V7 remains preserved for regression reference.
+- Split terrain texture scale into RTS-readable **overview albedo scale** and physical **normal/ARM detail scale**. Previous 1.3–2.5 m albedo tiling was averaging into flat color at tactical camera distance.
+- Removed V7's gain-based `sourceDominant` recoloring path. Source photographs are now dominant with only restrained palette correction.
+- Restored authored road shoulder meshes and authored road-core width; removed the V7 `road.width + 2.2` oversized black ribbon.
+- Retained stable road offsets, alpha-feathering, polygon offset, and no depth-write to avoid mobile z-fighting.
+- Replaced baseline Training Ground's hand-guessed WIDE span with the same projected-bounds fitting used for Iron Valley.
+- Relaxed CLOSE/GROUND zoom so terrain material structure can be judged with useful battlefield context.
+- Protected ForgeRTS v0.6.6.8 runtime files, Training Ground map, Iron Valley strategic geometry/routes, Poly Haven source assets, generators, and production GLBs remain unchanged.
+
 # v0.13.28 — Source Texture Visibility + Camera Frustum Recovery
 
 - Added **PBR V7 · SOURCE DETAIL** as an additive candidate renderer; PBR V6 remains preserved for regression comparison.
