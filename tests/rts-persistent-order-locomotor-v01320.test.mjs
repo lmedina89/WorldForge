@@ -8,7 +8,7 @@ const sk=read('src/rts/skirmish-test.js');
 const schema=read('src/core/schema.js');
 const html=read('index.html');
 
-assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.24'/);
+assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.25'/);
 assert.match(schema,/skirmish: '0\.7\.7'/);
 assert.match(sk,/SKIRMISH_VERSION='0\.7\.7'/);
 
@@ -46,7 +46,7 @@ assert.match(html,/PERSISTENT ORDERS \+ LOCOMOTOR CORE/);
 
 console.log(JSON.stringify({
   ok:true,
-  worldforge:'0.13.24',
+  worldforge:'0.13.25',
   skirmish:'0.7.7',
   persistentRequestedDestination:true,
   throttledRepath:true,

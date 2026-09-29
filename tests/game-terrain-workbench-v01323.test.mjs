@@ -14,11 +14,11 @@ const schema=text('src/core/schema.js'),app=text('src/app.js'),html=text('index.
 const manifest=JSON.parse(text('assets/game-terrain/runtime-sync-manifest.json'));
 const map=JSON.parse(text('assets/game-terrain/forgerts_training_ground.json'));
 
-assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.24'/);
-assert.match(schema,/gameTerrainWorkbench: '0\.4\.0'/);
-assert.match(wrapper,/GAME_TERRAIN_WORKBENCH_VERSION='0\.4\.0'/);
+assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.25'/);
+assert.match(schema,/gameTerrainWorkbench: '0\.5\.0'/);
+assert.match(wrapper,/GAME_TERRAIN_WORKBENCH_VERSION='0\.5\.0'/);
 assert.match(wrapper,/FORGERTS_TERRAIN_SOURCE_VERSION='0\.6\.6\.8'/);
-assert.match(wrapper,/EXPERIMENTAL_TERRAIN_RENDERER_VERSION='0\.3\.0'/);
+assert.match(wrapper,/EXPERIMENTAL_TERRAIN_RENDERER_VERSION='0\.4\.0'/);
 assert.match(wrapper,/TerrainRendererV4/);
 assert.match(v3,/TerrainSurfaceGenerator/);
 assert.match(v3,/uSplat/);
@@ -56,4 +56,4 @@ assert.equal(new Set(ids).size,ids.length,'duplicate DOM ids');
 const refs=[...app.matchAll(/\$\('([^']+)'\)/g)].map(x=>x[1]);
 const missing=[...new Set(refs.filter(x=>!ids.includes(x)))];
 assert.deepEqual(missing,[],'app references missing DOM ids');
-console.log(JSON.stringify({ok:true,worldforge:'0.13.24',terrainWorkbench:'0.4.0',forgertsSource:'0.6.6.8',runtimeSourceHashesVerified:true,pbrV4:true,splat:[splat.width,splat.height],macro:[macro.width,macro.height]},null,2));
+console.log(JSON.stringify({ok:true,worldforge:'0.13.25',terrainWorkbench:'0.5.0',forgertsSource:'0.6.6.8',runtimeSourceHashesVerified:true,pbrV4:true,splat:[splat.width,splat.height],macro:[macro.width,macro.height]},null,2));

@@ -1,3 +1,7 @@
+# WorldForge v0.13.25 — Curated Strategic Battlefield
+
+Game Terrain now defaults to **Iron Valley**, a fixed detailed RTS battlefield with authored plateaus, valleys, mountain passes and validated vehicle ramps. Use GAME TERRAIN directly; the advanced terrain tuning controls are optional and collapsed.
+
 # WorldForge v0.13.24 — Game Terrain PBR Material Foundation
 
 WorldForge now previews the same ForgeRTS heightfield/roads/water with a PBR V4 experimental terrain path using real 1K CC0 Poly Haven ground materials. CURRENT GAME is retained for exact A/B comparison.

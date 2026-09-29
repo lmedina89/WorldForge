@@ -1,3 +1,15 @@
+# v0.13.25 — Curated Strategic Battlefield + Valid Landforms
+
+- Game Terrain Workbench advanced to 0.5.0 and now opens directly on **Iron Valley**, a fixed authored RTS battlefield instead of asking the user to tune a wall of terrain sliders.
+- Added a separate `StrategicTerrainSampler` while preserving the exact ForgeRTS v0.6.6.8 `TerrainSampler` for current-game comparison.
+- Added authored landform operators for elongated mountain ridges, broad valley corridors, flat elevated plateaus/terraces, stable base pads and explicit linear-grade vehicle ramps.
+- Iron Valley includes high base shelves, middle terraces, a low armored valley, a central command mesa, northern mountain pass, southern flank corridor, two elevated overlooks, six roads and a decorative creek.
+- Added authored route validation against the actual terrain sampler. The showcase currently validates six ground routes, including the central mesa ramps and both overlook ramps.
+- Added optional green/red route-debug overlays.
+- Advanced noise/material sliders moved into a collapsed optional section; the showcase is already tuned and requires no slider setup.
+- PBR V4 / Poly Haven material work from v0.13.24 remains intact.
+- ForgeRTS source terrain files remain unchanged; this is still a WorldForge authoring/proving step before any game port.
+
 # v0.13.24 — Game Terrain PBR Material Foundation
 
 - Game Terrain Workbench advanced to **0.4.0**.

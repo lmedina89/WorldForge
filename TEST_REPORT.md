@@ -1,3 +1,32 @@
+# WorldForge v0.13.25 Test Report
+
+## Curated Strategic Battlefield + Valid Landforms
+
+- Current self-contained suite: **31 / 31 PASS**, including the new strategic-landform/route validation regression.
+- Seven inherited legacy tests still require historical fixture directories not shipped in this package; unchanged test-environment limitation.
+- Existing production GLBs vs v0.13.24 baseline: **16 / 16 byte-for-byte unchanged**.
+- All `src/generators/*.js` files vs v0.13.24 baseline: **15 / 15 byte-for-byte unchanged**.
+- Exact ForgeRTS v0.6.6.8 comparison snapshots remain byte-identical:
+  - `terrain-sampler.js` SHA-256 `d88d3456154a7759e078d1945e36e22714afe810171841a3d68f1f63b0b4b50a`
+  - `terrain-renderer.js` SHA-256 `a8d560b49db1652ef5b306b96f66412cd4010480775d0e90e3f7c6d721754c1c`
+  - Training Ground map SHA-256 `b7f54a9792e6df5e90b635a7fe02b6d3e6ad3e2bbe5f0dfc6f0eba8e66c9bfc9`
+- Iron Valley strategic route audit:
+  - main armored valley: **10.55° max / 18° limit**
+  - central mesa route: **16.64° max / 22° limit**
+  - southern flank: **7.72° max / 20° limit**
+  - northern mountain pass: **7.02° max / 20° limit**
+  - southwest overlook ramp: **11.52° max / 20° limit**
+  - southeast overlook ramp: **10.29° max / 20° limit**
+- Key authored elevation tiers resolve at approximately **27 m base shelf → 19 m middle terrace → 6.6 m main valley**, with the central command mesa at **32 m**.
+- New/modified JavaScript syntax checks: **PASS**.
+- DOM ID/reference audit: **PASS**.
+
+## On-device acceptance
+
+Open **GAME TERRAIN**; Iron Valley loads automatically. Do not open Advanced Terrain Tuning for the first evaluation. Inspect WIDE, CLOSE, GROUND and TOP. Optionally enable **Show validated routes**: all six authored ground routes should be green. Primary acceptance is whether the plateaus, stepped elevations, mountain walls, valley corridors and ramps finally read like an intentional RTS battlefield rather than noise-driven terrain.
+
+---
+
 # WorldForge v0.13.24 Test Report
 
 ## Game Terrain PBR Material Foundation

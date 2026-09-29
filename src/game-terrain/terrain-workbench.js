@@ -1,11 +1,12 @@
 import * as THREE from 'three';
 import { TerrainSampler } from './terrain-sampler.js';
+import { StrategicTerrainSampler } from './strategic-terrain-sampler.js';
 import { TerrainRenderer } from './terrain-renderer.js';
 import { TerrainRendererV4 } from './terrain-renderer-v4.js';
 
-export const GAME_TERRAIN_WORKBENCH_VERSION='0.4.0';
+export const GAME_TERRAIN_WORKBENCH_VERSION='0.5.0';
 export const FORGERTS_TERRAIN_SOURCE_VERSION='0.6.6.8';
-export const EXPERIMENTAL_TERRAIN_RENDERER_VERSION='0.3.0';
+export const EXPERIMENTAL_TERRAIN_RENDERER_VERSION='0.4.0';
 
 const clone=v=>JSON.parse(JSON.stringify(v));
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,Number(v)));
@@ -48,7 +49,7 @@ export class GameTerrainWorkbench{
     // That keeps shader projection, slope normals and lighting identical to the game path.
     this.runtimeRoot=new THREE.Group();this.runtimeRoot.name='ForgeRTSRuntimeTerrain';this.root.add(this.runtimeRoot);
     this.map=null;this.baselineMap=null;this.terrain=null;this.runtimeRenderer=null;this.info=null;this.loaded=false;this.view='wide';
-    this.rendererMode='experimental';
+    this.rendererMode='experimental';this.mapSource='none';this.routeDebug=new THREE.Group();this.routeDebug.name='StrategicRouteValidation';this.runtimeRoot.add(this.routeDebug);this._routesVisible=false;
   }
 
   setActive(active){this.root.visible=!!active;}
@@ -60,14 +61,22 @@ export class GameTerrainWorkbench{
     const res=await fetch('assets/game-terrain/forgerts_training_ground.json',{cache:'no-cache'});
     if(!res.ok)throw new Error(`ForgeRTS map load failed (${res.status})`);
     const map=await res.json();
-    this.baselineMap=clone(map);this.map=clone(map);this._ensureVisual();this.loaded=true;
+    this.baselineMap=clone(map);this.map=clone(map);this.mapSource='forgerts';this._ensureVisual();this.loaded=true;
+    return this.rebuild();
+  }
+
+  async loadShowcase(){
+    const res=await fetch('assets/game-terrain/worldforge_curated_battlefield.json',{cache:'no-cache'});
+    if(!res.ok)throw new Error(`Curated battlefield load failed (${res.status})`);
+    const map=await res.json();this._validateMap(map);
+    this.baselineMap=clone(map);this.map=clone(map);this.mapSource='showcase';this._ensureVisual();this.loaded=true;
     return this.rebuild();
   }
 
   async loadFile(file){
     const map=JSON.parse(await file.text());
     this._validateMap(map);
-    this.baselineMap=clone(map);this.map=clone(map);this._ensureVisual();this.loaded=true;
+    this.baselineMap=clone(map);this.map=clone(map);this.mapSource='import';this._ensureVisual();this.loaded=true;
     return this.rebuild();
   }
 
@@ -123,11 +132,12 @@ export class GameTerrainWorkbench{
     if(!this.map)return null;
     this._validateMap(this.map);this._ensureVisual();
     this._disposeRuntime();
-    this.terrain=new TerrainSampler(this.map);
+    this.terrain=this.map.terrain?.landforms?new StrategicTerrainSampler(this.map):new TerrainSampler(this.map);
     this.runtimeRenderer=this.rendererMode==='current'
       ?new TerrainRenderer({scene:this.runtimeRoot,map:this.map,terrain:this.terrain})
       :new TerrainRendererV4({scene:this.runtimeRoot,map:this.map,terrain:this.terrain,camera:this.camera});
     await this.runtimeRenderer.build();
+    this._buildRouteDebug();
     this._syncPresentationUniforms();
     this._applyVisibility();
     this.info=this._stats();
@@ -149,9 +159,48 @@ export class GameTerrainWorkbench{
     if(this.runtimeRenderer?.armTextures)for(const t of this.runtimeRenderer.armTextures.values())t?.dispose?.();
     this.runtimeRenderer?.rockMacroTexture?.dispose?.();
     if(this.runtimeRenderer?.generatedTextures)for(const t of this.runtimeRenderer.generatedTextures)t?.dispose?.();
-    while(this.runtimeRoot.children.length){const c=this.runtimeRoot.children[this.runtimeRoot.children.length-1];this.runtimeRoot.remove(c);disposeObject(c);}
+    for(const c of [...this.runtimeRoot.children]){if(c===this.routeDebug)continue;this.runtimeRoot.remove(c);disposeObject(c);}
+    while(this.routeDebug.children.length){const c=this.routeDebug.children.pop();c.geometry?.dispose?.();c.material?.dispose?.();}
     this.runtimeRenderer=null;this.terrain=null;
   }
+
+  _routeStats(){
+    const routes=this.map?.navigation?.validationRoutes||[],out=[];
+    const sampleStep=6;
+    for(const r of routes){
+      let maxSlope=0,sum=0,count=0;
+      const pts=r.points||[];
+      for(let i=0;i<pts.length-1;i++){
+        const a=pts[i],b=pts[i+1],L=Math.hypot(b.x-a.x,b.z-a.z),n=Math.max(1,Math.ceil(L/sampleStep));
+        for(let j=0;j<=n;j++){
+          const q=j/n,x=a.x+(b.x-a.x)*q,z=a.z+(b.z-a.z)*q,s=this.terrain.slopeDeg(x,z,3.5);
+          maxSlope=Math.max(maxSlope,s);sum+=s;count++;
+        }
+      }
+      const limit=Number(r.maxSlopeDeg??this.map.navigation?.defaultMaxSlopeDeg??28);
+      out.push({id:r.id,label:r.label||r.id,maxSlopeDeg:maxSlope,averageSlopeDeg:count?sum/count:0,limit,valid:maxSlope<=limit});
+    }
+    return out;
+  }
+
+  _buildRouteDebug(){
+    while(this.routeDebug.children.length){const c=this.routeDebug.children.pop();c.geometry?.dispose?.();c.material?.dispose?.();}
+    const stats=Object.fromEntries(this._routeStats().map(r=>[r.id,r]));
+    for(const r of this.map?.navigation?.validationRoutes||[]){
+      const pts=[],src=r.points||[];
+      for(let i=0;i<src.length-1;i++){
+        const a=src[i],b=src[i+1],L=Math.hypot(b.x-a.x,b.z-a.z),n=Math.max(1,Math.ceil(L/7));
+        for(let j=0;j<n;j++){const q=j/n,x=a.x+(b.x-a.x)*q,z=a.z+(b.z-a.z)*q;pts.push(new THREE.Vector3(x,this.terrain.heightAt(x,z)+.45,z));}
+      }
+      if(src.length){const a=src.at(-1);pts.push(new THREE.Vector3(a.x,this.terrain.heightAt(a.x,a.z)+.45,a.z));}
+      if(pts.length<2)continue;
+      const g=new THREE.BufferGeometry().setFromPoints(pts),ok=stats[r.id]?.valid!==false,m=new THREE.LineBasicMaterial({color:ok?0x59e38b:0xff5a48,transparent:true,opacity:.9,depthTest:false});
+      const line=new THREE.Line(g,m);line.name=`RouteValidation:${r.id}`;line.renderOrder=20;this.routeDebug.add(line);
+    }
+    this.routeDebug.visible=this._routesVisible;
+  }
+
+  setRoutesVisible(on){this._routesVisible=!!on;if(this.routeDebug)this.routeDebug.visible=this._routesVisible;}
 
   _stats(){
     const w=Number(this.map.size.width),d=Number(this.map.size.depth);
@@ -164,7 +213,10 @@ export class GameTerrainWorkbench{
       visual:clone(this.map.terrain.visual||DEFAULT_VISUAL),
       sourceVersion:FORGERTS_TERRAIN_SOURCE_VERSION,
       experimentalVersion:EXPERIMENTAL_TERRAIN_RENDERER_VERSION,
-      surfaceStats:clone(this.runtimeRenderer?.surfaceStats||null)
+      surfaceStats:clone(this.runtimeRenderer?.surfaceStats||null),
+      samplerMode:this.map.terrain?.landforms?'strategic-landforms':'forgerts-baseline',
+      mapSource:this.mapSource,
+      routeValidation:this._routeStats()
     };
   }
 
