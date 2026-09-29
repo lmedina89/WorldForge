@@ -1,0 +1,33 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import crypto from 'node:crypto';
+const text=p=>fs.readFileSync(new URL('../'+p,import.meta.url),'utf8');
+const bytes=p=>fs.readFileSync(new URL('../'+p,import.meta.url));
+const sha=p=>crypto.createHash('sha256').update(bytes(p)).digest('hex');
+const schema=text('src/core/schema.js');
+const wrapper=text('src/game-terrain/terrain-workbench.js');
+const renderer=text('src/game-terrain/terrain-renderer-v7.js');
+const html=text('index.html');
+const map=JSON.parse(text('assets/game-terrain/worldforge_curated_battlefield.json'));
+const manifest=JSON.parse(text('assets/game-terrain/runtime-sync-manifest.json'));
+
+assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.28'/);
+assert.match(schema,/gameTerrainWorkbench: '0\.8\.0'/);
+assert.match(wrapper,/GAME_TERRAIN_WORKBENCH_VERSION='0\.8\.0'/);
+assert.match(wrapper,/EXPERIMENTAL_TERRAIN_RENDERER_VERSION='0\.7\.0'/);
+assert.match(wrapper,/TerrainRendererV7/);
+assert.match(renderer,/sourceDominant\(/,'V7 must preserve source albedo as the dominant color signal');
+assert.doesNotMatch(renderer,/nearDetail=1\.0-smoothstep\(80\.0,260\.0,dist\)/,'V7 must not suppress albedo color at tactical distance');
+assert.match(renderer,/sourceDominant\(grassSrc,uGrassSourceMean,uGrassTint,\.18\)/);
+assert.match(renderer,/sourceDominant\(dirtSrc,uDirtSourceMean,uDirtTint,\.12\)/);
+assert.match(renderer,/smoothstep\(140\.0,520\.0,dist\)/,'normal detail should survive CLOSE/GROUND range but fade for WIDE');
+assert.match(renderer,/TerrainHeightfieldPBRV7/);
+assert.match(wrapper,/camera\.far=Math\.max\(1800,max\*3\)/,'camera far plane must scale beyond Iron Valley WIDE/TOP distance');
+assert.match(wrapper,/_fitStrategicWide\(aspect,setSpan\)/,'strategic WIDE must use bounds-derived fitting');
+assert.match(wrapper,/const span=Math\.max\(maxY-minY,\(maxX-minX\)\/a\)\*1\.08;setSpan\(span\)/,'wide span must derive from projected map bounds');
+assert.match(wrapper,/setSpan\(Math\.max\(d\*1\.08,w\/a\*1\.08\)\)/,'TOP must fit both map dimensions to the actual viewport aspect');
+assert.match(html,/PBR V7 · SOURCE DETAIL/);
+assert.equal(map.size.width,768);assert.equal(map.size.depth,576);
+// Protected ForgeRTS runtime snapshot must remain byte-identical.
+for(const [file,meta] of Object.entries(manifest.files))assert.equal(sha(file),meta.sha256,`protected runtime snapshot changed: ${file}`);
+console.log(JSON.stringify({ok:true,worldforge:'0.13.28',terrainWorkbench:'0.8.0',renderer:'PBR V7 SOURCE DETAIL',sourceAlbedoDominant:true,boundsFitWide:true,scaledFarPlane:true,protectedForgeRTS:true},null,2));

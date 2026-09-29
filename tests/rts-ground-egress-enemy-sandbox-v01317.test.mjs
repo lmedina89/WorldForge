@@ -7,7 +7,7 @@ const schema=fs.readFileSync(path.join(root,'src/core/schema.js'),'utf8');
 const sk=fs.readFileSync(path.join(root,'src/rts/skirmish-test.js'),'utf8');
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 
-assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.27'/);
+assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.28'/);
 assert.match(schema,/skirmish: '0\.7\.7'/);
 assert.match(schema,/rtsMapForge: '0\.2\.9'/);
 assert.match(sk,/SKIRMISH_VERSION='0\.7\.7'/);
@@ -45,7 +45,7 @@ assert.match(html,/controlled spawn → exit → exterior-staging deployment/);
 
 console.log(JSON.stringify({
   ok:true,
-  worldforge:'0.13.27',
+  worldforge:'0.13.28',
   skirmish:'0.7.7',
   mapForge:'0.2.9',
   controlledFactoryEgress:true,

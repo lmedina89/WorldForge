@@ -1,3 +1,13 @@
+# v0.13.28 — Source Texture Visibility + Camera Frustum Recovery
+
+- Added **PBR V7 · SOURCE DETAIL** as an additive candidate renderer; PBR V6 remains preserved for regression comparison.
+- Poly Haven albedo is now the dominant material color signal. A restrained per-material correction aligns average grass/soil/rock/wet-bank color with the RTS palette without replacing photographic variation.
+- Removed the V6 distance-based albedo suppression. Hardware mipmaps handle distant color detail; only normal-map strength fades with distance.
+- Extended useful normal detail through CLOSE/GROUND inspection distances while fading it before wide tactical views become noisy.
+- Fixed Iron Valley WIDE/TOP clipping by raising the shared camera far plane above the battlefield extent.
+- Replaced the hand-guessed Iron Valley WIDE orthographic span with a bounds-derived fit using the actual 768×576 m map dimensions and sampled terrain height range.
+- Strategic terrain geometry, splat distribution, roads, water, route validation, production GLBs, and the exact ForgeRTS v0.6.6.8 runtime snapshot remain unchanged.
+
 # v0.13.27 — Game Terrain Recovery / PBR V6 RTS Blend
 
 - Replaced the active experimental Game Terrain renderer with `terrain-renderer-v6.js`.

@@ -2,11 +2,11 @@ import * as THREE from 'three';
 import { TerrainSampler } from './terrain-sampler.js';
 import { StrategicTerrainSampler } from './strategic-terrain-sampler.js';
 import { TerrainRenderer } from './terrain-renderer.js';
-import { TerrainRendererV6 } from './terrain-renderer-v6.js';
+import { TerrainRendererV7 } from './terrain-renderer-v7.js';
 
-export const GAME_TERRAIN_WORKBENCH_VERSION='0.7.0';
+export const GAME_TERRAIN_WORKBENCH_VERSION='0.8.0';
 export const FORGERTS_TERRAIN_SOURCE_VERSION='0.6.6.8';
-export const EXPERIMENTAL_TERRAIN_RENDERER_VERSION='0.6.0';
+export const EXPERIMENTAL_TERRAIN_RENDERER_VERSION='0.7.0';
 
 const clone=v=>JSON.parse(JSON.stringify(v));
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,Number(v)));
@@ -135,7 +135,7 @@ export class GameTerrainWorkbench{
     this.terrain=this.map.terrain?.landforms?new StrategicTerrainSampler(this.map):new TerrainSampler(this.map);
     this.runtimeRenderer=this.rendererMode==='current'
       ?new TerrainRenderer({scene:this.runtimeRoot,map:this.map,terrain:this.terrain})
-      :new TerrainRendererV6({scene:this.runtimeRoot,map:this.map,terrain:this.terrain,camera:this.camera,renderer:this.renderer});
+      :new TerrainRendererV7({scene:this.runtimeRoot,map:this.map,terrain:this.terrain,camera:this.camera,renderer:this.renderer});
     await this.runtimeRenderer.build();
     this._buildRouteDebug();
     this._syncPresentationUniforms();
@@ -232,21 +232,48 @@ export class GameTerrainWorkbench{
     this.runtimeRoot.traverse(o=>{if(/^Road(?::|Shoulder:)/.test(o.name||''))o.visible=roads;if(/^River:/.test(o.name||''))o.visible=water;});
   }
 
+  _heightRange(samples=12){
+    const w=this.map.size.width,d=this.map.size.depth;let lo=Infinity,hi=-Infinity;
+    for(let iz=0;iz<=samples;iz++)for(let ix=0;ix<=samples;ix++){
+      const x=-w*.5+w*(ix/samples),z=-d*.5+d*(iz/samples),y=this.terrain.heightAt(x,z);
+      if(Number.isFinite(y)){lo=Math.min(lo,y);hi=Math.max(hi,y);}
+    }
+    if(!Number.isFinite(lo)||!Number.isFinite(hi))return {lo:0,hi:32};
+    return {lo,hi};
+  }
+
+  _fitStrategicWide(aspect,setSpan){
+    const w=this.map.size.width,d=this.map.size.depth,max=Math.max(w,d),a=Math.max(.5,aspect);
+    const {lo,hi}=this._heightRange(14),target=new THREE.Vector3(0,(lo+hi)*.5,0);
+    const direction=new THREE.Vector3(.58,.72,-.58).normalize(),distance=max*.68;
+    this.camera.up.set(0,1,0);this.controls.target.copy(target);this.camera.position.copy(target).addScaledVector(direction,distance);this.camera.lookAt(target);this.camera.updateMatrixWorld(true);
+    const right=new THREE.Vector3().setFromMatrixColumn(this.camera.matrixWorld,0).normalize(),up=new THREE.Vector3().setFromMatrixColumn(this.camera.matrixWorld,1).normalize();
+    let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
+    for(const x of [-w*.5,w*.5])for(const y of [lo,hi])for(const z of [-d*.5,d*.5]){
+      const rel=new THREE.Vector3(x,y,z).sub(target),sx=rel.dot(right),sy=rel.dot(up);minX=Math.min(minX,sx);maxX=Math.max(maxX,sx);minY=Math.min(minY,sy);maxY=Math.max(maxY,sy);
+    }
+    const span=Math.max(maxY-minY,(maxX-minX)/a)*1.08;setSpan(span);
+  }
+
   setView(view='wide',aspect=1.4){
     if(!this.map)return;
     this.view=view;const w=this.map.size.width,d=this.map.size.depth,max=Math.max(w,d),a=Math.max(.5,Number(aspect)||1.4);
     const setSpan=span=>{this.camera.left=-span*a*.5;this.camera.right=span*a*.5;this.camera.top=span*.5;this.camera.bottom=-span*.5;this.camera.zoom=1;this.camera.updateProjectionMatrix();};
-    this.camera.up.set(0,1,0);
+    // The shared WorldForge camera starts with far=400. Iron Valley's old WIDE/TOP
+    // positions exceeded that range and mobile Safari clipped most of the battlefield.
+    this.camera.near=.1;this.camera.far=Math.max(1800,max*3);this.camera.up.set(0,1,0);
     const strategic=!!this.map.terrain?.landforms;
     if(view==='top'){
-      this.camera.up.set(0,0,-1);setSpan(max*1.02);this.controls.target.set(0,0,0);this.camera.position.set(0,max*.92,0);this.camera.lookAt(0,0,0);
+      this.camera.up.set(0,0,-1);setSpan(Math.max(d*1.08,w/a*1.08));this.controls.target.set(0,0,0);this.camera.position.set(0,max*.92,0);this.camera.lookAt(0,0,0);
     }else if(view==='close'){
       setSpan(strategic ? Math.min(max*.27,190) : Math.min(max*.32,210));this.controls.target.set(0,strategic ? 11 : 8,strategic ? -18 : 0);this.camera.position.set(strategic ? 86 : 92,strategic ? 126 : 72,strategic ? 132 : 124);this.camera.lookAt(this.controls.target);
     }else if(view==='ground'){
       setSpan(strategic ? Math.min(max*.18,124) : Math.min(max*.20,135));this.controls.target.set(0,strategic ? 9 : 7,strategic ? 36 : 55);this.camera.position.set(0,strategic ? 34 : 22,strategic ? -118 : -105);this.camera.lookAt(this.controls.target);
+    }else if(strategic){
+      this._fitStrategicWide(a,setSpan);
     }else{
-      setSpan(strategic ? Math.min(max*.73,560) : max*.78);this.controls.target.set(0,strategic ? 10 : 4,strategic ? -10 : 0);this.camera.position.set(max*(strategic ? .24 : .34),max*(strategic ? .58 : .36),-max*(strategic ? .32 : .42));this.camera.lookAt(this.controls.target);
+      setSpan(max*.78);this.controls.target.set(0,4,0);this.camera.position.set(max*.34,max*.36,-max*.42);this.camera.lookAt(this.controls.target);
     }
-    this.controls.update();
+    this.camera.updateProjectionMatrix();this.controls.update();
   }
 }

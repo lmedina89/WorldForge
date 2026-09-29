@@ -1,3 +1,18 @@
+# WorldForge v0.13.28 — Source Detail + Camera Recovery
+
+This is a narrowly scoped GAME TERRAIN follow-up to v0.13.27. It changes only the experimental terrain presentation path and Game Terrain camera framing.
+
+- **PBR V7 · SOURCE DETAIL** keeps the actual Poly Haven albedo visible instead of reducing it to tiny brightness variation under flat palette colors.
+- RTS palette values are now restrained color correction targets, not replacement colors.
+- Normal-map detail remains strongest in CLOSE/GROUND and fades before tactical WIDE distances become noisy.
+- Iron Valley WIDE now derives its orthographic framing from battlefield bounds and terrain height range.
+- The Game Terrain camera far plane now scales to the map, fixing the clipping that could leave only a small strip of terrain visible on iPhone Safari.
+- Iron Valley geometry, splat layout, road/water data, strategic routes, ForgeRTS runtime snapshots, generators, and production GLBs are unchanged.
+
+**Do not port PBR V7 into ForgeRTS until the corrected WIDE/CLOSE/GROUND/TOP views are approved on-device.**
+
+---
+
 # WorldForge v0.13.27 — Game Terrain Recovery
 
 WorldForge v0.13.27 is a focused recovery pass for GAME TERRAIN after the Iron Valley + PBR V5 changes produced poor mobile presentation.

@@ -1,6 +1,6 @@
 # ForgeRTS Terrain Port Plan
 
-Current candidate: **WorldForge PBR V6 · RTS BLEND**.
+Current candidate: **WorldForge PBR V7 · SOURCE DETAIL**.
 
 Do not port yet. First approve WorldForge on the real target device in WIDE/CLOSE/GROUND/TOP.
 
