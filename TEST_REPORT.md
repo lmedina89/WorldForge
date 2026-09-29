@@ -1,4 +1,4 @@
-# WorldForge v0.13.25 Test Report
+# WorldForge v0.13.26 Test Report
 
 ## Curated Strategic Battlefield + Valid Landforms
 
@@ -40,7 +40,7 @@ Open **GAME TERRAIN**; Iron Valley loads automatically. Do not open Advanced Ter
   - `terrain-sampler.js` SHA-256 `d88d3456154a7759e078d1945e36e22714afe810171841a3d68f1f63b0b4b50a`
   - `terrain-renderer.js` SHA-256 `a8d560b49db1652ef5b306b96f66412cd4010480775d0e90e3f7c6d721754c1c`
   - Training Ground map SHA-256 `b7f54a9792e6df5e90b635a7fe02b6d3e6ad3e2bbe5f0dfc6f0eba8e66c9bfc9`
-- Default PBR V4 splat distribution map: **320 × 240** (2 m/texel).
+- Default PBR V5 True Color splat distribution map: **320 × 240** (2 m/texel).
 - Default macro-color map: **80 × 60** (8 m/texel).
 - Poly Haven runtime material files: **13 maps + CC0 note**, all present.
 - Candidate shader uses 15 fragment texture samplers: 2 generated maps + 4 albedo/color + 4 OpenGL normals + 4 ARM + 1 rocky macro; within the WebGL2 minimum 16-sampler budget.
@@ -49,7 +49,7 @@ Open **GAME TERRAIN**; Iron Valley loads automatically. Do not open Advanced Ter
 
 ## Visual acceptance still required
 
-Automated validation does not replace iPhone/Safari inspection. In GAME TERRAIN, compare CURRENT GAME vs PBR V4 in WIDE, CLOSE, GROUND and TOP. Check real-world texture scale, repetition, material transitions, brightness, road integration, riverbank read, normal shimmer and frame rate. ForgeRTS itself remains unchanged until this candidate is approved.
+Automated validation does not replace iPhone/Safari inspection. In GAME TERRAIN, compare CURRENT GAME vs PBR V5 True Color in WIDE, CLOSE, GROUND and TOP. Check real-world texture scale, repetition, material transitions, brightness, road integration, riverbank read, normal shimmer and frame rate. ForgeRTS itself remains unchanged until this candidate is approved.
 
 ---
 

@@ -649,15 +649,15 @@
     },
     "visual": {
       "cellMeters": 4,
-      "macroVariation": 0.08,
-      "normalStrength": 0.7,
-      "surfaceContrast": 1.02,
-      "detailMix": 0.14,
+      "macroVariation": 0.045,
+      "normalStrength": 0.58,
+      "surfaceContrast": 1.0,
+      "detailMix": 0.1,
       "splatCellMeters": 2.0,
       "macroCellMeters": 8,
       "roadBlendMeters": 9,
       "bankWetness": 0.72,
-      "blendDetail": 0.045,
+      "blendDetail": 0.0,
       "wetTileMeters": 2.0,
       "pbrMaterials": {
         "grass": {
@@ -1462,15 +1462,15 @@
     }
   ],
   "environment": {
-    "skyColor": "#aabcc4",
-    "fogColor": "#a4b2b1",
+    "skyColor": "#aebfc5",
+    "fogColor": "#a8b6b5",
     "fogNear": 360,
     "fogFar": 980,
-    "hemisphereSky": "#d9e3e5",
-    "hemisphereGround": "#56614d",
-    "hemisphereIntensity": 1.85,
-    "sunColor": "#fff4dd",
-    "sunIntensity": 1.72,
+    "hemisphereSky": "#dce7e9",
+    "hemisphereGround": "#60675b",
+    "hemisphereIntensity": 1.02,
+    "sunColor": "#fffdf7",
+    "sunIntensity": 1.08,
     "sunDirection": {
       "x": -0.48,
       "y": 1.0,

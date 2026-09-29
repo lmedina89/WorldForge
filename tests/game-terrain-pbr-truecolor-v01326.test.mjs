@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+const renderer=fs.readFileSync(new URL('../src/game-terrain/terrain-renderer-v5.js',import.meta.url),'utf8');
+const map=JSON.parse(fs.readFileSync(new URL('../assets/game-terrain/worldforge_curated_battlefield.json',import.meta.url),'utf8'));
+assert.match(renderer,/#include <colorspace_fragment>/,'custom ShaderMaterial must output through Three color management');
+assert.match(renderer,/#include <tonemapping_fragment>/,'custom ShaderMaterial must honor renderer tone mapping path');
+assert.match(renderer,/LinearMipmapLinearFilter/,'PBR maps need mipmapped minification for RTS camera distances');
+assert.match(renderer,/altUv\(/,'candidate must use non-identical-scale second sample for de-tiling');
+assert.doesNotMatch(renderer,/vec4 edge=vec4\(lum\(grass\)/,'source texel luminance must not mutate splat weights');
+assert.equal(map.terrain.visual.blendDetail,0);
+assert.ok(map.environment.sunIntensity<=1.2,'authored showcase lighting should stay neutral, not burn in a warm 4x sun');
+assert.ok(map.terrain.visual.macroVariation<=0.06,'macro tint must not overwhelm source albedo');
+assert.equal(map.terrain.visual.surfaceContrast,1);
+console.log(JSON.stringify({ok:true,worldforge:'0.13.26',trueColorOutput:true,sourceFaithfulBlend:true,neutralAuthoredLighting:true}));

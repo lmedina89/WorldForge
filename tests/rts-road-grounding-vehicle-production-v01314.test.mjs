@@ -10,7 +10,7 @@ const sk=fs.readFileSync(path.join(root,'src/rts/skirmish-test.js'),'utf8');
 const app=fs.readFileSync(path.join(root,'src/app.js'),'utf8');
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 
-assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.25'/);
+assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.26'/);
 assert.match(schema,/rtsMapForge: '0\.2\.9'/);
 assert.match(schema,/skirmish: '0\.7\.7'/);
 assert.equal(RTS_DEFINITIONS_VERSION,'0.6.1');
@@ -48,4 +48,4 @@ assert.match(html,/BUILD AEGIS-X/);
 assert.match(html,/BUILD HMMWV-50/);
 assert.match(html,/BUILD HARVESTER/);
 
-console.log(JSON.stringify({ok:true,worldforge:'0.13.25',mapForge:'0.2.9',skirmish:'0.7.7',definitions:'0.6.1',roadGrounding:true,vehicleFactoryProduction:true,exactFactoryExitSockets:true},null,2));
+console.log(JSON.stringify({ok:true,worldforge:'0.13.26',mapForge:'0.2.9',skirmish:'0.7.7',definitions:'0.6.1',roadGrounding:true,vehicleFactoryProduction:true,exactFactoryExitSockets:true},null,2));

@@ -1,6 +1,6 @@
-# ForgeRTS terrain port plan — PBR V4
+# ForgeRTS terrain port plan — PBR V5 True Color
 
-1. Approve PBR V4 in WorldForge on iPhone Safari and desktop.
+1. Approve PBR V5 True Color in WorldForge on iPhone Safari and desktop.
 2. Keep ForgeRTS TerrainSampler and all simulation terrain authority unchanged.
 3. Copy the approved PBR renderer + terrain surface generator and the selected 1K runtime texture maps.
 4. Add the approved `terrain.visual` material-set settings to ForgeRTS map loading.

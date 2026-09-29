@@ -1,4 +1,13 @@
-# v0.13.25 — Curated Strategic Battlefield + Valid Landforms
+# v0.13.26 — PBR True-Color / Repetition Correction
+
+- Fixed the custom terrain shader output pipeline so sRGB Poly Haven textures are converted back through Three.js output color space instead of being displayed as raw linear values.
+- Removed V4's warm manual material tints and texture-luminance feedback into splat weights.
+- Replaced same-period fixed-offset pseudo de-tiling with a second irrational-scale sample so repeated 1K material tiles do not form the same obvious grid.
+- Added explicit mipmap filtering and device-capped anisotropy for oblique RTS views.
+- Iron Valley now uses a neutral authored lighting setup; legacy advanced controls remain optional lab overrides rather than the intended showcase look.
+- Strategic landforms, route validation, PBR source assets, existing GLBs, protected generators, and the exact ForgeRTS v0.6.6.8 baseline terrain files remain unchanged.
+
+# v0.13.26 — Curated Strategic Battlefield + Valid Landforms
 
 - Game Terrain Workbench advanced to 0.5.0 and now opens directly on **Iron Valley**, a fixed authored RTS battlefield instead of asking the user to tune a wall of terrain sliders.
 - Added a separate `StrategicTerrainSampler` while preserving the exact ForgeRTS v0.6.6.8 `TerrainSampler` for current-game comparison.
@@ -7,14 +16,14 @@
 - Added authored route validation against the actual terrain sampler. The showcase currently validates six ground routes, including the central mesa ramps and both overlook ramps.
 - Added optional green/red route-debug overlays.
 - Advanced noise/material sliders moved into a collapsed optional section; the showcase is already tuned and requires no slider setup.
-- PBR V4 / Poly Haven material work from v0.13.24 remains intact.
+- PBR V5 True Color / Poly Haven material work from v0.13.24 remains intact.
 - ForgeRTS source terrain files remain unchanged; this is still a WorldForge authoring/proving step before any game port.
 
 # v0.13.24 — Game Terrain PBR Material Foundation
 
 - Game Terrain Workbench advanced to **0.4.0**.
 - CURRENT GAME remains the exact ForgeRTS v0.6.6.8 terrain path.
-- Experimental terrain advanced from SPLAT V3 to **PBR V4**.
+- Experimental terrain advanced from SPLAT V3 to **PBR V5 True Color**.
 - Integrated user-supplied Poly Haven 1K CC0 material sets: Grass Ground, Brown Mud Leaves 01, Rocks Ground 02, Dry River Pebbles, and Rocky Terrain 02.
 - Runtime uses diffuse/color + OpenGL normal + ARM (AO/Rough/Metal) for grass, soil, rock and riverbank.
 - Rocky Terrain 02 is used as large-scale rocky macro breakup rather than a close-detail tile.

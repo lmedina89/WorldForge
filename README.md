@@ -1,12 +1,12 @@
-# WorldForge v0.13.25 — Curated Strategic Battlefield
+# WorldForge v0.13.26 — PBR True-Color Terrain Correction
 
 Game Terrain now defaults to **Iron Valley**, a fixed detailed RTS battlefield with authored plateaus, valleys, mountain passes and validated vehicle ramps. Use GAME TERRAIN directly; the advanced terrain tuning controls are optional and collapsed.
 
 # WorldForge v0.13.24 — Game Terrain PBR Material Foundation
 
-WorldForge now previews the same ForgeRTS heightfield/roads/water with a PBR V4 experimental terrain path using real 1K CC0 Poly Haven ground materials. CURRENT GAME is retained for exact A/B comparison.
+WorldForge now previews the same ForgeRTS heightfield/roads/water with a PBR V5 True Color experimental terrain path using real 1K CC0 Poly Haven ground materials. CURRENT GAME is retained for exact A/B comparison.
 
-## PBR V4 material set
+## PBR V5 True Color material set
 
 - Grass Ground — 2.5 m scan — grass / worn turf
 - Brown Mud Leaves 01 — 1.3 m scan — exposed organic soil
@@ -18,4 +18,4 @@ The live candidate uses diffuse/color, OpenGL normal and ARM maps. Displacement 
 
 ## Safe ForgeRTS workflow
 
-Approve PBR V4 visually and performance-wise in WorldForge first. Then port only the validated renderer/material settings into ForgeRTS. TerrainSampler, pathfinding, passability, water blocking and deterministic gameplay authority remain unchanged.
+Approve PBR V5 True Color visually and performance-wise in WorldForge first. Then port only the validated renderer/material settings into ForgeRTS. TerrainSampler, pathfinding, passability, water blocking and deterministic gameplay authority remain unchanged.

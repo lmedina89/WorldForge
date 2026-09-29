@@ -138,13 +138,13 @@
     <div class="sectionTitle">BATTLEFIELD</div>
     <div class="mapViewButtons"><button id="gameTerrainLoadShowcase" class="active">IRON VALLEY SHOWCASE</button><button id="gameTerrainLoadCurrent">FORGERTS TRAINING GROUND</button></div>
     <div class="sectionTitle">RENDERER A / B</div>
-    <div class="mapViewButtons"><button id="gameTerrainRendererCurrent">LEGACY SURFACE</button><button id="gameTerrainRendererExperimental" class="active">PBR V4</button></div>
+    <div class="mapViewButtons"><button id="gameTerrainRendererCurrent">LEGACY SURFACE</button><button id="gameTerrainRendererExperimental" class="active">PBR V5 · TRUE COLOR</button></div>
     <div class="mapViewButtons"><button id="gameTerrainViewWide">WIDE</button><button id="gameTerrainViewClose">CLOSE</button><button id="gameTerrainViewGround">GROUND</button><button id="gameTerrainViewTop">TOP</button></div>
     <div class="checks"><label><input id="gameTerrainRoads" type="checkbox" checked> Show roads</label><label><input id="gameTerrainWater" type="checkbox" checked> Show water</label></div>
     <div class="checks"><label><input id="gameTerrainRoutes" type="checkbox"> Show validated routes</label><label><input id="gameTerrainWireframe" type="checkbox"> Wireframe audit</label></div>
     <div id="gameTerrainAudit" class="mapScore">Loading route and slope validation…</div>
     <details id="gameTerrainAdvanced">
-      <summary>ADVANCED TERRAIN TUNING · OPTIONAL</summary>
+      <summary>ADVANCED LAB OVERRIDES · OPTIONAL</summary>
       <p class="miniNote">The curated battlefield is already tuned. Open these only when deliberately testing terrain generation parameters.</p>
       <label>Map seed<div class="seedrow"><input id="gameTerrainSeed" type="number" value="842731"><button id="gameTerrainRandomize">↻</button></div></label>
       <div class="sectionTitle">HEIGHTFIELD</div>
@@ -153,12 +153,12 @@
       <label>Noise persistence <input id="gameTerrainPersistence" type="range" min="0.1" max="0.9" step="0.01" value="0.46"><output id="gameTerrainPersistenceOut">0.46</output></label>
       <div class="sectionTitle">MATERIAL / LIGHT</div>
       <div class="cols"><label>Grass tile m<input id="gameTerrainGrassTile" type="number" min="2" max="80" step="1" value="18"></label><label>Dirt tile m<input id="gameTerrainDirtTile" type="number" min="2" max="80" step="1" value="14"></label></div>
-      <div class="cols"><label>Rock tile m<input id="gameTerrainRockTile" type="number" min="2" max="80" step="1" value="12"></label><label>Sun intensity<input id="gameTerrainSunIntensity" type="number" min="0.1" max="5" step="0.05" value="1.72"></label></div>
+      <div class="cols"><label>Rock tile m<input id="gameTerrainRockTile" type="number" min="2" max="80" step="1" value="12"></label><label>Sun intensity<input id="gameTerrainSunIntensity" type="number" min="0.1" max="5" step="0.05" value="1.08"></label></div>
       <div class="cols"><label>Rock starts °<input id="gameTerrainCliffStart" type="number" min="5" max="60" step="1" value="20"></label><label>Rock full °<input id="gameTerrainCliffFull" type="number" min="6" max="75" step="1" value="34"></label></div>
-      <label>Macro color variation <input id="gameTerrainMacroVariation" type="range" min="0" max="0.5" step="0.01" value="0.08"><output id="gameTerrainMacroVariationOut">0.08</output></label>
-      <label>Normal detail <input id="gameTerrainNormalStrength" type="range" min="0" max="1.8" step="0.05" value="0.70"><output id="gameTerrainNormalStrengthOut">0.70</output></label>
-      <label>Surface contrast <input id="gameTerrainSurfaceContrast" type="range" min="0.7" max="1.5" step="0.01" value="1.02"><output id="gameTerrainSurfaceContrastOut">1.02</output></label>
-      <label>Material edge detail <input id="gameTerrainBlendDetail" type="range" min="0" max="0.28" step="0.01" value="0.045"><output id="gameTerrainBlendDetailOut">0.05</output></label>
+      <label>Macro color variation <input id="gameTerrainMacroVariation" type="range" min="0" max="0.5" step="0.01" value="0.045"><output id="gameTerrainMacroVariationOut">0.05</output></label>
+      <label>Normal detail <input id="gameTerrainNormalStrength" type="range" min="0" max="1.8" step="0.05" value="0.58"><output id="gameTerrainNormalStrengthOut">0.58</output></label>
+      <label>Surface contrast <input id="gameTerrainSurfaceContrast" type="range" min="0.7" max="1.5" step="0.01" value="1.00"><output id="gameTerrainSurfaceContrastOut">1.00</output></label>
+      <label>Material edge detail <input id="gameTerrainBlendDetail" type="range" min="0" max="0.28" step="0.01" value="0"><output id="gameTerrainBlendDetailOut">0.00</output></label>
       <label>Road terrain blend m <input id="gameTerrainRoadBlend" type="range" min="2" max="20" step="0.5" value="9"><output id="gameTerrainRoadBlendOut">9.0</output></label>
       <label>River-bank wetness <input id="gameTerrainBankWetness" type="range" min="0" max="1" step="0.02" value="0.72"><output id="gameTerrainBankWetnessOut">0.72</output></label>
       <div class="cols"><label>Splat texel<select id="gameTerrainSplatCell"><option value="3">3 m · light</option><option value="2.5">2.5 m</option><option value="2" selected>2 m · PBR balanced</option></select></label><label>Macro texel<select id="gameTerrainMacroCell"><option value="12">12 m</option><option value="8" selected>8 m</option><option value="6">6 m</option></select></label></div>

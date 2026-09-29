@@ -7,7 +7,7 @@ const sk=fs.readFileSync(path.join(root,'src/rts/skirmish-test.js'),'utf8');
 const schema=fs.readFileSync(path.join(root,'src/core/schema.js'),'utf8');
 const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
 
-assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.25'/);
+assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.26'/);
 assert.match(schema,/skirmish: '0\.7\.7'/);
 assert.match(sk,/SKIRMISH_VERSION='0\.7\.7'/);
 
@@ -45,7 +45,7 @@ assert.match(html,/repeated terrain taps keep the current selection locked/i);
 
 console.log(JSON.stringify({
   ok:true,
-  worldforge:'0.13.25',
+  worldforge:'0.13.26',
   skirmish:'0.7.7',
   stableRepeatedCommands:true,
   deliberateSelectionSwitch:true,
