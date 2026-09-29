@@ -1,39 +1,17 @@
-# WorldForge v0.13.23 — Game Terrain Splat + Macrotexture Foundation
+# WorldForge v0.13.24 — Game Terrain PBR Material Foundation
 
-WorldForge v0.13.23 advances **Game Terrain Workbench to 0.3** and replaces the weak experimental per-vertex three-way terrain blend with a runtime-generated **RGBA splat/distribution map + macro-color map** candidate. Terrain is still data/runtime generated; no terrain GLB is introduced.
+WorldForge now previews the same ForgeRTS heightfield/roads/water with a PBR V4 experimental terrain path using real 1K CC0 Poly Haven ground materials. CURRENT GAME is retained for exact A/B comparison.
 
-The bundled **CURRENT GAME** path remains the exact ForgeRTS v0.6.6.8 `TerrainSampler`, `TerrainRenderer`, and Training Ground map for A/B comparison. **SPLAT V3** uses the same ForgeRTS heightfield, road paths and water paths, but changes only visual surface generation/rendering.
+## PBR V4 material set
 
-## SPLAT V3
+- Grass Ground — 2.5 m scan — grass / worn turf
+- Brown Mud Leaves 01 — 1.3 m scan — exposed organic soil
+- Rocks Ground 02 — 2 m scan — rocky/exposed ground
+- Dry River Pebbles — 2 m scan — riverbank / gravel
+- Rocky Terrain 02 — 90 m scan — large-scale rocky macro breakup
 
-- Runtime RGBA distribution map at 2.5 m/texel by default:
-  - R = healthy/natural grass
-  - G = exposed/compacted dirt
-  - B = rock
-  - A = damp/wet riverbank soil
-- Material distribution is driven by slope, road distance, river distance/moisture, broad exposure fields, and deterministic breakup noise.
-- Road corridors now influence the terrain material map; the old full-width shoulder ribbon is removed from V3. The visible road core uses feathered alpha over the terrain-painted shoulder zone.
-- River edges now paint a separate wet-bank channel and suppress grass immediately beside water.
-- A separate macro-color map creates coherent green, dry, cool and lowland variation at map scale instead of shader sine-wave color breakup.
-- Rock uses triplanar color **and triplanar normal detail**.
-- Added a dedicated derived wet-bank albedo/normal pair.
-- Material edges use a small micro-height-assisted blend while the splat texture remains the authoritative large-scale distribution.
-- Terrain mesh density remains selectable independently from splat-map resolution.
+The live candidate uses diffuse/color, OpenGL normal and ARM maps. Displacement files are intentionally not shipped in the runtime candidate yet.
 
-## Exact-preview correction
+## Safe ForgeRTS workflow
 
-GAME TERRAIN now stays in ForgeRTS native **Y-up** coordinates. This avoids rotating shader normals/projection inside WorldForge and makes slope, texture projection and lighting behavior much closer to the code that will be moved into ForgeRTS.
-
-## Safe boundary
-
-This release does **not** modify the authoritative ForgeRTS gameplay terrain sampler or the copied CURRENT GAME renderer. Gameplay terrain heights, slope queries, roads, water, navigation and passability remain unchanged.
-
-The intended workflow is:
-
-1. Develop and visually approve terrain in **WorldForge → GAME TERRAIN → SPLAT V3**.
-2. Export the ForgeRTS-format map JSON containing the approved `terrain.visual` settings.
-3. Port only `terrain-surface-generator.js` + the approved V3 rendering path into ForgeRTS.
-4. Keep ForgeRTS `TerrainSampler` and gameplay/passability systems unchanged unless a later gameplay requirement explicitly needs a change.
-5. Run ForgeRTS regression/hash tests and compare the same Training Ground map in both projects before promotion.
-
-See `FORGERTS_TERRAIN_PORT_PLAN.md` for the exact integration sequence.
+Approve PBR V4 visually and performance-wise in WorldForge first. Then port only the validated renderer/material settings into ForgeRTS. TerrainSampler, pathfinding, passability, water blocking and deterministic gameplay authority remain unchanged.

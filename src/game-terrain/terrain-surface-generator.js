@@ -67,17 +67,18 @@ export class TerrainSurfaceGenerator{
     const medium=fbm(this.seed+1907,x,z,34,3,.52)*.5+.5;
     const exposure=fbm(this.seed+4409,x,z,170,2,.55)*.5+.5;
 
-    let rock=clamp(rockBase*(.86+medium*.24),0,1);
-    let dirt=clamp(.10 + medium*.23 + Math.max(0,exposure-.52)*.28,0,.62);
-    dirt=clamp(dirt + road*.78 + riverSoil*.62,0,1);
+    let rock=clamp(rockBase*(.88+medium*.20),0,1);
+    const dryBare=smoothstep(.57,.86,medium*.58+exposure*.42)*(1-moisture*.55);
+    let dirt=clamp(.025 + dryBare*.50 + Math.max(0,exposure-.60)*.18,0,.58);
+    dirt=clamp(dirt + road*.86 + riverSoil*.54,0,1);
     wet=clamp(wet*(1-rock*.88),0,1);
     rock=clamp(rock*(1-roadCore*.72)*(1-wet*.55),0,1);
 
     // Roads and wet banks deliberately suppress grass, while broad noise only
     // breaks up the remaining natural cover instead of choosing the material alone.
     let grass=clamp(1-dirt-rock-wet,0,1);
-    grass*=clamp(.82+(broad-.5)*.30+moisture*.18-road*.30-riverSoil*.18,.2,1.15);
-    dirt=clamp(dirt + (1-grass-rock-wet)*.35,0,1);
+    grass*=clamp(.94+(broad-.5)*.20+moisture*.16-road*.42-riverSoil*.20,.18,1.10);
+    dirt=clamp(dirt + (1-grass-rock-wet)*.22,0,1);
 
     const sum=grass+dirt+rock+wet||1;
     return {grass:grass/sum,dirt:dirt/sum,rock:rock/sum,wet:wet/sum,road,roadCore,moisture,slope};
@@ -90,9 +91,9 @@ export class TerrainSurfaceGenerator{
     const s=this.sample(x,z),m=s.moisture;
     // Neutral multiplier is 1.0. This creates coherent green/dry/cool regions
     // without shader sine waves or per-triangle color shifts.
-    let r=1+(dry-.5)*.13-(lush-.5)*.07-m*.045+(low-.5)*.025;
-    let g=1-(dry-.5)*.075+(lush-.5)*.12+m*.025+(low-.5)*.015;
-    let b=1-(dry-.5)*.13+(lush-.5)*.035+m*.065-(low-.5)*.015;
+    let r=1+(dry-.5)*.085-(lush-.5)*.045-m*.030+(low-.5)*.018;
+    let g=1-(dry-.5)*.050+(lush-.5)*.080+m*.018+(low-.5)*.012;
+    let b=1-(dry-.5)*.080+(lush-.5)*.024+m*.040-(low-.5)*.010;
     return [clamp(r,.76,1.24),clamp(g,.76,1.24),clamp(b,.76,1.24),clamp(m,0,1)];
   }
 

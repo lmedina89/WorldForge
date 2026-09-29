@@ -1,27 +1,27 @@
 import * as THREE from 'three';
 import { TerrainSampler } from './terrain-sampler.js';
 import { TerrainRenderer } from './terrain-renderer.js';
-import { TerrainRendererV3 } from './terrain-renderer-v3.js';
+import { TerrainRendererV4 } from './terrain-renderer-v4.js';
 
-export const GAME_TERRAIN_WORKBENCH_VERSION='0.3.0';
+export const GAME_TERRAIN_WORKBENCH_VERSION='0.4.0';
 export const FORGERTS_TERRAIN_SOURCE_VERSION='0.6.6.8';
-export const EXPERIMENTAL_TERRAIN_RENDERER_VERSION='0.2.0';
+export const EXPERIMENTAL_TERRAIN_RENDERER_VERSION='0.3.0';
 
 const clone=v=>JSON.parse(JSON.stringify(v));
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,Number(v)));
 
 const DEFAULT_VISUAL=Object.freeze({
   cellMeters:4,
-  macroVariation:.22,
-  normalStrength:.95,
-  surfaceContrast:1.06,
-  detailMix:.22,
-  splatCellMeters:2.5,
+  macroVariation:.14,
+  normalStrength:.82,
+  surfaceContrast:1.00,
+  detailMix:.18,
+  splatCellMeters:2.0,
   macroCellMeters:8,
   roadBlendMeters:8,
   bankWetness:.82,
-  blendDetail:.12,
-  wetTileMeters:11
+  blendDetail:.06,
+  wetTileMeters:2.0
 });
 
 function disposeObject(root){
@@ -126,7 +126,7 @@ export class GameTerrainWorkbench{
     this.terrain=new TerrainSampler(this.map);
     this.runtimeRenderer=this.rendererMode==='current'
       ?new TerrainRenderer({scene:this.runtimeRoot,map:this.map,terrain:this.terrain})
-      :new TerrainRendererV3({scene:this.runtimeRoot,map:this.map,terrain:this.terrain,camera:this.camera});
+      :new TerrainRendererV4({scene:this.runtimeRoot,map:this.map,terrain:this.terrain,camera:this.camera});
     await this.runtimeRenderer.build();
     this._syncPresentationUniforms();
     this._applyVisibility();
@@ -146,6 +146,8 @@ export class GameTerrainWorkbench{
   _disposeRuntime(){
     if(this.runtimeRenderer?.textures)for(const t of this.runtimeRenderer.textures.values())t?.dispose?.();
     if(this.runtimeRenderer?.normalTextures)for(const t of this.runtimeRenderer.normalTextures.values())t?.dispose?.();
+    if(this.runtimeRenderer?.armTextures)for(const t of this.runtimeRenderer.armTextures.values())t?.dispose?.();
+    this.runtimeRenderer?.rockMacroTexture?.dispose?.();
     if(this.runtimeRenderer?.generatedTextures)for(const t of this.runtimeRenderer.generatedTextures)t?.dispose?.();
     while(this.runtimeRoot.children.length){const c=this.runtimeRoot.children[this.runtimeRoot.children.length-1];this.runtimeRoot.remove(c);disposeObject(c);}
     this.runtimeRenderer=null;this.terrain=null;

@@ -1,3 +1,7 @@
+# Terrain material note
+
+WorldForge v0.13.24 bundles selected Poly Haven 1K ground textures supplied by the project owner. Poly Haven texture downloads are CC0. See `assets/terrain/polyhaven/POLYHAVEN_CC0.md` for the runtime set.
+
 # Asset attribution
 
 ## Included Vehicle Baker benchmark

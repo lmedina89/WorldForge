@@ -1,3 +1,16 @@
+# v0.13.24 — Game Terrain PBR Material Foundation
+
+- Game Terrain Workbench advanced to **0.4.0**.
+- CURRENT GAME remains the exact ForgeRTS v0.6.6.8 terrain path.
+- Experimental terrain advanced from SPLAT V3 to **PBR V4**.
+- Integrated user-supplied Poly Haven 1K CC0 material sets: Grass Ground, Brown Mud Leaves 01, Rocks Ground 02, Dry River Pebbles, and Rocky Terrain 02.
+- Runtime uses diffuse/color + OpenGL normal + ARM (AO/Rough/Metal) for grass, soil, rock and riverbank.
+- Rocky Terrain 02 is used as large-scale rocky macro breakup rather than a close-detail tile.
+- PBR material scales follow the source scan sizes: grass 2.5 m, organic soil 1.3 m, rocky ground 2 m, river pebbles 2 m; rocky macro 90 m.
+- Reduced blanket dirt weighting in the procedural splat generator and tightened macro tint so authored PBR colors remain recognizable.
+- Added environment hemisphere intensity to the candidate terrain lighting instead of discarding it.
+- Existing WorldForge production GLBs and ForgeRTS runtime snapshots remain unchanged.
+
 # v0.13.23 — Game Terrain Splat + Macrotexture Foundation
 
 - Game Terrain Workbench advanced to **0.3.0**.
