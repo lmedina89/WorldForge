@@ -2,11 +2,11 @@ import * as THREE from 'three';
 import { TerrainSampler } from './terrain-sampler.js';
 import { StrategicTerrainSampler } from './strategic-terrain-sampler.js';
 import { TerrainRenderer } from './terrain-renderer.js';
-import { TerrainRendererV8 } from './terrain-renderer-v8.js';
+import { TerrainRendererV9 } from './terrain-renderer-v9.js';
 
-export const GAME_TERRAIN_WORKBENCH_VERSION='0.9.0';
+export const GAME_TERRAIN_WORKBENCH_VERSION='0.10.0';
 export const FORGERTS_TERRAIN_SOURCE_VERSION='0.6.6.8';
-export const EXPERIMENTAL_TERRAIN_RENDERER_VERSION='0.8.0';
+export const EXPERIMENTAL_TERRAIN_RENDERER_VERSION='0.9.0';
 
 const clone=v=>JSON.parse(JSON.stringify(v));
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,Number(v)));
@@ -135,7 +135,7 @@ export class GameTerrainWorkbench{
     this.terrain=this.map.terrain?.landforms?new StrategicTerrainSampler(this.map):new TerrainSampler(this.map);
     this.runtimeRenderer=this.rendererMode==='current'
       ?new TerrainRenderer({scene:this.runtimeRoot,map:this.map,terrain:this.terrain})
-      :new TerrainRendererV8({scene:this.runtimeRoot,map:this.map,terrain:this.terrain,camera:this.camera,renderer:this.renderer});
+      :new TerrainRendererV9({scene:this.runtimeRoot,map:this.map,terrain:this.terrain,camera:this.camera,renderer:this.renderer});
     await this.runtimeRenderer.build();
     this._buildRouteDebug();
     this._syncPresentationUniforms();

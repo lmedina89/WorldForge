@@ -1,7 +1,7 @@
 # ForgeRTS Terrain Port Plan
 
-Current candidate: **WorldForge PBR V8 · DIRECT SOURCE**.
+Current WorldForge visual candidate: **PBR V9 · ROAD RECOVERY**.
 
-Do not port yet. First approve WorldForge on the real target device in WIDE/CLOSE/GROUND/TOP on both Iron Valley and the ForgeRTS Training Ground.
+V9 is still a WorldForge evaluation renderer only. Do **not** port it into ForgeRTS until the target-device views are approved.
 
-When approved, port only validated presentation pieces: source/normal scale separation, material blend tuning, road shoulder/core presentation, and lighting/material parameters. Keep the ForgeRTS v0.6.6.8 TerrainSampler, gameplay height authority, pathfinding, passability, slope rules, water blocking, deterministic simulation, and map contract unchanged unless a separate gameplay change is explicitly approved.
+The v0.13.30 change is road-presentation-only: V8 terrain remains protected, ForgeRTS runtime-sync files remain byte-identical, and authored road geometry remains unchanged. If approved, port the compacted-earth road presentation and non-accumulating road-core blending as a separate rendering change rather than modifying navigation, terrain sampling, passability or road centerlines.

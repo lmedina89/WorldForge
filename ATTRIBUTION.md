@@ -16,3 +16,7 @@ WorldForge v0.13.24 bundles selected Poly Haven 1K ground textures supplied by t
 The included benchmark remains subject to CC BY 4.0. For compatibility with WorldForge's current Three.js runtime, its archived specular/glossiness material declarations were mapped to standard glTF metallic/roughness declarations. Geometry, node hierarchy, embedded textures, and the original animation data are preserved. The conversion is only a format/runtime compatibility adjustment; it does not change the attribution or license.
 
 Preserve this attribution when redistributing the included benchmark model.
+
+## v0.13.30 compacted-road derivative
+
+`assets/terrain/road_compacted_dirt.png` and `road_compacted_dirt_normal.png` are deterministic project-generated derivatives using the existing WorldForge road-shoulder material plus bundled Poly Haven CC0 dirt/pebble detail. No additional external asset or license was introduced.

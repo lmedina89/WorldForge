@@ -1,33 +1,25 @@
-# Game Terrain Workbench 0.9 — Direct-Source Terrain
+# Game Terrain Workbench 0.10 — Road Recovery
 
-## Purpose
+Active experimental renderer: **PBR V9 · ROAD RECOVERY**.
 
-GAME TERRAIN remains a WorldForge proving environment. It does not change ForgeRTS gameplay terrain authority.
+V9 subclasses the protected V8 renderer. Terrain albedo, normal/ARM detail, splat weights, macro variation, strategic landforms, water, and camera framing remain V8 behavior.
 
-## Current candidate
+## Road-specific correction
 
-**PBR V8 · DIRECT SOURCE** fixes the main v0.13.28 failure: the Poly Haven albedo was technically loaded, but it was tiled at approximately physical scan scale (1.3–2.5 m). At a 200–600 m RTS view that creates dozens to hundreds of repetitions across the screen, so mipmapping averages the source into smooth color.
+The v0.13.29 road center used a very dark asphalt texture plus the same feather alpha map used by the road edge. At bends/intersections, transparent road fragments could overlap and visually accumulate into darker blotches. V9 keeps the existing feathered shoulder but makes the core fully opaque within the transparent render queue, so one road segment overwrites another rather than darkening it.
 
-V8 uses separate scales:
-- grass overview albedo: 18 m; physical normal/ARM detail: 2.5 m
-- dirt overview albedo: 14 m; physical normal/ARM detail: 1.3 m
-- rock overview albedo: 12 m; physical normal/ARM detail: 2.0 m
-- wet-bank overview albedo: 10 m; physical normal/ARM detail: 2.0 m
+The preview uses `assets/terrain/road_compacted_dirt.png` and its matching normal map for roads authored with the legacy asphalt surface. This substitution is renderer-only; bundled ForgeRTS and Iron Valley map JSON is unchanged.
 
-The source photograph is the dominant color/detail signal. Palette correction is deliberately restrained.
+### Protected from v0.13.29
 
-## Roads
+- V8 terrain renderer source
+- Poly Haven terrain source assets
+- road centerlines and widths
+- road shoulder texture/normal and feather profile
+- Iron Valley heightfield/landforms/routes
+- ForgeRTS Training Ground runtime-sync files
+- rivers and bank transitions
 
-V7 dropped authored shoulder meshes and widened the dark road core. V8 restores `road.shoulder`, restores the exact authored road width, retains soft edge alpha, and keeps stable positive/polygon offsets for mobile WebGL.
+### Device check
 
-## Camera
-
-WIDE uses projected map bounds for both Iron Valley and the 640×480 ForgeRTS Training Ground. CLOSE/GROUND keep more battlefield context instead of filling the viewport with one road strip.
-
-## Protected systems
-
-ForgeRTS v0.6.6.8 TerrainSampler/TerrainRenderer/Training Ground remain byte-identical. Iron Valley strategic geometry, six validated routes, splat generation, source PBR assets, generators, and production GLBs are unchanged.
-
-## Device check
-
-Check **PBR V8 · DIRECT SOURCE** in WIDE first, then CLOSE/GROUND, then TOP. Verify visible grass/soil/rock texture structure, readable shoulders/road core, full-map WIDE framing, and no shimmer/z-fighting.
+Check CLOSE first. Inspect straight road, a bend, an intersection, and a road next to grass/river-bank terrain. The center should stay consistently compacted-earth colored with no black overlap blocks. The existing mottled green/brown shoulder transition should remain intact.

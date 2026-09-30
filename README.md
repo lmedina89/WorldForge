@@ -1,12 +1,17 @@
-# WorldForge v0.13.29 — Direct-Source Terrain Recovery
+# WorldForge v0.13.30 — Battlefield Road Core Recovery
 
-This is a narrowly scoped GAME TERRAIN correction built from v0.13.28. It changes only the experimental Game Terrain renderer, road presentation, and Game Terrain camera framing.
+This build is deliberately narrow. **The v0.13.29 V8 terrain is protected.** The only visual target is the inconsistent dark road core seen on iPhone Safari.
 
-- **PBR V8 · DIRECT SOURCE** keeps the actual Poly Haven photographs readable at RTS camera distance instead of repeating 1–3 m albedo tiles hundreds of times until they average into flat color.
-- Source albedo now uses RTS-readable overview scales: grass 18 m, dirt 14 m, rock 12 m, wet bank 10 m. Physical scan scale remains reserved for normal/ARM detail.
-- V7's gain-based `sourceDominant` recoloring is removed. Palette correction is restrained; the source photograph remains the dominant color/detail signal.
-- Road shoulders are restored. Road surfaces use the authored road width rather than the V7 widened black strip. Stable positive offsets and polygon offset remain for mobile WebGL.
-- WIDE now uses bounds-derived fitting for **both** Iron Valley and the ForgeRTS Training Ground. CLOSE/GROUND are less excessively zoomed.
-- The exact ForgeRTS v0.6.6.8 terrain runtime snapshot, Training Ground map, Iron Valley strategic geometry/routes, source PBR assets, generators, and production GLBs remain unchanged.
+## What changed
 
-**Do not port PBR V8 into ForgeRTS until the target-device views are visually approved.**
+- **PBR V9 · ROAD RECOVERY** inherits V8 unchanged for terrain.
+- Road edges/shoulders that already looked good are preserved.
+- The road center is now a compacted dirt/gravel presentation instead of the dark asphalt-like ribbon.
+- Road-core alpha feathering was removed so overlapping bends/junctions cannot stack transparency into black patches.
+- Road paths, widths, shoulders, terrain heights and ForgeRTS map data are unchanged.
+
+## Test order on iPhone
+
+Open **GAME TERRAIN → IRON VALLEY SHOWCASE → PBR V9 · ROAD RECOVERY → CLOSE** and inspect long straight sections, bends, T-junctions and road/river-adjacent areas. Then check WIDE and the ForgeRTS Training Ground. The road should remain consistently earthy through bends instead of alternating between good soil-colored sections and black smears.
+
+Do not evaluate future Iron Valley expansion from this patch. The expanded main-world map will be designed separately after this road baseline is accepted.
