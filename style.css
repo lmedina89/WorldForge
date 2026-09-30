@@ -53,6 +53,7 @@ body.playtest .hint{bottom:14px}
 .mapViewButtons{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:7px 0}
 .mapViewButtons button{background:#121b16;border:1px solid var(--line);color:#c8d8ce;padding:9px;font-size:10px}
 .mapViewButtons button.active{background:#294636;color:#effff5;border-color:#5d8b70}
+.mapViewButtons .wideButton{grid-column:1/-1}
 .mapScore{border:1px solid #30483a;background:#0d1511;padding:9px;color:#b9c9bf;font-size:10px;line-height:1.5;margin:8px 0}
 #mapMinimapWrap{position:absolute;right:14px;bottom:34px;z-index:3;width:min(180px,27vw);aspect-ratio:1;border:1px solid rgba(220,235,225,.45);background:rgba(7,11,9,.82);padding:5px;pointer-events:auto}
 #mapMinimapWrap canvas{width:100%!important;height:100%!important;image-rendering:auto;touch-action:none}

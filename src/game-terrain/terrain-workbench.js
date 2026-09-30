@@ -4,7 +4,7 @@ import { StrategicTerrainSampler } from './strategic-terrain-sampler.js';
 import { TerrainRenderer } from './terrain-renderer.js';
 import { TerrainRendererV9 } from './terrain-renderer-v9.js';
 
-export const GAME_TERRAIN_WORKBENCH_VERSION='0.10.0';
+export const GAME_TERRAIN_WORKBENCH_VERSION='0.11.0';
 export const FORGERTS_TERRAIN_SOURCE_VERSION='0.6.6.8';
 export const EXPERIMENTAL_TERRAIN_RENDERER_VERSION='0.9.0';
 
@@ -70,6 +70,14 @@ export class GameTerrainWorkbench{
     if(!res.ok)throw new Error(`Curated battlefield load failed (${res.status})`);
     const map=await res.json();this._validateMap(map);
     this.baselineMap=clone(map);this.map=clone(map);this.mapSource='showcase';this._ensureVisual();this.loaded=true;
+    return this.rebuild();
+  }
+
+  async loadWorld(){
+    const res=await fetch('assets/game-terrain/worldforge_greater_iron_valley.json',{cache:'no-cache'});
+    if(!res.ok)throw new Error(`Greater Iron Valley load failed (${res.status})`);
+    const map=await res.json();this._validateMap(map);
+    this.baselineMap=clone(map);this.map=clone(map);this.mapSource='world';this._ensureVisual();this.loaded=true;
     return this.rebuild();
   }
 
@@ -216,6 +224,9 @@ export class GameTerrainWorkbench{
       surfaceStats:clone(this.runtimeRenderer?.surfaceStats||null),
       samplerMode:this.map.terrain?.landforms?'strategic-landforms':'forgerts-baseline',
       mapSource:this.mapSource,
+      worldSectors:(this.map.world?.sectors||[]).length,
+      worldRegions:(this.map.world?.regions||[]).length,
+      biomeZones:(this.map.terrain?.biomeZones||[]).length,
       routeValidation:this._routeStats()
     };
   }

@@ -1,22 +1,37 @@
-# WorldForge v0.13.30 Test Report
+# WorldForge v0.13.31 Test Report
 
-Scope: road-core presentation only.
+Scope: **Greater Iron Valley 0.1 — Regional Skeleton**, built on the protected v0.13.30 V8 terrain / V9 road baseline.
 
-## Passed
+## Current milestone regression — PASS
 
-- `game-terrain-road-recovery-v01330.test.mjs`
-  - V8 terrain renderer byte-identical to v0.13.29
-  - road centerline/width/shoulder geometry hashes unchanged for Iron Valley and ForgeRTS Training Ground
-  - road shoulder texture + normal byte-identical to v0.13.29
-  - V9 inherits V8
-  - renderer-only compacted-dirt substitution present
-  - road core no longer uses the feather alpha map
-  - road core remains authored width
-  - shoulder geometry/feather path preserved
+- `tests/game-terrain-greater-iron-valley-v01331.test.mjs`
+  - 2048×1536 world dimensions
+  - 12 exact 512×512 logical world sectors
+  - 9 named regions / 8 biome masks
+  - no new placed buildings, players, mission triggers or mission AI anchors
+  - V8 terrain renderer hash unchanged
+  - V9 road renderer hash unchanged
+  - protected `terrain-sampler.js` hash unchanged
+  - original Iron Valley benchmark map hash unchanged
+  - ForgeRTS Training Ground map hash unchanged
+  - compacted-road + shoulder assets unchanged
   - protected ForgeRTS runtime-sync manifest hashes pass
+  - original Iron Valley ridges / valleys / plateaus / pads / ramps remain exact in the new world data
+  - first six world roads are the exact original Iron Valley roads
+  - first world river is the exact original South Creek
+  - full 768×576 protected rectangle has zero sampled raw/final height delta; a 4 m inset has zero derived slope, splat-weight and macro-tint delta
+  - historical v0.13.30 benchmark surface sample hash still reproduces exactly
+  - major regional road branches use explicit shared junction nodes rather than accidental grade-crossings
+  - all 17 legacy/world validation routes remain below their authored slope limits
+  - Blackstone / Eastmere / Westfield / Red Mesa material-family assertions pass
 
-- JavaScript/MJS syntax validation across the project.
+- JavaScript/MJS syntax validation: **99 files passed `node --check`**.
+- `game-terrain-strategic-battlefield-v01325.test.mjs` and `game-terrain-pbr-truecolor-v01326.test.mjs` also pass against the protected map/material foundation.
+
+## Historical test-suite note
+
+The repository intentionally carries many old version-pinned regression files. Some assert an older `WORLDFORGE_VERSION`, while others import sibling historical source folders such as `/mnt/data/worldforge-v0.8.0` that are not part of a GitHub-ready ZIP. Those are archival regression fixtures, so running every historical test unchanged is not a valid current-release gate. The v0.13.31 focused regression, protected hashes, current strategic-terrain checks and project-wide syntax checks pass.
 
 ## Visual limitation
 
-The container does not provide a trustworthy iPhone Safari/WebGL visual pass. Final road appearance must be judged on the target device. No claim is made that the road is visually approved until that check is completed.
+The container cannot provide a trustworthy iPhone Safari/WebGL pass because this project imports Three.js from the CDN and the execution environment cannot reproduce the target mobile browser/GPU path. Final world composition, biome readability and target-device performance still require the iPhone check.

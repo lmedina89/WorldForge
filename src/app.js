@@ -586,14 +586,15 @@ function updateGameTerrainUi(info=gameTerrainWorkbench.info){
   if(info.samplerMode==='strategic-landforms'){
     const worst=routes.length?routes.reduce((a,b)=>a.maxSlopeDeg>b.maxSlopeDeg?a:b):null;
     const routeLines=routes.map(r=>`${r.valid?'✓':'✕'} ${r.label}: ${r.maxSlopeDeg.toFixed(1)}° / ${r.limit.toFixed(0)}°`).join('<br>');
-    $('gameTerrainAudit').innerHTML=`<b>IRON VALLEY · AUTHORED STRATEGIC LANDFORMS</b><br>${valid}/${routes.length} validated vehicle routes · plateaus + terraces + explicit graded ramps + valley corridors${worst?` · worst sampled route slope ${worst.maxSlopeDeg.toFixed(1)}°`:''}.<br>${routeLines}`;
+    if(info.mapSource==='world')$('gameTerrainAudit').innerHTML=`<b>GREATER IRON VALLEY · REGIONAL SKELETON 0.1</b><br>${info.width}×${info.depth} m · ${info.worldRegions} named regions · ${info.biomeZones} biome masks · ${info.worldSectors} future streaming sectors · protected central Iron Valley benchmark.<br>${valid}/${routes.length} validated vehicle routes${worst?` · worst sampled route slope ${worst.maxSlopeDeg.toFixed(1)}°`:''}.<br>${routeLines}`;
+    else $('gameTerrainAudit').innerHTML=`<b>IRON VALLEY · AUTHORED STRATEGIC LANDFORMS</b><br>${valid}/${routes.length} validated vehicle routes · plateaus + terraces + explicit graded ramps + valley corridors${worst?` · worst sampled route slope ${worst.maxSlopeDeg.toFixed(1)}°`:''}.<br>${routeLines}`;
   }else{
     $('gameTerrainAudit').innerHTML=experimental
       ?`<b>PBR V9 ROAD RECOVERY · FORGERTS TRAINING GROUND</b><br>Poly Haven 1K CC0 grass/soil/rock/riverbank PBR · RGBA splat + macro maps · triplanar rocky ground · seed ${info.seed}.`
       :`<b>CURRENT FORGERTS TRAINING GROUND</b><br>ForgeRTS ${FORGERTS_TERRAIN_SOURCE_VERSION} TerrainSampler + TerrainRenderer · current per-vertex grass/dirt/rock shader · seed ${info.seed}.`;
   }
   $('gameTerrainRendererCurrent').classList.toggle('active',!experimental);$('gameTerrainRendererExperimental').classList.toggle('active',experimental);
-  $('gameTerrainLoadShowcase').classList.toggle('active',info.mapSource==='showcase');$('gameTerrainLoadCurrent').classList.toggle('active',info.mapSource==='forgerts');
+  $('gameTerrainLoadWorld').classList.toggle('active',info.mapSource==='world');$('gameTerrainLoadShowcase').classList.toggle('active',info.mapSource==='showcase');$('gameTerrainLoadCurrent').classList.toggle('active',info.mapSource==='forgerts');
   $('modeLabel').textContent='GAME TERRAIN';$('seedLabel').textContent=String(info.seed);
 }
 function applyGameTerrainEnvironment(){
@@ -623,11 +624,12 @@ async function activateGameTerrainMode(){
   showMode('gameterrain');
   try{
     if(!gameTerrainWorkbench.hasMap()){
-      $('status').textContent='Loading curated Iron Valley battlefield…';
-      const info=await gameTerrainWorkbench.loadShowcase();syncGameTerrainInputs();updateGameTerrainUi(info);
+      $('status').textContent='Loading Greater Iron Valley regional skeleton…';
+      const info=await gameTerrainWorkbench.loadWorld();syncGameTerrainInputs();updateGameTerrainUi(info);
     }
     applyGameTerrainEnvironment();gameTerrainWorkbench.setRoadsVisible($('gameTerrainRoads').checked);gameTerrainWorkbench.setWaterVisible($('gameTerrainWater').checked);gameTerrainWorkbench.setRoutesVisible($('gameTerrainRoutes').checked);gameTerrainWorkbench.setWireframe($('gameTerrainWireframe').checked);setGameTerrainView(gameTerrainWorkbench.view||'wide');
-    $('status').textContent=`Game Terrain Workbench ${GAME_TERRAIN_WORKBENCH_VERSION} ready · ${gameTerrainWorkbench.mapSource==='showcase'?'Iron Valley curated battlefield':'ForgeRTS training ground'} · ${gameTerrainWorkbench.getRendererMode()==='experimental'?'PBR V9 road-recovery':'legacy surface'}.`;
+    const label=gameTerrainWorkbench.mapSource==='world'?'Greater Iron Valley 0.1':gameTerrainWorkbench.mapSource==='showcase'?'Iron Valley benchmark':'ForgeRTS training ground';
+    $('status').textContent=`Game Terrain Workbench ${GAME_TERRAIN_WORKBENCH_VERSION} ready · ${label} · ${gameTerrainWorkbench.getRendererMode()==='experimental'?'PBR V9 road-recovery':'legacy surface'}.`;
   }catch(err){$('status').textContent='Game terrain load failed: '+err.message;}
 }
 function gameTerrainBaseName(){const m=gameTerrainWorkbench.map||{};return `${m.id||'forgerts_map'}_terrain_${m.seed||1}`;}
@@ -748,7 +750,8 @@ $('gameTerrainWireframe').onchange=()=>gameTerrainWorkbench.setWireframe($('game
 $('gameTerrainRoads').onchange=()=>gameTerrainWorkbench.setRoadsVisible($('gameTerrainRoads').checked);
 $('gameTerrainWater').onchange=()=>gameTerrainWorkbench.setWaterVisible($('gameTerrainWater').checked);
 $('gameTerrainRoutes').onchange=()=>gameTerrainWorkbench.setRoutesVisible($('gameTerrainRoutes').checked);
-$('gameTerrainLoadShowcase').onclick=async()=>{try{$('status').textContent='Loading Iron Valley curated battlefield…';const info=await gameTerrainWorkbench.loadShowcase();syncGameTerrainInputs();updateGameTerrainUi(info);applyGameTerrainEnvironment();gameTerrainWorkbench.setRoadsVisible($('gameTerrainRoads').checked);gameTerrainWorkbench.setWaterVisible($('gameTerrainWater').checked);gameTerrainWorkbench.setRoutesVisible($('gameTerrainRoutes').checked);gameTerrainWorkbench.setWireframe($('gameTerrainWireframe').checked);setGameTerrainView('wide');$('status').textContent='Iron Valley loaded · authored plateaus, valleys, graded ramps and validated vehicle routes.';}catch(err){$('status').textContent='Curated battlefield load failed: '+err.message;}};
+$('gameTerrainLoadWorld').onclick=async()=>{try{$('status').textContent='Loading Greater Iron Valley regional skeleton…';const info=await gameTerrainWorkbench.loadWorld();syncGameTerrainInputs();updateGameTerrainUi(info);applyGameTerrainEnvironment();gameTerrainWorkbench.setRoadsVisible($('gameTerrainRoads').checked);gameTerrainWorkbench.setWaterVisible($('gameTerrainWater').checked);gameTerrainWorkbench.setRoutesVisible($('gameTerrainRoutes').checked);gameTerrainWorkbench.setWireframe($('gameTerrainWireframe').checked);setGameTerrainView('wide');$('status').textContent='Greater Iron Valley 0.1 loaded · 2048×1536 regional skeleton · protected central benchmark · biome regions + regional roads + world routes.';}catch(err){$('status').textContent='Greater Iron Valley load failed: '+err.message;}};
+$('gameTerrainLoadShowcase').onclick=async()=>{try{$('status').textContent='Loading protected Iron Valley benchmark…';const info=await gameTerrainWorkbench.loadShowcase();syncGameTerrainInputs();updateGameTerrainUi(info);applyGameTerrainEnvironment();gameTerrainWorkbench.setRoadsVisible($('gameTerrainRoads').checked);gameTerrainWorkbench.setWaterVisible($('gameTerrainWater').checked);gameTerrainWorkbench.setRoutesVisible($('gameTerrainRoutes').checked);gameTerrainWorkbench.setWireframe($('gameTerrainWireframe').checked);setGameTerrainView('wide');$('status').textContent='Iron Valley benchmark loaded · protected v0.13.30 terrain + roads for A/B comparison.';}catch(err){$('status').textContent='Curated battlefield load failed: '+err.message;}};
 $('gameTerrainLoadCurrent').onclick=async()=>{try{$('status').textContent='Loading current ForgeRTS Training Ground…';const info=await gameTerrainWorkbench.loadBundled();syncGameTerrainInputs();updateGameTerrainUi(info);applyGameTerrainEnvironment();gameTerrainWorkbench.setRoadsVisible($('gameTerrainRoads').checked);gameTerrainWorkbench.setWaterVisible($('gameTerrainWater').checked);gameTerrainWorkbench.setRoutesVisible(false);$('gameTerrainRoutes').checked=false;gameTerrainWorkbench.setWireframe($('gameTerrainWireframe').checked);setGameTerrainView('wide');$('status').textContent='Current ForgeRTS Training Ground loaded for comparison.';}catch(err){$('status').textContent='ForgeRTS map load failed: '+err.message;}};
 $('gameTerrainImport').onclick=()=>$('gameTerrainFile').click();
 $('gameTerrainFile').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;try{$('status').textContent=`Loading ForgeRTS map ${file.name}…`;const info=await gameTerrainWorkbench.loadFile(file);syncGameTerrainInputs();updateGameTerrainUi(info);applyGameTerrainEnvironment();gameTerrainWorkbench.setRoutesVisible($('gameTerrainRoutes').checked);setGameTerrainView('wide');$('status').textContent=`Loaded ${file.name} through the exact ForgeRTS terrain runtime.`;}catch(err){$('status').textContent='Game terrain map import failed: '+err.message;}e.target.value='';};

@@ -49,23 +49,98 @@ function ridgeContribution(x,z,item){
   return (item.height??0)*taper*cross*passFactor;
 }
 
+function rectProtection(x,z,item){
+  const hw=Math.max(0,(item.width??0)*.5),hd=Math.max(0,(item.depth??0)*.5),dx=Math.max(Math.abs(x-(item.x??0))-hw,0),dz=Math.max(Math.abs(z-(item.z??0))-hd,0);
+  if(dx===0&&dz===0)return 1;
+  const feather=Math.max(0,item.feather??0);if(feather<=0)return 0;
+  return 1-smoothstep(0,feather,Math.hypot(dx,dz));
+}
+
 export class StrategicTerrainSampler extends TerrainSampler{
   constructor(map){
     super(map);
     this.landforms=map.terrain?.landforms||{};
     this._valleys=(this.landforms.valleys||[]).map(v=>({...v,_path:preparePath(v.points||[])}));
     this._ramps=(this.landforms.ramps||[]).map(v=>({...v,_path:preparePath(v.points||[])}));
+    this.expansion=this.landforms.expansion||{};
+    this._expValleys=(this.expansion.valleys||[]).map(v=>({...v,_path:preparePath(v.points||[])}));
+    this._expRamps=(this.expansion.ramps||[]).map(v=>({...v,_path:preparePath(v.points||[])}));
+    this._protectedRects=map.world?.protectedRects||[];
+  }
+
+  protectionAt(x,z){
+    let p=0;for(const r of this._protectedRects)p=Math.max(p,rectProtection(x,z,r));return p;
+  }
+
+  _nearestTyped(x,z,items,key,predicate=null){
+    let best=null;
+    for(const item of items||[]){
+      if(predicate&&!predicate(item))continue;
+      const pts=item.points||[];
+      for(let i=0;i<pts.length-1;i++){
+        const n=segNearest(x,z,pts[i],pts[i+1]);
+        if(!best||n.distance<best.distance)best={...n,[key]:item,a:pts[i],b:pts[i+1]};
+      }
+    }
+    return best;
+  }
+
+  _nearestRoad(x,z){return this._nearestTyped(x,z,this.map.roads||[],'road');}
+  _nearestRiver(x,z){return this._nearestTyped(x,z,this.map.water?.rivers||[],'river');}
+
+  heightAt(x,z){
+    let h=this.rawHeightAt(x,z);
+
+    // Apply legacy river/road grading exactly as before. Expansion-only infrastructure
+    // is a second layer whose terrain deformation fades in outside protected rectangles.
+    const legacyRiver=this._nearestTyped(x,z,this.map.water?.rivers||[],'river',r=>!r.expansionOnly);
+    if(legacyRiver){
+      const r=legacyRiver.river,half=(r.width??18)/2,bank=r.bankWidth??12;
+      if(legacyRiver.distance<half+bank){
+        const water=r.waterLevel??0,depth=r.depth??4,channel=water-depth,edgeT=smoothstep(half,half+bank,legacyRiver.distance),target=lerp(channel,h,edgeT);
+        h=Math.min(h,target);
+      }
+    }
+    const ew=1-this.protectionAt(x,z);
+    if(ew>0){
+      const expRiver=this._nearestTyped(x,z,this.map.water?.rivers||[],'river',r=>!!r.expansionOnly);
+      if(expRiver){
+        const r=expRiver.river,half=(r.width??18)/2,bank=r.bankWidth??12;
+        if(expRiver.distance<half+bank){
+          const water=r.waterLevel??0,depth=r.depth??4,channel=water-depth,edgeT=smoothstep(half,half+bank,expRiver.distance),target=Math.min(h,lerp(channel,h,edgeT));
+          h=lerp(h,target,ew);
+        }
+      }
+    }
+
+    const legacyRoad=this._nearestTyped(x,z,this.map.roads||[],'road',r=>!r.expansionOnly);
+    if(legacyRoad){
+      const road=legacyRoad.road,half=(road.width??9)/2,shoulder=road.shoulderWidth??5;
+      if(legacyRoad.distance<half+shoulder){
+        const ah=this.rawHeightAt(legacyRoad.a.x,legacyRoad.a.z),bh=this.rawHeightAt(legacyRoad.b.x,legacyRoad.b.z),grade=lerp(ah,bh,legacyRoad.t)+(road.gradeOffset??0),edge=smoothstep(half,half+shoulder,legacyRoad.distance);
+        h=lerp(grade,h,edge);
+      }
+    }
+    if(ew>0){
+      const expRoad=this._nearestTyped(x,z,this.map.roads||[],'road',r=>!!r.expansionOnly);
+      if(expRoad){
+        const road=expRoad.road,half=(road.width??9)/2,shoulder=road.shoulderWidth??5;
+        if(expRoad.distance<half+shoulder){
+          const ah=this.rawHeightAt(expRoad.a.x,expRoad.a.z),bh=this.rawHeightAt(expRoad.b.x,expRoad.b.z),grade=lerp(ah,bh,expRoad.t)+(road.gradeOffset??0),edge=smoothstep(half,half+shoulder,expRoad.distance),target=lerp(grade,h,edge);
+          h=lerp(h,target,ew);
+        }
+      }
+    }
+    return h;
   }
 
   rawHeightAt(x,z){
     let h=super.rawHeightAt(x,z);
 
-    // Long mountain masses first. They form the large composition, then playable
-    // authored shelves/valleys overwrite them where required.
+    // Original Iron Valley authored landforms. This block intentionally remains
+    // behavior-compatible with v0.13.30 so the protected benchmark does not move.
     for(const ridge of this.landforms.ridges||[])h+=ridgeContribution(x,z,ridge);
 
-    // Carve broad valley floors before terraces and ramps. These are intentional
-    // strategic corridors, not random noise depressions.
     for(const valley of this._valleys){
       if(!valley._path.segs.length)continue;
       const hit=nearestPath(x,z,valley._path),half=Math.max(2,(valley.width??55)*.5),bank=Math.max(2,valley.bankWidth??30);
@@ -75,26 +150,56 @@ export class StrategicTerrainSampler extends TerrainSampler{
       h=lerp(h,target,w*clamp(valley.strength??.98,0,1));
     }
 
-    // Plateaus/terraces create the unmistakable C&C elevated flat combat shelves.
     for(const p of this.landforms.plateaus||[]){
       const w=ellipseBlend(x,z,p);if(w<=0)continue;
       h=lerp(h,p.height??h,w*clamp(p.strength??1,0,1));
     }
 
-    // Base pads are deliberately flatter and slightly wider than structures so
-    // production buildings/vehicle exits always sit on stable ground.
     for(const p of this.landforms.pads||[]){
       const w=ellipseBlend(x,z,p);if(w<=0)continue;
       h=lerp(h,p.height??h,w*clamp(p.strength??1,0,1));
     }
 
-    // Ramps are last in authored landforms. Their linear grade cuts cleanly through
-    // plateau/cliff edges and guarantees a driveable connection between elevations.
     for(const ramp of this._ramps){
       if(!ramp._path.segs.length)continue;
       const hit=nearestPath(x,z,ramp._path),half=Math.max(2,(ramp.width??24)*.5),shoulder=Math.max(2,ramp.shoulder??14);
       if(hit.distance>=half+shoulder)continue;
       const w=1-smoothstep(half,half+shoulder,hit.distance),target=lerp(ramp.startHeight??0,ramp.endHeight??0,hit.ratio);
+      h=lerp(h,target,w*clamp(ramp.strength??1,0,1));
+    }
+
+    // Greater Iron Valley is an additive layer. Expansion influence is exactly zero
+    // inside protected world rectangles and fades in outside them, so the current
+    // 768x576 Iron Valley core remains an unchanged reference inside the larger world.
+    if(!this.expansion||!Object.keys(this.expansion).length)return h;
+    const ew=1-this.protectionAt(x,z);if(ew<=0)return h;
+
+    for(const ridge of this.expansion.ridges||[])h+=ridgeContribution(x,z,ridge)*ew;
+
+    for(const valley of this._expValleys){
+      if(!valley._path.segs.length)continue;
+      const hit=nearestPath(x,z,valley._path),half=Math.max(2,(valley.width??55)*.5),bank=Math.max(2,valley.bankWidth??30);
+      if(hit.distance>=half+bank)continue;
+      const w=(1-smoothstep(half,half+bank,hit.distance))*ew,start=valley.startHeight??valley.floorHeight??0,end=valley.endHeight??start;
+      const target=lerp(start,end,hit.ratio)+(valley.camber??0)*(1-clamp(hit.distance/half,0,1));
+      h=lerp(h,target,w*clamp(valley.strength??.98,0,1));
+    }
+
+    for(const p of this.expansion.plateaus||[]){
+      const w=ellipseBlend(x,z,p)*ew;if(w<=0)continue;
+      h=lerp(h,p.height??h,w*clamp(p.strength??1,0,1));
+    }
+
+    for(const p of this.expansion.pads||[]){
+      const w=ellipseBlend(x,z,p)*ew;if(w<=0)continue;
+      h=lerp(h,p.height??h,w*clamp(p.strength??1,0,1));
+    }
+
+    for(const ramp of this._expRamps){
+      if(!ramp._path.segs.length)continue;
+      const hit=nearestPath(x,z,ramp._path),half=Math.max(2,(ramp.width??24)*.5),shoulder=Math.max(2,ramp.shoulder??14);
+      if(hit.distance>=half+shoulder)continue;
+      const w=(1-smoothstep(half,half+shoulder,hit.distance))*ew,target=lerp(ramp.startHeight??0,ramp.endHeight??0,hit.ratio);
       h=lerp(h,target,w*clamp(ramp.strength??1,0,1));
     }
     return h;

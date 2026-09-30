@@ -1,0 +1,3548 @@
+{
+  "manifestVersion": 2,
+  "contentContractVersion": 1,
+  "id": "worldforge_greater_iron_valley",
+  "name": "Greater Iron Valley \u2014 Regional World Skeleton",
+  "version": 1,
+  "seed": 842731,
+  "region": {
+    "id": "greater_iron_valley",
+    "biome": "multi-region temperate frontier",
+    "weather": "clear",
+    "timeOfDay": "late-morning",
+    "authoring": "WorldForge authored regional skeleton",
+    "streamable": true,
+    "worldGrid": {
+      "x": 0,
+      "z": 0
+    },
+    "tags": [
+      "main-world",
+      "regional",
+      "multi-biome",
+      "mission-ready-foundation"
+    ]
+  },
+  "size": {
+    "width": 2048,
+    "depth": 1536
+  },
+  "terrain": {
+    "heightfield": {
+      "baseHeight": 5.0,
+      "noise": {
+        "scale": 132,
+        "amplitude": 1.7,
+        "octaves": 3,
+        "persistence": 0.46
+      },
+      "features": [
+        {
+          "id": "nw_mass",
+          "x": -300,
+          "z": -220,
+          "radius": 150,
+          "height": 12
+        },
+        {
+          "id": "ne_mass",
+          "x": 300,
+          "z": -218,
+          "radius": 150,
+          "height": 12
+        },
+        {
+          "id": "southwest_mass",
+          "x": -295,
+          "z": 220,
+          "radius": 135,
+          "height": 8
+        },
+        {
+          "id": "southeast_mass",
+          "x": 295,
+          "z": 218,
+          "radius": 135,
+          "height": 8
+        }
+      ]
+    },
+    "landforms": {
+      "profile": "curated-strategic-battlefield-v1",
+      "ridges": [
+        {
+          "id": "north_wall",
+          "x": 0,
+          "z": -244,
+          "angleDeg": 0,
+          "length": 760,
+          "width": 92,
+          "height": 28,
+          "passes": [
+            {
+              "x": -185,
+              "z": -224,
+              "radius": 58,
+              "strength": 0.92
+            },
+            {
+              "x": 12,
+              "z": -230,
+              "radius": 52,
+              "strength": 0.72
+            },
+            {
+              "x": 190,
+              "z": -222,
+              "radius": 58,
+              "strength": 0.92
+            }
+          ]
+        },
+        {
+          "id": "south_wall",
+          "x": 0,
+          "z": 245,
+          "angleDeg": 0,
+          "length": 760,
+          "width": 86,
+          "height": 20,
+          "passes": [
+            {
+              "x": -135,
+              "z": 220,
+              "radius": 60,
+              "strength": 0.88
+            },
+            {
+              "x": 155,
+              "z": 224,
+              "radius": 60,
+              "strength": 0.88
+            }
+          ]
+        },
+        {
+          "id": "center_spur_w",
+          "x": -78,
+          "z": -40,
+          "angleDeg": 58,
+          "length": 285,
+          "width": 58,
+          "height": 13,
+          "passes": [
+            {
+              "x": -125,
+              "z": 38,
+              "radius": 46,
+              "strength": 0.86
+            }
+          ]
+        },
+        {
+          "id": "center_spur_e",
+          "x": 86,
+          "z": -32,
+          "angleDeg": -58,
+          "length": 285,
+          "width": 58,
+          "height": 13,
+          "passes": [
+            {
+              "x": 128,
+              "z": 42,
+              "radius": 46,
+              "strength": 0.86
+            }
+          ]
+        }
+      ],
+      "valleys": [
+        {
+          "id": "main_valley",
+          "width": 86,
+          "bankWidth": 54,
+          "startHeight": 6,
+          "endHeight": 6.8,
+          "strength": 0.98,
+          "points": [
+            {
+              "x": -372,
+              "z": 52
+            },
+            {
+              "x": -280,
+              "z": 36
+            },
+            {
+              "x": -190,
+              "z": 48
+            },
+            {
+              "x": -92,
+              "z": 34
+            },
+            {
+              "x": 0,
+              "z": 46
+            },
+            {
+              "x": 98,
+              "z": 30
+            },
+            {
+              "x": 195,
+              "z": 44
+            },
+            {
+              "x": 286,
+              "z": 26
+            },
+            {
+              "x": 372,
+              "z": 38
+            }
+          ]
+        },
+        {
+          "id": "north_pass_valley",
+          "width": 54,
+          "bankWidth": 34,
+          "startHeight": 17,
+          "endHeight": 17,
+          "strength": 0.94,
+          "points": [
+            {
+              "x": -340,
+              "z": -156
+            },
+            {
+              "x": -220,
+              "z": -146
+            },
+            {
+              "x": -115,
+              "z": -132
+            },
+            {
+              "x": 0,
+              "z": -148
+            },
+            {
+              "x": 112,
+              "z": -132
+            },
+            {
+              "x": 225,
+              "z": -150
+            },
+            {
+              "x": 340,
+              "z": -158
+            }
+          ]
+        },
+        {
+          "id": "south_flank_valley",
+          "width": 58,
+          "bankWidth": 38,
+          "startHeight": 8,
+          "endHeight": 9,
+          "strength": 0.96,
+          "points": [
+            {
+              "x": -350,
+              "z": 176
+            },
+            {
+              "x": -230,
+              "z": 158
+            },
+            {
+              "x": -120,
+              "z": 178
+            },
+            {
+              "x": 0,
+              "z": 164
+            },
+            {
+              "x": 126,
+              "z": 184
+            },
+            {
+              "x": 238,
+              "z": 160
+            },
+            {
+              "x": 350,
+              "z": 176
+            }
+          ]
+        }
+      ],
+      "plateaus": [
+        {
+          "id": "west_base_high",
+          "x": -292,
+          "z": -52,
+          "radiusX": 92,
+          "radiusZ": 112,
+          "height": 27,
+          "feather": 28,
+          "strength": 1
+        },
+        {
+          "id": "west_mid_terrace",
+          "x": -205,
+          "z": 5,
+          "radiusX": 68,
+          "radiusZ": 84,
+          "height": 17,
+          "feather": 22,
+          "strength": 1
+        },
+        {
+          "id": "east_base_high",
+          "x": 292,
+          "z": 48,
+          "radiusX": 92,
+          "radiusZ": 112,
+          "height": 27,
+          "feather": 28,
+          "strength": 1
+        },
+        {
+          "id": "east_mid_terrace",
+          "x": 205,
+          "z": 4,
+          "radiusX": 68,
+          "radiusZ": 84,
+          "height": 17,
+          "feather": 22,
+          "strength": 1
+        },
+        {
+          "id": "central_command_mesa",
+          "x": 0,
+          "z": -112,
+          "radiusX": 122,
+          "radiusZ": 72,
+          "height": 32,
+          "feather": 24,
+          "strength": 1
+        },
+        {
+          "id": "southwest_overlook",
+          "x": -150,
+          "z": 142,
+          "radiusX": 78,
+          "radiusZ": 48,
+          "height": 18,
+          "feather": 20,
+          "strength": 0.95
+        },
+        {
+          "id": "southeast_overlook",
+          "x": 158,
+          "z": 145,
+          "radiusX": 78,
+          "radiusZ": 48,
+          "height": 18,
+          "feather": 20,
+          "strength": 0.95
+        }
+      ],
+      "pads": [
+        {
+          "id": "west_hq_pad",
+          "x": -310,
+          "z": -68,
+          "radiusX": 54,
+          "radiusZ": 48,
+          "height": 27,
+          "feather": 14,
+          "strength": 1
+        },
+        {
+          "id": "west_factory_pad",
+          "x": -278,
+          "z": -8,
+          "radiusX": 54,
+          "radiusZ": 42,
+          "height": 27,
+          "feather": 14,
+          "strength": 1
+        },
+        {
+          "id": "east_hq_pad",
+          "x": 310,
+          "z": 64,
+          "radiusX": 54,
+          "radiusZ": 48,
+          "height": 27,
+          "feather": 14,
+          "strength": 1
+        },
+        {
+          "id": "east_factory_pad",
+          "x": 278,
+          "z": 4,
+          "radiusX": 54,
+          "radiusZ": 42,
+          "height": 27,
+          "feather": 14,
+          "strength": 1
+        },
+        {
+          "id": "center_pad",
+          "x": 0,
+          "z": -110,
+          "radiusX": 54,
+          "radiusZ": 38,
+          "height": 32,
+          "feather": 12,
+          "strength": 1
+        }
+      ],
+      "ramps": [
+        {
+          "id": "west_high_to_mid",
+          "width": 32,
+          "shoulder": 18,
+          "startHeight": 27,
+          "endHeight": 17,
+          "strength": 1,
+          "points": [
+            {
+              "x": -252,
+              "z": -28
+            },
+            {
+              "x": -235,
+              "z": -18
+            },
+            {
+              "x": -218,
+              "z": -8
+            },
+            {
+              "x": -202,
+              "z": 2
+            }
+          ]
+        },
+        {
+          "id": "west_mid_to_valley",
+          "width": 32,
+          "shoulder": 18,
+          "startHeight": 17,
+          "endHeight": 6.3,
+          "strength": 1,
+          "points": [
+            {
+              "x": -190,
+              "z": 15
+            },
+            {
+              "x": -174,
+              "z": 24
+            },
+            {
+              "x": -156,
+              "z": 31
+            },
+            {
+              "x": -138,
+              "z": 38
+            }
+          ]
+        },
+        {
+          "id": "east_valley_to_mid",
+          "width": 32,
+          "shoulder": 18,
+          "startHeight": 6.5,
+          "endHeight": 17,
+          "strength": 1,
+          "points": [
+            {
+              "x": 138,
+              "z": 37
+            },
+            {
+              "x": 156,
+              "z": 30
+            },
+            {
+              "x": 174,
+              "z": 22
+            },
+            {
+              "x": 190,
+              "z": 14
+            }
+          ]
+        },
+        {
+          "id": "east_mid_to_high",
+          "width": 32,
+          "shoulder": 18,
+          "startHeight": 17,
+          "endHeight": 27,
+          "strength": 1,
+          "points": [
+            {
+              "x": 202,
+              "z": 4
+            },
+            {
+              "x": 220,
+              "z": 14
+            },
+            {
+              "x": 238,
+              "z": 25
+            },
+            {
+              "x": 254,
+              "z": 36
+            }
+          ]
+        },
+        {
+          "id": "mesa_west_ramp",
+          "width": 30,
+          "shoulder": 18,
+          "startHeight": 7.2,
+          "endHeight": 32,
+          "strength": 1,
+          "points": [
+            {
+              "x": -104,
+              "z": -38
+            },
+            {
+              "x": -110,
+              "z": -56
+            },
+            {
+              "x": -105,
+              "z": -76
+            },
+            {
+              "x": -92,
+              "z": -94
+            },
+            {
+              "x": -72,
+              "z": -108
+            }
+          ]
+        },
+        {
+          "id": "mesa_east_ramp",
+          "width": 30,
+          "shoulder": 18,
+          "startHeight": 32,
+          "endHeight": 7.0,
+          "strength": 1,
+          "points": [
+            {
+              "x": 72,
+              "z": -108
+            },
+            {
+              "x": 92,
+              "z": -94
+            },
+            {
+              "x": 105,
+              "z": -76
+            },
+            {
+              "x": 110,
+              "z": -56
+            },
+            {
+              "x": 104,
+              "z": -38
+            }
+          ]
+        },
+        {
+          "id": "sw_overlook_ramp",
+          "width": 26,
+          "shoulder": 15,
+          "startHeight": 7.5,
+          "endHeight": 18,
+          "strength": 1,
+          "points": [
+            {
+              "x": -118,
+              "z": 92
+            },
+            {
+              "x": -126,
+              "z": 108
+            },
+            {
+              "x": -136,
+              "z": 122
+            },
+            {
+              "x": -148,
+              "z": 136
+            }
+          ]
+        },
+        {
+          "id": "se_overlook_ramp",
+          "width": 26,
+          "shoulder": 15,
+          "startHeight": 18,
+          "endHeight": 7.8,
+          "strength": 1,
+          "points": [
+            {
+              "x": 158,
+              "z": 138
+            },
+            {
+              "x": 146,
+              "z": 124
+            },
+            {
+              "x": 136,
+              "z": 108
+            },
+            {
+              "x": 126,
+              "z": 92
+            }
+          ]
+        }
+      ],
+      "expansion": {
+        "profile": "greater-iron-valley-regional-skeleton-v1",
+        "ridges": [
+          {
+            "id": "pinebreak_backbone",
+            "x": -690,
+            "z": -610,
+            "angleDeg": 10,
+            "length": 760,
+            "width": 205,
+            "height": 28,
+            "passes": [
+              {
+                "x": -735,
+                "z": -500,
+                "radius": 75,
+                "strength": 0.92
+              },
+              {
+                "x": -505,
+                "z": -445,
+                "radius": 68,
+                "strength": 0.72
+              }
+            ]
+          },
+          {
+            "id": "northwatch_backbone",
+            "x": 0,
+            "z": -630,
+            "angleDeg": 0,
+            "length": 760,
+            "width": 200,
+            "height": 44,
+            "passes": [
+              {
+                "x": -180,
+                "z": -545,
+                "radius": 72,
+                "strength": 0.88
+              },
+              {
+                "x": 210,
+                "z": -540,
+                "radius": 74,
+                "strength": 0.88
+              }
+            ]
+          },
+          {
+            "id": "blackstone_backbone",
+            "x": 700,
+            "z": -585,
+            "angleDeg": -12,
+            "length": 790,
+            "width": 220,
+            "height": 34,
+            "passes": [
+              {
+                "x": 610,
+                "z": -475,
+                "radius": 78,
+                "strength": 0.9
+              },
+              {
+                "x": 850,
+                "z": -470,
+                "radius": 72,
+                "strength": 0.78
+              }
+            ]
+          },
+          {
+            "id": "redmesa_escarpment",
+            "x": 735,
+            "z": 650,
+            "angleDeg": -8,
+            "length": 700,
+            "width": 175,
+            "height": 22,
+            "passes": [
+              {
+                "x": 620,
+                "z": 560,
+                "radius": 70,
+                "strength": 0.86
+              },
+              {
+                "x": 850,
+                "z": 570,
+                "radius": 72,
+                "strength": 0.82
+              }
+            ]
+          },
+          {
+            "id": "westfield_north_rise",
+            "x": -760,
+            "z": 310,
+            "angleDeg": -8,
+            "length": 520,
+            "width": 115,
+            "height": 9,
+            "passes": [
+              {
+                "x": -620,
+                "z": 300,
+                "radius": 68,
+                "strength": 0.88
+              }
+            ]
+          }
+        ],
+        "valleys": [
+          {
+            "id": "ashgate_approach",
+            "width": 92,
+            "bankWidth": 68,
+            "startHeight": 7.2,
+            "endHeight": 6.5,
+            "strength": 0.97,
+            "points": [
+              {
+                "x": -1000,
+                "z": 55
+              },
+              {
+                "x": -850,
+                "z": 25
+              },
+              {
+                "x": -700,
+                "z": -5
+              },
+              {
+                "x": -560,
+                "z": -24
+              },
+              {
+                "x": -430,
+                "z": -38
+              },
+              {
+                "x": -350,
+                "z": -52
+              }
+            ]
+          },
+          {
+            "id": "eastmere_approach",
+            "width": 110,
+            "bankWidth": 82,
+            "startHeight": 6.7,
+            "endHeight": 4.1,
+            "strength": 0.98,
+            "points": [
+              {
+                "x": 350,
+                "z": 62
+              },
+              {
+                "x": 480,
+                "z": 72
+              },
+              {
+                "x": 620,
+                "z": 95
+              },
+              {
+                "x": 760,
+                "z": 120
+              },
+              {
+                "x": 900,
+                "z": 145
+              },
+              {
+                "x": 1010,
+                "z": 165
+              }
+            ]
+          },
+          {
+            "id": "north_military_corridor",
+            "width": 70,
+            "bankWidth": 54,
+            "startHeight": 18,
+            "endHeight": 18,
+            "strength": 0.92,
+            "points": [
+              {
+                "x": -985,
+                "z": -505
+              },
+              {
+                "x": -760,
+                "z": -505
+              },
+              {
+                "x": -520,
+                "z": -485
+              },
+              {
+                "x": -280,
+                "z": -505
+              },
+              {
+                "x": 0,
+                "z": -515
+              },
+              {
+                "x": 280,
+                "z": -502
+              },
+              {
+                "x": 520,
+                "z": -482
+              },
+              {
+                "x": 760,
+                "z": -505
+              },
+              {
+                "x": 990,
+                "z": -500
+              }
+            ]
+          },
+          {
+            "id": "southline_corridor",
+            "width": 96,
+            "bankWidth": 70,
+            "startHeight": 8.2,
+            "endHeight": 9.5,
+            "strength": 0.96,
+            "points": [
+              {
+                "x": -995,
+                "z": 525
+              },
+              {
+                "x": -760,
+                "z": 535
+              },
+              {
+                "x": -530,
+                "z": 515
+              },
+              {
+                "x": -300,
+                "z": 525
+              },
+              {
+                "x": 0,
+                "z": 540
+              },
+              {
+                "x": 300,
+                "z": 530
+              },
+              {
+                "x": 540,
+                "z": 520
+              },
+              {
+                "x": 760,
+                "z": 545
+              },
+              {
+                "x": 995,
+                "z": 565
+              }
+            ]
+          },
+          {
+            "id": "pinebreak_pass",
+            "width": 58,
+            "bankWidth": 44,
+            "startHeight": 18,
+            "endHeight": 13,
+            "strength": 0.94,
+            "points": [
+              {
+                "x": -900,
+                "z": -665
+              },
+              {
+                "x": -810,
+                "z": -585
+              },
+              {
+                "x": -735,
+                "z": -500
+              },
+              {
+                "x": -650,
+                "z": -420
+              },
+              {
+                "x": -535,
+                "z": -330
+              },
+              {
+                "x": -420,
+                "z": -260
+              }
+            ]
+          },
+          {
+            "id": "blackstone_haul",
+            "width": 64,
+            "bankWidth": 48,
+            "startHeight": 14,
+            "endHeight": 24,
+            "strength": 0.93,
+            "points": [
+              {
+                "x": 420,
+                "z": -280
+              },
+              {
+                "x": 520,
+                "z": -355
+              },
+              {
+                "x": 610,
+                "z": -435
+              },
+              {
+                "x": 700,
+                "z": -505
+              },
+              {
+                "x": 820,
+                "z": -545
+              },
+              {
+                "x": 930,
+                "z": -575
+              }
+            ]
+          },
+          {
+            "id": "westfield_plain_route",
+            "width": 120,
+            "bankWidth": 88,
+            "startHeight": 6.8,
+            "endHeight": 7.5,
+            "strength": 0.94,
+            "points": [
+              {
+                "x": -980,
+                "z": 390
+              },
+              {
+                "x": -820,
+                "z": 420
+              },
+              {
+                "x": -670,
+                "z": 455
+              },
+              {
+                "x": -540,
+                "z": 410
+              },
+              {
+                "x": -420,
+                "z": 330
+              }
+            ]
+          },
+          {
+            "id": "redmesa_flank",
+            "width": 76,
+            "bankWidth": 58,
+            "startHeight": 11,
+            "endHeight": 17,
+            "strength": 0.94,
+            "points": [
+              {
+                "x": 420,
+                "z": 315
+              },
+              {
+                "x": 520,
+                "z": 380
+              },
+              {
+                "x": 620,
+                "z": 450
+              },
+              {
+                "x": 730,
+                "z": 520
+              },
+              {
+                "x": 850,
+                "z": 580
+              },
+              {
+                "x": 980,
+                "z": 625
+              }
+            ]
+          }
+        ],
+        "plateaus": [
+          {
+            "id": "ashgate_shelf",
+            "x": -720,
+            "z": -40,
+            "radiusX": 255,
+            "radiusZ": 185,
+            "height": 7.5,
+            "feather": 55,
+            "strength": 0.92
+          },
+          {
+            "id": "northwatch_radar_shelf",
+            "x": 0,
+            "z": -615,
+            "radiusX": 145,
+            "radiusZ": 88,
+            "height": 55,
+            "feather": 34,
+            "strength": 1
+          },
+          {
+            "id": "blackstone_quarry_bench",
+            "x": 700,
+            "z": -505,
+            "radiusX": 220,
+            "radiusZ": 165,
+            "height": 25,
+            "feather": 45,
+            "strength": 0.96
+          },
+          {
+            "id": "eastmere_lowland_shelf",
+            "x": 735,
+            "z": 115,
+            "radiusX": 260,
+            "radiusZ": 225,
+            "height": 4.6,
+            "feather": 70,
+            "strength": 0.78
+          },
+          {
+            "id": "westfield_plain",
+            "x": -720,
+            "z": 530,
+            "radiusX": 270,
+            "radiusZ": 185,
+            "height": 7.2,
+            "feather": 58,
+            "strength": 0.9
+          },
+          {
+            "id": "southline_airfield_shelf",
+            "x": -80,
+            "z": 585,
+            "radiusX": 260,
+            "radiusZ": 105,
+            "height": 9.0,
+            "feather": 42,
+            "strength": 0.98
+          },
+          {
+            "id": "redmesa_main_shelf",
+            "x": 760,
+            "z": 555,
+            "radiusX": 235,
+            "radiusZ": 150,
+            "height": 27,
+            "feather": 48,
+            "strength": 0.96
+          }
+        ],
+        "pads": [
+          {
+            "id": "ashgate_base_reserve",
+            "x": -865,
+            "z": -90,
+            "radiusX": 74,
+            "radiusZ": 64,
+            "height": 8.0,
+            "feather": 22,
+            "strength": 1
+          },
+          {
+            "id": "northwatch_radar_pad",
+            "x": 0,
+            "z": -615,
+            "radiusX": 62,
+            "radiusZ": 44,
+            "height": 55,
+            "feather": 18,
+            "strength": 1
+          },
+          {
+            "id": "blackstone_base_reserve",
+            "x": 825,
+            "z": -390,
+            "radiusX": 76,
+            "radiusZ": 64,
+            "height": 24,
+            "feather": 22,
+            "strength": 1
+          },
+          {
+            "id": "westfield_base_reserve",
+            "x": -760,
+            "z": 590,
+            "radiusX": 80,
+            "radiusZ": 68,
+            "height": 7.4,
+            "feather": 22,
+            "strength": 1
+          },
+          {
+            "id": "southline_depot_pad",
+            "x": 195,
+            "z": 525,
+            "radiusX": 72,
+            "radiusZ": 56,
+            "height": 9.2,
+            "feather": 20,
+            "strength": 1
+          },
+          {
+            "id": "redmesa_base_reserve",
+            "x": 790,
+            "z": 545,
+            "radiusX": 82,
+            "radiusZ": 68,
+            "height": 27,
+            "feather": 22,
+            "strength": 1
+          }
+        ],
+        "ramps": [
+          {
+            "id": "northwatch_west_access",
+            "width": 36,
+            "shoulder": 22,
+            "startHeight": 18,
+            "endHeight": 55,
+            "strength": 1,
+            "points": [
+              {
+                "x": -175,
+                "z": -520
+              },
+              {
+                "x": -145,
+                "z": -548
+              },
+              {
+                "x": -115,
+                "z": -575
+              },
+              {
+                "x": -75,
+                "z": -598
+              },
+              {
+                "x": -45,
+                "z": -610
+              }
+            ]
+          },
+          {
+            "id": "northwatch_east_access",
+            "width": 36,
+            "shoulder": 22,
+            "startHeight": 55,
+            "endHeight": 18,
+            "strength": 1,
+            "points": [
+              {
+                "x": 45,
+                "z": -610
+              },
+              {
+                "x": 80,
+                "z": -598
+              },
+              {
+                "x": 120,
+                "z": -573
+              },
+              {
+                "x": 155,
+                "z": -545
+              },
+              {
+                "x": 190,
+                "z": -520
+              }
+            ]
+          },
+          {
+            "id": "blackstone_south_access",
+            "width": 38,
+            "shoulder": 24,
+            "startHeight": 10,
+            "endHeight": 25,
+            "strength": 1,
+            "points": [
+              {
+                "x": 585,
+                "z": -315
+              },
+              {
+                "x": 610,
+                "z": -350
+              },
+              {
+                "x": 635,
+                "z": -390
+              },
+              {
+                "x": 665,
+                "z": -430
+              },
+              {
+                "x": 700,
+                "z": -470
+              }
+            ]
+          },
+          {
+            "id": "redmesa_west_access",
+            "width": 40,
+            "shoulder": 24,
+            "startHeight": 10,
+            "endHeight": 27,
+            "strength": 1,
+            "points": [
+              {
+                "x": 540,
+                "z": 410
+              },
+              {
+                "x": 585,
+                "z": 445
+              },
+              {
+                "x": 630,
+                "z": 480
+              },
+              {
+                "x": 680,
+                "z": 515
+              },
+              {
+                "x": 725,
+                "z": 540
+              }
+            ]
+          },
+          {
+            "id": "redmesa_south_access",
+            "width": 38,
+            "shoulder": 22,
+            "startHeight": 12,
+            "endHeight": 27,
+            "strength": 1,
+            "points": [
+              {
+                "x": 810,
+                "z": 690
+              },
+              {
+                "x": 805,
+                "z": 650
+              },
+              {
+                "x": 800,
+                "z": 615
+              },
+              {
+                "x": 795,
+                "z": 580
+              },
+              {
+                "x": 790,
+                "z": 550
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "materials": [
+      {
+        "id": "grass",
+        "albedo": "assets/terrain/temperate_grass.png",
+        "tileMeters": 18,
+        "roughness": 0.95
+      },
+      {
+        "id": "dirt",
+        "albedo": "assets/terrain/temperate_dirt.png",
+        "tileMeters": 14,
+        "roughness": 0.98
+      },
+      {
+        "id": "rock",
+        "albedo": "assets/terrain/temperate_rock.png",
+        "tileMeters": 12,
+        "roughness": 0.88
+      }
+    ],
+    "splat": {
+      "mode": "generated",
+      "drivers": [
+        "slope",
+        "road-distance",
+        "river-moisture",
+        "strategic-landform",
+        "seeded-breakup"
+      ]
+    },
+    "cliffs": {
+      "slopeStartDeg": 20,
+      "slopeFullDeg": 34
+    },
+    "visual": {
+      "cellMeters": 5,
+      "macroVariation": 0.09,
+      "normalStrength": 0.5,
+      "surfaceContrast": 1.0,
+      "detailMix": 0.08,
+      "splatCellMeters": 3,
+      "macroCellMeters": 12,
+      "roadBlendMeters": 5.5,
+      "bankWetness": 0.72,
+      "blendDetail": 0.0,
+      "wetTileMeters": 2.0,
+      "pbrMaterials": {
+        "grass": {
+          "albedo": "assets/terrain/polyhaven/grass_ground_diff_1k.jpg",
+          "normal": "assets/terrain/polyhaven/grass_ground_nor_gl_1k.png",
+          "arm": "assets/terrain/polyhaven/grass_ground_arm_1k.jpg",
+          "tileMeters": 2.5
+        },
+        "dirt": {
+          "albedo": "assets/terrain/polyhaven/brown_mud_leaves_01_diff_1k.jpg",
+          "normal": "assets/terrain/polyhaven/brown_mud_leaves_01_nor_gl_1k.png",
+          "arm": "assets/terrain/polyhaven/brown_mud_leaves_01_arm_1k.jpg",
+          "tileMeters": 1.3
+        },
+        "rock": {
+          "albedo": "assets/terrain/polyhaven/rocks_ground_02_col_1k.jpg",
+          "normal": "assets/terrain/polyhaven/rocks_ground_02_nor_gl_1k.png",
+          "arm": "assets/terrain/polyhaven/rocks_ground_02_arm_1k.jpg",
+          "tileMeters": 2.0
+        },
+        "wet": {
+          "albedo": "assets/terrain/polyhaven/dry_river_pebbles_diff_1k.jpg",
+          "normal": "assets/terrain/polyhaven/dry_river_pebbles_nor_gl_1k.png",
+          "arm": "assets/terrain/polyhaven/dry_river_pebbles_arm_1k.jpg",
+          "tileMeters": 2.0
+        },
+        "rockMacro": {
+          "albedo": "assets/terrain/polyhaven/rocky_terrain_02_diff_1k.jpg",
+          "tileMeters": 90
+        }
+      },
+      "rtsPalette": {
+        "grass": "#5e784e",
+        "dirt": "#7b6549",
+        "rock": "#73756e",
+        "wet": "#625b50"
+      }
+    },
+    "biomeZones": [
+      {
+        "id": "ashgate_belt",
+        "name": "Ashgate transition",
+        "x": -700,
+        "z": -35,
+        "radiusX": 390,
+        "radiusZ": 285,
+        "feather": 125,
+        "edgeNoise": 0.34,
+        "materialBias": {
+          "grass": -0.05,
+          "dirt": 0.12,
+          "rock": 0.02,
+          "wet": 0.0
+        },
+        "macroTint": [
+          0.99,
+          0.98,
+          0.95
+        ]
+      },
+      {
+        "id": "pinebreak_highlands",
+        "name": "Pinebreak Highlands",
+        "x": -675,
+        "z": -535,
+        "radiusX": 410,
+        "radiusZ": 310,
+        "feather": 135,
+        "edgeNoise": 0.38,
+        "materialBias": {
+          "grass": 0.1,
+          "dirt": -0.02,
+          "rock": 0.11,
+          "wet": 0.0
+        },
+        "macroTint": [
+          0.94,
+          1.035,
+          0.96
+        ]
+      },
+      {
+        "id": "northwatch_ridge",
+        "name": "Northwatch Ridge",
+        "x": 0,
+        "z": -600,
+        "radiusX": 390,
+        "radiusZ": 245,
+        "feather": 120,
+        "edgeNoise": 0.3,
+        "materialBias": {
+          "grass": -0.13,
+          "dirt": -0.02,
+          "rock": 0.28,
+          "wet": -0.02
+        },
+        "macroTint": [
+          0.94,
+          0.98,
+          1.02
+        ]
+      },
+      {
+        "id": "blackstone_quarry",
+        "name": "Blackstone Quarry",
+        "x": 690,
+        "z": -505,
+        "radiusX": 390,
+        "radiusZ": 315,
+        "feather": 125,
+        "edgeNoise": 0.31,
+        "materialBias": {
+          "grass": -0.26,
+          "dirt": 0.08,
+          "rock": 0.38,
+          "wet": -0.03
+        },
+        "macroTint": [
+          0.95,
+          0.95,
+          0.96
+        ]
+      },
+      {
+        "id": "eastmere_lowlands",
+        "name": "Eastmere Lowlands",
+        "x": 730,
+        "z": 100,
+        "radiusX": 410,
+        "radiusZ": 350,
+        "feather": 145,
+        "edgeNoise": 0.4,
+        "materialBias": {
+          "grass": 0.11,
+          "dirt": -0.08,
+          "rock": -0.07,
+          "wet": 0.16
+        },
+        "macroTint": [
+          0.93,
+          1.045,
+          1.035
+        ]
+      },
+      {
+        "id": "westfield_farmland",
+        "name": "Westfield",
+        "x": -700,
+        "z": 535,
+        "radiusX": 410,
+        "radiusZ": 300,
+        "feather": 135,
+        "edgeNoise": 0.36,
+        "materialBias": {
+          "grass": 0.17,
+          "dirt": 0.035,
+          "rock": -0.16,
+          "wet": 0.0
+        },
+        "macroTint": [
+          1.02,
+          1.045,
+          0.93
+        ]
+      },
+      {
+        "id": "southline_corridor",
+        "name": "Southline",
+        "x": 0,
+        "z": 555,
+        "radiusX": 405,
+        "radiusZ": 250,
+        "feather": 115,
+        "edgeNoise": 0.28,
+        "materialBias": {
+          "grass": 0.03,
+          "dirt": 0.09,
+          "rock": -0.03,
+          "wet": -0.01
+        },
+        "macroTint": [
+          1.025,
+          1.0,
+          0.95
+        ]
+      },
+      {
+        "id": "red_mesa_frontier",
+        "name": "Red Mesa Frontier",
+        "x": 710,
+        "z": 535,
+        "radiusX": 405,
+        "radiusZ": 310,
+        "feather": 130,
+        "edgeNoise": 0.38,
+        "materialBias": {
+          "grass": -0.31,
+          "dirt": 0.29,
+          "rock": 0.17,
+          "wet": -0.09
+        },
+        "macroTint": [
+          1.075,
+          0.94,
+          0.84
+        ]
+      }
+    ]
+  },
+  "roads": [
+    {
+      "id": "main_valley_artery",
+      "width": 11,
+      "shoulderWidth": 5,
+      "surface": "assets/terrain/road_asphalt.png",
+      "shoulder": "assets/terrain/road_shoulders.png",
+      "points": [
+        {
+          "x": -320,
+          "z": -56
+        },
+        {
+          "x": -270,
+          "z": -38
+        },
+        {
+          "x": -230,
+          "z": -18
+        },
+        {
+          "x": -190,
+          "z": 14
+        },
+        {
+          "x": -150,
+          "z": 34
+        },
+        {
+          "x": -90,
+          "z": 40
+        },
+        {
+          "x": 0,
+          "z": 44
+        },
+        {
+          "x": 92,
+          "z": 34
+        },
+        {
+          "x": 150,
+          "z": 34
+        },
+        {
+          "x": 190,
+          "z": 14
+        },
+        {
+          "x": 230,
+          "z": 24
+        },
+        {
+          "x": 270,
+          "z": 42
+        },
+        {
+          "x": 320,
+          "z": 56
+        }
+      ]
+    },
+    {
+      "id": "mesa_highland_route",
+      "width": 9,
+      "shoulderWidth": 4,
+      "surface": "assets/terrain/road_asphalt.png",
+      "shoulder": "assets/terrain/road_shoulders.png",
+      "points": [
+        {
+          "x": -120,
+          "z": -34
+        },
+        {
+          "x": -110,
+          "z": -58
+        },
+        {
+          "x": -94,
+          "z": -86
+        },
+        {
+          "x": -72,
+          "z": -108
+        },
+        {
+          "x": -18,
+          "z": -116
+        },
+        {
+          "x": 35,
+          "z": -112
+        },
+        {
+          "x": 72,
+          "z": -108
+        },
+        {
+          "x": 94,
+          "z": -86
+        },
+        {
+          "x": 110,
+          "z": -58
+        },
+        {
+          "x": 120,
+          "z": -34
+        }
+      ]
+    },
+    {
+      "id": "south_flank_route",
+      "width": 8,
+      "shoulderWidth": 4,
+      "surface": "assets/terrain/road_asphalt.png",
+      "shoulder": "assets/terrain/road_shoulders.png",
+      "points": [
+        {
+          "x": -325,
+          "z": 170
+        },
+        {
+          "x": -245,
+          "z": 160
+        },
+        {
+          "x": -180,
+          "z": 168
+        },
+        {
+          "x": -90,
+          "z": 172
+        },
+        {
+          "x": 0,
+          "z": 164
+        },
+        {
+          "x": 90,
+          "z": 176
+        },
+        {
+          "x": 185,
+          "z": 166
+        },
+        {
+          "x": 250,
+          "z": 158
+        },
+        {
+          "x": 325,
+          "z": 174
+        }
+      ]
+    },
+    {
+      "id": "north_pass_route",
+      "width": 8,
+      "shoulderWidth": 4,
+      "surface": "assets/terrain/road_asphalt.png",
+      "shoulder": "assets/terrain/road_shoulders.png",
+      "points": [
+        {
+          "x": -330,
+          "z": -154
+        },
+        {
+          "x": -250,
+          "z": -150
+        },
+        {
+          "x": -185,
+          "z": -142
+        },
+        {
+          "x": -115,
+          "z": -132
+        },
+        {
+          "x": 0,
+          "z": -146
+        },
+        {
+          "x": 115,
+          "z": -132
+        },
+        {
+          "x": 188,
+          "z": -142
+        },
+        {
+          "x": 255,
+          "z": -151
+        },
+        {
+          "x": 330,
+          "z": -158
+        }
+      ]
+    },
+    {
+      "id": "sw_overlook_spur",
+      "width": 7,
+      "shoulderWidth": 3.5,
+      "surface": "assets/terrain/road_asphalt.png",
+      "shoulder": "assets/terrain/road_shoulders.png",
+      "points": [
+        {
+          "x": -90,
+          "z": 172
+        },
+        {
+          "x": -112,
+          "z": 148
+        },
+        {
+          "x": -118,
+          "z": 92
+        },
+        {
+          "x": -126,
+          "z": 108
+        },
+        {
+          "x": -136,
+          "z": 122
+        },
+        {
+          "x": -148,
+          "z": 136
+        }
+      ]
+    },
+    {
+      "id": "se_overlook_spur",
+      "width": 7,
+      "shoulderWidth": 3.5,
+      "surface": "assets/terrain/road_asphalt.png",
+      "shoulder": "assets/terrain/road_shoulders.png",
+      "points": [
+        {
+          "x": 90,
+          "z": 176
+        },
+        {
+          "x": 116,
+          "z": 150
+        },
+        {
+          "x": 158,
+          "z": 140
+        },
+        {
+          "x": 146,
+          "z": 124
+        },
+        {
+          "x": 136,
+          "z": 108
+        },
+        {
+          "x": 126,
+          "z": 92
+        }
+      ]
+    },
+    {
+      "id": "north_pass_west_extension",
+      "class": "secondary",
+      "expansionOnly": true,
+      "width": 8,
+      "shoulderWidth": 4,
+      "surface": "assets/terrain/road_asphalt.png",
+      "shoulder": "assets/terrain/road_shoulders.png",
+      "points": [
+        {
+          "x": -330,
+          "z": -154
+        },
+        {
+          "x": -430,
+          "z": -238
+        },
+        {
+          "x": -535,
+          "z": -330
+        },
+        {
+          "x": -650,
+          "z": -420
+        },
+        {
+          "x": -760,
+          "z": -505
+        },
+        {
+          "x": -905,
+          "z": -625
+        }
+      ]
+    },
+    {
+      "id": "north_pass_east_extension",
+      "class": "secondary",
+      "expansionOnly": true,
+      "width": 8,
+      "shoulderWidth": 4,
+      "surface": "assets/terrain/road_asphalt.png",
+      "shoulder": "assets/terrain/road_shoulders.png",
+      "points": [
+        {
+          "x": 330,
+          "z": -158
+        },
+        {
+          "x": 445,
+          "z": -245
+        },
+        {
+          "x": 565,
+          "z": -330
+        },
+        {
+          "x": 690,
+          "z": -420
+        },
+        {
+          "x": 820,
+          "z": -505
+        },
+        {
+          "x": 945,
+          "z": -595
+        }
+      ]
+    },
+    {
+      "id": "south_flank_west_extension",
+      "class": "secondary",
+      "expansionOnly": true,
+      "width": 8,
+      "shoulderWidth": 4,
+      "surface": "assets/terrain/road_asphalt.png",
+      "shoulder": "assets/terrain/road_shoulders.png",
+      "points": [
+        {
+          "x": -325,
+          "z": 170
+        },
+        {
+          "x": -450,
+          "z": 250
+        },
+        {
+          "x": -575,
+          "z": 335
+        },
+        {
+          "x": -710,
+          "z": 425
+        },
+        {
+          "x": -760,
+          "z": 535
+        }
+      ]
+    },
+    {
+      "id": "south_flank_east_extension",
+      "class": "secondary",
+      "expansionOnly": true,
+      "width": 8,
+      "shoulderWidth": 4,
+      "surface": "assets/terrain/road_asphalt.png",
+      "shoulder": "assets/terrain/road_shoulders.png",
+      "points": [
+        {
+          "x": 325,
+          "z": 174
+        },
+        {
+          "x": 450,
+          "z": 260
+        },
+        {
+          "x": 575,
+          "z": 350
+        },
+        {
+          "x": 700,
+          "z": 445
+        },
+        {
+          "x": 760,
+          "z": 545
+        }
+      ]
+    },
+    {
+      "id": "northern_military_road",
+      "class": "arterial",
+      "expansionOnly": true,
+      "width": 10,
+      "shoulderWidth": 5,
+      "surface": "assets/terrain/road_asphalt.png",
+      "shoulder": "assets/terrain/road_shoulders.png",
+      "points": [
+        {
+          "x": -990,
+          "z": -505
+        },
+        {
+          "x": -760,
+          "z": -505
+        },
+        {
+          "x": -520,
+          "z": -485
+        },
+        {
+          "x": -280,
+          "z": -505
+        },
+        {
+          "x": 0,
+          "z": -515
+        },
+        {
+          "x": 280,
+          "z": -502
+        },
+        {
+          "x": 520,
+          "z": -482
+        },
+        {
+          "x": 760,
+          "z": -505
+        },
+        {
+          "x": 820,
+          "z": -505
+        },
+        {
+          "x": 990,
+          "z": -500
+        }
+      ]
+    },
+    {
+      "id": "southline_highway",
+      "class": "arterial",
+      "expansionOnly": true,
+      "width": 11,
+      "shoulderWidth": 5,
+      "surface": "assets/terrain/road_asphalt.png",
+      "shoulder": "assets/terrain/road_shoulders.png",
+      "points": [
+        {
+          "x": -995,
+          "z": 525
+        },
+        {
+          "x": -760,
+          "z": 535
+        },
+        {
+          "x": -530,
+          "z": 515
+        },
+        {
+          "x": -300,
+          "z": 525
+        },
+        {
+          "x": 0,
+          "z": 540
+        },
+        {
+          "x": 300,
+          "z": 530
+        },
+        {
+          "x": 540,
+          "z": 520
+        },
+        {
+          "x": 760,
+          "z": 545
+        },
+        {
+          "x": 995,
+          "z": 565
+        }
+      ]
+    },
+    {
+      "id": "ashgate_north_connector",
+      "class": "secondary",
+      "expansionOnly": true,
+      "width": 8,
+      "shoulderWidth": 4,
+      "surface": "assets/terrain/road_asphalt.png",
+      "shoulder": "assets/terrain/road_shoulders.png",
+      "points": [
+        {
+          "x": -700,
+          "z": -20
+        },
+        {
+          "x": -725,
+          "z": -150
+        },
+        {
+          "x": -740,
+          "z": -280
+        },
+        {
+          "x": -750,
+          "z": -395
+        },
+        {
+          "x": -760,
+          "z": -505
+        }
+      ]
+    },
+    {
+      "id": "eastmere_north_connector",
+      "class": "secondary",
+      "expansionOnly": true,
+      "width": 8,
+      "shoulderWidth": 4,
+      "surface": "assets/terrain/road_asphalt.png",
+      "shoulder": "assets/terrain/road_shoulders.png",
+      "points": [
+        {
+          "x": 730,
+          "z": 100
+        },
+        {
+          "x": 745,
+          "z": -50
+        },
+        {
+          "x": 750,
+          "z": -200
+        },
+        {
+          "x": 755,
+          "z": -350
+        },
+        {
+          "x": 760,
+          "z": -505
+        }
+      ]
+    },
+    {
+      "id": "westfield_south_connector",
+      "class": "secondary",
+      "expansionOnly": true,
+      "width": 8,
+      "shoulderWidth": 4,
+      "surface": "assets/terrain/road_asphalt.png",
+      "shoulder": "assets/terrain/road_shoulders.png",
+      "points": [
+        {
+          "x": -700,
+          "z": -20
+        },
+        {
+          "x": -690,
+          "z": 115
+        },
+        {
+          "x": -700,
+          "z": 250
+        },
+        {
+          "x": -715,
+          "z": 390
+        },
+        {
+          "x": -760,
+          "z": 535
+        }
+      ]
+    },
+    {
+      "id": "redmesa_south_connector",
+      "class": "secondary",
+      "expansionOnly": true,
+      "width": 8,
+      "shoulderWidth": 4,
+      "surface": "assets/terrain/road_asphalt.png",
+      "shoulder": "assets/terrain/road_shoulders.png",
+      "points": [
+        {
+          "x": 730,
+          "z": 100
+        },
+        {
+          "x": 700,
+          "z": 225
+        },
+        {
+          "x": 680,
+          "z": 350
+        },
+        {
+          "x": 700,
+          "z": 455
+        },
+        {
+          "x": 760,
+          "z": 545
+        }
+      ]
+    },
+    {
+      "class": "arterial",
+      "expansionOnly": true,
+      "width": 11,
+      "shoulderWidth": 5,
+      "surface": "assets/terrain/road_asphalt.png",
+      "shoulder": "assets/terrain/road_shoulders.png",
+      "id": "ashgate_gateway",
+      "points": [
+        {
+          "x": -325,
+          "z": 170
+        },
+        {
+          "x": -390,
+          "z": 172
+        },
+        {
+          "x": -500,
+          "z": 135
+        },
+        {
+          "x": -600,
+          "z": 78
+        },
+        {
+          "x": -700,
+          "z": -20
+        }
+      ]
+    },
+    {
+      "class": "arterial",
+      "expansionOnly": true,
+      "width": 11,
+      "shoulderWidth": 5,
+      "surface": "assets/terrain/road_asphalt.png",
+      "shoulder": "assets/terrain/road_shoulders.png",
+      "id": "eastmere_gateway",
+      "points": [
+        {
+          "x": 325,
+          "z": 174
+        },
+        {
+          "x": 390,
+          "z": 176
+        },
+        {
+          "x": 500,
+          "z": 160
+        },
+        {
+          "x": 620,
+          "z": 132
+        },
+        {
+          "x": 730,
+          "z": 100
+        }
+      ]
+    }
+  ],
+  "water": {
+    "rivers": [
+      {
+        "id": "south_creek",
+        "width": 16,
+        "bankWidth": 12,
+        "depth": 2.8,
+        "waterLevel": 4.4,
+        "color": "#456f72",
+        "points": [
+          {
+            "x": -370,
+            "z": 230
+          },
+          {
+            "x": -280,
+            "z": 218
+          },
+          {
+            "x": -190,
+            "z": 236
+          },
+          {
+            "x": -95,
+            "z": 222
+          },
+          {
+            "x": 0,
+            "z": 238
+          },
+          {
+            "x": 98,
+            "z": 224
+          },
+          {
+            "x": 190,
+            "z": 238
+          },
+          {
+            "x": 280,
+            "z": 220
+          },
+          {
+            "x": 370,
+            "z": 232
+          }
+        ]
+      },
+      {
+        "id": "south_creek_west_extension",
+        "expansionOnly": true,
+        "width": 18,
+        "bankWidth": 13,
+        "depth": 2.8,
+        "waterLevel": 4.4,
+        "color": "#456f72",
+        "points": [
+          {
+            "x": -370,
+            "z": 230
+          },
+          {
+            "x": -500,
+            "z": 242
+          },
+          {
+            "x": -640,
+            "z": 265
+          },
+          {
+            "x": -780,
+            "z": 300
+          },
+          {
+            "x": -900,
+            "z": 335
+          },
+          {
+            "x": -1010,
+            "z": 365
+          }
+        ]
+      },
+      {
+        "id": "south_creek_east_extension",
+        "expansionOnly": true,
+        "width": 21,
+        "bankWidth": 15,
+        "depth": 3.0,
+        "waterLevel": 4.4,
+        "color": "#456f72",
+        "points": [
+          {
+            "x": 370,
+            "z": 232
+          },
+          {
+            "x": 500,
+            "z": 245
+          },
+          {
+            "x": 640,
+            "z": 268
+          },
+          {
+            "x": 780,
+            "z": 300
+          },
+          {
+            "x": 900,
+            "z": 330
+          },
+          {
+            "x": 1010,
+            "z": 350
+          }
+        ]
+      },
+      {
+        "id": "eastmere_side_channel",
+        "expansionOnly": true,
+        "width": 15,
+        "bankWidth": 13,
+        "depth": 2.3,
+        "waterLevel": 4.15,
+        "color": "#4a7475",
+        "points": [
+          {
+            "x": 965,
+            "z": -70
+          },
+          {
+            "x": 900,
+            "z": 10
+          },
+          {
+            "x": 855,
+            "z": 95
+          },
+          {
+            "x": 835,
+            "z": 175
+          },
+          {
+            "x": 820,
+            "z": 245
+          },
+          {
+            "x": 790,
+            "z": 300
+          }
+        ]
+      }
+    ],
+    "lakes": []
+  },
+  "navigation": {
+    "cellSize": 4,
+    "defaultMaxSlopeDeg": 28,
+    "waterIsBlocked": true,
+    "validationRoutes": [
+      {
+        "id": "main_valley",
+        "label": "Main armored valley",
+        "maxSlopeDeg": 18,
+        "points": [
+          {
+            "x": -318,
+            "z": -54
+          },
+          {
+            "x": -270,
+            "z": -38
+          },
+          {
+            "x": -230,
+            "z": -18
+          },
+          {
+            "x": -190,
+            "z": 14
+          },
+          {
+            "x": -150,
+            "z": 34
+          },
+          {
+            "x": -90,
+            "z": 40
+          },
+          {
+            "x": 0,
+            "z": 44
+          },
+          {
+            "x": 92,
+            "z": 34
+          },
+          {
+            "x": 150,
+            "z": 34
+          },
+          {
+            "x": 190,
+            "z": 14
+          },
+          {
+            "x": 230,
+            "z": 24
+          },
+          {
+            "x": 270,
+            "z": 42
+          },
+          {
+            "x": 318,
+            "z": 54
+          }
+        ]
+      },
+      {
+        "id": "mesa_route",
+        "label": "Central high-ground ramp route",
+        "maxSlopeDeg": 22,
+        "points": [
+          {
+            "x": -118,
+            "z": -34
+          },
+          {
+            "x": -108,
+            "z": -58
+          },
+          {
+            "x": -94,
+            "z": -86
+          },
+          {
+            "x": -72,
+            "z": -108
+          },
+          {
+            "x": 0,
+            "z": -114
+          },
+          {
+            "x": 72,
+            "z": -108
+          },
+          {
+            "x": 94,
+            "z": -86
+          },
+          {
+            "x": 108,
+            "z": -58
+          },
+          {
+            "x": 118,
+            "z": -34
+          }
+        ]
+      },
+      {
+        "id": "south_flank",
+        "label": "Southern flank / overlook route",
+        "maxSlopeDeg": 20,
+        "points": [
+          {
+            "x": -320,
+            "z": 170
+          },
+          {
+            "x": -245,
+            "z": 160
+          },
+          {
+            "x": -180,
+            "z": 168
+          },
+          {
+            "x": -90,
+            "z": 172
+          },
+          {
+            "x": 0,
+            "z": 164
+          },
+          {
+            "x": 90,
+            "z": 176
+          },
+          {
+            "x": 185,
+            "z": 166
+          },
+          {
+            "x": 250,
+            "z": 158
+          },
+          {
+            "x": 320,
+            "z": 174
+          }
+        ]
+      },
+      {
+        "id": "north_pass",
+        "label": "Northern mountain pass",
+        "maxSlopeDeg": 20,
+        "points": [
+          {
+            "x": -325,
+            "z": -154
+          },
+          {
+            "x": -250,
+            "z": -150
+          },
+          {
+            "x": -185,
+            "z": -142
+          },
+          {
+            "x": -115,
+            "z": -132
+          },
+          {
+            "x": 0,
+            "z": -146
+          },
+          {
+            "x": 115,
+            "z": -132
+          },
+          {
+            "x": 188,
+            "z": -142
+          },
+          {
+            "x": 255,
+            "z": -151
+          },
+          {
+            "x": 325,
+            "z": -158
+          }
+        ]
+      },
+      {
+        "id": "sw_overlook_ramp",
+        "label": "Southwest overlook ramp",
+        "maxSlopeDeg": 20,
+        "points": [
+          {
+            "x": -118,
+            "z": 92
+          },
+          {
+            "x": -126,
+            "z": 108
+          },
+          {
+            "x": -136,
+            "z": 122
+          },
+          {
+            "x": -148,
+            "z": 136
+          }
+        ]
+      },
+      {
+        "id": "se_overlook_ramp",
+        "label": "Southeast overlook ramp",
+        "maxSlopeDeg": 20,
+        "points": [
+          {
+            "x": 158,
+            "z": 138
+          },
+          {
+            "x": 146,
+            "z": 124
+          },
+          {
+            "x": 136,
+            "z": 108
+          },
+          {
+            "x": 126,
+            "z": 92
+          }
+        ]
+      },
+      {
+        "id": "world_main_west",
+        "label": "Ashgate \u2192 Iron Valley gateway",
+        "maxSlopeDeg": 20,
+        "points": [
+          {
+            "x": -700,
+            "z": -20
+          },
+          {
+            "x": -600,
+            "z": 78
+          },
+          {
+            "x": -500,
+            "z": 135
+          },
+          {
+            "x": -390,
+            "z": 172
+          },
+          {
+            "x": -325,
+            "z": 170
+          }
+        ]
+      },
+      {
+        "id": "world_main_east",
+        "label": "Iron Valley \u2192 Eastmere gateway",
+        "maxSlopeDeg": 20,
+        "points": [
+          {
+            "x": 325,
+            "z": 174
+          },
+          {
+            "x": 390,
+            "z": 176
+          },
+          {
+            "x": 500,
+            "z": 160
+          },
+          {
+            "x": 620,
+            "z": 132
+          },
+          {
+            "x": 730,
+            "z": 100
+          }
+        ]
+      },
+      {
+        "id": "world_north_road",
+        "label": "Pinebreak \u2192 Northwatch \u2192 Blackstone military road",
+        "maxSlopeDeg": 22,
+        "points": [
+          {
+            "x": -990,
+            "z": -505
+          },
+          {
+            "x": -760,
+            "z": -505
+          },
+          {
+            "x": -520,
+            "z": -485
+          },
+          {
+            "x": -280,
+            "z": -505
+          },
+          {
+            "x": 0,
+            "z": -515
+          },
+          {
+            "x": 280,
+            "z": -502
+          },
+          {
+            "x": 520,
+            "z": -482
+          },
+          {
+            "x": 760,
+            "z": -505
+          },
+          {
+            "x": 820,
+            "z": -505
+          },
+          {
+            "x": 990,
+            "z": -500
+          }
+        ]
+      },
+      {
+        "id": "world_southline",
+        "label": "Westfield \u2192 Southline \u2192 Red Mesa highway",
+        "maxSlopeDeg": 22,
+        "points": [
+          {
+            "x": -970,
+            "z": 525
+          },
+          {
+            "x": -760,
+            "z": 535
+          },
+          {
+            "x": -530,
+            "z": 515
+          },
+          {
+            "x": -300,
+            "z": 525
+          },
+          {
+            "x": 0,
+            "z": 540
+          },
+          {
+            "x": 300,
+            "z": 530
+          },
+          {
+            "x": 540,
+            "z": 520
+          },
+          {
+            "x": 760,
+            "z": 545
+          },
+          {
+            "x": 970,
+            "z": 565
+          }
+        ]
+      },
+      {
+        "id": "pinebreak_route",
+        "label": "Iron Valley \u2192 Pinebreak pass",
+        "maxSlopeDeg": 23,
+        "points": [
+          {
+            "x": -330,
+            "z": -154
+          },
+          {
+            "x": -430,
+            "z": -238
+          },
+          {
+            "x": -535,
+            "z": -330
+          },
+          {
+            "x": -650,
+            "z": -420
+          },
+          {
+            "x": -760,
+            "z": -505
+          },
+          {
+            "x": -905,
+            "z": -625
+          }
+        ]
+      },
+      {
+        "id": "blackstone_route",
+        "label": "Iron Valley \u2192 Blackstone haul road",
+        "maxSlopeDeg": 23,
+        "points": [
+          {
+            "x": 330,
+            "z": -158
+          },
+          {
+            "x": 445,
+            "z": -245
+          },
+          {
+            "x": 565,
+            "z": -330
+          },
+          {
+            "x": 690,
+            "z": -420
+          },
+          {
+            "x": 820,
+            "z": -505
+          },
+          {
+            "x": 945,
+            "z": -595
+          }
+        ]
+      },
+      {
+        "id": "westfield_route",
+        "label": "Iron Valley \u2192 Westfield flank",
+        "maxSlopeDeg": 20,
+        "points": [
+          {
+            "x": -325,
+            "z": 170
+          },
+          {
+            "x": -450,
+            "z": 250
+          },
+          {
+            "x": -575,
+            "z": 335
+          },
+          {
+            "x": -710,
+            "z": 425
+          },
+          {
+            "x": -760,
+            "z": 535
+          },
+          {
+            "x": -970,
+            "z": 525
+          }
+        ]
+      },
+      {
+        "id": "redmesa_route",
+        "label": "Iron Valley \u2192 Red Mesa flank",
+        "maxSlopeDeg": 22,
+        "points": [
+          {
+            "x": 325,
+            "z": 174
+          },
+          {
+            "x": 450,
+            "z": 260
+          },
+          {
+            "x": 575,
+            "z": 350
+          },
+          {
+            "x": 700,
+            "z": 445
+          },
+          {
+            "x": 760,
+            "z": 545
+          },
+          {
+            "x": 970,
+            "z": 565
+          }
+        ]
+      },
+      {
+        "id": "northwatch_west_ramp",
+        "label": "Northwatch west access ramp",
+        "maxSlopeDeg": 24,
+        "points": [
+          {
+            "x": -175,
+            "z": -520
+          },
+          {
+            "x": -145,
+            "z": -548
+          },
+          {
+            "x": -115,
+            "z": -575
+          },
+          {
+            "x": -75,
+            "z": -598
+          },
+          {
+            "x": -45,
+            "z": -610
+          }
+        ]
+      },
+      {
+        "id": "northwatch_east_ramp",
+        "label": "Northwatch east access ramp",
+        "maxSlopeDeg": 24,
+        "points": [
+          {
+            "x": 45,
+            "z": -610
+          },
+          {
+            "x": 80,
+            "z": -598
+          },
+          {
+            "x": 120,
+            "z": -573
+          },
+          {
+            "x": 155,
+            "z": -545
+          },
+          {
+            "x": 190,
+            "z": -520
+          }
+        ]
+      },
+      {
+        "id": "redmesa_access",
+        "label": "Red Mesa western grade",
+        "maxSlopeDeg": 22,
+        "points": [
+          {
+            "x": 540,
+            "z": 410
+          },
+          {
+            "x": 585,
+            "z": 445
+          },
+          {
+            "x": 630,
+            "z": 480
+          },
+          {
+            "x": 680,
+            "z": 515
+          },
+          {
+            "x": 725,
+            "z": 540
+          }
+        ]
+      }
+    ],
+    "regionalChunkMeters": 512,
+    "worldBounds": {
+      "xMin": -1024,
+      "xMax": 1024,
+      "zMin": -768,
+      "zMax": 768
+    }
+  },
+  "passability": {
+    "blockedRects": []
+  },
+  "players": [],
+  "waypoints": [
+    {
+      "id": "Player_1_Start",
+      "x": -305,
+      "z": -62
+    },
+    {
+      "id": "Player_1_Rally",
+      "x": -214,
+      "z": 6
+    },
+    {
+      "id": "Player_2_Start",
+      "x": 305,
+      "z": 58
+    },
+    {
+      "id": "Player_2_Rally",
+      "x": 214,
+      "z": 8
+    },
+    {
+      "id": "Central_Mesa",
+      "x": 0,
+      "z": -112
+    },
+    {
+      "id": "South_Flank_W",
+      "x": -150,
+      "z": 142
+    },
+    {
+      "id": "South_Flank_E",
+      "x": 158,
+      "z": 145
+    },
+    {
+      "id": "Ashgate_Center",
+      "x": -760,
+      "z": -20
+    },
+    {
+      "id": "Northwatch_Radar",
+      "x": 0,
+      "z": -615
+    },
+    {
+      "id": "Blackstone_Quarry",
+      "x": 700,
+      "z": -505
+    },
+    {
+      "id": "Eastmere_Crossing",
+      "x": 650,
+      "z": 230
+    },
+    {
+      "id": "Westfield_Village",
+      "x": -720,
+      "z": 455
+    },
+    {
+      "id": "Southline_Airfield",
+      "x": -95,
+      "z": 585
+    },
+    {
+      "id": "RedMesa_Checkpoint",
+      "x": 610,
+      "z": 430
+    }
+  ],
+  "triggerAreas": [],
+  "resourceFields": [
+    {
+      "id": "west_safe_ore",
+      "definition": "mineral_dense",
+      "x": -240,
+      "z": -110,
+      "capacity": 3200
+    },
+    {
+      "id": "east_safe_ore",
+      "definition": "mineral_dense",
+      "x": 240,
+      "z": 110,
+      "capacity": 3200
+    },
+    {
+      "id": "mesa_rich",
+      "definition": "mineral_rich",
+      "x": 0,
+      "z": -110,
+      "capacity": 2200
+    },
+    {
+      "id": "south_rich_w",
+      "definition": "mineral_rich",
+      "x": -105,
+      "z": 172,
+      "capacity": 1700
+    },
+    {
+      "id": "south_rich_e",
+      "definition": "mineral_rich",
+      "x": 108,
+      "z": 174,
+      "capacity": 1700
+    }
+  ],
+  "aiAnchors": [],
+  "staticObstacles": [],
+  "objects": [],
+  "environment": {
+    "skyColor": "#8fa1a4",
+    "fogColor": "#89958f",
+    "fogNear": 700,
+    "fogFar": 2500,
+    "hemisphereSky": "#dce7e9",
+    "hemisphereGround": "#60675b",
+    "hemisphereIntensity": 1.02,
+    "sunColor": "#fffdf7",
+    "sunIntensity": 1.08,
+    "sunDirection": {
+      "x": -0.48,
+      "y": 1.0,
+      "z": 0.36
+    }
+  },
+  "world": {
+    "schemaVersion": 1,
+    "role": "main-world-candidate",
+    "phase": "regional-skeleton-0.1",
+    "protectedRects": [
+      {
+        "id": "iron_valley_core",
+        "x": 0,
+        "z": 0,
+        "width": 768,
+        "depth": 576,
+        "feather": 96,
+        "protect": [
+          "expansion-landforms",
+          "expansion-road-grade",
+          "expansion-river-carve",
+          "biome-bias"
+        ]
+      }
+    ],
+    "sectors": [
+      {
+        "id": "S11",
+        "xMin": -1024,
+        "xMax": -512,
+        "zMin": -768,
+        "zMax": -256,
+        "center": {
+          "x": -768.0,
+          "z": -512.0
+        },
+        "streamingHint": "terrain-always; props/buildings/foliage future-LOD"
+      },
+      {
+        "id": "S12",
+        "xMin": -512,
+        "xMax": 0,
+        "zMin": -768,
+        "zMax": -256,
+        "center": {
+          "x": -256.0,
+          "z": -512.0
+        },
+        "streamingHint": "terrain-always; props/buildings/foliage future-LOD"
+      },
+      {
+        "id": "S13",
+        "xMin": 0,
+        "xMax": 512,
+        "zMin": -768,
+        "zMax": -256,
+        "center": {
+          "x": 256.0,
+          "z": -512.0
+        },
+        "streamingHint": "terrain-always; props/buildings/foliage future-LOD"
+      },
+      {
+        "id": "S14",
+        "xMin": 512,
+        "xMax": 1024,
+        "zMin": -768,
+        "zMax": -256,
+        "center": {
+          "x": 768.0,
+          "z": -512.0
+        },
+        "streamingHint": "terrain-always; props/buildings/foliage future-LOD"
+      },
+      {
+        "id": "S21",
+        "xMin": -1024,
+        "xMax": -512,
+        "zMin": -256,
+        "zMax": 256,
+        "center": {
+          "x": -768.0,
+          "z": 0.0
+        },
+        "streamingHint": "terrain-always; props/buildings/foliage future-LOD"
+      },
+      {
+        "id": "S22",
+        "xMin": -512,
+        "xMax": 0,
+        "zMin": -256,
+        "zMax": 256,
+        "center": {
+          "x": -256.0,
+          "z": 0.0
+        },
+        "streamingHint": "terrain-always; props/buildings/foliage future-LOD"
+      },
+      {
+        "id": "S23",
+        "xMin": 0,
+        "xMax": 512,
+        "zMin": -256,
+        "zMax": 256,
+        "center": {
+          "x": 256.0,
+          "z": 0.0
+        },
+        "streamingHint": "terrain-always; props/buildings/foliage future-LOD"
+      },
+      {
+        "id": "S24",
+        "xMin": 512,
+        "xMax": 1024,
+        "zMin": -256,
+        "zMax": 256,
+        "center": {
+          "x": 768.0,
+          "z": 0.0
+        },
+        "streamingHint": "terrain-always; props/buildings/foliage future-LOD"
+      },
+      {
+        "id": "S31",
+        "xMin": -1024,
+        "xMax": -512,
+        "zMin": 256,
+        "zMax": 768,
+        "center": {
+          "x": -768.0,
+          "z": 512.0
+        },
+        "streamingHint": "terrain-always; props/buildings/foliage future-LOD"
+      },
+      {
+        "id": "S32",
+        "xMin": -512,
+        "xMax": 0,
+        "zMin": 256,
+        "zMax": 768,
+        "center": {
+          "x": -256.0,
+          "z": 512.0
+        },
+        "streamingHint": "terrain-always; props/buildings/foliage future-LOD"
+      },
+      {
+        "id": "S33",
+        "xMin": 0,
+        "xMax": 512,
+        "zMin": 256,
+        "zMax": 768,
+        "center": {
+          "x": 256.0,
+          "z": 512.0
+        },
+        "streamingHint": "terrain-always; props/buildings/foliage future-LOD"
+      },
+      {
+        "id": "S34",
+        "xMin": 512,
+        "xMax": 1024,
+        "zMin": 256,
+        "zMax": 768,
+        "center": {
+          "x": 768.0,
+          "z": 512.0
+        },
+        "streamingHint": "terrain-always; props/buildings/foliage future-LOD"
+      }
+    ],
+    "regions": [
+      {
+        "id": "iron_valley_core",
+        "name": "Iron Valley Core",
+        "biome": "temperate-valley",
+        "x": 0,
+        "z": 0,
+        "width": 768,
+        "depth": 576,
+        "role": "central maneuver battlefield"
+      },
+      {
+        "id": "ashgate",
+        "name": "Ashgate",
+        "biome": "temperate-urban-belt",
+        "x": -700,
+        "z": -30,
+        "width": 620,
+        "depth": 470,
+        "role": "future town + industrial hub"
+      },
+      {
+        "id": "pinebreak",
+        "name": "Pinebreak Highlands",
+        "biome": "pine-highlands",
+        "x": -650,
+        "z": -535,
+        "width": 760,
+        "depth": 430,
+        "role": "forested highland flank"
+      },
+      {
+        "id": "northwatch",
+        "name": "Northwatch Ridge",
+        "biome": "rocky-highland",
+        "x": 0,
+        "z": -590,
+        "width": 580,
+        "depth": 360,
+        "role": "radar ridge + mountain control"
+      },
+      {
+        "id": "blackstone",
+        "name": "Blackstone Quarry",
+        "biome": "quarry-highland",
+        "x": 680,
+        "z": -500,
+        "width": 650,
+        "depth": 500,
+        "role": "future quarry + heavy industry"
+      },
+      {
+        "id": "eastmere",
+        "name": "Eastmere Lowlands",
+        "biome": "wet-lowlands",
+        "x": 720,
+        "z": 80,
+        "width": 600,
+        "depth": 570,
+        "role": "river crossings + wetlands"
+      },
+      {
+        "id": "westfield",
+        "name": "Westfield",
+        "biome": "farmland",
+        "x": -700,
+        "z": 515,
+        "width": 640,
+        "depth": 440,
+        "role": "open armor + future villages"
+      },
+      {
+        "id": "southline",
+        "name": "Southline",
+        "biome": "logistics-corridor",
+        "x": 0,
+        "z": 545,
+        "width": 650,
+        "depth": 360,
+        "role": "future airfield + depot"
+      },
+      {
+        "id": "red_mesa",
+        "name": "Red Mesa Frontier",
+        "biome": "dry-scrub",
+        "x": 700,
+        "z": 520,
+        "width": 650,
+        "depth": 450,
+        "role": "dry frontier + long flanks"
+      }
+    ],
+    "reservedSites": [
+      {
+        "id": "ashgate_civic",
+        "name": "Ashgate Civic Center",
+        "x": -760,
+        "z": -20,
+        "futureRole": "city objective"
+      },
+      {
+        "id": "ashgate_rail",
+        "name": "Ashgate Rail Yard",
+        "x": -660,
+        "z": -190,
+        "futureRole": "rail logistics"
+      },
+      {
+        "id": "pinebreak_pass",
+        "name": "Pinebreak Pass",
+        "x": -735,
+        "z": -470,
+        "futureRole": "mountain pass"
+      },
+      {
+        "id": "northwatch_radar",
+        "name": "Northwatch Radar Hill",
+        "x": 0,
+        "z": -615,
+        "futureRole": "radar / high-ground objective"
+      },
+      {
+        "id": "blackstone_quarry",
+        "name": "Blackstone Quarry",
+        "x": 700,
+        "z": -505,
+        "futureRole": "quarry / resource objective"
+      },
+      {
+        "id": "blackstone_loader",
+        "name": "Blackstone Rail Loader",
+        "x": 835,
+        "z": -345,
+        "futureRole": "industrial logistics"
+      },
+      {
+        "id": "eastmere_bridge",
+        "name": "Eastmere Main Bridge",
+        "x": 650,
+        "z": 230,
+        "futureRole": "river crossing"
+      },
+      {
+        "id": "eastmere_pumps",
+        "name": "Eastmere Pump Station",
+        "x": 835,
+        "z": 125,
+        "futureRole": "water infrastructure"
+      },
+      {
+        "id": "westfield_village",
+        "name": "Westfield Village",
+        "x": -720,
+        "z": 455,
+        "futureRole": "village objective"
+      },
+      {
+        "id": "westfield_silos",
+        "name": "Westfield Silos",
+        "x": -865,
+        "z": 585,
+        "futureRole": "agricultural logistics"
+      },
+      {
+        "id": "southline_airfield",
+        "name": "Southline Airfield",
+        "x": -95,
+        "z": 585,
+        "futureRole": "airfield"
+      },
+      {
+        "id": "southline_depot",
+        "name": "Southline Depot",
+        "x": 195,
+        "z": 525,
+        "futureRole": "military logistics"
+      },
+      {
+        "id": "redmesa_checkpoint",
+        "name": "Red Mesa Checkpoint",
+        "x": 610,
+        "z": 430,
+        "futureRole": "frontier route control"
+      },
+      {
+        "id": "redmesa_overlook",
+        "name": "Red Mesa Overlook",
+        "x": 820,
+        "z": 620,
+        "futureRole": "high-ground objective"
+      }
+    ],
+    "reservedBaseZones": [
+      {
+        "id": "iron_west",
+        "x": -292,
+        "z": -52,
+        "radius": 88,
+        "role": "legacy west base"
+      },
+      {
+        "id": "iron_east",
+        "x": 292,
+        "z": 48,
+        "radius": 88,
+        "role": "legacy east base"
+      },
+      {
+        "id": "ashgate_reserve",
+        "x": -865,
+        "z": -90,
+        "radius": 105,
+        "role": "western operational base"
+      },
+      {
+        "id": "blackstone_reserve",
+        "x": 825,
+        "z": -390,
+        "radius": 105,
+        "role": "northeast operational base"
+      },
+      {
+        "id": "westfield_reserve",
+        "x": -760,
+        "z": 590,
+        "radius": 110,
+        "role": "southwest operational base"
+      },
+      {
+        "id": "redmesa_reserve",
+        "x": 790,
+        "z": 545,
+        "radius": 110,
+        "role": "southeast operational base"
+      }
+    ]
+  }
+}
