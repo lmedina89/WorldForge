@@ -1,26 +1,37 @@
-# WorldForge v0.13.33 Test Report
+# WorldForge v0.13.31 Test Report
 
-Release purpose: recover the v0.13.32 regional-surface regression without discarding the useful v0.13.32 strategic-geography work.
+Scope: **Greater Iron Valley 0.1 — Regional Skeleton**, built on the protected v0.13.30 V8 terrain / V9 road baseline.
 
-## Release gates
+## Current milestone regression — PASS
 
-- `game-terrain-regional-recovery-v01333.test.mjs`: PASS
-  - exact v0.13.31 eight-zone biome/surface distribution restored
-  - six v0.13.32 secondary material-bias masks absent
-  - v0.13.32 strategic geography / landmarks / POI / bridge / rail planning retained
-  - 23/23 authored vehicle routes pass
-  - protected Iron Valley core remains exact
-  - protected V8/V9 renderer and ForgeRTS runtime hashes pass
-- `game-terrain-greater-iron-valley-v01331.test.mjs`: PASS
-  - 2048×1536 world, 12 sectors, 9 regions
-  - protected core height/slope/surface/tint deltas = 0
-- `game-terrain-road-recovery-v01330.test.mjs`: PASS
-  - V9 road core recovery, shoulder feathering and road geometry remain protected
-- JS/MJS syntax: 100/100 PASS
-- JSON parse: 23/23 PASS
+- `tests/game-terrain-greater-iron-valley-v01331.test.mjs`
+  - 2048×1536 world dimensions
+  - 12 exact 512×512 logical world sectors
+  - 9 named regions / 8 biome masks
+  - no new placed buildings, players, mission triggers or mission AI anchors
+  - V8 terrain renderer hash unchanged
+  - V9 road renderer hash unchanged
+  - protected `terrain-sampler.js` hash unchanged
+  - original Iron Valley benchmark map hash unchanged
+  - ForgeRTS Training Ground map hash unchanged
+  - compacted-road + shoulder assets unchanged
+  - protected ForgeRTS runtime-sync manifest hashes pass
+  - original Iron Valley ridges / valleys / plateaus / pads / ramps remain exact in the new world data
+  - first six world roads are the exact original Iron Valley roads
+  - first world river is the exact original South Creek
+  - full 768×576 protected rectangle has zero sampled raw/final height delta; a 4 m inset has zero derived slope, splat-weight and macro-tint delta
+  - historical v0.13.30 benchmark surface sample hash still reproduces exactly
+  - major regional road branches use explicit shared junction nodes rather than accidental grade-crossings
+  - all 17 legacy/world validation routes remain below their authored slope limits
+  - Blackstone / Eastmere / Westfield / Red Mesa material-family assertions pass
 
-## Recovery finding
+- JavaScript/MJS syntax validation: **99 files passed `node --check`**.
+- `game-terrain-strategic-battlefield-v01325.test.mjs` and `game-terrain-pbr-truecolor-v01326.test.mjs` also pass against the protected map/material foundation.
 
-v0.13.32 added six secondary elliptical material-bias masks on top of the original eight regional masks. Those masks did not create true biome authoring; they increased rock/dirt/wet weights inside broad regions and could make otherwise-good grass read as speckled or rocky. v0.13.33 removes only those secondary masks and restores the exact v0.13.31 surface-distribution array.
+## Historical test-suite note
 
-No terrain-renderer rewrite, texture replacement, road rewrite, river rewrite or ForgeRTS runtime change is part of this recovery.
+The repository intentionally carries many old version-pinned regression files. Some assert an older `WORLDFORGE_VERSION`, while others import sibling historical source folders such as `/mnt/data/worldforge-v0.8.0` that are not part of a GitHub-ready ZIP. Those are archival regression fixtures, so running every historical test unchanged is not a valid current-release gate. The v0.13.31 focused regression, protected hashes, current strategic-terrain checks and project-wide syntax checks pass.
+
+## Visual limitation
+
+The container cannot provide a trustworthy iPhone Safari/WebGL pass because this project imports Three.js from the CDN and the execution environment cannot reproduce the target mobile browser/GPU path. Final world composition, biome readability and target-device performance still require the iPhone check.
