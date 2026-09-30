@@ -4,7 +4,7 @@ import { StrategicTerrainSampler } from './strategic-terrain-sampler.js';
 import { TerrainRenderer } from './terrain-renderer.js';
 import { TerrainRendererV9 } from './terrain-renderer-v9.js';
 
-export const GAME_TERRAIN_WORKBENCH_VERSION='0.12.0';
+export const GAME_TERRAIN_WORKBENCH_VERSION='0.12.1';
 export const FORGERTS_TERRAIN_SOURCE_VERSION='0.6.6.8';
 export const EXPERIMENTAL_TERRAIN_RENDERER_VERSION='0.9.0';
 

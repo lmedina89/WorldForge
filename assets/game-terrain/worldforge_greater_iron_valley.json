@@ -2,15 +2,15 @@
   "manifestVersion": 2,
   "contentContractVersion": 1,
   "id": "worldforge_greater_iron_valley",
-  "name": "Greater Iron Valley \u2014 Regional Identity + Strategic Geography",
-  "version": 2,
+  "name": "Greater Iron Valley \u2014 Regional Identity Recovery",
+  "version": 3,
   "seed": 842731,
   "region": {
     "id": "greater_iron_valley",
     "biome": "multi-region temperate frontier",
     "weather": "clear",
     "timeOfDay": "late-morning",
-    "authoring": "WorldForge authored regional identity + strategic geography",
+    "authoring": "WorldForge regional identity recovery \u2014 v0.13.31 surface distribution restored; v0.13.32 strategic geography retained",
     "streamable": true,
     "worldGrid": {
       "x": 0,
@@ -1822,132 +1822,6 @@
           0.94,
           0.84
         ]
-      },
-      {
-        "id": "pinebreak_deep_green",
-        "name": "Pinebreak shaded highland",
-        "x": -820,
-        "z": -625,
-        "radiusX": 235,
-        "radiusZ": 165,
-        "feather": 95,
-        "edgeNoise": 0.42,
-        "materialBias": {
-          "grass": 0.15,
-          "dirt": -0.03,
-          "rock": 0.08,
-          "wet": 0.0
-        },
-        "macroTint": [
-          0.915,
-          1.055,
-          0.94
-        ]
-      },
-      {
-        "id": "northwatch_exposed_crown",
-        "name": "Northwatch exposed crown",
-        "x": 20,
-        "z": -650,
-        "radiusX": 215,
-        "radiusZ": 135,
-        "feather": 82,
-        "edgeNoise": 0.3,
-        "materialBias": {
-          "grass": -0.12,
-          "dirt": -0.02,
-          "rock": 0.24,
-          "wet": -0.02
-        },
-        "macroTint": [
-          0.94,
-          0.975,
-          1.025
-        ]
-      },
-      {
-        "id": "blackstone_exposed_cut",
-        "name": "Blackstone exposed quarry cut",
-        "x": 760,
-        "z": -555,
-        "radiusX": 235,
-        "radiusZ": 175,
-        "feather": 92,
-        "edgeNoise": 0.34,
-        "materialBias": {
-          "grass": -0.24,
-          "dirt": 0.08,
-          "rock": 0.34,
-          "wet": -0.03
-        },
-        "macroTint": [
-          0.95,
-          0.945,
-          0.94
-        ]
-      },
-      {
-        "id": "eastmere_marsh_core",
-        "name": "Eastmere marsh core",
-        "x": 850,
-        "z": 175,
-        "radiusX": 235,
-        "radiusZ": 190,
-        "feather": 100,
-        "edgeNoise": 0.46,
-        "materialBias": {
-          "grass": 0.08,
-          "dirt": -0.08,
-          "rock": -0.08,
-          "wet": 0.22
-        },
-        "macroTint": [
-          0.91,
-          1.055,
-          1.045
-        ]
-      },
-      {
-        "id": "westfield_fertile_core",
-        "name": "Westfield fertile plain",
-        "x": -810,
-        "z": 590,
-        "radiusX": 250,
-        "radiusZ": 165,
-        "feather": 95,
-        "edgeNoise": 0.4,
-        "materialBias": {
-          "grass": 0.18,
-          "dirt": 0.02,
-          "rock": -0.15,
-          "wet": 0.0
-        },
-        "macroTint": [
-          1.0,
-          1.055,
-          0.92
-        ]
-      },
-      {
-        "id": "redmesa_dry_core",
-        "name": "Red Mesa dry bench",
-        "x": 830,
-        "z": 625,
-        "radiusX": 240,
-        "radiusZ": 180,
-        "feather": 95,
-        "edgeNoise": 0.4,
-        "materialBias": {
-          "grass": -0.27,
-          "dirt": 0.25,
-          "rock": 0.16,
-          "wet": -0.08
-        },
-        "macroTint": [
-          1.075,
-          0.92,
-          0.82
-        ]
       }
     ]
   },
@@ -3742,7 +3616,7 @@
   "world": {
     "schemaVersion": 1,
     "role": "main-world-candidate",
-    "phase": "regional-identity-0.2",
+    "phase": "regional-identity-recovery-0.2r",
     "protectedRects": [
       {
         "id": "iron_valley_core",

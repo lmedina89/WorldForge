@@ -19,9 +19,9 @@ const showcase=JSON.parse(text('assets/game-terrain/worldforge_curated_battlefie
 const training=JSON.parse(text('assets/game-terrain/forgerts_training_ground.json'));
 const manifest=JSON.parse(text('assets/game-terrain/runtime-sync-manifest.json'));
 
-assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.30'/);
-assert.match(schema,/gameTerrainWorkbench: '0\.10\.0'/);
-assert.match(wrapper,/GAME_TERRAIN_WORKBENCH_VERSION='0\.10\.0'/);
+assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.33'/);
+assert.match(schema,/gameTerrainWorkbench: '0\.12\.1'/);
+assert.match(wrapper,/GAME_TERRAIN_WORKBENCH_VERSION='0\.12\.1'/);
 assert.match(wrapper,/EXPERIMENTAL_TERRAIN_RENDERER_VERSION='0\.9\.0'/);
 assert.match(wrapper,/TerrainRendererV9/);
 assert.match(html,/PBR V9 · ROAD RECOVERY/);
@@ -58,4 +58,4 @@ for(const [file,meta] of Object.entries(manifest.files)){
   assert.equal(bytes(file).length,meta.bytes,`protected ForgeRTS runtime size changed: ${file}`);
 }
 
-console.log(JSON.stringify({ok:true,worldforge:'0.13.30',terrainWorkbench:'0.10.0',renderer:'PBR V9 ROAD RECOVERY',v8TerrainProtected:true,roadGeometryProtected:true,roadCoreOverlapDarkeningRemoved:true,shoulderFeatherProtected:true,protectedForgeRTS:true},null,2));
+console.log(JSON.stringify({ok:true,worldforge:'0.13.33',terrainWorkbench:'0.12.1',renderer:'PBR V9 ROAD RECOVERY',v8TerrainProtected:true,roadGeometryProtected:true,roadCoreOverlapDarkeningRemoved:true,shoulderFeatherProtected:true,protectedForgeRTS:true},null,2));

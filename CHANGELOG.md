@@ -1,9 +1,10 @@
-# v0.13.32 — Greater Iron Valley 0.2 · Regional Identity + Strategic Geography
+# v0.13.33 — Greater Iron Valley 0.2R · Surface Recovery
 
-- Preserved the approved v0.13.31 road/water network and the v0.13.30 V8/V9 terrain/road presentation.
-- Added six restrained secondary biome masks (14 total) to strengthen regional identity without adding new source materials or shaders.
-- Added landmark-scale authored geography: Ashgate Bluff, Pinebreak Saddle/overlook, Northwatch crown spurs, stepped Blackstone quarry benches, Eastmere floodplain shaping, Westfield Long Hill and Red Mesa twin-butte/dry-wash geography.
-- Added 8 named natural-landmark contracts, 12 future POI footprints, 4 bridge/causeway sites, 2 reserved rail corridors, road hierarchy, water-corridor groupings and 9 combat-space roles.
-- Added six regional navigation audits; 23/23 total authored vehicle routes pass their slope limits.
-- Added optional Game Terrain **Show strategic plan** overlay for rail centerlines, POI footprints and bridge sites. It is planning/debug presentation only.
-- Kept all city buildings, rail meshes, bridge meshes, mission scripts, AI anchors and placed gameplay entities deferred.
+- Recovered from the v0.13.32 regional-identity material regression reported on iPhone Safari.
+- Restored the exact eight v0.13.31 biome-zone definitions and their surface-distribution behavior. The six added v0.13.32 secondary material-bias masks were removed.
+- Kept the useful v0.13.32 strategic geography: authored ridges/benches/floodplains/buttes, 8 natural landmarks, 12 future POI footprints, 4 bridge sites, 2 reserved rail corridors, 9 combat-space contracts and the optional strategic-plan overlay.
+- Kept the approved v0.13.30 V8/V9 terrain and road renderers byte-for-byte unchanged.
+- Kept the v0.13.31 18-road / four-river network unchanged.
+- No city buildings, rail meshes, bridge meshes, mission scripts, AI anchors or placed gameplay entities were added.
+
+This is intentionally a recovery release. Proper biome mapping will be authored as explicit regional masks in a later milestone instead of stacking stronger material biases onto the grass/rock splat.

@@ -17,12 +17,12 @@ const world=JSON.parse(text('assets/game-terrain/worldforge_greater_iron_valley.
 const benchmark=JSON.parse(text('assets/game-terrain/worldforge_curated_battlefield.json'));
 const manifest=JSON.parse(text('assets/game-terrain/runtime-sync-manifest.json'));
 
-assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.32'/);
-assert.match(schema,/gameTerrainWorkbench: '0\.12\.0'/);
-assert.match(wrapper,/GAME_TERRAIN_WORKBENCH_VERSION='0\.12\.0'/);
+assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.33'/);
+assert.match(schema,/gameTerrainWorkbench: '0\.12\.1'/);
+assert.match(wrapper,/GAME_TERRAIN_WORKBENCH_VERSION='0\.12\.1'/);
 assert.match(wrapper,/loadWorld\(\)/);
-assert.match(html,/GREATER IRON VALLEY 0\.2/);
-assert.match(app,/Greater Iron Valley regional identity/);
+assert.match(html,/GREATER IRON VALLEY 0\.2R/);
+assert.match(app,/Greater Iron Valley recovered surface/);
 assert.match(app,/gameTerrainLoadWorld/);
 
 // v0.13.30 terrain and road presentation remain byte-for-byte protected.
@@ -40,7 +40,7 @@ for(const [file,meta] of Object.entries(manifest.files)){
 
 assert.equal(world.id,'worldforge_greater_iron_valley');
 assert.deepEqual(world.size,{width:2048,depth:1536});
-assert.equal(world.world.phase,'regional-identity-0.2');
+assert.equal(world.world.phase,'regional-identity-recovery-0.2r');
 assert.equal(world.world.sectors.length,12);
 assert.equal(world.world.regions.length,9);
 assert.ok(world.terrain.biomeZones.length>=8);
@@ -130,4 +130,4 @@ assert.ok(westfield.grass>.90,'Westfield should remain broad grass/farmland');
 assert.ok(eastmere.wet>.08,'Eastmere should carry wet-lowland material');
 assert.ok(redmesa.dirt>.20&&redmesa.rock>.10,'Red Mesa should read drier and rockier');
 
-console.log(JSON.stringify({ok:true,worldforge:'0.13.32',terrainWorkbench:'0.12.0',map:world.name,size:world.size,sectors:world.world.sectors.length,regions:world.world.regions.length,biomeZones:world.terrain.biomeZones.length,routes:`${routeAudit.length}/${routeAudit.length}`,protectedCore:{maxRawHeightDelta,maxHeightDelta,maxSlopeDelta,maxSurfaceDelta,maxTintDelta},protectedV9:true,protectedForgeRTS:true},null,2));
+console.log(JSON.stringify({ok:true,worldforge:'0.13.33',terrainWorkbench:'0.12.1',map:world.name,size:world.size,sectors:world.world.sectors.length,regions:world.world.regions.length,biomeZones:world.terrain.biomeZones.length,routes:`${routeAudit.length}/${routeAudit.length}`,protectedCore:{maxRawHeightDelta,maxHeightDelta,maxSlopeDelta,maxSurfaceDelta,maxTintDelta},protectedV9:true,protectedForgeRTS:true},null,2));
