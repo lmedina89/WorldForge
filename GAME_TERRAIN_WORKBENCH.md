@@ -1,33 +1,29 @@
-# Game Terrain Workbench 0.11 — Greater Iron Valley Regional Skeleton
+# Game Terrain Workbench 0.12 — Greater Iron Valley Regional Identity
 
-Active renderer remains **PBR V9 · ROAD RECOVERY**. No V10 renderer was created for this milestone.
+Active renderer remains **PBR V9 · ROAD RECOVERY**. No renderer rewrite is part of v0.13.32.
 
-## Three battlefield sources
+## Greater Iron Valley 0.2
 
-1. **Greater Iron Valley 0.1** — new 2048×1536 regional world skeleton.
-2. **Iron Valley Benchmark** — protected 768×576 v0.13.30 authored battlefield.
-3. **ForgeRTS Training Ground** — protected runtime comparison map.
+The 2048×1536 world keeps the original 768×576 Iron Valley terrain core protected while strengthening the surrounding regional identities with additional biome masks and landmark-scale authored landforms.
 
-## Protected center
+Fourteen total biome masks bias only the existing V8/V9 grass/dirt/rock/wet source materials. Roads and riverbanks continue to override biome paint, preserving the approved V9 road shoulders and wet-bank transitions.
 
-Greater Iron Valley declares a 768×576 protected terrain rectangle matching the original benchmark. Expansion landforms, expansion road grading, expansion river carving and biome bias all fade to zero inside that rectangle. Regression tests verify exact raw/final height across the complete protected rectangle, plus zero delta in derived slope, surface weights and macro tint from a 4 m inset (outside the derivative stencil at the expansion seam).
+## Strategic-plan overlay
 
-Additive road/water meshes can begin at the existing edge exits so the regional network is visually continuous, but they do not rewrite the protected core terrain field. The separate Iron Valley Benchmark remains the exact standalone v0.13.30 visual reference.
+The optional **Show strategic plan** toggle displays planning metadata only:
 
-## Regional landform layer
+- reserved rail centerlines
+- future POI footprint outlines
+- bridge/causeway markers
 
-`terrain.landforms.expansion` is an additive WorldForge authoring layer. It supports the same authored ridge/valley/plateau/pad/ramp primitives as the original strategic sampler, but applies them only outside protected world rectangles.
+The overlay does not participate in terrain generation, collision, navigation or rendering materials.
 
-This keeps the original benchmark behavior stable while allowing a much larger authored world around it.
+## Geography contracts
 
-## Biome masks
+`world.naturalLandmarks` names the major terrain silhouettes.
+`world.poiFootprints` reserves future city/industrial/military envelopes.
+`world.bridgeSites` pins future crossings to actual road/river intersections.
+`world.railCorridors` reserves future rail alignment without grading terrain yet.
+`world.roadHierarchy`, `world.waterCorridors` and `world.combatSpaces` document the intended strategic structure.
 
-`terrain.biomeZones` biases the existing grass/dirt/rock/wet splat distribution and macro tint using feathered, noise-distorted elliptical regions. These masks do not introduce new materials, new PBR textures or a new renderer.
-
-Road and river transitions continue to override biome paint so the good v0.13.30 shoulder/bank behavior is preserved.
-
-## World metadata
-
-`world.sectors` defines twelve 512×512 future streaming/LOD sectors.
-`world.regions` defines named gameplay regions.
-`world.reservedSites` and `world.reservedBaseZones` are planning anchors only; no buildings or mission scripts are spawned from them in 0.1.
+All 23 vehicle-validation routes currently pass their authored slope limits.

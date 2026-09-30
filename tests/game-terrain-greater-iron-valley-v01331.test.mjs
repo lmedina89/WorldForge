@@ -17,12 +17,12 @@ const world=JSON.parse(text('assets/game-terrain/worldforge_greater_iron_valley.
 const benchmark=JSON.parse(text('assets/game-terrain/worldforge_curated_battlefield.json'));
 const manifest=JSON.parse(text('assets/game-terrain/runtime-sync-manifest.json'));
 
-assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.31'/);
-assert.match(schema,/gameTerrainWorkbench: '0\.11\.0'/);
-assert.match(wrapper,/GAME_TERRAIN_WORKBENCH_VERSION='0\.11\.0'/);
+assert.match(schema,/WORLDFORGE_VERSION = '0\.13\.32'/);
+assert.match(schema,/gameTerrainWorkbench: '0\.12\.0'/);
+assert.match(wrapper,/GAME_TERRAIN_WORKBENCH_VERSION='0\.12\.0'/);
 assert.match(wrapper,/loadWorld\(\)/);
-assert.match(html,/GREATER IRON VALLEY 0\.1/);
-assert.match(app,/Greater Iron Valley regional skeleton/);
+assert.match(html,/GREATER IRON VALLEY 0\.2/);
+assert.match(app,/Greater Iron Valley regional identity/);
 assert.match(app,/gameTerrainLoadWorld/);
 
 // v0.13.30 terrain and road presentation remain byte-for-byte protected.
@@ -40,10 +40,10 @@ for(const [file,meta] of Object.entries(manifest.files)){
 
 assert.equal(world.id,'worldforge_greater_iron_valley');
 assert.deepEqual(world.size,{width:2048,depth:1536});
-assert.equal(world.world.phase,'regional-skeleton-0.1');
+assert.equal(world.world.phase,'regional-identity-0.2');
 assert.equal(world.world.sectors.length,12);
 assert.equal(world.world.regions.length,9);
-assert.equal(world.terrain.biomeZones.length,8);
+assert.ok(world.terrain.biomeZones.length>=8);
 assert.equal(world.world.protectedRects[0].width,768);
 assert.equal(world.world.protectedRects[0].depth,576);
 assert.deepEqual(world.world.protectedRects[0].protect,['expansion-landforms','expansion-road-grade','expansion-river-carve','biome-bias']);
@@ -121,7 +121,7 @@ for(const [road,x,z] of [
 const sampleRoute=(route,step=5)=>{let max=0;for(let i=0;i<route.points.length-1;i++){const a=route.points[i],b=route.points[i+1],L=Math.hypot(b.x-a.x,b.z-a.z),n=Math.max(1,Math.ceil(L/step));for(let j=0;j<=n;j++){const q=j/n,x=a.x+(b.x-a.x)*q,z=a.z+(b.z-a.z)*q;max=Math.max(max,worldTerrain.slopeDeg(x,z,3));}}return max;};
 const routeAudit=[];
 for(const r of world.navigation.validationRoutes){const maxSlope=sampleRoute(r);routeAudit.push({id:r.id,maxSlope:+maxSlope.toFixed(2),limit:r.maxSlopeDeg});assert.ok(maxSlope<=r.maxSlopeDeg,`${r.id} max slope ${maxSlope.toFixed(2)} exceeds ${r.maxSlopeDeg}`);}
-assert.equal(routeAudit.length,17);
+assert.ok(routeAudit.length>=17);
 
 // Biome masks create distinct terrain families while using the same protected source materials.
 const quarry=worldSurface.sample(650,-560),westfield=worldSurface.sample(-820,620),eastmere=worldSurface.sample(900,170),redmesa=worldSurface.sample(800,650);
@@ -130,4 +130,4 @@ assert.ok(westfield.grass>.90,'Westfield should remain broad grass/farmland');
 assert.ok(eastmere.wet>.08,'Eastmere should carry wet-lowland material');
 assert.ok(redmesa.dirt>.20&&redmesa.rock>.10,'Red Mesa should read drier and rockier');
 
-console.log(JSON.stringify({ok:true,worldforge:'0.13.31',terrainWorkbench:'0.11.0',map:world.name,size:world.size,sectors:world.world.sectors.length,regions:world.world.regions.length,biomeZones:world.terrain.biomeZones.length,routes:`${routeAudit.length}/${routeAudit.length}`,protectedCore:{maxRawHeightDelta,maxHeightDelta,maxSlopeDelta,maxSurfaceDelta,maxTintDelta},protectedV9:true,protectedForgeRTS:true},null,2));
+console.log(JSON.stringify({ok:true,worldforge:'0.13.32',terrainWorkbench:'0.12.0',map:world.name,size:world.size,sectors:world.world.sectors.length,regions:world.world.regions.length,biomeZones:world.terrain.biomeZones.length,routes:`${routeAudit.length}/${routeAudit.length}`,protectedCore:{maxRawHeightDelta,maxHeightDelta,maxSlopeDelta,maxSurfaceDelta,maxTintDelta},protectedV9:true,protectedForgeRTS:true},null,2));

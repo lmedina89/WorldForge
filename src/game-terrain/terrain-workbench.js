@@ -4,7 +4,7 @@ import { StrategicTerrainSampler } from './strategic-terrain-sampler.js';
 import { TerrainRenderer } from './terrain-renderer.js';
 import { TerrainRendererV9 } from './terrain-renderer-v9.js';
 
-export const GAME_TERRAIN_WORKBENCH_VERSION='0.11.0';
+export const GAME_TERRAIN_WORKBENCH_VERSION='0.12.0';
 export const FORGERTS_TERRAIN_SOURCE_VERSION='0.6.6.8';
 export const EXPERIMENTAL_TERRAIN_RENDERER_VERSION='0.9.0';
 
@@ -49,7 +49,7 @@ export class GameTerrainWorkbench{
     // That keeps shader projection, slope normals and lighting identical to the game path.
     this.runtimeRoot=new THREE.Group();this.runtimeRoot.name='ForgeRTSRuntimeTerrain';this.root.add(this.runtimeRoot);
     this.map=null;this.baselineMap=null;this.terrain=null;this.runtimeRenderer=null;this.info=null;this.loaded=false;this.view='wide';
-    this.rendererMode='experimental';this.mapSource='none';this.routeDebug=new THREE.Group();this.routeDebug.name='StrategicRouteValidation';this.runtimeRoot.add(this.routeDebug);this._routesVisible=false;
+    this.rendererMode='experimental';this.mapSource='none';this.routeDebug=new THREE.Group();this.routeDebug.name='StrategicRouteValidation';this.runtimeRoot.add(this.routeDebug);this._routesVisible=false;this.worldPlanDebug=new THREE.Group();this.worldPlanDebug.name='StrategicWorldPlan';this.runtimeRoot.add(this.worldPlanDebug);this._worldPlanVisible=false;
   }
 
   setActive(active){this.root.visible=!!active;}
@@ -146,6 +146,7 @@ export class GameTerrainWorkbench{
       :new TerrainRendererV9({scene:this.runtimeRoot,map:this.map,terrain:this.terrain,camera:this.camera,renderer:this.renderer});
     await this.runtimeRenderer.build();
     this._buildRouteDebug();
+    this._buildWorldPlanDebug();
     this._syncPresentationUniforms();
     this._applyVisibility();
     this.info=this._stats();
@@ -167,8 +168,9 @@ export class GameTerrainWorkbench{
     if(this.runtimeRenderer?.armTextures)for(const t of this.runtimeRenderer.armTextures.values())t?.dispose?.();
     this.runtimeRenderer?.rockMacroTexture?.dispose?.();
     if(this.runtimeRenderer?.generatedTextures)for(const t of this.runtimeRenderer.generatedTextures)t?.dispose?.();
-    for(const c of [...this.runtimeRoot.children]){if(c===this.routeDebug)continue;this.runtimeRoot.remove(c);disposeObject(c);}
+    for(const c of [...this.runtimeRoot.children]){if(c===this.routeDebug||c===this.worldPlanDebug)continue;this.runtimeRoot.remove(c);disposeObject(c);}
     while(this.routeDebug.children.length){const c=this.routeDebug.children.pop();c.geometry?.dispose?.();c.material?.dispose?.();}
+    while(this.worldPlanDebug.children.length){const c=this.worldPlanDebug.children.pop();c.geometry?.dispose?.();c.material?.dispose?.();}
     this.runtimeRenderer=null;this.terrain=null;
   }
 
@@ -210,6 +212,39 @@ export class GameTerrainWorkbench{
 
   setRoutesVisible(on){this._routesVisible=!!on;if(this.routeDebug)this.routeDebug.visible=this._routesVisible;}
 
+
+  _buildWorldPlanDebug(){
+    while(this.worldPlanDebug.children.length){const c=this.worldPlanDebug.children.pop();c.geometry?.dispose?.();c.material?.dispose?.();}
+    const addLine=(points,color=0xd0b37a,opacity=.78,name='WorldPlan')=>{
+      if(points.length<2)return;
+      const g=new THREE.BufferGeometry().setFromPoints(points),m=new THREE.LineBasicMaterial({color,transparent:true,opacity,depthTest:false});
+      const line=new THREE.Line(g,m);line.name=name;line.renderOrder=21;this.worldPlanDebug.add(line);
+    };
+    const sampledPath=(src=[],lift=.85)=>{
+      const out=[];
+      for(let i=0;i<src.length-1;i++){
+        const a=src[i],b=src[i+1],L=Math.hypot(b.x-a.x,b.z-a.z),n=Math.max(1,Math.ceil(L/18));
+        for(let j=0;j<n;j++){const q=j/n,x=a.x+(b.x-a.x)*q,z=a.z+(b.z-a.z)*q;out.push(new THREE.Vector3(x,this.terrain.heightAt(x,z)+lift,z));}
+      }
+      if(src.length){const a=src.at(-1);out.push(new THREE.Vector3(a.x,this.terrain.heightAt(a.x,a.z)+lift,a.z));}
+      return out;
+    };
+    for(const rail of this.map?.world?.railCorridors||[])addLine(sampledPath(rail.points||[],1.05),0xd7b36a,.82,`WorldPlan:Rail:${rail.id}`);
+    for(const p of this.map?.world?.poiFootprints||[]){
+      const hx=(p.width||20)*.5,hz=(p.depth||20)*.5,a=(p.angleDeg||0)*Math.PI/180,c=Math.cos(a),sn=Math.sin(a);
+      const corners=[[-hx,-hz],[hx,-hz],[hx,hz],[-hx,hz],[-hx,-hz]].map(([lx,lz])=>{const x=p.x+lx*c-lz*sn,z=p.z+lx*sn+lz*c;return new THREE.Vector3(x,this.terrain.heightAt(x,z)+1.15,z);});
+      addLine(corners,0x74d7ff,.72,`WorldPlan:POI:${p.id}`);
+    }
+    for(const b of this.map?.world?.bridgeSites||[]){
+      const y=this.terrain.heightAt(b.x,b.z)+1.25,r=b.class==='primary'?11:8;
+      const g=new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(b.x-r,y,b.z),new THREE.Vector3(b.x+r,y,b.z),new THREE.Vector3(b.x,y,b.z-r),new THREE.Vector3(b.x,y,b.z+r)]);
+      const m=new THREE.LineBasicMaterial({color:0xffd36a,transparent:true,opacity:.9,depthTest:false});const line=new THREE.LineSegments(g,m);line.name=`WorldPlan:Bridge:${b.id}`;line.renderOrder=22;this.worldPlanDebug.add(line);
+    }
+    this.worldPlanDebug.visible=this._worldPlanVisible;
+  }
+
+  setWorldPlanVisible(on){this._worldPlanVisible=!!on;if(this.worldPlanDebug)this.worldPlanDebug.visible=this._worldPlanVisible;}
+
   _stats(){
     const w=Number(this.map.size.width),d=Number(this.map.size.depth);
     const cell=this.rendererMode==='current'?6:clamp(this.map.terrain.visual?.cellMeters??4,3,6),cols=Math.ceil(w/cell),rows=Math.ceil(d/cell);
@@ -227,6 +262,10 @@ export class GameTerrainWorkbench{
       worldSectors:(this.map.world?.sectors||[]).length,
       worldRegions:(this.map.world?.regions||[]).length,
       biomeZones:(this.map.terrain?.biomeZones||[]).length,
+      worldPoiFootprints:(this.map.world?.poiFootprints||[]).length,
+      worldBridgeSites:(this.map.world?.bridgeSites||[]).length,
+      worldRailCorridors:(this.map.world?.railCorridors||[]).length,
+      worldNaturalLandmarks:(this.map.world?.naturalLandmarks||[]).length,
       routeValidation:this._routeStats()
     };
   }

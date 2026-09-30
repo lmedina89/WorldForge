@@ -1,46 +1,41 @@
-# WorldForge v0.13.31 — Greater Iron Valley 0.1
+# WorldForge v0.13.32 — Greater Iron Valley 0.2
 
-This build begins the main-world expansion without replacing the terrain and road work that is finally behaving correctly on iPhone.
+This milestone deepens Greater Iron Valley without reopening the terrain/road renderer that is now behaving correctly on iPhone.
 
-## New world
+## Regional identity + strategic geography
 
-**Greater Iron Valley** is 2048×1536 m — about 7.1× the area of the original 768×576 benchmark. The original Iron Valley remains embedded at the center as a **protected 768×576 terrain core**. Its authored height, slope, splat/material distribution and macro tint remain numerically unchanged throughout that core, while the original six roads and South Creek definitions remain intact. Additive world-road and water overlays begin at selected legacy exits, but their terrain deformation and biome influence fade to zero inside the protected core. The separate **Iron Valley Benchmark** remains the exact v0.13.30 A/B visual reference.
+The 2048×1536 main-world candidate still contains the protected 768×576 Iron Valley core. The current V8 direct-source terrain presentation, V9 compacted-road presentation, original Iron Valley landforms, 18-road regional network and four-river hydrology from v0.13.31 remain protected.
 
-The new regional skeleton adds eight surrounding world identities around that protected central terrain core:
+Greater Iron Valley 0.2 adds a second, restrained biome-identity layer and landmark-scale authored geography outside the protected core. Pinebreak is greener and broken, Northwatch has a stronger exposed crown, Blackstone gains stepped quarry benches, Eastmere gains a broader wet floodplain, Westfield remains fertile/open, and Red Mesa gains a warmer dry bench with twin-butte skyline. All of this still uses the same grass/dirt/rock/wet source materials; no V10 renderer was created.
 
-- Ashgate — future town / industrial belt
-- Pinebreak Highlands — greener highland flank
-- Northwatch Ridge — rocky radar-height terrain
-- Blackstone Quarry — exposed rock / industrial geology
-- Eastmere Lowlands — wet river country
-- Westfield — broad fertile/open farmland
-- Southline — logistics / future airfield corridor
-- Red Mesa Frontier — dry scrub / exposed earth and rock
+## Strategic planning metadata
 
-Biome variation uses the same protected V8/V9 grass, dirt, rock and wet source materials. It changes distribution and macro tint only; it does not replace the PBR source textures or add another terrain shader.
+Added planning-only contracts for:
 
-## Infrastructure skeleton
+- 8 named natural landmarks
+- 12 future POI footprints
+- 4 bridge/causeway sites at real road/river intersections
+- 2 reserved rail corridors
+- road hierarchy metadata
+- 2 water-corridor groups
+- 9 combat-space roles
 
-The six original Iron Valley roads remain unchanged. Twelve additive world-road definitions extend the north pass and south flank outward, add low-grade Ashgate/Eastmere gateway approaches, then tie the region into a northern military road, Southline highway and secondary connectors. The gateways deliberately avoid forcing the 27 m legacy base shelves into world exits. Major branch points use shared authored junction coordinates so the terrain grade cannot jump at an accidental road crossing. All of them use the approved V9 compacted-earth presentation.
+No buildings, mission scripts, AI anchors or placed gameplay entities are spawned from this metadata yet.
 
-The original South Creek definition remains unchanged. Additive west/east continuations and an Eastmere side channel establish the first regional hydrology pass. Their carve/material influence fades to zero inside the protected terrain core so the approved benchmark terrain remains numerically identical.
+The Game Terrain Workbench now has an optional **Show strategic plan** overlay. It draws reserved rail centerlines, future POI footprints and bridge sites without changing the terrain renderer.
 
-All 17 authored vehicle-validation routes are currently within their slope limits.
+## Navigation
 
-## Performance foundation
+23 authored vehicle-validation routes now cover both the original tactical core and the new regional spaces. All 23 pass their authored slope limits against the same StrategicTerrainSampler used by the preview.
 
-The world is authored as twelve 512×512 logical sectors. They are metadata in this milestone — the player should not see seams. Future city buildings, vegetation, props and mission activation can use those sectors for LOD/streaming without changing the continuous terrain.
+## Protection rules
 
-The new world uses a 5 m visual terrain cell, 3 m splat texel and 12 m macro texel to keep the 2048×1536 preview reasonable on mobile while retaining the protected direct-source material pipeline.
+- Original Iron Valley raw/final height remains numerically identical throughout the full protected rectangle.
+- Derived slope, surface weights and macro tint remain identical from the protected inset used by the slope stencil.
+- V8/V9 terrain/road renderer files remain byte-for-byte unchanged.
+- v0.13.31 roads and rivers remain unchanged.
+- ForgeRTS v0.6.6.8 runtime-sync files remain byte-for-byte protected.
 
-## What is intentionally NOT here yet
+## Still intentionally deferred
 
-No city buildings, foliage overhaul, mission scripts, garrison systems, destructible infrastructure, bridges, rail assets or persistent-control logic have been added yet. Those come only after the regional skeleton is visually and navigationally approved.
-
-## First iPhone check
-
-Open **GAME TERRAIN → GREATER IRON VALLEY 0.1 → PBR V9 · ROAD RECOVERY → WIDE**.
-
-Check the world silhouette and whether Pinebreak/Northwatch/Blackstone/Eastmere/Westfield/Southline/Red Mesa read as distinct but connected regions. Then use **TOP** to judge road hierarchy and world composition. Use **CLOSE** around the center to confirm the approved v0.13.30 terrain/road presentation is still intact. The world can add overlay roads/water beginning at legacy exits, but the underlying protected terrain core is unchanged; use **IRON VALLEY BENCHMARK** for the exact standalone A/B view.
-
-The separate **IRON VALLEY BENCHMARK** button remains available for direct A/B comparison.
+Actual bridges, rail meshes/grade engineering, city buildings, vegetation passes, mission scripting, garrisons, persistent territorial control and world streaming are not implemented in this milestone.
