@@ -13,13 +13,21 @@ assert.match(html,/data-mode="vehicle"/);
 assert.match(css,/\[hidden\]\{display:none!important\}/,'styled hidden elements must remain hidden');
 for(const id of ['vehiclePanel','vehicleGenerate','vehicleRandomize','vehicleExportGLB','vehicleExportRecipe','vehicleArchetype','vehicleStyle','vehiclePalette','vehicleSeed','vehicleLoadBenchmark','vehicleImport','vehicleDirection','vehicleFrameSize','vehicleForwardOffset','vehicleBake','vehicleExportMeta'])assert.match(html,new RegExp(`id="${id}"`));
 assert.match(app,/VehicleBaker/);
-assert.match(baker,/VEHICLE_BAKER_VERSION = '0\.1\.3'/);
-assert.match(baker,/\{ id:'N'/);
-assert.match(baker,/\{ id:'NW'/);
+assert.match(baker,/VEHICLE_BAKER_VERSION = '0\.2\.0'/);
+assert.match(baker,/\{id:'N'/);
+assert.match(baker,/\{id:'NW'/);
 
 assert.match(baker,/AUTO_FIT_TARGET = 0\.74/,'auto-fit framing constant missing');
 assert.match(baker,/BAKE_OVERSAMPLE = 3/,'oversampled bake constant missing');
 assert.match(baker,/installGeneratedYUp/,'Y-up generated/reference install path missing');
+assert.match(baker,/ATLAS_COLUMNS=4/,'4x4 atlas missing');
+assert.match(baker,/const turretMeshIds=new Set/,'turret layer filtering missing');
+assert.match(baker,/hullTurretPivotPxByDirection/,'turret alignment metadata missing');
+assert.match(html,/id="vehicleBakeSplit"/,'split bake button missing');
+assert.match(html,/id="vehicleBakeAll"/,'ZIP pack button missing');
+assert.match(html,/id="vehicleTurretNode"/,'turret selection control missing');
+assert.match(app,/createZip/,'phone-compatible single ZIP export missing');
+assert.match(app,/16-direction/,'16 direction UI flow missing');
 
 assert.equal(glb.toString('ascii',0,4),'glTF');
 const total=glb.readUInt32LE(8);assert.equal(total,glb.length);
@@ -38,4 +46,4 @@ assert.equal(doc.textures?.length,11);
 assert.equal(doc.animations?.length,1);
 assert.ok(doc.materials.every(m=>m.pbrMetallicRoughness),'all benchmark materials must use metallic/roughness');
 
-console.log(JSON.stringify({ok:true,vehicleBaker:'0.1.3',benchmarkMeshes:doc.meshes.length,materials:doc.materials.length,textures:doc.textures.length,animations:doc.animations.length,directions:8},null,2));
+console.log(JSON.stringify({ok:true,vehicleBaker:'0.2.0',benchmarkMeshes:doc.meshes.length,materials:doc.materials.length,textures:doc.textures.length,animations:doc.animations.length,directions:16},null,2));

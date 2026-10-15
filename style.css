@@ -346,3 +346,7 @@ body.skirmish-mode #mapMinimapWrap{
 }
 
 #skirmishHudFollow[hidden]{display:none!important;}
+
+/* Vehicle Baker 0.2.0: 16 compact tap targets on phones */
+.vehicleDirButtons button{font-size:11px;min-width:0;padding:9px 2px;touch-action:manipulation}
+#vehicleBakeSplit,#vehicleBakeAll{min-height:44px;font-size:11px}

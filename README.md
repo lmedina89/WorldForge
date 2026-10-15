@@ -1,3 +1,13 @@
+## Vehicle Baker 0.2.0 — 16-direction sprite export (October 2026)
+
+This complete, root-level WorldForge release is based on the uploaded v0.13.31 known-good backup. The Vehicle tab now bakes 16 headings (22.5-degree increments) as transparent 4x4 PNG atlases. It adds a turret pivot selector, split hull/turret sheets, a one-download ZIP with matching JSON pivot metadata, and mobile-friendly progress updates. No build step or external ZIP library is required. Other world/terrain/generation systems were left intact. To publish to GitHub Pages, upload/extract the ZIP **contents** at the repository root, replacing same-named files. No parent directory is included.
+
+The split mode requires an articulated turret node such as `TurretYaw`; if none is detected, use the turret selector after importing a model with a suitable hierarchy. The optional complete pack exports combined sprites alone when no turret is available. Sprite sheets are static; runtime gameplay will need to apply the exported anchor metadata to place a turret layer independently.
+
+Verification: JavaScript syntax, targeted tests, and repository test suite. Full GPU and iPhone Safari render quality requires testing on your device. This backup was supplied by the user and cannot be claimed as the current GitHub HEAD.
+
+---
+
 # WorldForge v0.13.31 — Greater Iron Valley 0.1
 
 This build begins the main-world expansion without replacing the terrain and road work that is finally behaving correctly on iPhone.

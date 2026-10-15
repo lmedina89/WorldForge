@@ -1,17 +1,23 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-export const VEHICLE_BAKER_VERSION = '0.1.3';
+export const VEHICLE_BAKER_VERSION = '0.2.0';
 export const VEHICLE_DIRECTIONS = Object.freeze([
-  { id:'N',  degrees: 90 },
-  { id:'NE', degrees: 45 },
-  { id:'E',  degrees: 0 },
-  { id:'SE', degrees:-45 },
-  { id:'S',  degrees:-90 },
-  { id:'SW', degrees:-135 },
-  { id:'W',  degrees:180 },
-  { id:'NW', degrees:135 }
+  {id:'N',degrees:90},{id:'NNE',degrees:67.5},{id:'NE',degrees:45},{id:'ENE',degrees:22.5},
+  {id:'E',degrees:0},{id:'ESE',degrees:-22.5},{id:'SE',degrees:-45},{id:'SSE',degrees:-67.5},
+  {id:'S',degrees:-90},{id:'SSW',degrees:-112.5},{id:'SW',degrees:-135},{id:'WSW',degrees:-157.5},
+  {id:'W',degrees:180},{id:'WNW',degrees:157.5},{id:'NW',degrees:135},{id:'NNW',degrees:112.5}
 ]);
+const ATLAS_COLUMNS=4;
+const degRad=degrees=>THREE.MathUtils.degToRad(degrees);
+const roundPx=n=>+n.toFixed(2);
+function chooseTurretCandidate(node){
+  const name=(node.name||'').toLowerCase();
+  if(!/turret|weapon.?station|gun.?yaw|rotating.?mount/.test(name) || /ring|socket|bearing|hatch|skirt|armor|bolt|optic|shield|bracket/.test(name))return -1;
+  let descendants=0;node.traverse(c=>{if(c.isMesh)descendants++;});
+  if(!descendants)return -1;
+  return (/turret.?yaw/.test(name)?100:/turret.?root/.test(name)?90:/^turret$/.test(name)?85:/turret/.test(name)?60:35)+Math.min(descendants,15);
+}
 
 const VEHICLE_CAMERA_TARGET = new THREE.Vector3(0,0,1.8);
 const VEHICLE_CAMERA_POSITION = new THREE.Vector3(10.5,-14.5,11.5);
@@ -82,6 +88,7 @@ export class VehicleBaker{
     this.loader=new GLTFLoader();
     this.container=new THREE.Group();this.container.name='WorldForgeVehicleBaker';this.container.visible=false;scene.add(this.container);
     this.modelRoot=null;this.sourceName='';this.sourceInfo=null;this.directionIndex=0;this.forwardOffsetDeg=0;this.previewSpan=DEFAULT_PREVIEW_SPAN;
+    this.turretNode=null;this.turretCandidates=[];this.turretUpAxis='y';
     this.shadowCatcher=new THREE.Mesh(new THREE.PlaneGeometry(28,28),new THREE.ShadowMaterial({color:0x000000,opacity:.18,transparent:true,depthWrite:false}));
     this.shadowCatcher.name='WorldForgeVehicleShadowCatcher';this.shadowCatcher.position.z=-.025;this.shadowCatcher.receiveShadow=true;this.shadowCatcher.visible=false;scene.add(this.shadowCatcher);
 
@@ -134,6 +141,21 @@ export class VehicleBaker{
       const axis=new THREE.Group();axis.name='GLTF_Y_Up_to_WorldForge_Z_Up';axis.rotation.x=Math.PI/2;axis.add(sourceScene);pivot.add(axis);
     }else pivot.add(sourceScene);
     this.container.add(pivot);this.modelRoot=pivot;
+    this.turretUpAxis=sourceUp==='Y'?'y':'z';
+    this.turretCandidates=[];
+    sourceScene.traverse(node=>{
+      if(node===sourceScene)return;
+      let score=chooseTurretCandidate(node);
+      // Advanced manual fallback for imported GLBs with unnamed or nonstandard turret pivots.
+      // Avoid leaf meshes; only show group nodes that control at least one mesh.
+      if(score<0&&node.isGroup&&node.children.length){
+        let meshes=0;node.traverse(c=>{if(c.isMesh)meshes++;});
+        if(meshes)score=0;
+      }
+      if(score>=0)this.turretCandidates.push({id:node.uuid,name:node.name||`Group ${node.id}`,score,node});
+    });
+    this.turretCandidates.sort((a,b)=>b.score-a.score);
+    this.turretNode=this.turretCandidates.find(c=>c.score>0)?.node||null;
 
     pivot.updateMatrixWorld(true);
     let box=new THREE.Box3().setFromObject(pivot),size=new THREE.Vector3();box.getSize(size);
@@ -152,6 +174,8 @@ export class VehicleBaker{
       normalizationScale:+scale.toFixed(6),
       meshCount:counts.meshes,
       triangleCount:counts.triangles,
+      turretCandidates:this.turretCandidates.map(c=>({id:c.id,name:c.name})),
+      detectedTurret:this.turretNode?.name||null,
       animationCount:animations.length,
       animations:animations.map(a=>a.name||'unnamed'),
       ...extraInfo
@@ -205,7 +229,7 @@ export class VehicleBaker{
   }
 
   setDirection(index=0){
-    this.directionIndex=((Number(index)||0)%8+8)%8;
+    this.directionIndex=((Number(index)||0)%VEHICLE_DIRECTIONS.length+VEHICLE_DIRECTIONS.length)%VEHICLE_DIRECTIONS.length;
     if(!this.modelRoot)return;
     const d=VEHICLE_DIRECTIONS[this.directionIndex];
     this.modelRoot.rotation.z=THREE.MathUtils.degToRad(d.degrees+this.forwardOffsetDeg);
@@ -226,68 +250,120 @@ export class VehicleBaker{
     return clone;
   }
 
-  metadata(frameSize=128,includeShadow=true){
-    const dir=VEHICLE_DIRECTIONS.map((d,i)=>({id:d.id,index:i,degrees:d.degrees+this.forwardOffsetDeg,x:i*frameSize,y:0,width:frameSize,height:frameSize}));
-    const metaCamera=new THREE.OrthographicCamera();
-    setCameraFrame(metaCamera,1,this.previewSpan);
-    const pivotWorld=new THREE.Vector3(0,0,0).project(metaCamera);
-    const pivotPx={x:+((pivotWorld.x*.5+.5)*frameSize).toFixed(2),y:+((-pivotWorld.y*.5+.5)*frameSize).toFixed(2)};
-    return {
-      schema:'worldforge.vehicle-sprite.v1',
-      vehicleBakerVersion:VEHICLE_BAKER_VERSION,
-      source:this.sourceName,
-      sourceInfo:this.sourceInfo,
-      camera:{type:'orthographic',preset:'rts-classic-3q',position:[10.5,-14.5,11.5],target:[0,0,1.8],span:this.previewSpan,autoFitted:true,targetFrameOccupancy:AUTO_FIT_TARGET},
-      frame:{width:frameSize,height:frameSize,count:8,layout:'horizontal',transparent:true,shadow:!!includeShadow,pivotPx,bakeOversample:BAKE_OVERSAMPLE},
-      forwardCalibration:{assumedModelForward:'+X',offsetDegrees:this.forwardOffsetDeg},
-      directions:dir
-    };
+  selectTurret(uuid=''){
+    this.turretNode=this.turretCandidates.find(t=>t.id===uuid)?.node||null;
+    if(this.sourceInfo)this.sourceInfo.detectedTurret=this.turretNode?.name||null;
+    return this.turretNode;
   }
 
-  async bakeSpriteSheet({frameSize=128,includeShadow=true}={}){
+  _projectPx(point,frameSize,camera){
+    const p=point.clone().project(camera);
+    return {x:roundPx((p.x*.5+.5)*frameSize),y:roundPx((-.5*p.y+.5)*frameSize)};
+  }
+
+  metadata(frameSize=128,includeShadow=true,layer='combined'){
+    const dir=VEHICLE_DIRECTIONS.map((d,i)=>({id:d.id,index:i,degrees:d.degrees+this.forwardOffsetDeg,
+      x:(i%ATLAS_COLUMNS)*frameSize,y:Math.floor(i/ATLAS_COLUMNS)*frameSize,width:frameSize,height:frameSize}));
+    const metaCamera=new THREE.OrthographicCamera();
+    setCameraFrame(metaCamera,1,this.previewSpan);
+    const pivotPx=this._projectPx(new THREE.Vector3(0,0,0),frameSize,metaCamera);
+    let turret=null;
+    if(this.turretNode){
+      const previousRotation=this.modelRoot.rotation.z;
+      const node=this.turretNode;
+      const previousYaw=node.rotation[this.turretUpAxis];
+      const hullTurretPivots=[];
+      for(const d of VEHICLE_DIRECTIONS){
+        this.modelRoot.rotation.z=degRad(d.degrees+this.forwardOffsetDeg);
+        this.modelRoot.updateMatrixWorld(true);
+        hullTurretPivots.push(this._projectPx(node.getWorldPosition(new THREE.Vector3()),frameSize,metaCamera));
+      }
+      this.modelRoot.rotation.z=degRad(this.forwardOffsetDeg);
+      node.rotation[this.turretUpAxis]=previousYaw;
+      this.modelRoot.updateMatrixWorld(true);
+      const turretSpritePivotPx=this._projectPx(node.getWorldPosition(new THREE.Vector3()),frameSize,metaCamera);
+      this.modelRoot.rotation.z=previousRotation;this.modelRoot.updateMatrixWorld(true);
+      turret={node:node.name,localYawAxis:this.turretUpAxis,
+        turretSpritePivotPx,hullTurretPivotPxByDirection:hullTurretPivots,
+        alignment:'Offset turret sprite so turretSpritePivotPx aligns with hullTurretPivotPxByDirection[hullIndex]. Turret sprite rotation is independent of hull.'};
+    }
+    return {schema:'worldforge.vehicle-sprite.v2',vehicleBakerVersion:VEHICLE_BAKER_VERSION,source:this.sourceName,
+      sourceInfo:this.sourceInfo,camera:{type:'orthographic',preset:'rts-classic-3q',position:[10.5,-14.5,11.5],
+      target:[0,0,1.8],span:this.previewSpan,autoFitted:true,targetFrameOccupancy:AUTO_FIT_TARGET},
+      frame:{width:frameSize,height:frameSize,count:16,columns:ATLAS_COLUMNS,rows:4,layout:'4x4',transparent:true,
+      shadow:layer==='turret'?false:!!includeShadow,pivotPx,bakeOversample:BAKE_OVERSAMPLE},
+      layer,forwardCalibration:{assumedModelForward:'+X',offsetDegrees:this.forwardOffsetDeg},
+      turret,directions:dir};
+  }
+
+  async bakeSpriteSheet({frameSize=128,includeShadow=true,layer='combined',onProgress=null}={}){
     if(!this.modelRoot)throw new Error('Load a GLB vehicle first.');
+    if(!['combined','hull','turret'].includes(layer))throw new Error('Unsupported sprite layer.');
+    if(layer!=='combined'&&!this.turretNode)throw new Error('No turret pivot selected. Select TurretYaw (or another turret root) to split hull and turret.');
     frameSize=Math.max(64,Math.min(512,Number(frameSize)||128));
     const renderSize=Math.min(2048,frameSize*BAKE_OVERSAMPLE);
-    const sheet=document.createElement('canvas');sheet.width=frameSize*8;sheet.height=frameSize;
+    const sheet=document.createElement('canvas');sheet.width=frameSize*ATLAS_COLUMNS;sheet.height=frameSize*4;
     const ctx=sheet.getContext('2d',{alpha:true});
+    if(!ctx)throw new Error('Sprite canvas is unavailable.');
     ctx.clearRect(0,0,sheet.width,sheet.height);
-    ctx.imageSmoothingEnabled=true;
-    ctx.imageSmoothingQuality='high';
-
-    const old={
-      background:this.scene.background,
-      direction:this.directionIndex,
-      shadowVisible:this.shadowCatcher.visible,
-      shadowOpacity:this.shadowCatcher.material.opacity,
-      lightVisible:this.bakeLightRig.visible,
-      pixelRatio:this.renderer.getPixelRatio(),
-      size:new THREE.Vector2(),
+    ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';
+    const old={background:this.scene.background,clearColor:this.renderer.getClearColor(new THREE.Color()).clone(),clearAlpha:this.renderer.getClearAlpha(),
+      direction:this.directionIndex,modelYaw:this.modelRoot.rotation.z,
+      shadowVisible:this.shadowCatcher.visible,shadowOpacity:this.shadowCatcher.material.opacity,
+      lightVisible:this.bakeLightRig.visible,pixelRatio:this.renderer.getPixelRatio(),size:new THREE.Vector2(),
       left:this.camera.left,right:this.camera.right,top:this.camera.top,bottom:this.camera.bottom,near:this.camera.near,far:this.camera.far,
-      position:this.camera.position.clone(),target:this.controls.target.clone()
-    };
+      position:this.camera.position.clone(),target:this.controls.target.clone()};
     this.renderer.getSize(old.size);
-    this.scene.background=null;
-    this.shadowCatcher.visible=!!includeShadow;
-    this.shadowCatcher.material.opacity=includeShadow ? .16 : 0;
-    this.bakeLightRig.visible=true;
-    this.renderer.setPixelRatio(1);
-    this.renderer.setSize(renderSize,renderSize,false);
-    this.renderer.setClearColor(0x000000,0);
-    this.fitPreview(1);
-
-    for(let i=0;i<VEHICLE_DIRECTIONS.length;i++){
-      this.setDirection(i);
-      this.renderer.render(this.scene,this.camera);
-      ctx.drawImage(this.renderer.domElement,i*frameSize,0,frameSize,frameSize);
+    const oldSceneVisibility=[];
+    for(const c of this.scene.children){
+      if(c!==this.container && c!==this.shadowCatcher && c!==this.bakeLightRig && !c.isLight){
+        oldSceneVisibility.push([c,c.visible]);c.visible=false;
+      }
     }
-    const meta=this.metadata(frameSize,includeShadow);
-
-    this.setDirection(old.direction);this.scene.background=old.background;this.shadowCatcher.visible=old.shadowVisible;this.shadowCatcher.material.opacity=old.shadowOpacity;
-    this.bakeLightRig.visible=old.lightVisible;
-    this.renderer.setPixelRatio(old.pixelRatio);this.renderer.setSize(old.size.x,old.size.y,false);
-    this.camera.left=old.left;this.camera.right=old.right;this.camera.top=old.top;this.camera.bottom=old.bottom;this.camera.near=old.near;this.camera.far=old.far;this.camera.position.copy(old.position);this.camera.updateProjectionMatrix();this.controls.target.copy(old.target);this.camera.lookAt(this.controls.target);this.controls.update();
-
-    const blob=await new Promise((resolve,reject)=>sheet.toBlob(b=>b?resolve(b):reject(new Error('PNG encoding failed.')),'image/png'));
-    return {blob,metadata:meta,canvas:sheet,baseName:cleanName(this.sourceName)};
+    const rootMeshVisibility=[];
+    const turretMeshIds=new Set();
+    this.turretNode?.traverse(n=>{if(n.isMesh)turretMeshIds.add(n.uuid);});
+    this.modelRoot.traverse(n=>{if(n.isMesh){rootMeshVisibility.push([n,n.visible]);if(layer==='hull'&&turretMeshIds.has(n.uuid))n.visible=false;
+      if(layer==='turret'&&!turretMeshIds.has(n.uuid))n.visible=false;}});
+    const yawBefore=this.turretNode?.rotation[this.turretUpAxis];
+    const meta=this.metadata(frameSize,includeShadow,layer);
+    try{
+      this.scene.background=null;
+      this.shadowCatcher.visible=layer!=='turret'&&!!includeShadow;
+      this.shadowCatcher.material.opacity=includeShadow?.16:0;
+      this.bakeLightRig.visible=true;
+      this.renderer.setPixelRatio(1);
+      this.renderer.setSize(renderSize,renderSize,false);
+      this.renderer.setClearColor(0x000000,0);
+      this.fitPreview(1);
+      for(let i=0;i<VEHICLE_DIRECTIONS.length;i++){
+        if(layer==='turret'){
+          this.modelRoot.rotation.z=degRad(this.forwardOffsetDeg);
+          this.turretNode.rotation[this.turretUpAxis]=yawBefore+degRad(VEHICLE_DIRECTIONS[i].degrees);
+          this.modelRoot.updateMatrixWorld(true);
+        }else this.setDirection(i);
+        this.renderer.clear(true,true,true);
+        this.renderer.render(this.scene,this.camera);
+        ctx.drawImage(this.renderer.domElement,(i%ATLAS_COLUMNS)*frameSize,Math.floor(i/ATLAS_COLUMNS)*frameSize,frameSize,frameSize);
+        onProgress?.(i+1,16,layer);
+        // Yield periodically so iPhone Safari can show progress and respond during large bakes.
+        if(i%2===1)await new Promise(resolve=>requestAnimationFrame(resolve));
+      }
+      const blob=await new Promise((resolve,reject)=>sheet.toBlob(b=>b?resolve(b):reject(new Error('PNG encoding failed.')),'image/png'));
+      return {blob,metadata:meta,canvas:sheet,baseName:cleanName(this.sourceName),layer};
+    }finally{
+      if(this.turretNode)this.turretNode.rotation[this.turretUpAxis]=yawBefore;
+      this.modelRoot.rotation.z=old.modelYaw;this.directionIndex=old.direction;this.modelRoot.updateMatrixWorld(true);
+      rootMeshVisibility.forEach(([n,visible])=>n.visible=visible);
+      oldSceneVisibility.forEach(([n,visible])=>n.visible=visible);
+      this.scene.background=old.background;
+      this.shadowCatcher.visible=old.shadowVisible;this.shadowCatcher.material.opacity=old.shadowOpacity;
+      this.bakeLightRig.visible=old.lightVisible;
+      this.renderer.setPixelRatio(old.pixelRatio);this.renderer.setSize(old.size.x,old.size.y,false);
+      this.renderer.setClearColor(old.clearColor,old.clearAlpha);
+      this.camera.left=old.left;this.camera.right=old.right;this.camera.top=old.top;this.camera.bottom=old.bottom;
+      this.camera.near=old.near;this.camera.far=old.far;this.camera.position.copy(old.position);
+      this.camera.updateProjectionMatrix();this.controls.target.copy(old.target);this.camera.lookAt(this.controls.target);this.controls.update();
+    }
   }
 }

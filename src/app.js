@@ -9,6 +9,7 @@ import { WORLDFORGE_VERSION } from './core/schema.js';
 import { enrichExistingScene } from './core/production-metadata.js';
 import { snapScalar, snapRotationRadians, nearestLevel, nearestEdgeAdjustment, worldTraversalConnections } from './core/placement-tools.js';
 import { VehicleBaker, VEHICLE_BAKER_VERSION } from './vehicle/vehicle-baker.js';
+import { createZip } from './vehicle/zip-pack.js';
 import { generateLowPolyVehicle, loadAegisReferenceVehicle, isAegisReferenceVehicle, VEHICLE_GENERATOR_VERSION, VEHICLE_ARCHETYPES } from './vehicle/vehicle-generator.js';
 import { RTSMapForge, RTS_MAP_FORGE_VERSION } from './rts-map/rts-map-forge.js';
 import { GameTerrainWorkbench, GAME_TERRAIN_WORKBENCH_VERSION, FORGERTS_TERRAIN_SOURCE_VERSION, EXPERIMENTAL_TERRAIN_RENDERER_VERSION } from './game-terrain/terrain-workbench.js';
@@ -446,6 +447,7 @@ function updateVehicleUi(info=vehicleBaker.sourceInfo){
   $('vehicleSourceName').textContent=info.generatedInfo?.label?`${info.generatedInfo.label} · seed ${info.generatedInfo.seed}`:info.name;
   const generated=info.generatedInfo?` · ${info.generatedInfo.style}${info.generatedInfo.silhouette?` / ${info.generatedInfo.silhouette}`:''} / ${info.generatedInfo.palette}${info.generatedInfo.quality?` · ${info.generatedInfo.quality}`:''}`:'';
   $('vehicleStats').textContent=`${info.meshCount.toLocaleString()} meshes · ~${info.triangleCount.toLocaleString()} tris${generated} · source ${info.sourceDimensions.x} × ${info.sourceDimensions.y} × ${info.sourceDimensions.z}`;
+  syncVehicleTurretSelector();
 }
 function vehicleForgeRecipe(){return {type:$('vehicleArchetype').value,seed:+$('vehicleSeed').value||48127,style:$('vehicleStyle').value,palette:$('vehiclePalette').value,silhouette:$('vehicleSilhouette').value,detail:$('vehicleDetail').value,roadWheels:$('vehicleRoadWheels').value};}
 function syncVehicleForgeUi(){
@@ -479,10 +481,47 @@ async function activateVehicleMode(){
   if(!vehicleBaker.hasModel())await generateVehicleFromUi();else{vehicleBaker.shadowCatcher.visible=$('vehicleShadow').checked;vehicleBaker.fitPreview(vehicleAspect());updateVehicleUi();$('status').textContent=`Vehicle Baker ${VEHICLE_BAKER_VERSION} ready.`;}
 }
 function setVehicleDirection(index){
-  index=((Number(index)||0)%8+8)%8;$('vehicleDirection').value=String(index);vehicleBaker.setDirection(index);
+  index=((Number(index)||0)%16+16)%16;$('vehicleDirection').value=String(index);vehicleBaker.setDirection(index);
   document.querySelectorAll('[data-vehicle-dir]').forEach(b=>b.classList.toggle('active',Number(b.dataset.vehicleDir)===index));
 }
+function syncVehicleTurretSelector(){
+  const select=$('vehicleTurretNode'),options=vehicleBaker.turretCandidates;
+  select.replaceChildren();
+  select.add(new Option('No turret / combined only',''));
+  for(const c of options)select.add(new Option(c.score>0?c.name:`Manual: ${c.name}`,c.id));
+  select.value=vehicleBaker.turretNode?.uuid||'';
+  $('vehicleBakeSplit').disabled=!vehicleBaker.turretNode;
+  $('vehicleBakeAll').disabled=!vehicleBaker.hasModel();
+}
 function vehicleMetaBlob(){const frame=+$('vehicleFrameSize').value||128;const meta=vehicleBaker.metadata(frame,$('vehicleShadow').checked);return new Blob([JSON.stringify(meta,null,2)],{type:'application/json'});}
+async function exportVehicle16Pack({includeCombined=true,includeSplit=true}={}){
+  if(!vehicleBaker.hasModel())throw new Error('Load or generate a vehicle first.');
+  if(includeSplit&&!vehicleBaker.turretNode)throw new Error('Select the turret pivot node first.');
+  const buttons=['vehicleBake','vehicleBakeSplit','vehicleBakeAll'].map(id=>$(id));
+  buttons.forEach(b=>b.disabled=true);
+  const frameSize=+$('vehicleFrameSize').value||128,includeShadow=$('vehicleShadow').checked;
+  const base=(vehicleBaker.sourceName||'vehicle').replace(/\.(glb|gltf)$/i,'').replace(/[^a-z0-9_-]/gi,'_');
+  const layers=[...(includeCombined?['combined']:[]),...(includeSplit?['hull','turret']:[])];
+  const entries=[];
+  try{
+    for(let n=0;n<layers.length;n++){
+      const layer=layers[n];
+      $('status').textContent=`16-direction ${layer} bake ${n+1}/${layers.length}…`;
+      const result=await vehicleBaker.bakeSpriteSheet({frameSize,includeShadow,layer,onProgress:(i,total,type)=>{
+        $('status').textContent=`Baking ${type} · ${i}/${total} directions · ${n+1}/${layers.length} layers`;
+      }});
+      entries.push({name:`${base}_${layer}_16dir_${frameSize}px.png`,data:new Uint8Array(await result.blob.arrayBuffer())});
+      entries.push({name:`${base}_${layer}_16dir.json`,data:JSON.stringify(result.metadata,null,2)});
+    }
+    entries.push({name:'README.txt',data:'WorldForge Vehicle Baker 0.2.0\n16 headings at 22.5-degree steps, four-by-four RGBA PNG atlases.\nDirection order: N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSW,SW,WSW,W,WNW,NW,NNW.\nRender image origin is upper left. Use JSON pivot coordinates to align hull and turret layers.\nTurret frames face world directions independently of hull. Align turretSpritePivotPx to hullTurretPivotPxByDirection[hullFrame].\n'});
+    download(createZip(entries),`${base}_16dir_${frameSize}px_sprite_pack.zip`);
+    $('status').textContent=`Exported ${layers.length} 16-direction 4×4 sprite sheets + pivot metadata in one ZIP.`;
+  }finally{
+    syncVehicleTurretSelector();
+    $('vehicleBake').disabled=false;
+    vehicleBaker.fitPreview(vehicleAspect());
+  }
+}
 
 
 function buildingForgeColors(){return {base:$('rtsBuildingBase').value,primary:$('rtsBuildingPrimary').value,secondary:$('rtsBuildingSecondary').value,accent:$('rtsBuildingAccent').value};}
@@ -716,6 +755,7 @@ $('vehicleLoadBenchmark').onclick=loadVehicleBenchmark;
 $('vehicleImport').onclick=()=>$('vehicleFile').click();
 $('vehicleFile').onchange=async e=>{const file=e.target.files?.[0];if(!file)return;$('status').textContent=`Loading ${file.name}…`;try{const info=await vehicleBaker.loadFile(file);$('vehicleForwardOffset').value='0';updateVehicleUi(info);vehicleBaker.setForwardOffset(0);setVehicleDirection(+$('vehicleDirection').value||0);vehicleBaker.fitPreview(vehicleAspect());$('status').textContent=`Loaded ${file.name} · ${info.meshCount} meshes · ~${info.triangleCount.toLocaleString()} tris. Adjust forward offset if its nose is not aligned.`;}catch(err){$('status').textContent='Vehicle import failed: '+err.message;}e.target.value='';};
 $('vehicleDirection').onchange=()=>setVehicleDirection(+$('vehicleDirection').value||0);
+$('vehicleTurretNode').onchange=()=>{vehicleBaker.selectTurret($('vehicleTurretNode').value);syncVehicleTurretSelector();};
 $('vehicleForwardOffset').oninput=()=>{vehicleBaker.setForwardOffset(+$('vehicleForwardOffset').value||0);setVehicleDirection(+$('vehicleDirection').value||0);};
 $('vehicleShadow').onchange=()=>{vehicleBaker.shadowCatcher.visible=mode==='vehicle'&&vehicleBaker.hasModel()&&$('vehicleShadow').checked;};
 $('rtsBuildingAsset').onchange=()=>{if(mode==='rtsbuilding')loadBuildingMaster();};
@@ -729,7 +769,19 @@ $('rtsBuildingExportGLB').onclick=()=>{const obj=buildingForge.canonicalObject()
 $('vehicleResetCamera').onclick=()=>vehicleBaker.fitPreview(vehicleAspect());
 $('vehicleExportMeta').onclick=()=>{if(!vehicleBaker.hasModel())return $('status').textContent='Load a GLB vehicle first.';const base=(vehicleBaker.sourceName||'vehicle').replace(/\.(glb|gltf)$/i,'');download(vehicleMetaBlob(),`${base}.vehicle.json`);$('status').textContent='Vehicle metadata exported.';};
 document.querySelectorAll('[data-vehicle-dir]').forEach(b=>b.onclick=()=>setVehicleDirection(+b.dataset.vehicleDir));
-$('vehicleBake').onclick=async()=>{if(!vehicleBaker.hasModel())return $('status').textContent='Load a GLB vehicle first.';const btn=$('vehicleBake');btn.disabled=true;$('status').textContent='Baking 8 deterministic vehicle directions…';try{const result=await vehicleBaker.bakeSpriteSheet({frameSize:+$('vehicleFrameSize').value||128,includeShadow:$('vehicleShadow').checked});download(result.blob,`${result.baseName}_8dir_${result.metadata.frame.width}px.png`);$('status').textContent=`Baked 8 directions · ${result.metadata.frame.width}px frames · transparent PNG. Use EXPORT META JSON for the matching metadata file.`;vehicleBaker.fitPreview(vehicleAspect());}catch(err){$('status').textContent='Vehicle bake failed: '+err.message;}finally{btn.disabled=false;}};
+$('vehicleBake').onclick=async()=>{
+  if(!vehicleBaker.hasModel())return $('status').textContent='Load a GLB vehicle first.';
+  const btn=$('vehicleBake');btn.disabled=true;
+  try{
+    const result=await vehicleBaker.bakeSpriteSheet({frameSize:+$('vehicleFrameSize').value||128,includeShadow:$('vehicleShadow').checked,
+      layer:'combined',onProgress:(i,total)=>$('status').textContent=`Baking 16 directions · ${i}/${total}…`});
+    download(result.blob,`${result.baseName}_16dir_${result.metadata.frame.width}px.png`);
+    $('status').textContent=`Baked 16 directions · 4×4 atlas · transparent PNG. Export matching metadata using EXPORT META JSON.`;
+  }catch(err){$('status').textContent='Vehicle bake failed: '+err.message;}
+  finally{btn.disabled=false;vehicleBaker.fitPreview(vehicleAspect());}
+};
+$('vehicleBakeSplit').onclick=async()=>{try{await exportVehicle16Pack({includeCombined:false,includeSplit:true});}catch(err){$('status').textContent='Split bake failed: '+err.message;}};
+$('vehicleBakeAll').onclick=async()=>{try{await exportVehicle16Pack({includeCombined:true,includeSplit:!!vehicleBaker.turretNode});}catch(err){$('status').textContent='Export failed: '+err.message;}};
 
 $('gameTerrainRendererCurrent').onclick=async()=>{if(gameTerrainWorkbench.getRendererMode()==='current')return;$('status').textContent='Switching to legacy terrain surface renderer…';const info=await gameTerrainWorkbench.setRendererMode('current');updateGameTerrainUi(info);gameTerrainWorkbench.setRoadsVisible($('gameTerrainRoads').checked);gameTerrainWorkbench.setWaterVisible($('gameTerrainWater').checked);gameTerrainWorkbench.setRoutesVisible($('gameTerrainRoutes').checked);gameTerrainWorkbench.setWireframe($('gameTerrainWireframe').checked);setGameTerrainView(gameTerrainWorkbench.view||'wide');$('status').textContent=info.samplerMode==='forgerts-baseline'?'CURRENT FORGERTS terrain active · byte-for-byte renderer + sampler.':'Legacy surface renderer active on the curated strategic landform sampler.';};
 $('gameTerrainRendererExperimental').onclick=async()=>{if(gameTerrainWorkbench.getRendererMode()==='experimental')return;$('status').textContent='Switching to PBR terrain renderer…';const info=await gameTerrainWorkbench.setRendererMode('experimental');updateGameTerrainUi(info);gameTerrainWorkbench.setRoadsVisible($('gameTerrainRoads').checked);gameTerrainWorkbench.setWaterVisible($('gameTerrainWater').checked);gameTerrainWorkbench.setRoutesVisible($('gameTerrainRoutes').checked);gameTerrainWorkbench.setWireframe($('gameTerrainWireframe').checked);setGameTerrainView(gameTerrainWorkbench.view||'wide');$('status').textContent='PBR V9 road-recovery active · V8 terrain preserved + compacted dirt/gravel core + protected feathered shoulders.';};

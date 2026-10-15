@@ -17,7 +17,7 @@ export const ENGINE_VERSIONS = Object.freeze({
   traversal: '0.1.0',
   production: PRODUCTION_VERSION,
   settlement: '0.1.0',
-  vehicleBaker: '0.1.3',
+  vehicleBaker: '0.2.0',
   vehicleGenerator: '0.4.0',
   rtsMapForge: '0.2.9',
   gameTerrainWorkbench: '0.11.0',
