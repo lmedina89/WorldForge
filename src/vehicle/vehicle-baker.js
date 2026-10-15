@@ -273,10 +273,14 @@ export class VehicleBaker{
       const node=this.turretNode;
       const previousYaw=node.rotation[this.turretUpAxis];
       const hullTurretPivots=[];
+      const turretSpritePivotPxByDirection=[];
       for(const d of VEHICLE_DIRECTIONS){
         this.modelRoot.rotation.z=degRad(d.degrees+this.forwardOffsetDeg);
+        node.rotation[this.turretUpAxis]=previousYaw;
         this.modelRoot.updateMatrixWorld(true);
-        hullTurretPivots.push(this._projectPx(node.getWorldPosition(new THREE.Vector3()),frameSize,metaCamera));
+        const projected=this._projectPx(node.getWorldPosition(new THREE.Vector3()),frameSize,metaCamera);
+        hullTurretPivots.push(projected);
+        turretSpritePivotPxByDirection.push(projected);
       }
       this.modelRoot.rotation.z=degRad(this.forwardOffsetDeg);
       node.rotation[this.turretUpAxis]=previousYaw;
@@ -284,8 +288,8 @@ export class VehicleBaker{
       const turretSpritePivotPx=this._projectPx(node.getWorldPosition(new THREE.Vector3()),frameSize,metaCamera);
       this.modelRoot.rotation.z=previousRotation;this.modelRoot.updateMatrixWorld(true);
       turret={node:node.name,localYawAxis:this.turretUpAxis,
-        turretSpritePivotPx,hullTurretPivotPxByDirection:hullTurretPivots,
-        alignment:'Offset turret sprite so turretSpritePivotPx aligns with hullTurretPivotPxByDirection[hullIndex]. Turret sprite rotation is independent of hull.'};
+        turretSpritePivotPx,turretSpritePivotPxByDirection,hullTurretPivotPxByDirection:hullTurretPivots,
+        alignment:'Offset turret sprite so turretSpritePivotPxByDirection[turretFrame] aligns with hullTurretPivotPxByDirection[hullFrame]. Hull and turret headings are fully independent.'};
     }
     return {schema:'worldforge.vehicle-sprite.v2',vehicleBakerVersion:VEHICLE_BAKER_VERSION,source:this.sourceName,
       sourceInfo:this.sourceInfo,camera:{type:'orthographic',preset:'rts-classic-3q',position:[10.5,-14.5,11.5],
@@ -338,8 +342,12 @@ export class VehicleBaker{
       this.fitPreview(1);
       for(let i=0;i<VEHICLE_DIRECTIONS.length;i++){
         if(layer==='turret'){
-          this.modelRoot.rotation.z=degRad(this.forwardOffsetDeg);
-          this.turretNode.rotation[this.turretUpAxis]=yawBefore+degRad(VEHICLE_DIRECTIONS[i].degrees);
+          // Bake turret headings by rotating the full vehicle root to the requested world heading
+          // while keeping the turret at its authored local zero. This keeps the atlas direction
+          // labels consistent with the combined/hull sheets even for imported GLBs whose turret
+          // local yaw basis differs from the hull basis.
+          this.modelRoot.rotation.z=degRad(VEHICLE_DIRECTIONS[i].degrees+this.forwardOffsetDeg);
+          this.turretNode.rotation[this.turretUpAxis]=yawBefore;
           this.modelRoot.updateMatrixWorld(true);
         }else this.setDirection(i);
         this.renderer.clear(true,true,true);

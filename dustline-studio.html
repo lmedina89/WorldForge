@@ -1,0 +1,336 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#101817"><title>WorldForge — Dustline Studio 0.1</title>
+<style>
+:root{font-family:ui-monospace,Menlo,Consolas,monospace;color:#d7e1d7;background:#0a100e}*{box-sizing:border-box}body,html{margin:0;height:100%;overflow:hidden}#view{width:100%;height:100%;display:block;touch-action:none}#app{height:100dvh;position:relative;background:#131c19}header{position:absolute;left:0;right:0;top:0;z-index:5;pointer-events:none;display:flex;justify-content:space-between;gap:14px;padding:19px 21px;background:linear-gradient(#101b19ed,#101b1999,transparent)}h1{font-size:18px;letter-spacing:.17em;margin:2px 0 5px;color:#e7efdd}.over{font-size:10px;letter-spacing:.21em;color:#8fb49e}.sub{color:#afc4b5;font-size:11px}.stats{display:flex;gap:8px;align-items:flex-start;flex-wrap:wrap;justify-content:end}.stat{border:1px solid #70857688;background:#14231fcb;padding:8px 10px;font-size:10px;letter-spacing:.08em;white-space:nowrap}.controls{position:absolute;z-index:5;bottom:max(12px,env(safe-area-inset-bottom));left:12px;right:12px;display:flex;justify-content:space-between;align-items:flex-end;gap:10px;pointer-events:none}.controls>div{pointer-events:auto;display:flex;gap:6px;flex-wrap:wrap}button{font:11px monospace;color:#d2dfd4;border:1px solid #51715e;background:#172b25dd;padding:10px 12px;border-radius:5px;min-height:36px}button.active{background:#38614c;border-color:#8da995;color:#fff}#left{max-width:57%}.hint{font-size:10px;letter-spacing:.11em;color:#a3b5a5;background:#101e1bd9;border:1px solid #445e5099;padding:9px 10px}#status{position:absolute;bottom:77px;left:14px;color:#9eb19f;background:#10201ccc;padding:8px;font-size:10px;z-index:5;max-width:70%;pointer-events:none;border:1px solid #384f40aa}.loader{z-index:8;position:absolute;inset:0;background:#0c1613;display:flex;align-items:center;justify-content:center;padding:25px;font-size:12px;letter-spacing:1px;color:#bdcfbc;text-align:center}.loader[hidden]{display:none}.legend{z-index:5;position:absolute;left:20px;top:90px;color:#c2d7c2;font-size:10px;background:#111c19bc;padding:8px 11px;border:1px solid #495d4b91;pointer-events:none}.legend .dot{display:inline-block;width:7px;height:7px;border-radius:100%;margin-right:5px}.legend b{color:#dee6d6}.legend>div{margin:4px 0}.badge{color:#d3ccb0}#mapPanel{position:absolute;right:10px;top:89px;width:172px;z-index:6;background:#0e1c17eb;border:1px solid #466353;padding:8px;display:none;box-shadow:0 10px 40px #0007}#mapPanel.visible{display:block}#mini{display:block;width:100%;border:1px solid #3d5546}#mapPanel p{color:#a9bca9;margin:6px 0 2px;font-size:9px;line-height:1.5}
+@media(max-width:650px){header{padding:11px 12px}.over{font-size:9px}h1{font-size:14px;letter-spacing:.11em}.sub{font-size:9px}.stat{font-size:9px;padding:6px}.stats{max-width:42%}.legend{left:11px;top:83px;font-size:8px;padding:6px;line-height:1.1}.hint{display:none}.controls{bottom:max(8px,env(safe-area-inset-bottom))}button{font-size:10px;padding:9px 8px;min-height:40px}#status{bottom:67px;left:10px;max-width:93%;font-size:9px}#mapPanel{top:111px;width:120px}.stat:last-child{display:none}}
+
+/* Dustline Studio overlay: designed for one-handed phone editing and desktop. */
+.studio-open .legend{display:none}
+#studioToggle{position:absolute;z-index:9;top:80px;right:12px;border-color:#93bca4;background:#244e3b;color:white;font-weight:bold}
+#studioPanel{z-index:9;position:absolute;right:10px;top:125px;width:min(310px,calc(100vw - 22px));max-height:calc(100dvh - 225px);overflow:auto;overscroll-behavior:contain;background:#0d1a16f5;border:1px solid #658b72;border-radius:7px;box-shadow:0 12px 36px #0009;padding:12px;touch-action:pan-y}
+#studioPanel[hidden]{display:none}
+#studioPanel h2{font-size:14px;margin:3px 0 9px;color:#dcebdd}
+#studioPanel .toolrow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:5px;margin-bottom:8px}
+#studioPanel .toolrow button{min-height:40px;padding:7px 2px;font-size:10px}
+#studioPanel button.active{background:#4b765e;border-color:#b0cfb8}
+#studioPanel label{display:block;margin:10px 0;color:#a9c3af;font:11px monospace}
+#studioPanel input[type=range]{width:100%;accent-color:#89b792}
+#studioPanel select{width:100%;padding:9px;background:#142820;color:#f0f5e7;border:1px solid #577460;border-radius:4px;margin-top:4px;font:12px monospace}
+#studioPanel .actionrow{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:6px 0}
+#studioPanel .actionrow button{padding:10px 4px}
+#studioPanel .note{font:10px/1.5 monospace;color:#a5b9aa;margin:8px 0}
+#studioPanel .small{font-size:10px;opacity:.8}
+#studioTip{position:absolute;left:10px;top:82px;z-index:5;font:10px/1.45 monospace;color:#d4e0c8;background:#10201bdb;border:1px solid #425b4b;padding:6px 9px;pointer-events:none;max-width:48%}
+@media(max-width:650px){#studioToggle{top:67px;right:10px}#studioPanel{top:114px;max-height:calc(100dvh - 195px)}#studioTip{top:67px;max-width:48%}header .stats{display:none}.controls{bottom:max(4px,env(safe-area-inset-bottom))}.controls button{padding:6px 6px;font-size:9px}}
+</style>
+</head><body><main id="app"><canvas id="view"></canvas><div class="loader" id="loader">PREPARING PBR TERRAIN + AEGIS GLBS…</div>
+<header><div><div class="over">WORLDFORGE / DUSTLINE STUDIO</div><h1>OPERATION DUSTLINE</h1><div class="sub">64 × 64 M · REAL HEIGHTFIELD · PBR TEXTURES · GRIT PASS</div></div><div class="stats"><div class="stat">3D / GLB</div><div class="stat" id="fps">FPS —</div><div class="stat">EDITOR 0.1</div></div></header>
+<div class="legend"><div><b>WORLD LAYERS</b></div><div><i class="dot" style="background:#9e9680"></i>Gritty PBR terrain</div><div><i class="dot" style="background:#676e52"></i>Aegis forward base</div><div><i class="dot" style="background:#b0a28a"></i>Civilian apartments</div><div class="badge">Orbit / pinch / two-finger pan</div></div>
+<aside id="mapPanel"><img id="mini" src="assets/dustline/Dustline_v02_ColorMap.png" alt="Terrain color map"><p>Terrain color map with weathered roads, patched asphalt, field erosion and prepared building sites.</p></aside>
+<div id="status">LOADING TERRAIN DATA…</div>
+<div class="controls"><div id="left"><button id="vIso" class="active">RTS</button><button id="vTop">TOP</button><button id="vFocus">RESET</button><button id="vProps" class="active">DETAIL</button></div><div><button id="vMaps">MAP</button><button id="vPBR" class="active">PBR</button></div></div>
+
+<button id="studioToggle" aria-controls="studioPanel" aria-expanded="false">EDIT MAP</button>
+<div id="studioTip">View mode · Orbit or pinch to inspect the original Dustline map</div>
+<aside id="studioPanel" hidden>
+  <h2>DUSTLINE / MAP EDITOR</h2>
+  <div class="toolrow"><button data-tool="view" class="active">VIEW</button><button data-tool="paint">PAINT</button><button data-tool="sculpt">SCULPT</button><button data-tool="place">PLACE</button><button data-tool="move">MOVE</button><button data-tool="erase">ERASE</button></div>
+  <label>Surface tint (edits baked albedo; original PBR normal/roughness retained)
+    <select id="paintLayer"><option value="soil">Dusty soil</option><option value="grass">Dry grass</option><option value="rubble">Rubble</option><option value="asphalt">Cracked asphalt</option></select>
+  </label>
+  <label>Brush radius <span id="radiusOut">2.0</span> m<input type="range" id="radius" min=".5" max="9" step=".5" value="2"></label>
+  <label>Brush strength <span id="strengthOut">50</span>%<input type="range" id="strength" min="5" max="100" step="5" value="50"></label>
+  <label>Sculpt action <select id="sculptType"><option value="raise">Raise</option><option value="lower">Lower</option><option value="smooth">Smooth / flatten toward center</option></select></label>
+  <label>Place reusable GLB <select id="assetPick"><option value="Aegis_FOB.glb">Aegis FOB</option><option value="Aegis_MBT.glb">Aegis tank</option><option value="Civilian_Apartment.glb">Civilian apartment</option><option value="Dustline_RubbleCluster_A_YUp.glb">Rubble cluster</option><option value="Dustline_BrokenWall_YUp.glb">Broken wall</option><option value="Dustline_BurnedCar_YUp.glb">Burned car</option><option value="Dustline_UtilityPole_YUp.glb">Utility pole</option></select></label>
+  <div class="actionrow"><button id="rotateChosen">ROTATE 22.5°</button><button id="removeChosen">REMOVE SELECTED</button></div>
+  <div class="actionrow"><button id="undoEdit">UNDO</button><button id="resetEdit">RESET MAP</button></div>
+  <div class="actionrow"><button id="saveProject">SAVE PROJECT JSON</button><button id="loadProject">LOAD PROJECT JSON</button></div>
+  <div class="actionrow"><button id="saveColor">EXPORT COLOR PNG</button><button id="saveHeights">EXPORT HEIGHTS JSON</button></div>
+  <input type="file" id="projectFile" accept=".json,application/json" hidden>
+  <p class="note">VIEW: orbit camera. PAINT or SCULPT: drag across terrain. PLACE: tap ground. MOVE: tap an object, then tap its new position. ERASE: tap an object to remove it. Only editable placed GLBs are selectable; v0.2 decorative scatter stays in the scene.</p>
+  <p class="note" id="selectionStatus">No object selected.</p>
+  <p class="note small">Non-destructive edit sessions export to JSON. The baked albedo can be exported separately as PNG; terrain height changes export as sampled JSON. Godot runtime import comes later.</p>
+  <a href="./index.html" style="font-size:11px;color:#b9d5c3">← Back to WorldForge</a>
+</aside>
+</main>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/"}}</script>
+<script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+const $=id=>document.getElementById(id);
+const status=t=>$('status').textContent=t;
+const canvas=$('view');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:false,powerPreference:'high-performance'});
+renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,1.5));
+renderer.setClearColor(0x313c36);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+const scene=new THREE.Scene();scene.background=new THREE.Color('#333d38');scene.fog=new THREE.FogExp2('#525d55',.0043);
+const camera=new THREE.PerspectiveCamera(35,1,.15,300);
+const controls=new OrbitControls(camera,canvas);controls.enableDamping=true;controls.dampingFactor=.13;controls.minDistance=18;controls.maxDistance=132;
+controls.maxPolarAngle=1.56;controls.minPolarAngle=.14;
+controls.target.set(0,0,0);camera.position.set(68,72,89);controls.update();
+const hemi=new THREE.HemisphereLight(0xc9d8d1,0x67604e,.93);scene.add(hemi);
+const sun=new THREE.DirectionalLight(0xffead2,1.83);sun.position.set(-26,54,-21);sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.left=-48;sun.shadow.camera.right=48;sun.shadow.camera.top=48;sun.shadow.camera.bottom=-48;sun.shadow.camera.far=160;sun.shadow.bias=-.00011;scene.add(sun);
+const loader=new GLTFLoader(),texLoader=new THREE.TextureLoader();
+const assetCache=new Map();
+async function sourceModel(asset){if(!/^[a-zA-Z0-9_-]+\.glb$/.test(asset))throw new Error('Unsupported asset name');const path='assets/dustline/assets/models/'+(asset.startsWith('Dustline_')?'environment/':'')+asset;if(!assetCache.has(path))assetCache.set(path,loadGlb(path).then(v=>v.scene).catch(e=>{assetCache.delete(path);throw e}));return assetCache.get(path);}
+const placements=[];let chosen=null;
+async function addPlacement(asset,pos,scale=1,yaw=0){const source=await sourceModel(asset),o=source.clone(true);o.position.fromArray(pos);o.scale.setScalar(scale);o.rotation.y=yaw*Math.PI/180;markShadows(o);scene.add(o);const rec={asset,object:o};placements.push(rec);return rec;}
+function placementData(){return placements.map(p=>({asset:p.asset,position:p.object.position.toArray().map(v=>+v.toFixed(4)),rotation_y_deg:+(p.object.rotation.y*180/Math.PI).toFixed(2),scale:+p.object.scale.x.toFixed(4)}));}
+
+const loadGlb=(p)=>new Promise((res,rej)=>loader.load(p,res,undefined,rej));
+const loadTex=(p,srgb=false)=>new Promise((res,rej)=>texLoader.load(p,t=>{t.flipY=false;t.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());if(srgb)t.colorSpace=THREE.SRGBColorSpace;res(t)},undefined,rej));
+let terrain=null, originalMaterial=null, debugMaterial=null,props=[];
+function markShadows(o,yes=true){o.traverse(c=>{if(c.isMesh){c.castShadow=yes;c.receiveShadow=true;}})}
+function place(model,pos,scale=1,yaw=0){const o=model.scene;o.scale.setScalar(scale);o.rotation.y=yaw*Math.PI/180;o.position.set(...pos);markShadows(o);scene.add(o);return o;}
+// World-to-map sampling uses the same 1024 × 1024 heightmap and Y range as the authored model.
+let heights=null, meta=null;
+function heightAt(x,z){
+ if(!heights||!meta)return 0;
+ const a=Math.max(0,Math.min(1023,((x+32)/64)*1024)),b=Math.max(0,Math.min(1023,((32-z)/64)*1024));
+ const i=Math.floor(a),j=Math.floor(b),i1=Math.min(i+1,1023),j1=Math.min(j+1,1023),u=a-i,v=b-j;
+ const k=(x,y)=>heights[y*1024+x];const value=THREE.MathUtils.lerp(THREE.MathUtils.lerp(k(i,j),k(i1,j),u),THREE.MathUtils.lerp(k(i,j1),k(i1,j1),u),v)/65535;
+ return THREE.MathUtils.lerp(meta.heightmap.meters_min,meta.heightmap.meters_max,value);
+}
+// Height data can also be sampled directly from the authoring JSON's normalized preview PNG in browsers
+// if R16 decoding is unavailable. GLB terrain geometry is authoritative for visual elevation.
+async function maps(){
+ const [base,normal,rough,ao,splat]=await Promise.all([
+ 'assets/dustline/assets/maps/terrain_basecolor_2048.png', 'assets/dustline/assets/maps/terrain_normal_opengl.png',
+ 'assets/dustline/assets/maps/terrain_roughness.png','assets/dustline/assets/maps/terrain_ambient_occlusion.png',
+ 'assets/dustline/assets/maps/splatmap_RGBA_grass_dirt_rubble_asphalt.png'].map((p,i)=>loadTex(p,i===0)));
+ const material=new THREE.MeshStandardMaterial({color:'#ffffff',map:base,normalMap:normal,normalScale:new THREE.Vector2(.37,.37),roughnessMap:rough,roughness:1.0,metalness:0.0,aoMap:ao,aoMapIntensity:.4});
+ return {material,base,splat};
+}
+// v0.2 environmental scatter: deterministic, clustered, GPU-instanced wherever possible.
+function addProps(){
+ const rng=(i,seed)=>{const q=Math.sin(i*127.1+seed*311.7)*43758.5453123;return q-Math.floor(q)};
+ const near=(x,z,cx,cz,rx,rz)=>Math.abs(x-cx)<rx&&Math.abs(z-cz)<rz;
+ const site=(x,z)=>near(x,z,-15,-15.1,12.5,11.6)||near(x,z,16.5,17,12.2,11.1);
+ const roadZ=x=>4.5+1.6*Math.sin((x+9)*.086)+1.1*Math.cos(x*.153);
+ const isRoad=(x,z,clearance=3.3)=>Math.abs(z-roadZ(x))<clearance||
+   (z>7&&z<29&&Math.abs(x-15-1.1*Math.sin((z-7)*.15))<3.4);
+ const addMesh=(geometry,material,positions,colorVariation)=>{
+   const count=positions.length;const inst=new THREE.InstancedMesh(geometry,material,count);
+   const dummy=new THREE.Object3D();const cc=new THREE.Color();
+   for(let j=0;j<count;j++){
+     const pt=positions[j],y=heightAt(pt.x,pt.z);
+     dummy.position.set(pt.x,y+(pt.raise||0),pt.z);
+     dummy.rotation.set(pt.pitch||0,pt.yaw||0,pt.roll||0);
+     dummy.scale.set(pt.sx||1,pt.sy||1,pt.sz||1);dummy.updateMatrix();
+     inst.setMatrixAt(j,dummy.matrix);
+     if(colorVariation){cc.setRGB(...colorVariation[j%colorVariation.length]);inst.setColorAt(j,cc)}
+   }
+   inst.instanceMatrix.needsUpdate=true;
+   inst.castShadow=false;inst.receiveShadow=true;
+   scene.add(inst);props.push(inst);
+   return inst;
+ };
+ const olive=new THREE.MeshStandardMaterial({color:0xffffff,roughness:1,metalness:0,flatShading:true,side:THREE.DoubleSide});
+ const stone=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.98,metalness:0,flatShading:true});
+ const debris=new THREE.MeshStandardMaterial({color:0xffffff,roughness:.96,metalness:.05,flatShading:true});
+ const grassGeom=new THREE.ConeGeometry(.13,.8,3,1);
+ grassGeom.translate(0,.28,0);
+ const rockGeom=new THREE.DodecahedronGeometry(.35,0);
+ const brickGeom=new THREE.BoxGeometry(.34,.20,.24);
+ const dryGrass=[],rocks=[],bricks=[];
+ // Patchy, grouped roadside vegetation; no giant evenly distributed random cubes.
+ for(let i=0;i<1200;i++){
+   const cx=rng(i,8)*62-31,cz=rng(i,88)*62-31;
+   const onRoad=isRoad(cx,cz,2.5);if(site(cx,cz)||onRoad)continue;
+   if(i%3===0){
+     const n=2+Math.floor(rng(i,91)*4);
+     for(let j=0;j<n;j++){
+       if(dryGrass.length>820)break;
+       const x=cx+(rng(i+j,46)-.5)*.8,z=cz+(rng(i+j,52)-.5)*.8;
+       if(site(x,z)||isRoad(x,z,2.1))continue;
+       const size=.29+rng(i+j,99)*.40;
+       dryGrass.push({x,z,sx:size,sz:size,sy:size*(.9+rng(i+j,50)),yaw:rng(i+j,74)*6.283,raise:-.01});
+     }
+   }
+   if(i%5===0&&rocks.length<150){let ss=.27+rng(i,66)*1.28;
+     rocks.push({x:cx,z:cz,sx:ss,sz:ss*.9,sy:ss*.48,raise:ss*.11,yaw:rng(i,42)*6.283});}
+   if(i%13===0&&bricks.length<88){let ss=.32+rng(i,53)*1.4;
+     bricks.push({x:cx,z:cz,sx:ss,sz:ss,sy:ss,raise:ss*.07,yaw:rng(i,45)*6.283,pitch:(rng(i,4)-.5)*.44});}
+ }
+ addMesh(grassGeom,olive,dryGrass,[[.30,.37,.23],[.43,.44,.29],[.32,.40,.27],[.42,.42,.25]]);
+ addMesh(rockGeom,stone,rocks,[[.43,.42,.38],[.54,.50,.42],[.36,.38,.34],[.51,.49,.43]]);
+ addMesh(brickGeom,debris,bricks,[[.46,.40,.33],[.43,.32,.26],[.52,.49,.44],[.31,.34,.32]]);
+ // Concentrate rubble around the damaged civilian block with scattered broken bricks and limestone.
+ const urban=[];
+ for(let i=0;i<200;i++){
+   let x=3+rng(i,444)*28,z=7+rng(i,904)*25;
+   if(site(x,z)||isRoad(x,z,2.1))continue;
+   const sz=.32+rng(i,82)*1.0;
+   urban.push({x,z,sx:sz,sz:sz*.9,sy:sz*.65,raise:sz*.11,yaw:rng(i,13)*6.283});
+ }
+ addMesh(rockGeom,stone,urban,[[.48,.44,.39],[.44,.42,.40],[.52,.45,.38]]);
+ // Patchy road-edge concrete barricades, not a continuous immaculate fence.
+ const concrete=new THREE.MeshStandardMaterial({color:'#797366',roughness:.94,metalness:.02});
+ function barrier(x,z,angle=0){
+   const geo=new THREE.BoxGeometry(1.48,.66,.36);
+   const m=new THREE.Mesh(geo,concrete);m.position.set(x,heightAt(x,z)+.33,z);m.rotation.y=angle;
+   m.castShadow=true;m.receiveShadow=true;scene.add(m);props.push(m);
+   const g=new THREE.BoxGeometry(1.5,.085,.1);
+   const top=new THREE.Mesh(g,new THREE.MeshStandardMaterial({color:'#aba090',roughness:1}));
+   top.position.set(x,heightAt(x,z)+.71,z);top.rotation.y=angle;
+   scene.add(top);props.push(top);
+ }
+ [[5.5,12,.29],[7.17,12.16,.26],[8.86,12.3,.21],[3.8,-5,-.21],[5.55,-5.38,-.21]].forEach(a=>barrier(...a));
+ // Broken masonry silhouette with a staggered top edge and missing courses.
+ const masonry=new THREE.MeshStandardMaterial({color:'#71685c',roughness:.98,flatShading:true});
+ function damagedWall(x,z,len,angle){
+   const pieces=8,geo=new THREE.BoxGeometry(len/pieces+.02,1,.25);
+   for(let j=0;j<pieces;j++){
+     if(j===3||j===6)continue;
+     let h=.8+(j%3)*.36+(j===0?.3:0);
+     const obj=new THREE.Mesh(geo,masonry);
+     obj.scale.y=h;obj.position.set(x+(j-(pieces-1)/2)*len/pieces*Math.cos(angle),heightAt(x,z)+h*.5,
+       z+(j-(pieces-1)/2)*len/pieces*Math.sin(angle));obj.rotation.y=-angle;
+     obj.castShadow=true;obj.receiveShadow=true;scene.add(obj);props.push(obj);
+   }
+ }
+ damagedWall(3.7,23.5,5.5,.13);damagedWall(27,11.8,5.1,-.13);
+ // Low-contrast scored road markings, placed close to graded asphalt height.
+ const chalk=new THREE.MeshBasicMaterial({color:'#a19881',transparent:true,opacity:.36,depthWrite:false,side:THREE.DoubleSide});
+ for(let xx=-29;xx<29;xx+=5.6){
+   const zz=roadZ(xx);
+   const quad=new THREE.Mesh(new THREE.PlaneGeometry(2.35,.048),chalk);
+   quad.rotation.x=-Math.PI/2;quad.rotation.z=0;
+   quad.position.set(xx,heightAt(xx,zz)+.042,zz);
+   quad.rotation.y=0;scene.add(quad);props.push(quad);
+ }
+}
+// Render actual environmental GLBs, but batch repeated geometry through GPU instancing.
+async function loadEnvironmentAssets(){
+ const sets=[
+  ['assets/dustline/assets/models/environment/Dustline_RubbleCluster_A_YUp.glb',[
+   [3.2,27.1,.86,12],[5.8,28,.75,42],[25,11.3,.95,20],[28,15.1,.8,90],
+   [4.9,19.1,.75,45],[22.1,30.1,.85,130],[7.8,10.1,.80,180],[29,25.1,.90,40]]],
+  ['assets/dustline/assets/models/environment/Dustline_BrokenWall_YUp.glb',[[7.2,27,1,45],[29.0,14,.85,80]]],
+  ['assets/dustline/assets/models/environment/Dustline_BurnedCar_YUp.glb',[[-24,9.9,.8,-15],[28.0,7.8,.75,22]]],
+  ['assets/dustline/assets/models/environment/Dustline_UtilityPole_YUp.glb',[[4,7,1,0],[11,7.2,1,0],[23,6.6,1,0]]]
+ ];
+ const loaded=[];
+ for(const [path,where] of sets){
+  try{
+   const source=(await loadGlb(path)).scene;
+   source.updateMatrixWorld(true);
+   const baseMeshes=[];source.traverse(obj=>{if(obj.isMesh&&obj.geometry)baseMeshes.push(obj)});
+   for(const src of baseMeshes){
+     const instance=new THREE.InstancedMesh(src.geometry,src.material,where.length);
+     const loc=new THREE.Object3D();const base=src.matrixWorld.clone();
+     for(let i=0;i<where.length;i++){
+       const [x,z,s,yaw]=where[i];loc.position.set(x,heightAt(x,z),z);
+       loc.rotation.set(0,yaw*Math.PI/180,0);loc.scale.setScalar(s);
+       loc.updateMatrix();instance.setMatrixAt(i,loc.matrix.clone().multiply(base));
+     }
+     instance.instanceMatrix.needsUpdate=true;
+     instance.castShadow=true;instance.receiveShadow=true;
+     scene.add(instance);props.push(instance);
+   }
+   loaded.push(path.split('/').pop());
+  }catch(err){console.warn('Optional prop GLB unavailable',path,err)}
+ }
+ return loaded;
+}
+
+function resize(){const w=canvas.clientWidth||innerWidth,h=canvas.clientHeight||innerHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}
+window.addEventListener('resize',resize);resize();
+let lastFrame=performance.now(),frames=0;
+function animate(time){controls.update();renderer.render(scene,camera);frames++;if(time-lastFrame>1150){$('fps').textContent='FPS '+Math.round(frames*1000/(time-lastFrame));frames=0;lastFrame=time;}requestAnimationFrame(animate)}requestAnimationFrame(animate);
+const turnOn=(id,yes)=>$(id).classList.toggle('active',yes);
+function view(top=false){controls.target.set(0,0,0);camera.position.set(top?0:68,top?102:72,top?0:89);controls.update();turnOn('vTop',top);turnOn('vIso',!top)}
+$('vIso').onclick=()=>view(false);$('vTop').onclick=()=>view(true);$('vFocus').onclick=()=>view(false);
+$('vMaps').onclick=()=>{const b=$('mapPanel');b.classList.toggle('visible');turnOn('vMaps',b.classList.contains('visible'))};
+$('vProps').onclick=()=>{const active=!$('vProps').classList.contains('active');props.forEach(p=>p.visible=active);turnOn('vProps',active)};
+$('vPBR').onclick=()=>{let yes=!$('vPBR').classList.contains('active');turnOn('vPBR',yes);if(terrain)terrain.traverse(m=>{if(m.isMesh)m.material=yes?originalMaterial:debugMaterial})};
+
+// WorldForge Dustline Studio 0.1 — non-destructive editable layer above the faithful v0.2 visual baseline.
+const paintColors={soil:'#aa9273',grass:'#6e805e',rubble:'#7c7971',asphalt:'#74746e'};
+let activeTool='view',paintCanvas=null,paintCtx=null,baseAlbedo=null,paintTexture=null,terrainSurface=null,baseTerrainVertices=null,baseHeightAt=null;
+let paintStrokes=[],sculptStrokes=[],history=[],isDrawing=false,changedDuringStroke=false,lastStamp=null,editorReady=false;
+const raycaster=new THREE.Raycaster(),pointer=new THREE.Vector2();
+const radiusVal=()=>Number($('radius').value),strengthVal=()=>Number($('strength').value)/100;
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+function locate(event){const box=canvas.getBoundingClientRect();pointer.set((event.clientX-box.left)/box.width*2-1,-(event.clientY-box.top)/box.height*2+1);raycaster.setFromCamera(pointer,camera)}
+function groundHit(event){if(!terrainSurface)return null;locate(event);return raycaster.intersectObject(terrainSurface,true).find(hit=>Math.abs(hit.point.x)<=32.1&&Math.abs(hit.point.z)<=32.1)||null}
+function modelHit(event){locate(event);const meshes=[];for(const p of placements)p.object.traverse(o=>{if(o.isMesh)meshes.push(o)});const hits=raycaster.intersectObjects(meshes,false);for(const hit of hits){const rec=placements.find(p=>{let o=hit.object;while(o){if(o===p.object)return true;o=o.parent}return false});if(rec)return rec;}return null;}
+function tip(text){$('studioTip').textContent=text;}
+function setTool(tool){activeTool=tool;controls.enabled=tool==='view';document.querySelectorAll('[data-tool]').forEach(b=>b.classList.toggle('active',b.dataset.tool===tool));tip(({view:'View mode · Orbit or pinch the camera',paint:'PAINT · Drag on ground to add color tint',sculpt:'SCULPT · Drag on ground to edit elevation',place:'PLACE · Tap ground to add selected GLB',move:'MOVE · Tap object, then tap a location',erase:'ERASE · Tap a placed GLB to remove it'})[tool]);}
+function snapshot(){return {paintStrokes:structuredClone(paintStrokes),sculptStrokes:structuredClone(sculptStrokes),placements:placementData()};}
+function remember(){history.push(snapshot());if(history.length>24)history.shift();}
+function drawPaintStroke(stroke){const p=stroke,px=(p.x+32)/64*paintCanvas.width,py=(p.z+32)/64*paintCanvas.height,r=p.r/64*paintCanvas.width,alpha=p.s*.64;
+ const grd=paintCtx.createRadialGradient(px,py,0,px,py,r);const rgb=paintColors[p.type]||paintColors.soil;grd.addColorStop(0,rgb);grd.addColorStop(.58,rgb);grd.addColorStop(1,rgb+'00');
+ paintCtx.save();paintCtx.globalAlpha=alpha;paintCtx.fillStyle=grd;paintCtx.beginPath();paintCtx.arc(px,py,r,0,Math.PI*2);paintCtx.fill();paintCtx.restore();}
+function rebuildPaint(){if(!paintCtx||!baseAlbedo)return;paintCtx.clearRect(0,0,paintCanvas.width,paintCanvas.height);paintCtx.drawImage(baseAlbedo,0,0,paintCanvas.width,paintCanvas.height);for(const s of paintStrokes)drawPaintStroke(s);paintTexture.needsUpdate=true;}
+function brushFalloff(dx,dz,r){const t=Math.hypot(dx,dz)/r;if(t>=1)return 0;return (1-t*t)**2;}
+function applySculptStroke(stroke,vertices){const {x,z,r,s,type,center}=stroke;let mix=0;
+ for(let i=0;i<vertices.length;i+=3){const w=brushFalloff(vertices[i]-x,vertices[i+2]-z,r);if(w<=0)continue;
+ const old=vertices[i+1];if(type==='smooth')vertices[i+1]+= (center-old)*w*s*.18;else vertices[i+1]+= (type==='raise'?1:-1)*w*s*.09;
+ }}
+function rebuildSculpt(){if(!terrainSurface||!baseTerrainVertices)return;const pos=terrainSurface.geometry.attributes.position;const vertices=new Float32Array(baseTerrainVertices);
+ for(const s of sculptStrokes)applySculptStroke(s,vertices);pos.array.set(vertices);pos.needsUpdate=true;terrainSurface.geometry.computeVertexNormals();terrainSurface.geometry.computeBoundingSphere();terrainSurface.geometry.computeBoundingBox();
+ if(baseHeightAt){heightAt=(x,z)=>{const fx=clamp((x+32)/64*128,0,128),fz=clamp((z+32)/64*128,0,128);const i=Math.round(fx),j=Math.round(fz);return vertices[(j*129+i)*3+1];};}
+}
+function stamp(point){if(!point)return;const x=+point.x.toFixed(3),z=+point.z.toFixed(3),r=radiusVal(),s=strengthVal();if(lastStamp&&Math.hypot(lastStamp.x-x,lastStamp.z-z)<r*.20)return;lastStamp={x,z};changedDuringStroke=true;
+ if(activeTool==='paint'){const st={x,z,r,s,type:$('paintLayer').value};paintStrokes.push(st);drawPaintStroke(st);paintTexture.needsUpdate=true;}
+ else{const st={x,z,r,s,type:$('sculptType').value,center:heightAt(x,z)};sculptStrokes.push(st);rebuildSculpt();}
+}
+async function restoreProject(obj){if(!obj||obj.schema!=='worldforge.dustline-edit.v1'||!Array.isArray(obj.placements)||!Array.isArray(obj.paintStrokes)||!Array.isArray(obj.sculptStrokes))throw new Error('Expected WorldForge Dustline project JSON');
+ if(obj.placements.length>200||obj.paintStrokes.length>15000||obj.sculptStrokes.length>15000)throw new Error('Project too large');
+ paintStrokes=structuredClone(obj.paintStrokes);sculptStrokes=structuredClone(obj.sculptStrokes);rebuildPaint();rebuildSculpt();
+ for(const p of placements)scene.remove(p.object);placements.length=0;chosen=null;
+ for(const p of obj.placements){if(!p.asset||!Array.isArray(p.position)||p.position.length!==3)continue;await addPlacement(p.asset,p.position,Number(p.scale)||1,Number(p.rotation_y_deg)||0);}
+ $('selectionStatus').textContent=`Loaded ${placements.length} editable GLBs`;tip('Project restored · all layers loaded');
+}
+function exportFile(blob,name){const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),15000);}
+function projectData(){return {schema:'worldforge.dustline-edit.v1',version:1,base:'outpost60.dustline.v0.2',sizeMeters:64,terrainGLB:'assets/dustline/assets/models/Outpost60_Dustline_Terrain_64m_YUp.glb',placements:placementData(),paintStrokes,sculptStrokes,coordinates:'Y_up',notes:'Non-destructive paint and terrain edits. Original Dustline PBR textures and scene assets are packaged in WorldForge.'};}
+function selectRec(p){chosen=p;$('selectionStatus').textContent=p?`${p.asset} · x ${p.object.position.x.toFixed(1)}, z ${p.object.position.z.toFixed(1)}`:'No object selected';}
+function wireStudio(){
+ document.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>setTool(b.dataset.tool));
+ $('studioToggle').onclick=()=>{const open=$('studioPanel').hidden;$('studioPanel').hidden=!open;document.body.classList.toggle('studio-open',open);$('studioToggle').textContent=open?'CLOSE EDITOR':'EDIT MAP';$('studioToggle').setAttribute('aria-expanded',open);};
+ for(const id of ['radius','strength'])$(id).oninput=()=>{$('radiusOut').textContent=radiusVal().toFixed(1);$('strengthOut').textContent=String(Math.round(strengthVal()*100));};
+ $('rotateChosen').onclick=()=>{if(!chosen)return;remember();chosen.object.rotation.y+=Math.PI/8;selectRec(chosen)};
+ $('removeChosen').onclick=()=>{if(!chosen)return;remember();scene.remove(chosen.object);placements.splice(placements.indexOf(chosen),1);selectRec(null)};
+ $('undoEdit').onclick=async()=>{const prev=history.pop();if(!prev){tip('Nothing to undo');return;}await restoreProject({...prev,schema:'worldforge.dustline-edit.v1'});tip('Last edit undone')};
+ $('resetEdit').onclick=async()=>{if(!confirm('Restore original Dustline terrain, paint and GLB placements?'))return;remember();await restoreProject({schema:'worldforge.dustline-edit.v1',placements:meta.placements,paintStrokes:[],sculptStrokes:[]});tip('Original map restored')};
+ $('saveProject').onclick=()=>{exportFile(new Blob([JSON.stringify(projectData(),null,2)],{type:'application/json'}),'Dustline_WorldForge_Project.json');tip('Saved editable project JSON')};
+ $('loadProject').onclick=()=>$('projectFile').click();$('projectFile').onchange=async e=>{const f=e.target.files?.[0];if(!f)return;try{const data=JSON.parse(await f.text());remember();await restoreProject(data);}catch(err){tip('Load failed: '+err.message);}e.target.value='';};
+ $('saveColor').onclick=()=>paintCanvas.toBlob(b=>{if(b)exportFile(b,'Dustline_Albedo_Edited_2048.png')},'image/png');
+ $('saveHeights').onclick=()=>{const pos=terrainSurface.geometry.attributes.position.array;const rows=129,values=Array.from({length:rows*rows},()=>0);for(let i=0;i<pos.length;i+=3){const ix=Math.round((pos[i]+32)*2),iz=Math.round((pos[i+2]+32)*2);if(ix>=0&&ix<129&&iz>=0&&iz<129)values[iz*129+ix]=+pos[i+1].toFixed(5)}exportFile(new Blob([JSON.stringify({n:129,boundsMeters:64,heightsMeters:values},null,0)],{type:'application/json'}),'Dustline_Height_129_Edited.json');};
+ canvas.addEventListener('pointerdown',async e=>{if(!editorReady||activeTool==='view'||e.pointerType==='touch'&&!e.isPrimary)return;
+   // Single-finger paint/sculpt/place, two-finger pinch stays in VIEW mode.
+   if(activeTool==='paint'||activeTool==='sculpt'){const hit=groundHit(e);if(!hit)return;remember();isDrawing=true;lastStamp=null;changedDuringStroke=false;canvas.setPointerCapture(e.pointerId);stamp(hit.point);e.preventDefault();}
+   else if(activeTool==='place'){const hit=groundHit(e);if(!hit)return;remember();try{const asset=$('assetPick').value;const rec=await addPlacement(asset,[hit.point.x,hit.point.y,hit.point.z],asset==='Civilian_Apartment.glb'?.9:1,0);selectRec(rec);tip(`Placed ${asset}`)}catch(err){tip('Import failed: '+err.message)}}
+   else if(activeTool==='move'){const clicked=modelHit(e);if(clicked){selectRec(clicked);tip('Selected · tap terrain for new position')}else if(chosen){const hit=groundHit(e);if(hit){remember();chosen.object.position.set(hit.point.x,hit.point.y,hit.point.z);selectRec(chosen);tip('Moved GLB')}}}
+   else if(activeTool==='erase'){const picked=modelHit(e);if(picked){remember();scene.remove(picked.object);placements.splice(placements.indexOf(picked),1);selectRec(null);tip('Removed GLB · tap Undo to restore')}}
+ });
+ canvas.addEventListener('pointermove',e=>{if(!isDrawing)return;const hit=groundHit(e);if(hit)stamp(hit.point);e.preventDefault()},{passive:false});
+ const stop=()=>{isDrawing=false;lastStamp=null};canvas.addEventListener('pointerup',stop);canvas.addEventListener('pointercancel',stop);canvas.addEventListener('lostpointercapture',stop);
+ setTool('view');
+}
+function prepareEditTerrain(originalImage){terrain.traverse(o=>{if(o.isMesh&&o.geometry.attributes.position&&!terrainSurface)terrainSurface=o});if(!terrainSurface)throw new Error('Terrain mesh unavailable');baseTerrainVertices=new Float32Array(terrainSurface.geometry.attributes.position.array);
+ paintCanvas=document.createElement('canvas');paintCanvas.width=originalImage.width;paintCanvas.height=originalImage.height;paintCtx=paintCanvas.getContext('2d',{willReadFrequently:false});baseAlbedo=originalImage;paintCtx.drawImage(baseAlbedo,0,0);
+ paintTexture=new THREE.CanvasTexture(paintCanvas);paintTexture.flipY=false;paintTexture.colorSpace=THREE.SRGBColorSpace;paintTexture.anisotropy=Math.min(4,renderer.capabilities.getMaxAnisotropy());originalMaterial.map=paintTexture;originalMaterial.needsUpdate=true;
+ baseHeightAt=heightAt;editorReady=true;wireStudio();
+}
+
+async function boot(){try{
+  status('Loading terrain mesh and maps…');meta=await fetch('assets/dustline/map.json').then(r=>r.json());
+  // Extract R16 directly via PNG with an ImageBitmap + 16-bit decoder not consistently supported by Safari.
+  // The included surface GLB carries the exact authored elevations. Height sampling for scatter can use
+  // a compact JSON mesh-height grid instead, avoiding browser-specific 16-bit PNG decode paths.
+  const heightsResp=await fetch('assets/dustline/assets/maps/height_samples_257.json').then(r=>r.json());
+  const n=heightsResp.n;
+  const grid=heightsResp.values;
+  function sample(x,z){let fx=THREE.MathUtils.clamp((x+32)/64*(n-1),0,n-1),fz=THREE.MathUtils.clamp((32-z)/64*(n-1),0,n-1);let i=Math.floor(fx),j=Math.floor(fz),ii=Math.min(i+1,n-1),jj=Math.min(j+1,n-1);const a=fx-i,b=fz-j;return THREE.MathUtils.lerp(THREE.MathUtils.lerp(grid[j*n+i],grid[j*n+ii],a),THREE.MathUtils.lerp(grid[jj*n+i],grid[jj*n+ii],a),b)}
+  heightAt=sample;
+  const [res,ground]=await Promise.all([loadGlb('assets/dustline/'+meta.terrainMesh),maps()]);terrain=res.scene;originalMaterial=ground.material;debugMaterial=new THREE.MeshBasicMaterial({map:ground.base});terrain.traverse(o=>{if(o.isMesh){o.material=ground.material;o.receiveShadow=true;o.castShadow=false;}});scene.add(terrain);
+  prepareEditTerrain(ground.base.image);
+  status('Adding field-worn roads and debris…');addProps();const envAssets=await loadEnvironmentAssets();
+  const entries=await Promise.all(meta.placements.map(async p=>{try{await addPlacement(p.asset,p.position,p.scale,p.rotation_y_deg);return p.asset+' ✓';}catch(err){return p.asset+' failed ('+err.message+')';}}));
+  status('DUSTLINE STUDIO 0.1 · '+entries.join(' · ')+' · '+envAssets.length+' environmental GLB kits');$('loader').hidden=true;
+}catch(err){$('loader').innerHTML='Could not load asset files: '+String(err.message)+'<br><br>Host the full ZIP contents on GitHub Pages or another static server. Safari Files preview may block local GLB requests.';status('Terrain load failed: '+err.message);console.error(err)}}
+boot();
+</script></body></html>

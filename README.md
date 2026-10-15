@@ -1,3 +1,15 @@
+## WorldForge — Dustline Studio 0.1 (October 2026)
+
+The root WorldForge project now links to **DUSTLINE 3D MAP STUDIO**, a separate authoring view at `dustline-studio.html`. This new page imports the **actual** Operation Dustline v0.2 source geometry, embedded GLBs, PBR base color, normal, roughness and AO images, procedural grit detail and placements. It uses the same lighting/camera as the supplied v0.2 viewer and does not alter the original WorldForge game terrain, Vehicle Baker, or old skirmish tools.
+
+**Editing:** view/orbit, baked albedo tint brush, mesh-height brush (raise/lower/smooth), select/move/rotate/delete/place named GLB assets, Undo (up to 24 states), JSON project save/reimport, edited color PNG export, edited sampled height JSON export. The v0.2 deterministic decorative scatter is visually preserved, but individual scatter instances are not editable. Texture painting currently changes **albedo tint only**; live recomposition of normal/roughness per material and a full 4-layer splat shader are future work. For a Godot scene rebuild use the shipped original source maps plus your edited project JSON/color/height exports.
+
+**Publish:** This ZIP contains `index.html` and `dustline-studio.html` at the **ZIP root** (no enclosing folder); upload the root contents to the WorldForge GitHub Pages repository. Existing `assets`, `src`, and `tests` remain. Do not deploy over a newer repository revision without diff/merge. The latest accessible baseline is your v0.13.31 archive with the 16-direction turret fix.
+
+**Testing limits:** Static JS checks and headless Chromium tests included in `TEST_REPORT_DUSTLINE.md`. iPhone Safari field testing remains necessary.
+
+---
+
 ## Vehicle Baker 0.2.0 — 16-direction sprite export (October 2026)
 
 This complete, root-level WorldForge release is based on the uploaded v0.13.31 known-good backup. The Vehicle tab now bakes 16 headings (22.5-degree increments) as transparent 4x4 PNG atlases. It adds a turret pivot selector, split hull/turret sheets, a one-download ZIP with matching JSON pivot metadata, and mobile-friendly progress updates. No build step or external ZIP library is required. Other world/terrain/generation systems were left intact. To publish to GitHub Pages, upload/extract the ZIP **contents** at the repository root, replacing same-named files. No parent directory is included.

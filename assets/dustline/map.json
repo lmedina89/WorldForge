@@ -1,0 +1,99 @@
+{
+  "schema": "outpost60.map.v0.2",
+  "name": "Operation Dustline \u2014 64m Environmental Detail Pass",
+  "bounds_m": {
+    "min_x": -32,
+    "max_x": 32,
+    "min_z": -32,
+    "max_z": 32
+  },
+  "heightmap": {
+    "file": "assets/maps/heightmap_R16.png",
+    "meters_min": -1.27456,
+    "meters_max": 4.19053,
+    "bit_depth": 16,
+    "resolution": 1024,
+    "orientation": "north_up",
+    "encoding": "unsigned normalized mapped to meters_min / meters_max"
+  },
+  "albedo": "assets/maps/terrain_basecolor_2048.png",
+  "normal": "assets/maps/terrain_normal_opengl.png",
+  "roughness": "assets/maps/terrain_roughness.png",
+  "metallic": "assets/maps/terrain_metallic.png",
+  "ambientOcclusion": "assets/maps/terrain_ambient_occlusion.png",
+  "splatmap": {
+    "file": "assets/maps/splatmap_RGBA_grass_dirt_rubble_asphalt.png",
+    "channels": [
+      "grass",
+      "dirt",
+      "rubble",
+      "asphalt"
+    ]
+  },
+  "terrainMesh": "assets/models/Outpost60_Dustline_Terrain_64m_YUp.glb",
+  "placements": [
+    {
+      "asset": "Aegis_FOB.glb",
+      "position": [
+        -15,
+        0.45,
+        -15.1
+      ],
+      "rotation_y_deg": 0,
+      "scale": 1
+    },
+    {
+      "asset": "Civilian_Apartment.glb",
+      "position": [
+        17,
+        0.77,
+        17
+      ],
+      "rotation_y_deg": 180,
+      "scale": 0.9
+    },
+    {
+      "asset": "Aegis_MBT.glb",
+      "position": [
+        -3,
+        0.43,
+        4.6
+      ],
+      "rotation_y_deg": -22,
+      "scale": 0.76
+    }
+  ],
+  "editor": {
+    "coordinate": "Y_up",
+    "unit": "meter",
+    "terrain_resolution": 129,
+    "display_area_m": 64,
+    "native_target": [
+      "Godot 4",
+      "WebGL/Three.js"
+    ]
+  },
+  "notes": "Road and building sites are graded into the heightmap. True 3D assets are placed using original files. PBR texture maps are included as individual PNGs. This is a visual terrain slice, not a navmesh or finished Godot scene.",
+  "environment": {
+    "version": "0.2",
+    "terrainGeometryUnchanged": true,
+    "originalPlacementsUnchanged": true,
+    "groundLayers": [
+      "grass",
+      "soil",
+      "rubble",
+      "asphalt"
+    ],
+    "additionalMaps": [
+      "assets/maps/road_damage_mask.png",
+      "assets/maps/road_cracks_and_shoulder_grime.png"
+    ],
+    "modularProps": [
+      "assets/models/environment/Dustline_BrokenWall_YUp.glb",
+      "assets/models/environment/Dustline_BurnedCar_YUp.glb",
+      "assets/models/environment/Dustline_RubbleCluster_A_YUp.glb",
+      "assets/models/environment/Dustline_UtilityPole_YUp.glb"
+    ],
+    "details": "Road fractures, edge grime, pothole blending, asphalt seams, faded lane marking, ground macro variation, deterministic roadside debris and vegetation"
+  }
+}

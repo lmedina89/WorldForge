@@ -513,7 +513,7 @@ async function exportVehicle16Pack({includeCombined=true,includeSplit=true}={}){
       entries.push({name:`${base}_${layer}_16dir_${frameSize}px.png`,data:new Uint8Array(await result.blob.arrayBuffer())});
       entries.push({name:`${base}_${layer}_16dir.json`,data:JSON.stringify(result.metadata,null,2)});
     }
-    entries.push({name:'README.txt',data:'WorldForge Vehicle Baker 0.2.0\n16 headings at 22.5-degree steps, four-by-four RGBA PNG atlases.\nDirection order: N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSW,SW,WSW,W,WNW,NW,NNW.\nRender image origin is upper left. Use JSON pivot coordinates to align hull and turret layers.\nTurret frames face world directions independently of hull. Align turretSpritePivotPx to hullTurretPivotPxByDirection[hullFrame].\n'});
+    entries.push({name:'README.txt',data:'WorldForge Vehicle Baker 0.2.1\n16 headings at 22.5-degree steps, four-by-four RGBA PNG atlases.\nDirection order: N,NNE,NE,ENE,E,ESE,SE,SSE,S,SSW,SW,WSW,W,WNW,NW,NNW.\nRender image origin is upper left. Use JSON pivot coordinates to align hull and turret layers.\nTurret atlas headings now match the hull/combined heading order exactly. Align turretSpritePivotPxByDirection[turretFrame] to hullTurretPivotPxByDirection[hullFrame].\n'});
     download(createZip(entries),`${base}_16dir_${frameSize}px_sprite_pack.zip`);
     $('status').textContent=`Exported ${layers.length} 16-direction 4×4 sprite sheets + pivot metadata in one ZIP.`;
   }finally{
